@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex promo</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --page: #060606; --panel: #0F0F0F; --card: #121212; --chip: #1E1E1E; --lime: #8FA661; --mark: #C2EA8A; --text: #fff; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.5); }
+html, body { margin: 0; background: var(--page); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--page); color: var(--text); font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; will-change: transform, opacity, filter; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.glass { background: rgba(20,20,20,.62); backdrop-filter: blur(26px) saturate(150%); -webkit-backdrop-filter: blur(26px) saturate(150%); border: 1px solid rgba(255,255,255,.07); box-shadow: 0 30px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.07); }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; border-radius: 10px; background: var(--chip); font-size: 22px; font-weight: 500; }
+.pill svg { width: 20px; height: 20px; }
+.line { overflow: hidden; display: block; }
+.word { display: inline-block; will-change: transform; }
+.tile { position: absolute; width: 150px; height: 150px; border-radius: 24px; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+.tile img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; background: #151515; }
+.tile b { font-weight: 600; font-size: 22px; letter-spacing: -0.01em; }
+.tile span { display: block; font-size: 17px; color: var(--muted); margin-top: 2px; }
+.iss { position: absolute; width: 230px; height: 170px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.iss img { width: 76px; height: 76px; border-radius: 20px; object-fit: cover; }
+.iss div { font-size: 24px; font-weight: 500; }
+.chain { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: var(--chip); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.chain img { width: 40px; height: 40px; border-radius: 50%; }
+.swap { position: absolute; width: 600px; border-radius: 28px; padding: 22px; box-sizing: border-box; }
+.box { background: #181818; border-radius: 18px; padding: 20px 22px; }
+.lbl { font-size: 18px; color: var(--muted); }
+.amt { font-size: 52px; font-weight: 500; letter-spacing: -0.02em; margin-top: 8px; height: 62px; white-space: nowrap; }
+.tok { display: inline-flex; align-items: center; gap: 10px; background: var(--chip); border-radius: 14px; padding: 8px 14px 8px 8px; font-size: 22px; font-weight: 600; position: relative; }
+.tok img.l { width: 36px; height: 36px; border-radius: 50%; }
+.tok img.c { position: absolute; left: 32px; top: 32px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--chip); }
+.btn { height: 64px; border-radius: 14px; background: #fff; color: #060606; display: grid; place-items: center; font-size: 22px; font-weight: 600; margin-top: 16px; }
+.win { position: absolute; border-radius: 18px; overflow: hidden; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 60px 140px rgba(0,0,0,.7); transform-style: preserve-3d; }
+.win .bar { height: 38px; background: #141414; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.win .bar i { width: 12px; height: 12px; border-radius: 50%; background: #2A2A2A; display: block; }
+.win .view { position: relative; overflow: hidden; }
+.win .view img { display: block; width: 100%; will-change: transform; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .06; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// Deterministic timeline: renderAt(t) paints the frame at t seconds, so every frame can be captured exactly.
+// Motion follows Apple's fluid-interface rules: critically damped springs by default, a little bounce
+// only for things that are "thrown", materials that arrive with blur and scale together.
+const MARK = `<svg viewBox="0 0 100 100" fill="currentColor"><path d="M54.3 99.9C56.7 99.6 57.7 99.3 58.6 98.5C61.9 95.7 60.8 90.5 56.6 89.4C55.8 89.2 44.2 89.2 43.4 89.4C38.5 90.9 38.2 97.6 43 99.3C44.7 99.9 51.1 100.2 54.3 99.9ZM33.5 86.6C35.5 86.1 37 84.3 37.3 82.1C37.3 81.6 37.3 81.3 37.1 79.2C37.1 78.6 37 77.5 37 77C36.9 75.7 36.8 74.9 36.7 73.2C36.2 68.3 36.9 66.4 39.4 64.7C41.2 63.5 40.7 63.5 50.4 63.5C58.8 63.5 58.7 63.5 59.7 63.1C61.5 62.6 62.8 61.2 63.3 59.3C63.5 58.7 63.6 52.9 63.5 46.7C63.5 41.3 63.8 40.1 65.6 38.4C67.4 36.5 69.1 36.2 74.6 36.7C75.8 36.8 77.2 36.9 77.8 37C78.3 37 79.4 37.1 80.2 37.2C83.2 37.4 85 36.7 86.1 34.7C87.2 32.8 87.1 31.3 85.3 25.3C83.6 19.3 82.8 17.8 80.7 16.8C78.7 15.8 71.3 13.6 68.9 13.3C65 12.7 62.5 15.4 62.9 19.6C62.9 20.2 63 21.1 63 21.8C63.1 22.4 63.1 23.3 63.2 23.8C63.5 26.6 63.6 29.5 63.5 30.6C63.3 33 61.6 35.1 59.2 36C58 36.5 58.8 36.5 49.7 36.5C40.9 36.5 41.2 36.5 40.2 36.9C38.3 37.5 37 39.1 36.7 41.1C36.6 42 36.5 47.4 36.5 52.5C36.6 58.3 36.5 58.8 35.4 60.5C33.7 63.2 31.6 63.8 25.8 63.3C24.7 63.2 23.4 63.1 22.7 63C22.1 63 21 62.9 20.2 62.8C17.3 62.6 16.1 62.9 14.7 64.3C12.7 66.4 12.8 68.3 15.3 76.2C16.7 80.7 17.3 81.9 18.9 82.9C20.3 83.7 27.8 86.1 30.9 86.6C31.5 86.8 33 86.7 33.5 86.6ZM70.4 86.4C74.5 85.5 79.7 83.8 81.1 83C81.9 82.5 82.7 81.6 83.2 80.7C84.1 79 85.7 73.5 86.6 69.7C87.1 67.4 86.6 65.5 85.3 64.2C84 63 82.7 62.6 80.4 62.8C79.4 62.9 78.1 63 76.8 63.1C76.4 63.1 75.4 63.2 74.6 63.2C72.4 63.4 72.3 63.4 70.5 63.5C67.5 63.6 66.3 64 65.1 65.3C63.9 66.6 63.6 67.6 63.5 71.5C63.5 72.4 63.4 73.9 63.3 74.9C63.2 75.8 63.1 77.1 63.1 77.9C63 78.7 62.9 79.8 62.9 80.4C62.7 82.7 63.2 84.2 64.4 85.4C66 86.8 67.6 87 70.4 86.4ZM6.5 60.4C8.8 60 10.5 58.2 10.8 55.8C10.8 55.4 10.8 54.8 10.8 53.6C10.7 51.5 10.7 48.2 10.8 46.4C10.9 43.6 10.6 42.5 9.4 41.1C6.8 38.3 1.9 39.3 0.7 43C-0.2 45.5 -0.2 54.3 0.7 56.9C1.5 59.3 4 60.9 6.5 60.4ZM95.3 60.4C97.6 60 99.1 58.4 99.6 56.2C100.2 53.2 100.2 45.6 99.5 43.3C98.5 39.5 93.6 38.2 90.8 41C89.6 42.2 89.3 43.2 89.3 45.6C89.4 47.7 89.4 52 89.3 54.1C89.3 55.9 89.3 56 89.4 56.5C90 58.6 91.6 60.1 93.8 60.4C94.1 60.5 94.9 60.5 95.3 60.4ZM19.7 37.1C19.9 37.1 20.9 37 21.8 37C22.6 36.9 24.3 36.8 25.3 36.7C26.4 36.6 28.1 36.5 29.1 36.5C32 36.4 32.9 36.2 34.1 35.5C35.8 34.4 36.4 32.9 36.5 29.8C36.5 28.9 36.6 27.4 36.7 26.5C36.9 24.3 36.9 24.1 37 22.9C37 22.3 37.1 21.1 37.2 20.3C37.4 17.8 37.3 16.8 36.5 15.6C35.2 13.6 33.1 12.9 30.6 13.4C27.2 14.1 21.2 15.9 19.4 16.8C18.2 17.4 17.2 18.4 16.7 19.6C15.7 21.8 13.6 28.9 13.3 31.2C12.9 34.2 14.7 36.7 17.7 37.2C18 37.2 19.3 37.2 19.7 37.1ZM56.7 10.6C61.3 9.3 61.9 2.9 57.6 0.8C55.2 -0.3 45.1 -0.3 42.6 0.8C38.1 2.9 38.8 9.6 43.7 10.6C44.5 10.8 56.1 10.7 56.7 10.6Z"/></svg>`
+const PUB = '../public'
+const DURATION = 31
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2)
+const easeOut = (p) => 1 - Math.pow(1 - p, 3)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+// Materialize: opacity, blur and scale arrive together so the element reads as a surface, not a fade.
+function mat(el, p, { y = 0, x = 0, s = 0.04, blur = 14, extra = '' } = {}) {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)}) ${extra}`
+}
+// Scene envelope: spring in at `a`, spring out at `b`.
+const env = (t, a, b, rin = 0.6, rout = 0.55) => clamp(spring(t - a, rin)) * (1 - clamp(spring(t - b, rout)))
+
+let DATA
+const CTA = { x: 0, y: 0 }
+async function build() {
+  DATA = await (await fetch('data.json')).json()
+
+  // Backdrop: the particle landscape from the site, drifting very slowly.
+  const bg = add(stage, `<div class="abs" style="inset:0"><img src="${PUB}/design/particles.webp" style="position:absolute;left:-4%;width:108%;bottom:-2%;height:92%;object-fit:cover;object-position:center bottom"><div class="abs" style="inset:0;background:linear-gradient(180deg,#060606 0%,rgba(6,6,6,.82) 28%,rgba(6,6,6,0) 62%,rgba(6,6,6,.2) 88%,#060606 100%)"></div></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1600px;height:1100px;margin:-550px 0 0 -800px;background:radial-gradient(closest-side,rgba(143,166,97,.16),rgba(143,166,97,0));pointer-events:none"></div>`)
+
+  // 1. Intro
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const s1pill = add(s1, `<div class="abs" style="left:0;right:0;top:250px;text-align:center"><span class="pill"><span style="color:var(--mark);display:inline-flex">${MARK}</span>Unified marketplace for real-world assets</span></div>`)
+  const s1word = add(s1, `<div class="abs serif" style="left:0;right:0;top:330px;text-align:center;font-size:300px"></div>`)
+  const letters = [...'Verdex'].map((c) => add(s1word, `<span class="word">${c}</span>`))
+  const s1tag = add(s1, `<div class="abs" style="left:0;right:0;top:700px;text-align:center;font-size:46px;font-weight:500;letter-spacing:-0.02em;color:var(--soft)">Everything tokenized. One marketplace.</div>`)
+
+  // 2. Stocks wall
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const s2pill = add(s2, `<div class="abs" style="left:150px;top:250px"><span class="pill"><span style="color:var(--mark);display:inline-flex">${MARK}</span>Markets</span></div>`)
+  const s2h = add(s2, `<div class="abs serif" style="left:146px;top:330px;font-size:150px;width:820px"><span class="line">Tokenized</span><span class="line" style="position:relative;height:160px"></span></div>`)
+  const roll = s2h.children[1]
+  const WORDS = ['stocks.', 'ETFs.', 'gold.', 'treasuries.']
+  const words = WORDS.map((w) => add(roll, `<span class="word" style="position:absolute;left:0;top:0;color:var(--lime)">${w}</span>`))
+  const s2sub = add(s2, `<div class="abs" style="left:150px;top:680px;font-size:34px;color:var(--soft);line-height:1.35;width:760px"><span id="cnt" style="color:#fff;font-weight:600">0</span> assets from <span style="color:#fff;font-weight:600">12 issuers</span>.<br>Buy any of them in one order.</div>`)
+  const cnt = s2sub.querySelector('#cnt')
+  const grid = add(s2, `<div class="abs" style="left:1000px;top:230px;width:822px;height:820px"></div>`)
+  const tiles = DATA.stocks.slice(0, 20).map((s, i) => {
+    const col = i % 5, row = Math.floor(i / 5)
+    const el = add(grid, `<div class="tile glass" style="left:${col * 168}px;top:${row * 168}px"><img src="${PUB}/img/logos/${s.logo}.webp"><div><b>${s.ticker}</b><span>$${s.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div></div>`)
+    return { el, col, row }
+  })
+
+  // 3. Issuers
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const s3h1 = add(s3, `<div class="abs serif" style="left:0;right:0;top:150px;text-align:center;font-size:150px">Every issuer.</div>`)
+  const s3h2 = add(s3, `<div class="abs serif" style="left:0;right:0;top:300px;text-align:center;font-size:150px;color:var(--muted)">One order.</div>`)
+  const ISS = [['Ondo', 'ondo.png'], ['xStocks', 'xstocks.png'], ['bStocks', 'bstocks.svg'], ['Robinhood', 'robinhood.svg'], ['Coinbase', 'coinbase.png'], ['Backed', 'backed.png'], ['Tether', 'tether.png'], ['Paxos', 'paxos.png'], ['Maple', 'maple.png'], ['Ethena', 'ethena.png'], ['USD.AI', 'usdai.png'], ['Theo', 'theo.png']]
+  const issuers = ISS.map(([n, f], i) => {
+    const col = i % 6, row = Math.floor(i / 6)
+    return add(s3, `<div class="iss glass" style="left:${220 + col * 250}px;top:${530 + row * 195}px"><img src="${PUB}/logos/issuers/${f}"><div>${n}</div></div>`)
+  })
+
+  // 4. Swap and bridge
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const s4pill = add(s4, `<div class="abs" style="left:150px;top:300px"><span class="pill"><span style="color:var(--mark);display:inline-flex">${MARK}</span>Swap and Bridge</span></div>`)
+  const s4h1 = add(s4, `<div class="abs serif" style="left:146px;top:380px;font-size:140px">Any token.</div>`)
+  const s4h2 = add(s4, `<div class="abs serif" style="left:146px;top:520px;font-size:140px;color:var(--muted)">Any chain.</div>`)
+  const s4sub = add(s4, `<div class="abs" style="left:150px;top:700px;font-size:32px;color:var(--soft);line-height:1.4;width:700px">70 chains, 36 bridges and 37 DEXs.<br>The best route, in one signature.</div>`)
+  const orbit = add(s4, `<div class="abs" style="left:1420px;top:540px;width:0;height:0"></div>`)
+  const CHAINS = ['1', '8453', '42161', '56', '4663', '5042', '1151111081099710', '10', '137', '43114', '999', '146']
+  const chains = CHAINS.map((c) => add(orbit, `<div class="chain"><img src="${PUB}/logos/chains/${c}.svg"></div>`))
+  const swap = add(s4, `<div class="swap glass" style="left:1120px;top:220px">
+    <div style="display:flex;gap:8px;margin-bottom:16px"><span class="pill" style="background:#fff;color:#060606;font-size:19px;padding:8px 16px">Swap</span><span class="pill" style="background:transparent;color:var(--muted);font-size:19px;padding:8px 16px">Bridge</span></div>
+    <div class="box"><div class="lbl">You pay</div><div style="display:flex;align-items:center;justify-content:space-between"><div class="amt" id="pay"></div><span class="tok"><img class="l" src="${PUB}/img/tokens/usdc.png"><img class="c" src="${PUB}/logos/chains/8453.svg">USDC</span></div><div class="lbl" style="margin-top:6px">on Base</div></div>
+    <div style="height:10px;position:relative"><div style="position:absolute;left:50%;top:-22px;margin-left:-22px;width:44px;height:44px;border-radius:12px;background:#242424;border:4px solid #141414;display:grid;place-items:center;color:var(--soft);font-size:20px">↓</div></div>
+    <div class="box"><div class="lbl">You receive</div><div style="display:flex;align-items:center;justify-content:space-between"><div class="amt" id="get" style="color:var(--soft)"></div><span class="tok"><img class="l" src="${PUB}/img/logos/${DATA.stocks[0].logo}.webp"><img class="c" src="${PUB}/logos/chains/4663.svg">NVDA</span></div><div class="lbl" style="margin-top:6px">on Robinhood Chain</div></div>
+    <div id="route" style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:19px;color:var(--soft)"><span style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></span>Best route found</span><span style="display:flex;align-items:center;gap:8px"><img src="${PUB}/logos/tools/relaydepository.svg" style="width:26px;height:26px;border-radius:50%"><img src="${PUB}/logos/tools/across.svg" style="width:26px;height:26px;border-radius:50%">2 steps</span></div>
+    <div class="btn" id="cta">Buy NVDA</div>
+  </div>`)
+  const pay = swap.querySelector('#pay'), get = swap.querySelector('#get'), route = swap.querySelector('#route'), cta = swap.querySelector('#cta')
+  const cursor = add(s4, `<svg class="abs" width="34" height="34" viewBox="0 0 24 24" style="left:0;top:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#fff" stroke="#060606" stroke-width="1.2" stroke-linejoin="round"/></svg>`)
+  const ripple = add(s4, `<div class="abs" style="width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:2px solid rgba(255,255,255,.8);opacity:0"></div>`)
+
+  // 5. Product
+  const s5 = add(stage, `<div class="scene" style="perspective:2600px"></div>`)
+  const s5pill = add(s5, `<div class="abs" style="left:150px;top:190px"><span class="pill"><span style="color:var(--mark);display:inline-flex">${MARK}</span>Tokenized Baskets</span></div>`)
+  const s5h1 = add(s5, `<div class="abs serif" style="left:146px;top:280px;font-size:112px">Whole portfolios.</div>`)
+  const s5h2 = add(s5, `<div class="abs serif" style="left:146px;top:395px;font-size:112px;color:var(--muted)">One token.</div>`)
+  const s5sub = add(s5, `<div class="abs" style="left:150px;top:560px;font-size:32px;color:var(--soft);line-height:1.4;width:640px">Index baskets fully backed at published weights. Redeemable any time.</div>`)
+  const winB = add(s5, `<div class="win" style="left:1080px;top:190px;width:820px;height:560px"><div class="bar"><i></i><i></i><i></i></div><div class="view" style="height:522px"><img src="shots/discover.png"></div></div>`)
+  const winA = add(s5, `<div class="win" style="left:960px;top:300px;width:900px;height:620px"><div class="bar"><i></i><i></i><i></i></div><div class="view" style="height:582px"><img src="shots/baskets.png"></div></div>`)
+  const imgA = winA.querySelector('img'), imgB = winB.querySelector('img')
+
+  // 6. Outro
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const s6logo = add(s6, `<div class="abs" style="left:0;right:0;top:340px;display:flex;justify-content:center;align-items:center;gap:40px"><span style="width:170px;height:170px;display:inline-flex;margin-top:24px;color:var(--mark)">${MARK}</span><span class="serif" style="font-size:250px">Verdex</span></div>`)
+  const s6ca = add(s6, `<div class="abs" style="left:0;right:0;top:770px;text-align:center"><span class="pill" style="font-size:26px;padding:12px 22px;gap:14px"><span style="color:var(--mark);font-weight:600;letter-spacing:.08em;font-size:19px">CA</span><span style="font-family:ui-monospace,Menlo,monospace">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+  const s6tag = add(s6, `<div class="abs" style="left:0;right:0;top:670px;text-align:center;font-size:48px;font-weight:500;letter-spacing:-0.02em;color:var(--soft)">Trade real-world assets onchain.</div>`)
+
+  // Film grain and vignette: a static texture, so it adds material without flicker.
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    // Backdrop: visible in the intro and outro, dimmed in between.
+    const bgIn = clamp(spring(t - 0.05, 1.6))
+    const bgMid = 1 - 0.78 * clamp(spring(t - 4.2, 0.9)) * (1 - clamp(spring(t - 26.1, 1.1)))
+    bg.style.opacity = bgIn * bgMid
+    bg.firstElementChild.style.transform = `translate3d(${lerp(-24, 24, t / DURATION).toFixed(2)}px, ${lerp(10, -14, t / DURATION).toFixed(2)}px, 0) scale(${(1.1 - 0.06 * clamp(spring(t, 4))).toFixed(4)})`
+    glow.style.opacity = 0.35 + 0.65 * clamp(spring(t - 4.3, 1)) * (1 - clamp(spring(t - 26, 1)))
+
+    // 1. Intro
+    const e1 = 1 - clamp(spring(t - 4.0, 0.6))
+    s1.style.display = t < 5.2 ? '' : 'none'
+    mat(s1pill, spring(t - 1.2, 0.6) * e1, { y: 18 * (1 - spring(t - 1.2, 0.6)) })
+    letters.forEach((l, i) => { const p = spring(t - 0.45 - i * 0.07, 0.75); mat(l, p * e1, { y: 70 * (1 - p), s: 0.02, blur: 18 }) })
+    mat(s1tag, spring(t - 1.6, 0.7) * e1, { y: 24 * (1 - spring(t - 1.6, 0.7)) })
+    s1.style.transform = `scale(${1 - 0.05 * (1 - e1)})`
+
+    // 2. Stocks
+    const in2 = env(t, 4.3, 10.1)
+    s2.style.display = t > 4.2 && t < 11.0 ? '' : 'none'
+    const out2 = clamp(spring(t - 10.1, 0.55))
+    s2.style.transform = `scale(${1 - 0.04 * out2})`; s2.style.filter = out2 > 0.001 ? `blur(${(out2 * 10).toFixed(2)}px)` : 'none'; s2.style.opacity = 1 - out2
+    mat(s2pill, spring(t - 4.4, 0.6), { y: 16 * (1 - spring(t - 4.4, 0.6)) })
+    mat(s2h.children[0], spring(t - 4.5, 0.7), { y: 50 * (1 - spring(t - 4.5, 0.7)) })
+    const starts = [4.65, 6.15, 7.45, 8.75]
+    words.forEach((w, i) => {
+      const pin = spring(t - starts[i], 0.6)
+      const pout = i < words.length - 1 ? spring(t - starts[i + 1], 0.6) : 0
+      w.style.transform = `translate3d(0, ${((1 - pin) * 125 - pout * 125).toFixed(2)}%, 0)`
+      w.style.opacity = t < starts[i] ? 0 : 1
+    })
+    mat(s2sub, spring(t - 5.0, 0.7), { y: 24 * (1 - spring(t - 5.0, 0.7)) })
+    cnt.textContent = Math.round(DATA.assets * easeOut(clamp((t - 5.0) / 1.6)))
+    grid.style.transform = `translate3d(0, ${(-(t - 4.3) * 7).toFixed(2)}px, 0)`
+    tiles.forEach(({ el, col, row }, i) => {
+      const t0 = 4.6 + (col + row) * 0.075
+      const p = spring(t - t0, 0.62, 0.78) // thrown in: a little bounce is earned here
+      el.style.opacity = clamp(spring(t - t0, 0.3))
+      el.style.transform = `translate3d(0, ${((1 - p) * 180).toFixed(2)}px, 0) rotate(${((1 - p) * (i % 2 ? 5 : -5)).toFixed(2)}deg)`
+    })
+
+    // 3. Issuers
+    s3.style.display = t > 10.2 && t < 15.9 ? '' : 'none'
+    const out3 = clamp(spring(t - 15.0, 0.55))
+    s3.style.transform = `scale(${1 - 0.04 * out3})`; s3.style.filter = out3 > 0.001 ? `blur(${(out3 * 10).toFixed(2)}px)` : 'none'; s3.style.opacity = 1 - out3
+    mat(s3h1, spring(t - 10.35, 0.75), { y: 50 * (1 - spring(t - 10.35, 0.75)) })
+    mat(s3h2, spring(t - 11.0, 0.75), { y: 50 * (1 - spring(t - 11.0, 0.75)) })
+    issuers.forEach((el, i) => { const p = spring(t - 11.4 - i * 0.085, 0.6); mat(el, p, { y: 40 * (1 - p), s: 0.1, blur: 16 }) })
+
+    // 4. Swap
+    s4.style.display = t > 15.1 && t < 21.7 ? '' : 'none'
+    const out4 = clamp(spring(t - 20.8, 0.55))
+    s4.style.transform = `scale(${1 - 0.04 * out4})`; s4.style.filter = out4 > 0.001 ? `blur(${(out4 * 10).toFixed(2)}px)` : 'none'; s4.style.opacity = 1 - out4
+    mat(s4pill, spring(t - 15.2, 0.6), { y: 16 * (1 - spring(t - 15.2, 0.6)) })
+    mat(s4h1, spring(t - 15.3, 0.75), { y: 50 * (1 - spring(t - 15.3, 0.75)) })
+    mat(s4h2, spring(t - 15.7, 0.75), { y: 50 * (1 - spring(t - 15.7, 0.75)) })
+    mat(s4sub, spring(t - 16.1, 0.7), { y: 24 * (1 - spring(t - 16.1, 0.7)) })
+    const ps = spring(t - 15.45, 0.7)
+    mat(swap, ps, { x: 90 * (1 - ps), s: 0.05, blur: 20 })
+    chains.forEach((c, i) => {
+      const a = (i / chains.length) * Math.PI * 2 + (t - 15) * 0.1
+      const p = spring(t - 15.6 - i * 0.06, 0.8)
+      const r = lerp(250, 410, p)
+      c.style.left = `${(Math.cos(a) * r).toFixed(2)}px`; c.style.top = `${(Math.sin(a) * r * 0.9).toFixed(2)}px`
+      c.style.opacity = clamp(p) * 0.95
+    })
+    const typed = '1,000'.slice(0, clamp(Math.floor((t - 16.5) / 0.12), 0, 5))
+    pay.textContent = typed || '0'; pay.style.color = typed ? '#fff' : 'var(--muted)'
+    const q = clamp(spring(t - 17.35, 0.8))
+    get.textContent = t < 17.35 ? '0' : (4.4579 * easeOut(clamp((t - 17.35) / 0.9))).toFixed(4)
+    get.style.color = q > 0.5 ? '#fff' : 'var(--muted)'
+    mat(route, spring(t - 18.0, 0.5), { y: 10 * (1 - spring(t - 18.0, 0.5)), s: 0 })
+    // Cursor travels to the button and presses it; feedback lands on the press, not the release.
+    const cp = spring(t - 18.3, 0.9)
+    const bx = CTA.x, by = CTA.y - 8
+    cursor.style.opacity = clamp(spring(t - 18.2, 0.4)) * (1 - clamp(spring(t - 20.2, 0.4)))
+    cursor.style.transform = `translate3d(${lerp(1780, bx, cp).toFixed(2)}px, ${lerp(1000, by + 8, cp).toFixed(2)}px, 0)`
+    const press = t >= 19.35 && t < 19.5
+    const done = t >= 19.5
+    cta.style.transform = `scale(${press ? 0.97 : 1})`
+    cta.style.background = done ? 'var(--lime)' : '#fff'
+    cta.textContent = done ? '✓  Bought 4.4579 NVDA' : 'Buy NVDA'
+    const rp = clamp((t - 19.35) / 0.6)
+    ripple.style.opacity = t >= 19.35 ? (1 - rp) * 0.8 : 0
+    ripple.style.transform = `translate3d(${bx}px, ${by + 8}px, 0) scale(${1 + rp * 2.2})`
+
+    // 5. Product
+    s5.style.display = t > 20.9 && t < 26.8 ? '' : 'none'
+    const out5 = clamp(spring(t - 25.9, 0.55))
+    s5.style.opacity = 1 - out5; s5.style.filter = out5 > 0.001 ? `blur(${(out5 * 10).toFixed(2)}px)` : 'none'
+    mat(s5pill, spring(t - 21.0, 0.6), { y: 16 * (1 - spring(t - 21.0, 0.6)) })
+    mat(s5h1, spring(t - 21.1, 0.75), { y: 50 * (1 - spring(t - 21.1, 0.75)) })
+    mat(s5h2, spring(t - 21.5, 0.75), { y: 50 * (1 - spring(t - 21.5, 0.75)) })
+    mat(s5sub, spring(t - 21.9, 0.7), { y: 24 * (1 - spring(t - 21.9, 0.7)) })
+    const pa = spring(t - 21.25, 0.9), pb = spring(t - 21.45, 0.9)
+    winA.style.opacity = clamp(pa); winB.style.opacity = clamp(pb) * 0.7
+    winA.style.transform = `translate3d(0, ${((1 - pa) * 160).toFixed(2)}px, 0) rotateY(${lerp(-24, -13, pa).toFixed(2)}deg) rotateX(${lerp(18, 7, pa).toFixed(2)}deg)`
+    winB.style.transform = `translate3d(0, ${((1 - pb) * 160).toFixed(2)}px, -220px) rotateY(${lerp(-24, -13, pb).toFixed(2)}deg) rotateX(${lerp(18, 7, pb).toFixed(2)}deg)`
+    const sc = easeInOut(clamp((t - 21.8) / 4.2))
+    imgA.style.transform = `translate3d(0, ${(-sc * 1250).toFixed(2)}px, 0)`
+    imgB.style.transform = `translate3d(0, ${(-sc * 700).toFixed(2)}px, 0)`
+
+    // 6. Outro
+    s6.style.display = t > 26.0 ? '' : 'none'
+    const p6 = spring(t - 26.3, 0.8)
+    mat(s6logo, p6, { y: 60 * (1 - p6), s: 0.03, blur: 20 })
+    mat(s6tag, spring(t - 27.0, 0.7), { y: 24 * (1 - spring(t - 27.0, 0.7)) })
+    mat(s6ca, spring(t - 27.5, 0.7), { y: 24 * (1 - spring(t - 27.5, 0.7)) })
+
+    // Fade in from black and back out, so the loop on X is seamless.
+    fade.style.opacity = Math.max(1 - clamp(t / 0.5), clamp((t - (DURATION - 0.6)) / 0.6))
+  }
+  window.DURATION = DURATION
+  await document.fonts.ready
+  const r = cta.getBoundingClientRect(); const CTA_ = { x: r.left + r.width * 0.62, y: r.top + r.height * 0.55 }; Object.assign(CTA, CTA_)
+  await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+  window.renderAt(0)
+  window.__ready = true
+  if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+}
+build()
+</script>
+</body>
+</html>

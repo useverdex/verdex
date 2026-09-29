@@ -1,0 +1,338 @@
+{
+ "stocks": [
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA",
+   "price": 224.32,
+   "logo": "88a0e630",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 137609041.12072787
+  },
+  {
+   "ticker": "AAPL",
+   "name": "Apple",
+   "price": 336.72,
+   "logo": "2a11a6bd",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 35755709.92276363
+  },
+  {
+   "ticker": "TSLA",
+   "name": "Tesla",
+   "price": 379.06,
+   "logo": "e8ca24f9",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 115117177.63267957
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms",
+   "price": 778.59,
+   "logo": "0b00cc62",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 28269975.47377626
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet",
+   "price": 342.34,
+   "logo": "4d76db13",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 90164604.50522386
+  },
+  {
+   "ticker": "AMZN",
+   "name": "Amazon",
+   "price": 249.35,
+   "logo": "39c11fed",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 23314852.39504708
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "price": 496.79,
+   "logo": "9e189df1",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 23516856.70194173
+  },
+  {
+   "ticker": "COIN",
+   "name": "Coinbase",
+   "price": 199.94,
+   "logo": "1efa740a",
+   "issuers": 4,
+   "chains": 5,
+   "marketCap": 44427949.04172818
+  },
+  {
+   "ticker": "HOOD",
+   "name": "Robinhood Markets",
+   "price": 121.42,
+   "logo": "fa2b34f1",
+   "issuers": 3,
+   "chains": 4,
+   "marketCap": 25484186
+  },
+  {
+   "ticker": "PLTR",
+   "name": "Palantir Technologies",
+   "price": 192.35,
+   "logo": "5c6daea9",
+   "issuers": 4,
+   "chains": 5,
+   "marketCap": 11721454.34194564
+  },
+  {
+   "ticker": "SPY",
+   "name": "SPDR S&P 500 ETF",
+   "price": 767.47,
+   "logo": "c025dcd9",
+   "issuers": 4,
+   "chains": 5,
+   "marketCap": 151326823.6593923
+  },
+  {
+   "ticker": "QQQ",
+   "name": "Invesco QQQ",
+   "price": 742.79,
+   "logo": "8fbe91e2",
+   "issuers": 4,
+   "chains": 5,
+   "marketCap": 77935856.16530304
+  },
+  {
+   "ticker": "NFLX",
+   "name": "Netflix",
+   "price": 713.33,
+   "logo": "f2f095b3",
+   "issuers": 2,
+   "chains": 3,
+   "marketCap": 2335579
+  },
+  {
+   "ticker": "AMD",
+   "name": "AMD",
+   "price": 630.98,
+   "logo": "0a5c861d",
+   "issuers": 3,
+   "chains": 5,
+   "marketCap": 17592515.171381257
+  },
+  {
+   "ticker": "MSTR",
+   "name": "MicroStrategy",
+   "price": 163.33,
+   "logo": "48f06241",
+   "issuers": 5,
+   "chains": 6,
+   "marketCap": 193811723.22830963
+  },
+  {
+   "ticker": "CRCL",
+   "name": "Circle Internet Group",
+   "price": 93.17,
+   "logo": "1b790bc1",
+   "issuers": 4,
+   "chains": 5,
+   "marketCap": 310978451.36192125
+  },
+  {
+   "ticker": "XAUT",
+   "name": "Tether Gold",
+   "price": 4282.85,
+   "logo": "941acb6b",
+   "issuers": 1,
+   "chains": 5,
+   "marketCap": 2665560776
+  },
+  {
+   "ticker": "PAXG",
+   "name": "Pax Gold",
+   "price": 4275.02,
+   "logo": "7869a6ce",
+   "issuers": 1,
+   "chains": 1,
+   "marketCap": 1858466113
+  },
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom",
+   "price": 351.98,
+   "logo": "454862a2",
+   "issuers": 4,
+   "chains": 5,
+   "marketCap": 22853753.814186066
+  },
+  {
+   "ticker": "ORCL",
+   "name": "Oracle",
+   "price": 141.0,
+   "logo": "64f9cd25",
+   "issuers": 3,
+   "chains": 5,
+   "marketCap": 10041784.058467217
+  },
+  {
+   "ticker": "UBER",
+   "name": "Uber",
+   "price": 69.35,
+   "logo": "452933ff",
+   "issuers": 2,
+   "chains": 4,
+   "marketCap": 3013543.3690499
+  },
+  {
+   "ticker": "SHOP",
+   "name": "Shopify",
+   "price": 145.7,
+   "logo": "1bb14dbf",
+   "issuers": 2,
+   "chains": 4,
+   "marketCap": 960718.299967562
+  },
+  {
+   "ticker": "MU",
+   "name": "Micron Technology",
+   "price": 1082.93,
+   "logo": "21a84899",
+   "issuers": 4,
+   "chains": 5,
+   "marketCap": 137249143.622968
+  },
+  {
+   "ticker": "INTC",
+   "name": "Intel",
+   "price": 127.89,
+   "logo": "50ecf869",
+   "issuers": 3,
+   "chains": 5,
+   "marketCap": 37203705.41401765
+  },
+  {
+   "ticker": "IBM",
+   "name": "IBM",
+   "price": 228.09,
+   "logo": "1da01b55",
+   "issuers": 3,
+   "chains": 4,
+   "marketCap": 4357387
+  },
+  {
+   "ticker": "JPM",
+   "name": "JPMorgan Chase",
+   "price": 342.92,
+   "logo": "f52ab302",
+   "issuers": 2,
+   "chains": 4,
+   "marketCap": 3187865
+  },
+  {
+   "ticker": "MCD",
+   "name": "McDonald's",
+   "price": 242.64,
+   "logo": "088435db",
+   "issuers": 2,
+   "chains": 4,
+   "marketCap": 4712888
+  },
+  {
+   "ticker": "KO",
+   "name": "Coca-Cola",
+   "price": 90.24,
+   "logo": "34514ffd",
+   "issuers": 2,
+   "chains": 4,
+   "marketCap": 5167103
+  },
+  {
+   "ticker": "DIS",
+   "name": "Disney",
+   "price": 105.33,
+   "logo": "cf266277",
+   "issuers": 2,
+   "chains": 4,
+   "marketCap": 987121
+  },
+  {
+   "ticker": "NKE",
+   "name": "Nike",
+   "price": 36.3,
+   "logo": "d606b2e5",
+   "issuers": 2,
+   "chains": 4,
+   "marketCap": 1860669
+  }
+ ],
+ "assets": 226,
+ "issuers": 12,
+ "extra": [
+  "8719914b",
+  "fa0f1b35",
+  "820e25cc",
+  "a4694174",
+  "4cc2cbcf",
+  "466da8b0",
+  "acc88ff5",
+  "c9897823",
+  "d72357f9",
+  "49508426",
+  "ee84c833",
+  "03b5e651",
+  "e77da78c",
+  "6e34c4e7",
+  "2a81f836",
+  "d124d874",
+  "c589420b",
+  "7ff112e5",
+  "d0bf07b9",
+  "f8c99a7c",
+  "2c4805eb",
+  "326a85aa",
+  "0b8bbcb9",
+  "2c529d30",
+  "cdd43b57",
+  "2a9142ed",
+  "aebba2e8",
+  "c27a1c4e",
+  "e3ad47c1",
+  "6d695ac9",
+  "506ec69d",
+  "cd75b53b",
+  "aad70441",
+  "a04e689c",
+  "56ee5828",
+  "6b96f441",
+  "2e6f5afc",
+  "5bca0ced",
+  "88506a2d",
+  "6a50df33",
+  "a9583815",
+  "b9a37eaf",
+  "d3086d6c",
+  "6fab6799",
+  "61b10f82",
+  "7000fa22",
+  "db2c39cf",
+  "17930f3f",
+  "ff2b5da2",
+  "42833343",
+  "c2be2e46",
+  "8c7c66ff",
+  "a7e569a6",
+  "dd140cda",
+  "d8398732",
+  "c0fbd2ed",
+  "221408a7",
+  "8e06d8a4",
+  "8e04c78d",
+  "759a440c"
+ ]
+}

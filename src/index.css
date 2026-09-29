@@ -1,0 +1,15 @@
+@font-face{font-family:Geist;src:url(./fonts/Geist-400.woff2)format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Geist;src:url(./fonts/Geist-500.woff2)format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:Geist;src:url(./fonts/Geist-600.woff2)format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:Geist;src:url(./fonts/Geist-700.woff2)format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"LT Remark";src:url(./fonts/LT-Remark-400.woff2)format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"LT Remark";src:url(./fonts/LT-Remark-700.woff2)format("woff2");font-weight:700;font-display:swap}
+html{scroll-behavior:smooth}
+html,body,#root{min-height:100dvh;margin:0}
+html[data-private-mode=true],html[data-private-mode=true] body{background:#000!important}
+body{color:#fff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:#060606;overflow-x:hidden;font-family:Geist,-apple-system,system-ui,"Segoe UI",sans-serif;letter-spacing:-0.02em}
+::selection{background:rgba(143,166,97,.45)}
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--tabbar:0px}
+@media (max-width:899.95px){:root{--tabbar:calc(60px + var(--sab))}body{padding-bottom:var(--tabbar)}}
+*{-webkit-tap-highlight-color:transparent}
+@media (display-mode:standalone){body{overscroll-behavior-y:none;-webkit-touch-callout:none}}

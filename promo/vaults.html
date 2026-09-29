@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex Vaults reveal</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Strategy cards */
+.tpl { position: absolute; top: 330px; width: 520px; padding: 30px 34px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.tpl.on { border-color: rgba(194,234,138,.55); }
+.tpl .t { display: flex; align-items: center; justify-content: space-between; }
+.tpl .t b { font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+.tpl .t span { padding: 5px 11px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 17px; font-weight: 500; color: var(--soft); }
+.tpl.on .t span { background: rgba(194,234,138,.16); color: var(--lime); }
+.tpl p { margin: 8px 0 0; font-size: 19px; color: var(--muted); }
+.tpl .seg { display: flex; gap: 3px; height: 14px; border-radius: 7px; overflow: hidden; background: var(--tile); margin-top: 24px; }
+.tpl .seg i { display: block; height: 100%; width: 0; }
+.tpl .lg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 16px; font-size: 16px; color: var(--muted); }
+.tpl .lg span { display: inline-flex; align-items: center; gap: 7px; }
+.tpl .lg span i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.tpl .rl { margin-top: 20px; font-size: 16px; color: var(--faint); }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 26px; border-radius: 12px; font-size: 20px; font-weight: 500; letter-spacing: -0.02em; will-change: transform; }
+.btn.pri { background: #fff; color: #000; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.toast .mk { width: 40px; height: 40px; border-radius: 10px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; flex-shrink: 0; }
+.toast .sub { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+/* Vault card */
+.vcard { position: absolute; left: 150px; top: 300px; width: 900px; padding: 32px 36px 36px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter, border-color; }
+.vcard.due { border-color: rgba(194,234,138,.4); }
+.vcard .hd { display: flex; align-items: center; gap: 16px; }
+.vcard .ic { width: 56px; height: 56px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.vcard .nm b { font-size: 26px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.vcard .nm span { font-size: 17px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.vcard .nm img { width: 18px; height: 18px; border-radius: 50%; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); will-change: transform; }
+.badge.due { background: rgba(194,234,138,.16); color: var(--lime); }
+.vals { display: flex; justify-content: space-between; margin-top: 28px; }
+.vals small { font-size: 15px; color: var(--muted); display: block; }
+.vals b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 46px; letter-spacing: -0.02em; line-height: 1.1; }
+.vals .r { text-align: right; }
+.rows { margin-top: 24px; display: grid; gap: 13px; }
+.row { display: grid; grid-template-columns: 34px 82px 1fr 170px; align-items: center; gap: 14px; }
+.row img { width: 34px; height: 34px; border-radius: 50%; }
+.row b { font-size: 18px; font-weight: 500; }
+.bar { position: relative; height: 12px; border-radius: 6px; background: #1c1c1c; overflow: hidden; }
+.bar .tg { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255,255,255,.12); }
+.bar .ac { position: absolute; left: 0; top: 0; bottom: 0; background: var(--lime); }
+.row .pc { font-size: 16px; color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row .pc i { font-style: normal; color: var(--faint); }
+.row .pc em { font-style: normal; color: var(--faint); margin-left: 6px; }
+.row .pc em.hot { color: var(--lime); }
+.vcard .fee { margin-top: 22px; font-size: 15px; color: var(--faint); }
+/* Drift meter (right of the card) */
+.meter { position: absolute; left: 1120px; top: 330px; width: 640px; will-change: transform, opacity, filter; }
+.meter small { font-size: 22px; color: var(--muted); font-weight: 500; display: block; }
+.meter b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 190px; letter-spacing: -0.04em; line-height: 1; display: block; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.meter b.hot { color: var(--lime); }
+.meter .th { position: relative; margin-top: 30px; height: 10px; border-radius: 5px; background: #1c1c1c; overflow: visible; }
+.meter .th i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--lime); width: 0; }
+.meter .th u { position: absolute; top: -10px; bottom: -10px; width: 2px; background: rgba(255,255,255,.5); left: 50%; }
+.meter .th u::after { content: 'Threshold 5%'; position: absolute; top: 34px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 17px; color: var(--muted); font-weight: 500; }
+.meter p { margin: 74px 0 0; font-size: 24px; color: var(--soft); font-weight: 500; letter-spacing: -0.015em; line-height: 1.35; }
+/* Plan panel (right of the card) */
+.plan { position: absolute; left: 1120px; top: 300px; width: 640px; padding: 30px 34px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.plan .t { font-size: 24px; font-weight: 500; letter-spacing: -0.02em; }
+.plan .tr { display: grid; grid-template-columns: 16px 62px 1fr auto; align-items: center; gap: 14px; margin-top: 18px; font-size: 21px; }
+.plan .tr .dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.18); will-change: transform, background; }
+.plan .tr .dot.on { background: var(--lime); }
+.plan .tr .sd { font-weight: 500; }
+.plan .tr .sd.s { color: var(--red); } .plan .tr .sd.b { color: var(--lime); }
+.plan .tr .q { color: var(--faint); font-size: 18px; }
+.plan .rt { display: flex; align-items: center; gap: 10px; margin: 6px 0 0 92px; font-size: 17px; color: var(--muted); will-change: transform, opacity; }
+.plan .rt img { width: 20px; height: 20px; border-radius: 50%; }
+.plan .rt .ck { margin-left: auto; color: var(--lime); font-weight: 600; }
+.plan .btns { margin-top: 28px; display: flex; gap: 12px; }
+.btn.sec { background: rgba(255,255,255,.1); color: #fff; }
+/* Lines */
+.line { position: absolute; left: 0; right: 0; display: flex; justify-content: center; will-change: transform, opacity, filter; }
+.line div { display: flex; align-items: center; gap: 22px; padding: 22px 34px; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 36px; font-weight: 500; letter-spacing: -0.02em; }
+.line svg { width: 34px; height: 34px; flex-shrink: 0; }
+/* Fee */
+.feebox { position: absolute; left: 50%; top: 600px; width: 900px; margin-left: -450px; padding: 30px 40px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: space-between; font-size: 30px; font-weight: 500; will-change: transform, opacity, filter; }
+.feebox .old { position: relative; color: var(--faint); }
+.feebox .old i { position: absolute; left: 0; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.feebox .new { color: var(--lime); font-family: 'LT Remark', serif; font-size: 64px; letter-spacing: -0.03em; line-height: 1; will-change: transform, opacity; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Vaults reveal: a target allocation in the user's wallet, drift watched live, rebalanced in one sitting, zero fee for holders. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const TOOL = (k) => `${PUB}/logos/tools/${k}.svg`
+const LOGO = { NVDA: L('88a0e630'), AAPL: L('2a11a6bd'), MSFT: L('9e189df1'), GOOGL: L('4d76db13'), AMZN: L('39c11fed'), META: L('0b00cc62'), TSLA: L('e8ca24f9'), AVGO: L('454862a2'), AMD: L('0a5c861d'), TSM: L('ae4207a3'), SPY: L('c025dcd9'), QQQ: L('8fbe91e2'), SGOV: L('4f0c7bb8') }
+const DURATION = 40
+const PAL = ['#C2EA8A', '#8FA661', '#F6F0E9', '#6F8549', '#DDE9C6', '#4E6032', '#B9B2A8']
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+
+// The Magnificent 7 vault: equal targets, a drift that builds over a month, three trades back to target.
+const TICKERS = ['NVDA', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA']
+const TARGET = 100 / 7
+const DRIFTED = [21.4, 11.0, 14.2, 14.2, 14.2, 14.2, 10.8]
+const TRADES = [['sell', 'NVDA', 800, 0, ['kyberswap', 'KyberSwap']], ['buy', 'AAPL', 370, 1, ['1inch', '1inch']], ['buy', 'TSLA', 381, 6, ['paraswap', 'ParaSwap']]]
+const FIRE = [22.3, 23.5, 24.7]
+const V0 = 10000, V1 = 11240
+const DRIFT_T0 = 13.6, DRIFT_T1 = 17.4
+const driftAt = (t) => { const p = easeIO(clamp((t - DRIFT_T0) / (DRIFT_T1 - DRIFT_T0))); return DRIFTED.map((d) => lerp(TARGET, d, p)) }
+let DUE_AT = DRIFT_T1
+for (let x = DRIFT_T0; x <= DRIFT_T1; x += 0.005) { if (Math.max(...driftAt(x).map((w) => Math.abs(w - TARGET))) > 5) { DUE_AT = x; break } }
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. "New on Verdex", then the name.
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const comingEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:44px;font-weight:500;letter-spacing:-0.01em;color:var(--soft)"><div></div></div>`)
+  const comingChars = letters(comingEl.firstElementChild, 'New on Verdex')
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:130px;height:130px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:230px">Vaults</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Your allocation. Kept on target.')
+
+  // 2. Three strategies; the first is picked and the vault is created.
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:120px"><h1 class="serif">Pick a strategy.</h1><p>Six curated allocations, or your own weights across any tokenized asset.</p></div>`)
+  const TPLS = [
+    ['Magnificent 7', 'The seven megacaps, equal weight.', TICKERS.map((tk) => [tk, TARGET]), 'Every month, or past 5% drift'],
+    ['AI Leaders', 'Chips, cloud and the labs that buy them.', [['NVDA', 25], ['AVGO', 15], ['AMD', 12], ['TSM', 12], ['MU', 10], ['MSFT', 10], ['GOOGL', 8], ['PLTR', 8]], 'Every month, or past 5% drift'],
+    ['Balanced 60/40', 'Equities and Treasuries, classic split.', [['SPY', 40], ['QQQ', 20], ['SGOV', 40]], 'Every quarter, or past 5% drift'],
+  ]
+  const tpls = TPLS.map(([name, tag, ws, rule], i) => add(s2, `<div class="tpl" style="left:${150 + i * 550}px">
+    <div class="t"><b>${name}</b><span>${ws.length} assets</span></div><p>${tag}</p>
+    <div class="seg">${ws.map((w, j) => `<i style="background:${PAL[j % PAL.length]}" data-w="${w[1]}"></i>`).join('')}</div>
+    <div class="lg">${ws.map((w, j) => `<span><i style="background:${PAL[j % PAL.length]}"></i>${w[0]} ${w[1] >= 10 ? w[1].toFixed(0) : w[1].toFixed(1)}%</span>`).join('')}</div>
+    <div class="rl">${rule}</div>
+  </div>`))
+  const segs = tpls.map((el) => [...el.querySelectorAll('.seg i')])
+  const createBtn = add(s2, `<div class="abs" style="left:0;right:0;top:830px;display:flex;justify-content:center;will-change:transform,opacity,filter"><span class="btn pri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Create vault</span></div>`)
+  const createInner = createBtn.firstElementChild
+  const toast2 = add(s2, `<div class="toast" style="left:50%;top:930px;transform:translateX(-50%)"><span class="ok">✓</span><span>Vault created<span class="sub">Magnificent 7 on Robinhood Chain, funded with USDG. Every month, or past 5% drift.</span></span></div>`)
+
+  // 3 and 4. The vault card, the drift meter, then the plan.
+  const s34 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s34, `<div class="head" style="top:110px"><h1 class="serif">It lives in your wallet.</h1><p>Balances and prices are read live. Verdex watches the drift.</p></div>`)
+  const h4 = add(s34, `<div class="head" style="top:110px"><h1 class="serif">Rebalance in one sitting.</h1><p>Sells first, then buys. Each trade takes the best route and you confirm it.</p></div>`)
+  const VICON = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><circle cx="12" cy="11.5" r="3"/><path d="M12 8.5V7M12 16v-1.5M7 19v2M17 19v2"/></svg>`
+  const vcard = add(s34, `<div class="vcard">
+    <div class="hd"><div class="ic">${VICON}</div><div class="nm"><b>Magnificent 7</b><span><img src="${CH(4663)}" alt="">Robinhood Chain · 7 assets · every month or 5% drift</span></div><span class="badge">On target</span></div>
+    <div class="vals"><div><small>Vault value</small><b class="val">${usd(V0)}</b></div><div class="r"><small>Max drift</small><b class="md">0.0%</b></div></div>
+    <div class="rows">${TICKERS.map((tk, i) => `<div class="row"><img src="${LOGO[tk]}" alt=""><b>${tk}</b><div class="bar"><div class="tg" style="width:${(TARGET * 3.5).toFixed(2)}%"></div><div class="ac" style="background:${PAL[i % PAL.length]}"></div></div><div class="pc"><span class="a">14.3%</span> <i>/ 14.3%</i><em>+0.0</em></div></div>`).join('')}</div>
+    <div class="fee">No Verdex fee: this wallet holds VERDEX.</div>
+  </div>`)
+  const badge = vcard.querySelector('.badge'), valEl = vcard.querySelector('.val'), mdEl = vcard.querySelector('.md')
+  const rows = [...vcard.querySelectorAll('.row')].map((r) => ({ ac: r.querySelector('.ac'), a: r.querySelector('.a'), em: r.querySelector('em') }))
+  const meter = add(s34, `<div class="meter"><small>Max drift</small><b>0.0%</b><div class="th"><i></i><u></u></div><p>When any asset moves past your threshold, or the date comes round, the vault is due and you are reminded.</p></div>`)
+  const meterB = meter.querySelector('b'), meterFill = meter.querySelector('.th i')
+  const toast3 = add(s34, `<div class="toast" style="right:150px;top:930px"><span class="mk"><span style="width:22px;height:22px;display:inline-flex">${MARK()}</span></span><span>Magnificent 7 is due for a rebalance<span class="sub">Vaults · review the trades, then confirm</span></span></div>`)
+  const plan = add(s34, `<div class="plan"><div class="t">3 trades to reach target</div>
+    ${TRADES.map(([side, tk, amt, , route]) => `<div class="tr"><span class="dot"></span><span class="sd ${side[0]}">${side === 'sell' ? 'Sell' : 'Buy'}</span><span>${usd(amt)} of ${tk}</span><span class="q">${side === 'sell' ? '→ USDG' : '← USDG'}</span></div><div class="rt"><img src="${TOOL(route[0])}" alt="">via ${route[1]} · Robinhood Chain<span class="ck">✓ confirmed</span></div>`).join('')}
+    <div class="btns"><span class="btn pri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Confirm 3 trades</span><span class="btn sec">Cancel</span></div>
+  </div>`)
+  const dots = [...plan.querySelectorAll('.dot')], rts = [...plan.querySelectorAll('.rt')], confirmBtn = plan.querySelector('.btn.pri')
+  const toast4 = add(s34, `<div class="toast" style="right:150px;top:930px"><span class="ok">✓</span><span>Back on target<span class="sub">3 trades, each confirmed in your wallet. The tokens never left it.</span></span></div>`)
+
+  // 5. Non-custodial lines.
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:150px"><h1 class="serif">Never custodial.</h1></div>`)
+  const LOCK = `<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`
+  const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`
+  const lines = [[LOCK, 'The holdings are plain tokens in your wallet, the whole time.'], [CHECK, 'Every trade is confirmed by you, in your own wallet.'], [CHECK, 'Pause or remove the vault any time.']].map(([ic, tx], i) => add(s5, `<div class="line" style="top:${420 + i * 130}px"><div>${ic}${tx}</div></div>`))
+
+  // 6. The token: fee to zero.
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const tokenTile = add(s6, `<div class="abs" style="left:50%;top:170px;width:150px;height:150px;margin-left:-75px;border-radius:36px;background:#000;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;box-shadow:0 30px 80px rgba(0,0,0,.7);will-change:transform,opacity,filter"><span style="width:86px;height:86px;display:inline-flex">${MARK()}</span></div>`)
+  const h6 = add(s6, `<div class="head" style="top:360px"><div class="tag" style="margin-bottom:22px">Hold VERDEX</div><h1 class="serif">Holders pay no Verdex fee.</h1></div>`)
+  const fee = add(s6, `<div class="feebox"><span>Verdex fee per rebalance trade</span><span style="display:flex;align-items:center;gap:26px"><span class="old">0.25%<i></i></span><span class="new">0%</span></span></div>`)
+  const feeStrike = fee.querySelector('.old i'), feeNew = fee.querySelector('.new')
+  const sub6 = add(s6, `<div class="abs" style="left:0;right:0;top:790px;text-align:center;font-size:30px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">0.25% becomes 0% on every rebalance trade. Checked onchain, every time.</div>`)
+
+  // 7. End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Vaults. Live now.</div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/vaults</span></div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:ui-monospace,Menlo,monospace">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  const pressAt = (btn, t, t0, light = '#E6E1DA') => {
+    const press = t >= t0 && t < t0 + 0.2 ? 1 : clamp(1 - spring(t - t0 - 0.2, 0.3))
+    btn.style.transform = `scale(${(1 - 0.05 * (t >= t0 ? press : 0)).toFixed(3)})`
+    btn.style.background = t >= t0 && press > 0.5 ? light : '#fff'
+  }
+  const toastIn = (el, t, t0, t1) => {
+    const p = spring(t - t0, 0.55, 0.7), o = clamp(spring(t - t1, 0.45))
+    el.style.opacity = clamp(p * 2) * (1 - o)
+    el.style.transform = `${el.style.left === '50%' ? 'translate3d(-50%,' : 'translate3d(0,'} ${((1 - p) * 30 - o * 14).toFixed(2)}px, 0) scale(${lerp(0.94, 1, p).toFixed(3)})`
+  }
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. New on Verdex (0.3-1.7), name (1.7-5.4)
+    show(s1, t < 6)
+    wipe(comingChars, spring(t - 0.3, 0.9), { out: clamp(spring(t - 1.6, 0.35)) })
+    const pn = spring(t - 1.9, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 5.2, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 2.7, 0.9), { stagger: 0.03, out: clamp(spring(t - 5.1, 0.4)) })
+
+    // 2. Strategies (5.6-12.4): cards materialise, the first is picked, the vault is created.
+    show(s2, t >= 5.4 && t < 13)
+    const o2 = clamp(spring(t - 12.2, 0.5))
+    const h2in = spring(t - 5.6, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    tpls.forEach((el, i) => {
+      const p = spring(t - 6.0 - i * 0.22, 0.8)
+      const picked = i === 0 && t >= 8.8
+      const pop = picked ? spring(t - 8.8, 0.4, 0.55) : 1
+      el.classList.toggle('on', picked)
+      mat(el, p * (1 - o2), { y: 50 * (1 - p) + 20 * o2, s: 0.06, blur: 18 })
+      if (picked) el.style.transform += ` scale(${(1 + 0.03 * (1 - pop)).toFixed(3)})`
+      if (i !== 0 && t >= 8.8) el.style.opacity = clamp(p) * (1 - o2) * lerp(1, 0.45, clamp(spring(t - 8.8, 0.6)))
+      segs[i].forEach((sg, j) => { const q = spring(t - 6.5 - i * 0.22 - j * 0.06, 0.7); sg.style.width = `calc(${(Number(sg.dataset.w) * q).toFixed(2)}% - 3px)` })
+    })
+    const cb = spring(t - 7.2, 0.8)
+    mat(createBtn, cb * (1 - o2), { y: 20 * (1 - cb), s: 0.03 })
+    pressAt(createInner, t, 9.8)
+    toastIn(toast2, t, 10.2, 12.2)
+
+    // 3. Drift (12.8-19.6) and 4. Rebalance (19.8-27.6) share the card.
+    show(s34, t >= 12.6 && t < 28.2)
+    const o34 = clamp(spring(t - 27.6, 0.5))
+    const h3in = spring(t - 12.9, 0.9), h3out = clamp(spring(t - 19.3, 0.45))
+    mat(h3, h3in * (1 - h3out), { y: 24 * (1 - h3in) - 16 * h3out, s: 0.02 })
+    const h4in = spring(t - 19.9, 0.9)
+    mat(h4, h4in * (1 - o34), { y: 24 * (1 - h4in), s: 0.02 })
+    const cin = spring(t - 13.1, 0.85)
+    mat(vcard, cin * (1 - o34), { y: 50 * (1 - cin) + 20 * o34, s: 0.05, blur: 18 })
+    // Weights: drift in during scene 3, then each trade snaps its row back.
+    let w = driftAt(t)
+    TRADES.forEach(([, , , row], k) => { const q = spring(t - FIRE[k], 0.7, 0.75); w[row] = lerp(w[row], TARGET + (row === 0 ? 0.08 : -0.04), clamp(q)) })
+    const maxDrift = Math.max(...w.map((x) => Math.abs(x - TARGET)))
+    rows.forEach((r, i) => {
+      r.ac.style.width = `${(w[i] * 3.5).toFixed(2)}%`
+      r.a.textContent = `${w[i].toFixed(1)}%`
+      const d = w[i] - TARGET
+      r.em.textContent = `${d >= 0 ? '+' : ''}${d.toFixed(1)}`
+      r.em.classList.toggle('hot', Math.abs(d) > 5)
+    })
+    const vp = easeIO(clamp((t - DRIFT_T0) / (DRIFT_T1 - DRIFT_T0)))
+    valEl.textContent = usd(lerp(V0, V1, vp))
+    mdEl.textContent = `${maxDrift.toFixed(1)}%`
+    mdEl.style.color = maxDrift > 5 ? 'var(--lime)' : '#fff'
+    const due = t >= DUE_AT && t < FIRE[2] + 0.9
+    vcard.classList.toggle('due', due)
+    badge.classList.toggle('due', due)
+    badge.textContent = due ? 'Rebalance due' : 'On target'
+    const bp = due ? spring(t - DUE_AT, 0.4, 0.55) : t >= FIRE[2] + 0.9 ? spring(t - FIRE[2] - 0.9, 0.4, 0.55) : 1
+    badge.style.transform = `scale(${(1 + 0.12 * (1 - bp)).toFixed(3)})`
+    // Right side: meter in scene 3, plan in scene 4.
+    const min = spring(t - 13.5, 0.9), mout = clamp(spring(t - 19.3, 0.45))
+    mat(meter, min * (1 - mout), { y: 30 * (1 - min) - 20 * mout, s: 0.03, blur: 16 })
+    meterB.textContent = `${maxDrift.toFixed(1)}%`
+    meterB.classList.toggle('hot', maxDrift > 5)
+    meterFill.style.width = `${clamp(maxDrift / 10) * 100}%`
+    toastIn(toast3, t, DUE_AT + 0.6, 19.1)
+    const pin = spring(t - 20.3, 0.85)
+    mat(plan, pin * (1 - o34), { y: 40 * (1 - pin) + 20 * o34, s: 0.05, blur: 18 })
+    pressAt(confirmBtn, t, 21.6)
+    TRADES.forEach((_, k) => {
+      const fired = t >= FIRE[k]
+      const p = spring(t - FIRE[k], 0.45, 0.55)
+      dots[k].classList.toggle('on', fired)
+      dots[k].style.transform = fired ? `scale(${(1 + 0.6 * (1 - p)).toFixed(3)})` : 'scale(1)'
+      const rp = spring(t - FIRE[k] - 0.1, 0.6, 0.75)
+      rts[k].style.opacity = fired ? clamp(rp * 1.5) : 0
+      rts[k].style.transform = `translate3d(0, ${((1 - clamp(rp)) * 10).toFixed(2)}px, 0)`
+    })
+    confirmBtn.style.opacity = t >= FIRE[0] ? 0.55 : 1
+    confirmBtn.nextElementSibling.style.opacity = t >= FIRE[2] + 0.5 ? 0.35 : 1
+    confirmBtn.firstElementChild.nextSibling.textContent = t >= FIRE[2] + 0.5 ? 'Rebalanced' : t >= FIRE[0] ? `Confirm in wallet · ${Math.min(3, TRADES.filter((_, k) => t >= FIRE[k]).length + (t < FIRE[2] ? 1 : 0))}/3` : 'Confirm 3 trades'
+    toastIn(toast4, t, FIRE[2] + 1.0, 27.4)
+
+    // 5. Non-custodial (28.2-32.6)
+    show(s5, t >= 28.0 && t < 33.2)
+    const o5 = clamp(spring(t - 32.6, 0.5))
+    const h5in = spring(t - 28.2, 0.9)
+    mat(h5, h5in * (1 - o5), { y: 24 * (1 - h5in), s: 0.02 })
+    lines.forEach((el, i) => { const p = spring(t - 28.8 - i * 0.55, 0.8); mat(el, p * (1 - o5), { y: 30 * (1 - p), s: 0.03, blur: 16 }) })
+
+    // 6. Token and fee (33.2-37.4)
+    show(s6, t >= 33.0 && t < 38.0)
+    const o6 = clamp(spring(t - 37.2, 0.5))
+    const tk = spring(t - 33.2, 0.7, 0.62)
+    mat(tokenTile, clamp(tk * 1.5) * (1 - o6), { y: -40 * (1 - tk), s: 0.3, blur: 18 })
+    const h6in = spring(t - 33.6, 0.9)
+    mat(h6, h6in * (1 - o6), { y: 24 * (1 - h6in), s: 0.02 })
+    const f6 = spring(t - 34.1, 0.8)
+    mat(fee, f6 * (1 - o6), { y: 30 * (1 - f6), s: 0.04, blur: 16 })
+    feeStrike.style.width = `${(clamp(spring(t - 35.0, 0.4)) * 100).toFixed(1)}%`
+    const nz = spring(t - 35.3, 0.5, 0.55)
+    feeNew.style.opacity = clamp(nz * 2)
+    feeNew.style.transform = `scale(${lerp(0.6, 1, nz).toFixed(3)})`
+    const s6in = spring(t - 35.6, 0.9)
+    mat(sub6, s6in * (1 - o6), { y: 16 * (1 - s6in), s: 0.02 })
+
+    // 7. End card (37.6-40)
+    show(s8, t >= 37.4)
+    const e1 = spring(t - 37.6, 0.7), e2 = spring(t - 37.95, 0.7), e3 = spring(t - 38.2, 0.7), e4 = spring(t - 38.4, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endCa, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

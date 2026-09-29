@@ -1,0 +1,2060 @@
+{
+ "snapshotDate": "2026-09-18",
+ "baskets": [
+  {
+   "id": "01KXNYTAFC67EJSJ80FC2DE98H",
+   "slug": "pure-silicon",
+   "name": "Pure Silicon",
+   "description": "Semiconductors are the foundational hardware behind every device, model, and machine, and demand continues to climb as computing spreads into more of the economy. This portfolio concentrates on the chip industry itself: the designers, the memory makers, the foundries that manufacture wafers, and the equipment companies that supply the production lines.",
+   "chainId": 4663,
+   "chain": "Robinhood Chain",
+   "oneYearReturn": 118.6693,
+   "investors": 110,
+   "rebalanceHours": 1,
+   "holdings": [
+    {
+     "address": "0xd0601ce157db5bdc3162bbac2a2c8af5320d9eec",
+     "chainId": 4663,
+     "symbol": "NVDA",
+     "ticker": "NVDA",
+     "name": "NVIDIA",
+     "decimals": 18,
+     "weight": 20
+    },
+    {
+     "address": "0x58ffe4a942d3885baa22d7520691f611ef09e7aa",
+     "chainId": 4663,
+     "symbol": "TSM",
+     "ticker": "TSM",
+     "name": "Taiwan Semiconductor Manufacturing",
+     "decimals": 18,
+     "weight": 13
+    },
+    {
+     "address": "0xff080c8ce2e5feadaca0da81314ae59d232d4afd",
+     "chainId": 4663,
+     "symbol": "MU",
+     "ticker": "MU",
+     "name": "Micron Technology",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x156e175dd063a8ce274c50654ef40e0032b3fbcf",
+     "chainId": 4663,
+     "symbol": "AVGO",
+     "ticker": "AVGO",
+     "name": "Broadcom",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x86923f96303d656e4aa86d9d42d1e57ad2023fdc",
+     "chainId": 4663,
+     "symbol": "AMD",
+     "ticker": "AMD",
+     "name": "AMD",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x47f93d52cbec7c6d2cfc080e154002370a60daea",
+     "chainId": 4663,
+     "symbol": "ASML",
+     "ticker": "ASML",
+     "name": "ASML Holding NV",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x36046893810a7e7fce501229d57dc3fc8c8716d0",
+     "chainId": 4663,
+     "symbol": "AMAT",
+     "ticker": "AMAT",
+     "name": "Applied Materials",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x0f17206447090e464c277571124dd2688e48aea9",
+     "chainId": 4663,
+     "symbol": "QCOM",
+     "ticker": "QCOM",
+     "name": "Qualcomm",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0xc72b96e0e48ecd4dc75e1e45396e26300bc39681",
+     "chainId": 4663,
+     "symbol": "INTC",
+     "ticker": "INTC",
+     "name": "Intel",
+     "decimals": 18,
+     "weight": 6
+    },
+    {
+     "address": "0x62fd0668e10d8b72339be2dcf7643001688ff13b",
+     "chainId": 4663,
+     "symbol": "MRVL",
+     "ticker": "MRVL",
+     "name": "Marvell Technology",
+     "decimals": 18,
+     "weight": 6
+    }
+   ]
+  },
+  {
+   "id": "01KWJ0QA4N1DYBNWTQXJ0XQ7S8",
+   "slug": "leopold-aschenbrenner-tracker",
+   "name": "Leopold Aschenbrenner Tracker",
+   "description": "Leopold Aschenbrenner is a former OpenAI researcher who went viral in 2024 with his essay series Situational Awareness, arguing that artificial general intelligence is arriving sooner than almost anyone expects and that the economic consequences will be staggering. He went on to launch Situational Awareness LP, an investment fund built around that idea. This portfolio is inspired by and tracks the long positions disclosed by Situational Awareness LP in public SEC filings.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 117.7605,
+   "investors": 189,
+   "rebalanceHours": 0,
+   "holdings": [
+    {
+     "address": "0x4fd67cb8cfedc718bac984b5936abe3330d0a2a4",
+     "chainId": 56,
+     "symbol": "SNDKon",
+     "ticker": "SNDK",
+     "name": "SanDisk (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 23.58
+    },
+    {
+     "address": "0x8b6acf6041a81567f012ff6a4c6d96d5818d74bf",
+     "chainId": 56,
+     "symbol": "MUon",
+     "ticker": "MU",
+     "name": "Micron Technology, Inc.",
+     "decimals": 18,
+     "weight": 22.54
+    },
+    {
+     "address": "0x17d03ae104a9d12e9e5794efb109b817dd7f3404",
+     "chainId": 56,
+     "symbol": "BEon",
+     "ticker": "BE",
+     "name": "Bloom Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 13.36
+    },
+    {
+     "address": "0xc37042a7a4fa510d8884a433762ab87257b91965",
+     "chainId": 56,
+     "symbol": "TSMon",
+     "ticker": "TSM",
+     "name": "Taiwan Semiconductor Manufacturing Company Ltd.",
+     "decimals": 18,
+     "weight": 6.42
+    },
+    {
+     "address": "0xee268780473e7a0e47bac41547c6e01512555a16",
+     "chainId": 56,
+     "symbol": "NBISon",
+     "ticker": "NBIS",
+     "name": "Nebius Group (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6.01
+    },
+    {
+     "address": "0x5e3ca19c533c8c0381eac5319624596557c279ed",
+     "chainId": 56,
+     "symbol": "KEELon",
+     "ticker": "KEEL",
+     "name": "Keel Infrastructure (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 4.17
+    },
+    {
+     "address": "0x3a562836afb1026f5d7a6b6da1125d27fdfee372",
+     "chainId": 56,
+     "symbol": "BTDRon",
+     "ticker": "BTDR",
+     "name": "Bitdeer Technologies (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 3.44
+    },
+    {
+     "address": "0x76e39171cb665a35981e744e2ceb7012f76caeac",
+     "chainId": 56,
+     "symbol": "CRWVon",
+     "ticker": "CRWV",
+     "name": "CoreWeave (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 3.29
+    },
+    {
+     "address": "0x3f19a16a401a6af05150479ccb76ef2fb57b0df3",
+     "chainId": 56,
+     "symbol": "HIVEon",
+     "ticker": "HIVE",
+     "name": "HIVE Digital Technologies (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 3.25
+    },
+    {
+     "address": "0x25ed86472cf3012607dc6576c58e6432968255c2",
+     "chainId": 56,
+     "symbol": "CORZon",
+     "ticker": "CORZ",
+     "name": "Core Scientific (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 3.19
+    },
+    {
+     "address": "0xce128edcf46b281b7df8880867b74e11b055e8e7",
+     "chainId": 56,
+     "symbol": "WYFIon",
+     "ticker": "WYFI",
+     "name": "WhiteFiber (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 2.84
+    },
+    {
+     "address": "0x8b46599e0e80a34f37e97df58e741ca904cdfabd",
+     "chainId": 56,
+     "symbol": "STMon",
+     "ticker": "STM",
+     "name": "STMicroelectronics (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 2.82
+    },
+    {
+     "address": "0xc4a88a72b848255fd24da3c1ad6755d980535fb1",
+     "chainId": 56,
+     "symbol": "RIOTon",
+     "ticker": "RIOT",
+     "name": "Riot Platforms, Inc.",
+     "decimals": 18,
+     "weight": 2.74
+    },
+    {
+     "address": "0x18de24acb876c0b8392d9c55583bb21c0355980b",
+     "chainId": 56,
+     "symbol": "APLDon",
+     "ticker": "APLD",
+     "name": "Applied Digital (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 2.35
+    }
+   ]
+  },
+  {
+   "id": "01KVXKP9GZ6QXS7D7AMD4696EY",
+   "slug": "digital-fortress",
+   "name": "Digital Fortress",
+   "description": "Every new connected device and AI system adds another target to defend, and cybersecurity spending continues to climb as a result. This portfolio holds the platforms and infrastructure protecting the digital world, from endpoint and network security to cloud and identity.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 56.4912,
+   "investors": 107,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xe6837794fbc6dd024733a1a31f86061296fa2752",
+     "chainId": 56,
+     "symbol": "CRWDon",
+     "ticker": "CRWD",
+     "name": "CrowdStrike",
+     "decimals": 18,
+     "weight": 23
+    },
+    {
+     "address": "0x0eaa1a75bd682a5669ab2371a559fbd039c6b9eb",
+     "chainId": 56,
+     "symbol": "PANWon",
+     "ticker": "PANW",
+     "name": "Palo Alto Networks",
+     "decimals": 18,
+     "weight": 21
+    },
+    {
+     "address": "0xfeb0793eea97585eb3a541f3fd53450d225b2b87",
+     "chainId": 56,
+     "symbol": "NETon",
+     "ticker": "NET",
+     "name": "Cloudflare (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0x6bfe75d1ad432050ea973c3a3dcd88f02e2444c3",
+     "chainId": 56,
+     "symbol": "MSFTon",
+     "ticker": "MSFT",
+     "name": "Microsoft Corporation",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0x34304f2f7cc487eb4186e6d69f5905a613474aa2",
+     "chainId": 56,
+     "symbol": "CSCOon",
+     "ticker": "CSCO",
+     "name": "Cisco Systems, Inc.",
+     "decimals": 18,
+     "weight": 14
+    },
+    {
+     "address": "0x37ff203ac221313b620d047eddd7bd6f68d656a6",
+     "chainId": 56,
+     "symbol": "VRSNon",
+     "ticker": "VRSN",
+     "name": "VeriSign (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 12
+    }
+   ]
+  },
+  {
+   "id": "01KWJ0Q9GXP1HBN2Z53RCHCHQW",
+   "slug": "nancy-pelosi-tracker",
+   "name": "Nancy Pelosi Tracker",
+   "description": "Nancy Pelosi, the former Speaker of the U.S. House of Representatives, is among the most closely watched names in the market, with the trades disclosed in her congressional filings drawing intense public attention for their strong reported performance. The activity is concentrated in large-cap technology and AI companies, and has become a widely followed signal among retail investors who track congressional disclosures. This portfolio is inspired by and tracks the positions disclosed in Nancy Pelosi's congressional financial filings, with options converted into their underlying stock equivalents.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 53.2369,
+   "investors": 688,
+   "rebalanceHours": 0,
+   "holdings": [
+    {
+     "address": "0xa528caaa2f96090e379d43f90834c75df54d6e74",
+     "chainId": 56,
+     "symbol": "INTCon",
+     "ticker": "INTC",
+     "name": "Intel Corporation",
+     "decimals": 18,
+     "weight": 13.85
+    },
+    {
+     "address": "0x0eaa1a75bd682a5669ab2371a559fbd039c6b9eb",
+     "chainId": 56,
+     "symbol": "PANWon",
+     "ticker": "PANW",
+     "name": "Palo Alto Networks",
+     "decimals": 18,
+     "weight": 13.65
+    },
+    {
+     "address": "0xe6837794fbc6dd024733a1a31f86061296fa2752",
+     "chainId": 56,
+     "symbol": "CRWDon",
+     "ticker": "CRWD",
+     "name": "CrowdStrike",
+     "decimals": 18,
+     "weight": 11.9
+    },
+    {
+     "address": "0x091fc7778e6932d4009b087b191d1ee3bac5729a",
+     "chainId": 56,
+     "symbol": "GOOGLon",
+     "ticker": "GOOGL",
+     "name": "Alphabet Inc.",
+     "decimals": 18,
+     "weight": 10.64
+    },
+    {
+     "address": "0x0ed2e3180edf393e6bf8db124bd15ddd54de150a",
+     "chainId": 56,
+     "symbol": "AVGOon",
+     "ticker": "AVGO",
+     "name": "Broadcom Inc.",
+     "decimals": 18,
+     "weight": 10.18
+    },
+    {
+     "address": "0xde9d6036fca870f7efc5a82722ae694c371ac909",
+     "chainId": 56,
+     "symbol": "UBERon",
+     "ticker": "UBER",
+     "name": "Uber Technologies, Inc.",
+     "decimals": 18,
+     "weight": 8.54
+    },
+    {
+     "address": "0x4553cfe1c09f37f38b12dc509f676964e392f8fc",
+     "chainId": 56,
+     "symbol": "AMZNon",
+     "ticker": "AMZN",
+     "name": "Amazon.com, Inc.",
+     "decimals": 18,
+     "weight": 8.42
+    },
+    {
+     "address": "0xf2c24c47805f4f72d3919c8674bfdd401505794b",
+     "chainId": 56,
+     "symbol": "VSTon",
+     "ticker": "VST",
+     "name": "Vistra (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7.89
+    },
+    {
+     "address": "0xa9ee28c80f960b889dfbd1902055218cba016f75",
+     "chainId": 56,
+     "symbol": "NVDAon",
+     "ticker": "NVDA",
+     "name": "Nvdia Corporation",
+     "decimals": 18,
+     "weight": 5.91
+    },
+    {
+     "address": "0x6bfe75d1ad432050ea973c3a3dcd88f02e2444c3",
+     "chainId": 56,
+     "symbol": "MSFTon",
+     "ticker": "MSFT",
+     "name": "Microsoft Corporation",
+     "decimals": 18,
+     "weight": 4.89
+    },
+    {
+     "address": "0x390a684ef9cade28a7ad0dfa61ab1eb3842618c4",
+     "chainId": 56,
+     "symbol": "AAPLon",
+     "ticker": "AAPL",
+     "name": "Apple Inc.",
+     "decimals": 18,
+     "weight": 4.13
+    }
+   ]
+  },
+  {
+   "id": "01KVXHE56MX6KR8WW1R0PMN51J",
+   "slug": "the-compute-grab",
+   "name": "The Compute Grab",
+   "description": "Cheap power and available land have become the scarcest resources of the AI era, and a wave of operators are racing to convert both into data center capacity. This portfolio holds the infrastructure companies, cloud providers, and former crypto miners pivoting to high-performance computing, alongside the power producers supplying them.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 36.882,
+   "investors": 71,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x5e3ca19c533c8c0381eac5319624596557c279ed",
+     "chainId": 56,
+     "symbol": "KEELon",
+     "ticker": "KEEL",
+     "name": "Keel Infrastructure (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0x8fd70ee385f470c8d6fda2d93a4e49c849bac6a6",
+     "chainId": 56,
+     "symbol": "IRENon",
+     "ticker": "IREN",
+     "name": "IREN Limited",
+     "decimals": 18,
+     "weight": 14
+    },
+    {
+     "address": "0x25ed86472cf3012607dc6576c58e6432968255c2",
+     "chainId": 56,
+     "symbol": "CORZon",
+     "ticker": "CORZ",
+     "name": "Core Scientific (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0x76e39171cb665a35981e744e2ceb7012f76caeac",
+     "chainId": 56,
+     "symbol": "CRWVon",
+     "ticker": "CRWV",
+     "name": "CoreWeave (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x18de24acb876c0b8392d9c55583bb21c0355980b",
+     "chainId": 56,
+     "symbol": "APLDon",
+     "ticker": "APLD",
+     "name": "Applied Digital (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x65d84f0990b7394209d591380c2952c83d778aa3",
+     "chainId": 56,
+     "symbol": "CEGon",
+     "ticker": "CEG",
+     "name": "Constellation Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0xdad07d0ca26ed4109bc00893dbee3ed4ce8ce2a4",
+     "chainId": 56,
+     "symbol": "CIFRon",
+     "ticker": "CIFR",
+     "name": "Cipher Mining (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0xad56701d9e57957e28e546db7db508a16d4f86cc",
+     "chainId": 56,
+     "symbol": "WULFon",
+     "ticker": "WULF",
+     "name": "Terawulf (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0xee268780473e7a0e47bac41547c6e01512555a16",
+     "chainId": 56,
+     "symbol": "NBISon",
+     "ticker": "NBIS",
+     "name": "Nebius Group (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    }
+   ]
+  },
+  {
+   "id": "01KVXJWCW6ZNGX1A5XH0VVK9PB",
+   "slug": "black-gold",
+   "name": "Black Gold",
+   "description": "Oil remains central to the global economy, and the companies that produce, refine, and transport it generate some of the largest cash flows in the market. This portfolio holds the integrated majors, independent producers, and oilfield service providers that benefit when energy prices rise.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 35.9207,
+   "investors": 93,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x4d209d275e3492ac08497a7a42915899c4dd5e86",
+     "chainId": 56,
+     "symbol": "XOMon",
+     "ticker": "XOM",
+     "name": "Exxon Mobil (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 23
+    },
+    {
+     "address": "0xd3113a0ad20a46f6a662c63fe8e637f7713e59c7",
+     "chainId": 56,
+     "symbol": "CVXon",
+     "ticker": "CVX",
+     "name": "Chevron (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 17
+    },
+    {
+     "address": "0x0d586b51a90dc999f9bb6a0506da7f034a1d3a2e",
+     "chainId": 56,
+     "symbol": "COPon",
+     "ticker": "COP",
+     "name": "ConocoPhillips (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 14
+    },
+    {
+     "address": "0x01b5a4ac600be98448dbefbb78bcdf38262552cc",
+     "chainId": 56,
+     "symbol": "OXYon",
+     "ticker": "OXY",
+     "name": "Occidental Petroleum (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0xfadde620010736a5074a4269894cb52b0a9a91de",
+     "chainId": 56,
+     "symbol": "SLBon",
+     "ticker": "SLB",
+     "name": "SLB (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x7b7abd762a400c9768cdeeef3c01dae39e0b8427",
+     "chainId": 56,
+     "symbol": "WMBon",
+     "ticker": "WMB",
+     "name": "Williams (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x9a1c88ac479906a7f03e76605b15b72df10d8e51",
+     "chainId": 56,
+     "symbol": "EQTon",
+     "ticker": "EQT",
+     "name": "EQT (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x7a18bb5fd6ba6343180afdcf6dc406ef17f7fc04",
+     "chainId": 56,
+     "symbol": "HALon",
+     "ticker": "HAL",
+     "name": "Halliburton (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    }
+   ]
+  },
+  {
+   "id": "01KVXHVT8Q8QF8SAQJRPYF2XAA",
+   "slug": "energy-infrastructure",
+   "name": "Energy Infrastructure",
+   "description": "Electricity demand is rising sharply as AI data centers, electric vehicles, and reshored manufacturing all draw more power from the grid. This portfolio holds the utilities, equipment manufacturers, and storage providers building the capacity to meet it.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 32.4554,
+   "investors": 156,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xe9d43f7e6b2237e8873a7003b3f43c6b03160be5",
+     "chainId": 56,
+     "symbol": "NEEon",
+     "ticker": "NEE",
+     "name": "NextEra Energy",
+     "decimals": 18,
+     "weight": 22
+    },
+    {
+     "address": "0x2aea1d415d45ccf3eabe565d45dcaf4ea2035b9c",
+     "chainId": 56,
+     "symbol": "GEVon",
+     "ticker": "GEV",
+     "name": "GE Vernova (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 18
+    },
+    {
+     "address": "0x4697b2a050f7b5a8e1ebc27c325f9d78d094f041",
+     "chainId": 56,
+     "symbol": "ETNon",
+     "ticker": "ETN",
+     "name": "Eaton (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 13
+    },
+    {
+     "address": "0xf1a96d4b591e446445600789d60c73dd636b357c",
+     "chainId": 56,
+     "symbol": "FLNCon",
+     "ticker": "FLNC",
+     "name": "Fluence Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x30938154e2697694f41592c2e48459287debe4bf",
+     "chainId": 56,
+     "symbol": "ENPHon",
+     "ticker": "ENPH",
+     "name": "Enphase Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0xd7a6353a23ed2c4fcac29a63cbbe3f65ffef41f5",
+     "chainId": 56,
+     "symbol": "SOon",
+     "ticker": "SO",
+     "name": "Southern (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x2418c2e1ae3b8d767594b3974d32610743f88155",
+     "chainId": 56,
+     "symbol": "PWRon",
+     "ticker": "PWR",
+     "name": "Quanta Services (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0xf49046aae76eaeb7ffd3ef116ce0f7cd0f52d93e",
+     "chainId": 56,
+     "symbol": "MTZon",
+     "ticker": "MTZ",
+     "name": "MasTec (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    }
+   ]
+  },
+  {
+   "id": "01KVXG24D6NDH1GBX0FCS68M9B",
+   "slug": "hard-money",
+   "name": "Hard Money",
+   "description": "Precious metals and bitcoin have historically held their value when currencies weaken and inflation runs high. This portfolio holds physical gold and silver alongside smaller allocations to platinum and bitcoin, combining the oldest stores of value with the newest.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 31.3762,
+   "investors": 147,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xfa9a1e901085e269f6d428f79cd5252d8b919344",
+     "chainId": 56,
+     "symbol": "GLDon",
+     "ticker": "GLD",
+     "name": "SPDR Gold Shares (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 36
+    },
+    {
+     "address": "0x5e63232993789601ce362e0240a299c1dfcbfbec",
+     "chainId": 56,
+     "symbol": "NEMon",
+     "ticker": "NEM",
+     "name": "Newmont (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 16
+    },
+    {
+     "address": "0x8b872732b07be325a8803cdb480d9d20b6f8d11b",
+     "chainId": 56,
+     "symbol": "SLVon",
+     "ticker": "SLV",
+     "name": "iShares Silver Trust",
+     "decimals": 18,
+     "weight": 16
+    },
+    {
+     "address": "0x68b07cef227cea1b2b6683921c8c825cd5c69ec7",
+     "chainId": 56,
+     "symbol": "IBITon",
+     "ticker": "IBIT",
+     "name": "iShares Bitcoin Trust (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 16
+    },
+    {
+     "address": "0xa2a97e3d6140e8ccd058f3b84230f3e1a349b1a3",
+     "chainId": 56,
+     "symbol": "AGon",
+     "ticker": "AG",
+     "name": "First Majestic Silver (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x3ec23f52f6573fc0587a0631dd8c3b107f6bcb35",
+     "chainId": 56,
+     "symbol": "PPLTon",
+     "ticker": "PPLT",
+     "name": "abrdn Physical Platinum Shares ETF (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    }
+   ]
+  },
+  {
+   "id": "01KVXK3V75W15CAF584JTK311E",
+   "slug": "mine-the-future",
+   "name": "Mine The Future",
+   "description": "Robots, chips, electric vehicles, and weapons all begin as raw materials pulled from the ground. This portfolio holds the miners and processors supplying the critical metals and minerals behind the industrial economy, including rare earths, copper, lithium, and uranium.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 28.1037,
+   "investors": 118,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x4baf4dc56cf6a525a0874e25cc6372a6a8915135",
+     "chainId": 56,
+     "symbol": "MPon",
+     "ticker": "MP",
+     "name": "MP Materials (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 20
+    },
+    {
+     "address": "0xe3b17e6d290a0f28bd32af4064637057627004d5",
+     "chainId": 56,
+     "symbol": "FCXon",
+     "ticker": "FCX",
+     "name": "Freeport-McMoRan (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 17
+    },
+    {
+     "address": "0x2206e07410a8fe9ef595e7184b2e9d160fdb7211",
+     "chainId": 56,
+     "symbol": "USARon",
+     "ticker": "USAR",
+     "name": "USA Rare Earth (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 13
+    },
+    {
+     "address": "0x0b790abd6594918de1022233b7cc79badb84d92a",
+     "chainId": 56,
+     "symbol": "ALBon",
+     "ticker": "ALB",
+     "name": "Albemarle (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0x5e63232993789601ce362e0240a299c1dfcbfbec",
+     "chainId": 56,
+     "symbol": "NEMon",
+     "ticker": "NEM",
+     "name": "Newmont (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0xf15b8f7465b92799f6ee440f86b3cab5a4dbc65a",
+     "chainId": 56,
+     "symbol": "SCCOon",
+     "ticker": "SCCO",
+     "name": "Southern Copper (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0xac38a6608868e2f487d7993ea7339c69e5ab077b",
+     "chainId": 56,
+     "symbol": "CLFon",
+     "ticker": "CLF",
+     "name": "Cleveland-Cliffs (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0xe7ddf606841ee278a30e5c90486681e68ddd8cbf",
+     "chainId": 56,
+     "symbol": "UECon",
+     "ticker": "UEC",
+     "name": "Uranium Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    }
+   ]
+  },
+  {
+   "id": "01KWJ0QAV0P64JAETT29AS1MAH",
+   "slug": "warren-buffett-tracker",
+   "name": "Warren Buffett Tracker",
+   "description": "Warren Buffett built Berkshire Hathaway into one of the most successful investment companies in history, turning a struggling textile maker into a conglomerate worth hundreds of billions through a patient, value-focused approach to owning great businesses. His portfolio is among the most closely watched in the world, known for concentrated, long-term bets on durable, cash-generating companies. This portfolio is inspired by and tracks the equity positions disclosed by Berkshire Hathaway in its public SEC filings.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 27.4245,
+   "investors": 160,
+   "rebalanceHours": 0,
+   "holdings": [
+    {
+     "address": "0x390a684ef9cade28a7ad0dfa61ab1eb3842618c4",
+     "chainId": 56,
+     "symbol": "AAPLon",
+     "ticker": "AAPL",
+     "name": "Apple Inc.",
+     "decimals": 18,
+     "weight": 36.63
+    },
+    {
+     "address": "0xd803f8777187d6dee1ea57854aeb957043fb1675",
+     "chainId": 56,
+     "symbol": "AXPon",
+     "ticker": "AXP",
+     "name": "American Express (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 15.72
+    },
+    {
+     "address": "0xd615468088b19fb9d4f03cb3ce9e33876ff3db99",
+     "chainId": 56,
+     "symbol": "BACon",
+     "ticker": "BAC",
+     "name": "Bank of America (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 13.08
+    },
+    {
+     "address": "0x405f38b90bebf1259062cf29da299f3398662bcb",
+     "chainId": 56,
+     "symbol": "KOon",
+     "ticker": "KO",
+     "name": "The Coca-Cola Company",
+     "decimals": 18,
+     "weight": 11.61
+    },
+    {
+     "address": "0x091fc7778e6932d4009b087b191d1ee3bac5729a",
+     "chainId": 56,
+     "symbol": "GOOGLon",
+     "ticker": "GOOGL",
+     "name": "Alphabet Inc.",
+     "decimals": 18,
+     "weight": 8.07
+    },
+    {
+     "address": "0xd3113a0ad20a46f6a662c63fe8e637f7713e59c7",
+     "chainId": 56,
+     "symbol": "CVXon",
+     "ticker": "CVX",
+     "name": "Chevron (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7.69
+    },
+    {
+     "address": "0x01b5a4ac600be98448dbefbb78bcdf38262552cc",
+     "chainId": 56,
+     "symbol": "OXYon",
+     "ticker": "OXY",
+     "name": "Occidental Petroleum (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6.14
+    },
+    {
+     "address": "0x37ff203ac221313b620d047eddd7bd6f68d656a6",
+     "chainId": 56,
+     "symbol": "VRSNon",
+     "ticker": "VRSN",
+     "name": "VeriSign (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 1.06
+    }
+   ]
+  },
+  {
+   "id": "01KVXGPDTP3FWTVPEXH6A5XPA4",
+   "slug": "ai-full-stack",
+   "name": "AI Full Stack",
+   "description": "The artificial intelligence build-out runs across several industries at once: the chips that train models, the servers and networking that run them, the cloud platforms that rent out capacity, and the power generation feeding the data centers. This portfolio holds a position in every layer rather than concentrating on a single winner.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 23.9922,
+   "investors": 127,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xa9ee28c80f960b889dfbd1902055218cba016f75",
+     "chainId": 56,
+     "symbol": "NVDAon",
+     "ticker": "NVDA",
+     "name": "Nvdia Corporation",
+     "decimals": 18,
+     "weight": 14
+    },
+    {
+     "address": "0xc37042a7a4fa510d8884a433762ab87257b91965",
+     "chainId": 56,
+     "symbol": "TSMon",
+     "ticker": "TSM",
+     "name": "Taiwan Semiconductor Manufacturing Company Ltd.",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x0ed2e3180edf393e6bf8db124bd15ddd54de150a",
+     "chainId": 56,
+     "symbol": "AVGOon",
+     "ticker": "AVGO",
+     "name": "Broadcom Inc.",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x9351abd19f42101dd36025e495b98e910b255d78",
+     "chainId": 56,
+     "symbol": "PLTRon",
+     "ticker": "PLTR",
+     "name": "Palantir Technologies Inc.",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x65d84f0990b7394209d591380c2952c83d778aa3",
+     "chainId": 56,
+     "symbol": "CEGon",
+     "ticker": "CEG",
+     "name": "Constellation Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x2aea1d415d45ccf3eabe565d45dcaf4ea2035b9c",
+     "chainId": 56,
+     "symbol": "GEVon",
+     "ticker": "GEV",
+     "name": "GE Vernova (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x9cea8a7be1ab0320b709d368ad60d8500f55995f",
+     "chainId": 56,
+     "symbol": "VRTon",
+     "ticker": "VRT",
+     "name": "Vertiv (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x538e2838f9ebc9b891399df4a8dcc42890d9dc20",
+     "chainId": 56,
+     "symbol": "ANETon",
+     "ticker": "ANET",
+     "name": "Arista Networks (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x03e4bd1ea53f1da84513da0319d1f03dd1bbcf93",
+     "chainId": 56,
+     "symbol": "ORCLon",
+     "ticker": "ORCL",
+     "name": "Oracle Corporation",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0xee268780473e7a0e47bac41547c6e01512555a16",
+     "chainId": 56,
+     "symbol": "NBISon",
+     "ticker": "NBIS",
+     "name": "Nebius Group (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6
+    },
+    {
+     "address": "0xc142ba8ccd36d80c3a001342fb83e4c3d218a873",
+     "chainId": 56,
+     "symbol": "SMCIon",
+     "ticker": "SMCI",
+     "name": "Super Micro Computer, Inc.",
+     "decimals": 18,
+     "weight": 6
+    },
+    {
+     "address": "0x76e39171cb665a35981e744e2ceb7012f76caeac",
+     "chainId": 56,
+     "symbol": "CRWVon",
+     "ticker": "CRWV",
+     "name": "CoreWeave (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6
+    },
+    {
+     "address": "0xf2c24c47805f4f72d3919c8674bfdd401505794b",
+     "chainId": 56,
+     "symbol": "VSTon",
+     "ticker": "VST",
+     "name": "Vistra (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6
+    }
+   ]
+  },
+  {
+   "id": "01KVXM1ZF8GSR20SN3N5GAR3EN",
+   "slug": "the-healthcare-trade",
+   "name": "The Healthcare Trade",
+   "description": "A new class of blockbuster drugs is reshaping healthcare and creating some of the most valuable companies in medicine. This portfolio anchors on the leaders behind that breakthrough and broadens into large pharmaceutical makers, medical device companies, and biotech.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 21.3243,
+   "investors": 80,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x341d31b2be1fee9c00e395a62ba41837f4322eed",
+     "chainId": 56,
+     "symbol": "LLYon",
+     "ticker": "LLY",
+     "name": "Eli Lilly",
+     "decimals": 18,
+     "weight": 24
+    },
+    {
+     "address": "0x08a513779f46ffb7a34f16094a94016d010128a8",
+     "chainId": 56,
+     "symbol": "NVOon",
+     "ticker": "NVO",
+     "name": "Novo Nordisk A/S",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0x8677abad7b458bf16a0fb2676dfc7d3f55ac202a",
+     "chainId": 56,
+     "symbol": "ABBVon",
+     "ticker": "ABBV",
+     "name": "AbbVie (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x869027261075c3c239d6a26842579b93802606f4",
+     "chainId": 56,
+     "symbol": "MRKon",
+     "ticker": "MRK",
+     "name": "Merck (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x8a83c31d6751833b4940b6e871c48d9a15a07b46",
+     "chainId": 56,
+     "symbol": "PFEon",
+     "ticker": "PFE",
+     "name": "Pfizer Inc.",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x5a20886b575058dd7299785f0ea9b1172942a3e0",
+     "chainId": 56,
+     "symbol": "ABTon",
+     "ticker": "ABT",
+     "name": "Abbott (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x784584933c2192caa062e90d8140d94768ce62d8",
+     "chainId": 56,
+     "symbol": "ISRGon",
+     "ticker": "ISRG",
+     "name": "Intuitive Surgical (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x30bd85fd4286c5c9857679f5b188f737b4a7b8c0",
+     "chainId": 56,
+     "symbol": "REGNon",
+     "ticker": "REGN",
+     "name": "Regeneron Pharmaceuticals (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x8c9979dc208f74a5602c38691aa920f121e2f863",
+     "chainId": 56,
+     "symbol": "VRTXon",
+     "ticker": "VRTX",
+     "name": "Vertex Pharmaceuticals (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x3385cb29cca0ac66f5d2354d13ef977b49a2510f",
+     "chainId": 56,
+     "symbol": "UNHon",
+     "ticker": "UNH",
+     "name": "UnitedHealth Group Incorporated",
+     "decimals": 18,
+     "weight": 7
+    }
+   ]
+  },
+  {
+   "id": "01KV68M2Y685X59DWAEVX5D5X3",
+   "slug": "the-magnificent-seven-portfolio",
+   "name": "The Magnificent Seven Portfolio (+10%)",
+   "description": "The Magnificent Seven, the companies behind most of the US market's growth this past decade, in a single portfolio.\n\nUnlike your normal Mag7 ETF, this one earns an additional 10% on top. The 10% accrues automatically to your portfolio.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 14.6936,
+   "investors": 1382,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xa9ee28c80f960b889dfbd1902055218cba016f75",
+     "chainId": 56,
+     "symbol": "NVDAon",
+     "ticker": "NVDA",
+     "name": "Nvdia Corporation",
+     "decimals": 18,
+     "weight": 14.29
+    },
+    {
+     "address": "0x2494b603319d4d9f9715c9f4496d9e0364b59d93",
+     "chainId": 56,
+     "symbol": "TSLAon",
+     "ticker": "TSLA",
+     "name": "Tesla Inc.",
+     "decimals": 18,
+     "weight": 14.29
+    },
+    {
+     "address": "0x6bfe75d1ad432050ea973c3a3dcd88f02e2444c3",
+     "chainId": 56,
+     "symbol": "MSFTon",
+     "ticker": "MSFT",
+     "name": "Microsoft Corporation",
+     "decimals": 18,
+     "weight": 14.29
+    },
+    {
+     "address": "0x390a684ef9cade28a7ad0dfa61ab1eb3842618c4",
+     "chainId": 56,
+     "symbol": "AAPLon",
+     "ticker": "AAPL",
+     "name": "Apple Inc.",
+     "decimals": 18,
+     "weight": 14.29
+    },
+    {
+     "address": "0x4553cfe1c09f37f38b12dc509f676964e392f8fc",
+     "chainId": 56,
+     "symbol": "AMZNon",
+     "ticker": "AMZN",
+     "name": "Amazon.com, Inc.",
+     "decimals": 18,
+     "weight": 14.29
+    },
+    {
+     "address": "0x091fc7778e6932d4009b087b191d1ee3bac5729a",
+     "chainId": 56,
+     "symbol": "GOOGLon",
+     "ticker": "GOOGL",
+     "name": "Alphabet Inc.",
+     "decimals": 18,
+     "weight": 14.29
+    },
+    {
+     "address": "0xd7df5863a3e742f0c767768cdfcb63f09e0422f6",
+     "chainId": 56,
+     "symbol": "METAon",
+     "ticker": "META",
+     "name": "Meta Platforms, Inc.",
+     "decimals": 18,
+     "weight": 14.29
+    }
+   ]
+  },
+  {
+   "id": "01KWJ0QBBM4RCD3MG33JB3JKDQ",
+   "slug": "cathie-wood-tracker",
+   "name": "Cathie Wood Tracker",
+   "description": "Cathie Wood is the founder and chief investment officer of ARK Invest, and one of the most closely followed investors in the world, known for high-conviction bets on disruptive innovation across artificial intelligence, crypto, robotics, and genomics. Her flagship ARK Innovation strategy is recognised for concentrated positions in fast-growing technology companies positioned to benefit from major technological shifts. This portfolio is inspired by and tracks the equity positions disclosed in ARK Invest's publicly published holdings.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 10.8638,
+   "investors": 99,
+   "rebalanceHours": 0,
+   "holdings": [
+    {
+     "address": "0x2494b603319d4d9f9715c9f4496d9e0364b59d93",
+     "chainId": 56,
+     "symbol": "TSLAon",
+     "ticker": "TSLA",
+     "name": "Tesla Inc.",
+     "decimals": 18,
+     "weight": 14.5
+    },
+    {
+     "address": "0x9f16e46c73b43bdb70861247d537bee4ea18f639",
+     "chainId": 56,
+     "symbol": "AMDon",
+     "ticker": "AMD",
+     "name": "Advanced Micro Devices, Inc.",
+     "decimals": 18,
+     "weight": 11.75
+    },
+    {
+     "address": "0xd0a58bc9d88d3ff48c0294cb7e45937d0e41a928",
+     "chainId": 56,
+     "symbol": "SPCXon",
+     "ticker": "SPCX",
+     "name": "SpaceX (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10.33
+    },
+    {
+     "address": "0x19601179a60f55ff6636f5d1a8b6671053bd60a8",
+     "chainId": 56,
+     "symbol": "HOODon",
+     "ticker": "HOOD",
+     "name": "Robinhood Markets, Inc.",
+     "decimals": 18,
+     "weight": 9.08
+    },
+    {
+     "address": "0x9351abd19f42101dd36025e495b98e910b255d78",
+     "chainId": 56,
+     "symbol": "PLTRon",
+     "ticker": "PLTR",
+     "name": "Palantir Technologies Inc.",
+     "decimals": 18,
+     "weight": 7.42
+    },
+    {
+     "address": "0xf8589b526fdd65f7f301c605a6e04f0f1b4b3620",
+     "chainId": 56,
+     "symbol": "COINon",
+     "ticker": "COIN",
+     "name": "Coinbase",
+     "decimals": 18,
+     "weight": 7.32
+    },
+    {
+     "address": "0x992879cd8ce0c312d98648875b5a8d6d042cbf34",
+     "chainId": 56,
+     "symbol": "CRCLon",
+     "ticker": "CRCL",
+     "name": "Circle Internet Group, Inc.",
+     "decimals": 18,
+     "weight": 6.92
+    },
+    {
+     "address": "0x43d0b380c33cd004a6a69abd61843881a2de4113",
+     "chainId": 56,
+     "symbol": "SHOPon",
+     "ticker": "SHOP",
+     "name": "Shopify",
+     "decimals": 18,
+     "weight": 6.81
+    },
+    {
+     "address": "0x4553cfe1c09f37f38b12dc509f676964e392f8fc",
+     "chainId": 56,
+     "symbol": "AMZNon",
+     "ticker": "AMZN",
+     "name": "Amazon.com, Inc.",
+     "decimals": 18,
+     "weight": 5.65
+    },
+    {
+     "address": "0x091fc7778e6932d4009b087b191d1ee3bac5729a",
+     "chainId": 56,
+     "symbol": "GOOGLon",
+     "ticker": "GOOGL",
+     "name": "Alphabet Inc.",
+     "decimals": 18,
+     "weight": 5.45
+    },
+    {
+     "address": "0xa9ee28c80f960b889dfbd1902055218cba016f75",
+     "chainId": 56,
+     "symbol": "NVDAon",
+     "ticker": "NVDA",
+     "name": "Nvdia Corporation",
+     "decimals": 18,
+     "weight": 5.14
+    },
+    {
+     "address": "0xb4d695569236273745b4cd54b539b1b9cc1513af",
+     "chainId": 56,
+     "symbol": "RKLBon",
+     "ticker": "RKLB",
+     "name": "Rocket Lab (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 3.98
+    },
+    {
+     "address": "0x6f040fc3061374304bddbfdae9d688d7c868c785",
+     "chainId": 56,
+     "symbol": "TERon",
+     "ticker": "TER",
+     "name": "Teradyne (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 3.7
+    },
+    {
+     "address": "0x91c62325f901ee29da8e521cfe68980332a4ca06",
+     "chainId": 56,
+     "symbol": "ACHRon",
+     "ticker": "ACHR",
+     "name": "Archer Aviation",
+     "decimals": 18,
+     "weight": 1.95
+    }
+   ]
+  },
+  {
+   "id": "01KVXKFXVKWCZEEX5C2Q9YW283",
+   "slug": "the-arsenal",
+   "name": "The Arsenal",
+   "description": "Defense budgets are rising worldwide, and the nature of warfare is shifting toward software, drones, and autonomous systems. This portfolio pairs the established defense primes with the newer technology companies reshaping the battlefield.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": 8.2115,
+   "investors": 102,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x44fde2c6bc2c2b54962c69fcef57a2a50121dbd7",
+     "chainId": 56,
+     "symbol": "RTXon",
+     "ticker": "RTX",
+     "name": "RTX (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 17
+    },
+    {
+     "address": "0xd09f7b75b9659b864c6f82bb00ff096f9d277998",
+     "chainId": 56,
+     "symbol": "LMTon",
+     "ticker": "LMT",
+     "name": "Lockheed (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 13
+    },
+    {
+     "address": "0x9351abd19f42101dd36025e495b98e910b255d78",
+     "chainId": 56,
+     "symbol": "PLTRon",
+     "ticker": "PLTR",
+     "name": "Palantir Technologies Inc.",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0x5d1a9d8aa362a6424b65fcb601e52fefce5b4efa",
+     "chainId": 56,
+     "symbol": "GDon",
+     "ticker": "GD",
+     "name": "General Dynamics (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x4d3442d884202584f1729bca20db05472b886b52",
+     "chainId": 56,
+     "symbol": "NOCon",
+     "ticker": "NOC",
+     "name": "Northrop Grumman (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0xf21132a811ad1a878e21af60f64d4e690c9daa42",
+     "chainId": 56,
+     "symbol": "BAon",
+     "ticker": "BA",
+     "name": "Boeing",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x5151a22421ed4277f1e4ca4785a07b035d548a36",
+     "chainId": 56,
+     "symbol": "GEon",
+     "ticker": "GE",
+     "name": "General Electric (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x7ba995f1662a01f3be0dc299ce94bb7e9c7075f5",
+     "chainId": 56,
+     "symbol": "BBAIon",
+     "ticker": "BBAI",
+     "name": "BigBear.ai Holdings (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0xb4d695569236273745b4cd54b539b1b9cc1513af",
+     "chainId": 56,
+     "symbol": "RKLBon",
+     "ticker": "RKLB",
+     "name": "Rocket Lab (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    }
+   ]
+  },
+  {
+   "id": "01KVXHMSPVYT832EHC76QVJJ39",
+   "slug": "quantum",
+   "name": "Quantum",
+   "description": "Quantum computing aims to solve problems that classical machines cannot, and the market is only beginning to price in its long-term potential. This portfolio pairs the large technology companies funding quantum research with the smaller pure-play developers building the hardware.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": -4.344,
+   "investors": 106,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xe8ff70859ce4cbd72e4352b4fb45f5bf39d07464",
+     "chainId": 56,
+     "symbol": "IBMon",
+     "ticker": "IBM",
+     "name": "International Business Machines Corporation",
+     "decimals": 18,
+     "weight": 19
+    },
+    {
+     "address": "0xa9ee28c80f960b889dfbd1902055218cba016f75",
+     "chainId": 56,
+     "symbol": "NVDAon",
+     "ticker": "NVDA",
+     "name": "Nvdia Corporation",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0x091fc7778e6932d4009b087b191d1ee3bac5729a",
+     "chainId": 56,
+     "symbol": "GOOGLon",
+     "ticker": "GOOGL",
+     "name": "Alphabet Inc.",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0x40d8e1fbaf69173c47fa493feb50a84eec6b57ee",
+     "chainId": 56,
+     "symbol": "IONQon",
+     "ticker": "IONQ",
+     "name": "IonQ (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 13
+    },
+    {
+     "address": "0xed2a500eb2b66679e0bbd76e51a60049ae5f3271",
+     "chainId": 56,
+     "symbol": "RGTIon",
+     "ticker": "RGTI",
+     "name": "Rigetti Computing",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x8c7bf0ed6bc778bde1489de1592c1aad3e66371d",
+     "chainId": 56,
+     "symbol": "QBTSon",
+     "ticker": "QBTS",
+     "name": "D-Wave Quantum Inc.",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x82e07c1017032cfd889b1ca81ebe722c4d4de825",
+     "chainId": 56,
+     "symbol": "QUBTon",
+     "ticker": "QUBT",
+     "name": "Quantum Computing (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x1161989389a991532dce453d04d6346c2581c907",
+     "chainId": 56,
+     "symbol": "ARQQon",
+     "ticker": "ARQQ",
+     "name": "Arqit Quantum (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    }
+   ]
+  },
+  {
+   "id": "01KVXGBHHGE4YECQ6MT3BMKGX4",
+   "slug": "neo-finance",
+   "name": "Neo Finance",
+   "description": "Financial services are shifting away from traditional banks toward digital platforms, payment networks, and crypto-native businesses. This portfolio combines the established card networks that process most global transactions with the trading apps, neobanks, and stablecoin issuers competing to replace them.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": -9.0525,
+   "investors": 82,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xf8589b526fdd65f7f301c605a6e04f0f1b4b3620",
+     "chainId": 56,
+     "symbol": "COINon",
+     "ticker": "COIN",
+     "name": "Coinbase",
+     "decimals": 18,
+     "weight": 14
+    },
+    {
+     "address": "0x19601179a60f55ff6636f5d1a8b6671053bd60a8",
+     "chainId": 56,
+     "symbol": "HOODon",
+     "ticker": "HOOD",
+     "name": "Robinhood Markets, Inc.",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0x1cde419fae0ef7f7931ae3e29e5f411c8c5e5fa1",
+     "chainId": 56,
+     "symbol": "Von",
+     "ticker": "V",
+     "name": "Visa (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0x71507068e98049cba81e9bbc8d901e4a2f4222eb",
+     "chainId": 56,
+     "symbol": "SOFIon",
+     "ticker": "SOFI",
+     "name": "SoFi Technologies (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x25ffda07f585c39848db6573e533d7585679c52d",
+     "chainId": 56,
+     "symbol": "MAon",
+     "ticker": "MA",
+     "name": "Mastercard (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0xe778a2e5d953c82eb9475cf3b87654226a867344",
+     "chainId": 56,
+     "symbol": "XYZon",
+     "ticker": "XYZ",
+     "name": "Block (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x374d03a6c0d5bd4be0a5117ebe1b49d52ac8a53f",
+     "chainId": 56,
+     "symbol": "PYPLon",
+     "ticker": "PYPL",
+     "name": "PayPal (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x992879cd8ce0c312d98648875b5a8d6d042cbf34",
+     "chainId": 56,
+     "symbol": "CRCLon",
+     "ticker": "CRCL",
+     "name": "Circle Internet Group, Inc.",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0xd803f8777187d6dee1ea57854aeb957043fb1675",
+     "chainId": 56,
+     "symbol": "AXPon",
+     "ticker": "AXP",
+     "name": "American Express (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0xe5ba472c98b7e4695bd856290de66bdedaffc123",
+     "chainId": 56,
+     "symbol": "SCHWon",
+     "ticker": "SCHW",
+     "name": "Charles Schwab (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    }
+   ]
+  },
+  {
+   "id": "01KVXM9W3M121FE4409QD70VKW",
+   "slug": "consumer-brands",
+   "name": "Consumer Brands",
+   "description": "Consumer brands are the companies people interact with daily through what they stream, eat, wear, and buy on repeat. This portfolio holds established businesses with strong pricing power, loyal customers, and long records of steady growth.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": -12.7644,
+   "investors": 104,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x7048f5227b032326cc8dbc53cf3fddd947a2c757",
+     "chainId": 56,
+     "symbol": "NFLXon",
+     "ticker": "NFLX",
+     "name": "Netflix, Inc.",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0xa7d1e886acf66ec0656df2decb4b7c893a3bab4c",
+     "chainId": 56,
+     "symbol": "WMTon",
+     "ticker": "WMT",
+     "name": "Walmart Inc.",
+     "decimals": 18,
+     "weight": 13
+    },
+    {
+     "address": "0x34375f826fd3dd4e15f883d4f4786bb45eb705ac",
+     "chainId": 56,
+     "symbol": "COSTon",
+     "ticker": "COST",
+     "name": "Costco (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0x995add4ba29a628a57930a8a185c62ca044ec090",
+     "chainId": 56,
+     "symbol": "MCDon",
+     "ticker": "MCD",
+     "name": "McDonald's",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x405f38b90bebf1259062cf29da299f3398662bcb",
+     "chainId": 56,
+     "symbol": "KOon",
+     "ticker": "KO",
+     "name": "The Coca-Cola Company",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x04b5e199f2ec84f78b111035f57b16bee448db6f",
+     "chainId": 56,
+     "symbol": "NKEon",
+     "ticker": "NKE",
+     "name": "Nike (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0xeee9eee593cb8f7946260b4066cba7907f40acfa",
+     "chainId": 56,
+     "symbol": "DISon",
+     "ticker": "DIS",
+     "name": "Disney (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0xf99f8f3a95257d82006183bd524efa7aacc9ef7a",
+     "chainId": 56,
+     "symbol": "PEPon",
+     "ticker": "PEP",
+     "name": "PepsiCo (Ondo Tokenized Stock)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x94d7754541b829a87321d56121bc544167ac490d",
+     "chainId": 56,
+     "symbol": "SBUXon",
+     "ticker": "SBUX",
+     "name": "Starbucks Corporation",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x31dabf49e4bc1af1456c1819cb6a2562154e92f3",
+     "chainId": 56,
+     "symbol": "HDon",
+     "ticker": "HD",
+     "name": "Home Depot (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6
+    },
+    {
+     "address": "0xaed5985afc12aa09d87f55b4b1e6bc3b8f7b0208",
+     "chainId": 56,
+     "symbol": "CMGon",
+     "ticker": "CMG",
+     "name": "Chipotle Mexican Grill, Inc.",
+     "decimals": 18,
+     "weight": 5
+    }
+   ]
+  },
+  {
+   "id": "01KVXKWV9PDJ15R16VYJTD4KYG",
+   "slug": "road-warriors",
+   "name": "Road Warriors",
+   "description": "The automobile is being reinvented twice over, first as electric and then as autonomous. This portfolio holds the manufacturers, ride-hailing platforms, and self-driving software companies competing to define how people and goods move next.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": -13.0243,
+   "investors": 109,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x2494b603319d4d9f9715c9f4496d9e0364b59d93",
+     "chainId": 56,
+     "symbol": "TSLAon",
+     "ticker": "TSLA",
+     "name": "Tesla Inc.",
+     "decimals": 18,
+     "weight": 24
+    },
+    {
+     "address": "0xde9d6036fca870f7efc5a82722ae694c371ac909",
+     "chainId": 56,
+     "symbol": "UBERon",
+     "ticker": "UBER",
+     "name": "Uber Technologies, Inc.",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0x277e1fa8704c5511fed7e30bc691f922aa30101b",
+     "chainId": 56,
+     "symbol": "RIVNon",
+     "ticker": "RIVN",
+     "name": "Rivian Automotive (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 13
+    },
+    {
+     "address": "0xb1aba049c42b6fe811766eba61f51f11c57acc4b",
+     "chainId": 56,
+     "symbol": "Fon",
+     "ticker": "F",
+     "name": "Ford Motor (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0xc6f9edbee6042a237d72493bbda3ee2c3c62f708",
+     "chainId": 56,
+     "symbol": "NIOon",
+     "ticker": "NIO",
+     "name": "NIO (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0x66a1409fe303d00209202933e3d31ee43aaab39d",
+     "chainId": 56,
+     "symbol": "AURon",
+     "ticker": "AUR",
+     "name": "Aurora Innovation (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0xecc1299f183b6a720a6f4729bf24f82cd8d50828",
+     "chainId": 56,
+     "symbol": "TMon",
+     "ticker": "TM",
+     "name": "Toyota (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x9810beac9af3c30d14cfb61cdd557e160f60fd50",
+     "chainId": 56,
+     "symbol": "LIon",
+     "ticker": "LI",
+     "name": "Li Auto (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0xcc977b493f52b4b6b6a0c3594530f2baee565e96",
+     "chainId": 56,
+     "symbol": "MBLYon",
+     "ticker": "MBLY",
+     "name": "Mobileye Global (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    }
+   ]
+  },
+  {
+   "id": "01KVXKAZA1JH8HEXETJX8VJVHY",
+   "slug": "escape-velocity",
+   "name": "Escape Velocity",
+   "description": "Space has shifted from a government program to a genuine commercial industry, with launch, satellites, and orbital services now generating real revenue. This portfolio holds the rocket builders, satellite operators, and space infrastructure companies developing the economy above the atmosphere.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": -24.1788,
+   "investors": 67,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0xb4d695569236273745b4cd54b539b1b9cc1513af",
+     "chainId": 56,
+     "symbol": "RKLBon",
+     "ticker": "RKLB",
+     "name": "Rocket Lab (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 19
+    },
+    {
+     "address": "0xd0a58bc9d88d3ff48c0294cb7e45937d0e41a928",
+     "chainId": 56,
+     "symbol": "SPCXon",
+     "ticker": "SPCX",
+     "name": "SpaceX (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 16
+    },
+    {
+     "address": "0x45abf29515bc23f8c0ed2a06584444ce473a75fb",
+     "chainId": 56,
+     "symbol": "ASTSon",
+     "ticker": "ASTS",
+     "name": "AST SpaceMobile (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0x23e39d94807a8bb7e3f8294b4911d04ee26dce39",
+     "chainId": 56,
+     "symbol": "RDWon",
+     "ticker": "RDW",
+     "name": "Redwire (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0xa3b7b7cfeb023a6c4f444f5ca9a3fc85809ece15",
+     "chainId": 56,
+     "symbol": "LUNRon",
+     "ticker": "LUNR",
+     "name": "Intuitive Machines (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0x3ce678692a60fb5f31963b05cb158f0ce0ff1736",
+     "chainId": 56,
+     "symbol": "IRDMon",
+     "ticker": "IRDM",
+     "name": "Iridium Communications (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0xf9015e0b3ab4ddd216f522d6150db826c9be83f8",
+     "chainId": 56,
+     "symbol": "PLon",
+     "ticker": "PL",
+     "name": "Planet Labs (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0xf21132a811ad1a878e21af60f64d4e690c9daa42",
+     "chainId": 56,
+     "symbol": "BAon",
+     "ticker": "BA",
+     "name": "Boeing",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x4d3442d884202584f1729bca20db05472b886b52",
+     "chainId": 56,
+     "symbol": "NOCon",
+     "ticker": "NOC",
+     "name": "Northrop Grumman (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6
+    }
+   ]
+  },
+  {
+   "id": "01KVXJQ7N3Q55WEZRXV1F99BMJ",
+   "slug": "going-nuclear",
+   "name": "Going Nuclear",
+   "description": "Nuclear power is returning to favor after decades on the sidelines, driven by the need for constant, carbon-free electricity to run AI data centers. This portfolio combines the utilities operating today's reactors with the small modular reactor developers and uranium miners positioned for the next wave.",
+   "chainId": 56,
+   "chain": "BNB Chain",
+   "oneYearReturn": -29.6607,
+   "investors": 59,
+   "rebalanceHours": 24,
+   "holdings": [
+    {
+     "address": "0x65d84f0990b7394209d591380c2952c83d778aa3",
+     "chainId": 56,
+     "symbol": "CEGon",
+     "ticker": "CEG",
+     "name": "Constellation Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 16
+    },
+    {
+     "address": "0xa75f08b9a91439daac9cc7072857cc0a98cf527a",
+     "chainId": 56,
+     "symbol": "CCJon",
+     "ticker": "CCJ",
+     "name": "Cameco (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 15
+    },
+    {
+     "address": "0xf4b674d4e33c36f8db4b928a5eec4e1f87b386e3",
+     "chainId": 56,
+     "symbol": "SMRon",
+     "ticker": "SMR",
+     "name": "NuScale Power (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 12
+    },
+    {
+     "address": "0xaf6c03acf72355ce98d0741302b78870b376428c",
+     "chainId": 56,
+     "symbol": "OKLOon",
+     "ticker": "OKLO",
+     "name": "Oklo (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 11
+    },
+    {
+     "address": "0xf2c24c47805f4f72d3919c8674bfdd401505794b",
+     "chainId": 56,
+     "symbol": "VSTon",
+     "ticker": "VST",
+     "name": "Vistra (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 10
+    },
+    {
+     "address": "0xbbe4dfe7a349fb72aec6f52d5cd9bdd78ae8f313",
+     "chainId": 56,
+     "symbol": "TLNon",
+     "ticker": "TLN",
+     "name": "Talen Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 9
+    },
+    {
+     "address": "0xe7ddf606841ee278a30e5c90486681e68ddd8cbf",
+     "chainId": 56,
+     "symbol": "UECon",
+     "ticker": "UEC",
+     "name": "Uranium Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 8
+    },
+    {
+     "address": "0x3c276dd9f9eab5510f9eafd3a6ea54879b27ca3d",
+     "chainId": 56,
+     "symbol": "NNEon",
+     "ticker": "NNE",
+     "name": "NANO Nuclear Energy (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 7
+    },
+    {
+     "address": "0x70bd780076e25d087ed9c35f4e4a540522abe8cf",
+     "chainId": 56,
+     "symbol": "DNNon",
+     "ticker": "DNN",
+     "name": "Denison Mines (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6
+    },
+    {
+     "address": "0xd2c06fef2ca2375a9c7ceb4abca9dbc2ab6af981",
+     "chainId": 56,
+     "symbol": "UUUUon",
+     "ticker": "UUUU",
+     "name": "Energy Fuels (Ondo Tokenized)",
+     "decimals": 18,
+     "weight": 6
+    }
+   ]
+  }
+ ]
+}

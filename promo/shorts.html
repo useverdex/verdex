@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex shorts</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.lg { position: absolute; border-radius: 50%; object-fit: cover; will-change: transform, opacity, filter; background: #111; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); border: 1px solid rgba(255,255,255,.07); font-size: 26px; font-weight: 500; }
+.tile { position: absolute; width: 150px; height: 150px; border-radius: 26px; background: #111; border: 1px solid rgba(255,255,255,.07); display: grid; place-items: center; will-change: transform, opacity; }
+.tile img { width: 72px; height: 72px; border-radius: 20px; object-fit: cover; }
+.tile.rd img { border-radius: 50%; }
+.row { position: absolute; left: 50%; width: 1000px; margin-left: -500px; height: 96px; display: flex; align-items: center; gap: 22px; padding: 0 26px; box-sizing: border-box; border-radius: 18px; background: #111; border: 1px solid rgba(255,255,255,.07); will-change: transform, opacity; }
+.row img.a { width: 54px; height: 54px; border-radius: 50%; }
+.row img.c { width: 34px; height: 34px; border-radius: 50%; margin-left: auto; }
+.row b { font-weight: 600; font-size: 30px; letter-spacing: -0.01em; }
+.row .nm { font-size: 22px; color: var(--muted); margin-left: 6px; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; }
+.toast .ms { color: var(--lime); font-family: ui-monospace, Menlo, monospace; font-size: 20px; margin-left: 8px; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Short clips for X, one per ?clip=. Each is a deterministic timeline: renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const CA = '0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43'
+const URL_ = 'useverdex.xyz'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (c) => `${PUB}/logos/chains/${c}.svg`
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeOut = (p) => 1 - Math.pow(1 - p, 3)
+const easeInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2)
+const rnd = (seed) => () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14, extra = '' } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)}) ${extra}`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const sceneOut = (el, p) => { el.style.opacity = 1 - p; el.style.filter = p > 0.001 ? `blur(${(p * 12).toFixed(2)}px)` : 'none'; el.style.transform = `scale(${1 - 0.04 * p})` }
+
+// Shared end card: mark + name, CA, url. `at` is when it starts.
+function endCard(parent) {
+  const s = add(parent, `<div class="abs" style="inset:0"></div>`)
+  const logo = add(s, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:30px"><span style="width:130px;height:130px;display:inline-flex;margin-top:12px">${MARK()}</span><span class="serif" style="font-size:200px">Verdex</span></div>`)
+  const ca = add(s, `<div class="abs" style="left:0;right:0;top:600px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px;gap:16px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:20px">CA</span><span class="mono">${CA}</span></span></div>`)
+  const url = add(s, `<div class="abs" style="left:0;right:0;top:700px;text-align:center;font-size:30px;font-weight:500;color:var(--soft)">${URL_}</div>`)
+  return (t, at) => {
+    show(s, t > at - 0.2)
+    const p = spring(t - at, 0.8); mat(logo, p, { y: 40 * (1 - p), s: 0.04, blur: 18 })
+    mat(ca, spring(t - at - 0.3, 0.7), { y: 20 * (1 - spring(t - at - 0.3, 0.7)) })
+    mat(url, spring(t - at - 0.5, 0.7), { y: 16 * (1 - spring(t - at - 0.5, 0.7)) })
+  }
+}
+
+const CLIPS = {
+  // 1. The CA, typed out. 10s.
+  ca: { duration: 10, build() {
+    const s = add(stage, `<div class="abs" style="inset:0"></div>`)
+    const logo = add(s, `<div class="abs" style="left:0;right:0;top:250px;display:flex;justify-content:center;align-items:center;gap:30px"><span style="width:130px;height:130px;display:inline-flex;margin-top:12px">${MARK()}</span><span class="serif" style="font-size:200px">Verdex</span></div>`)
+    const tag = add(s, `<div class="abs" style="left:0;right:0;top:500px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+    const tagChars = letters(tag.firstElementChild, 'Everything tokenized. One marketplace.')
+    const pill = add(s, `<div class="abs" style="left:0;right:0;top:620px;text-align:center"><span class="pill" style="font-size:38px;padding:20px 32px;gap:20px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:24px">CA</span><span class="mono" id="typed" style="min-width:990px;text-align:left"></span><span id="cur" style="display:inline-block;width:3px;height:44px;background:var(--lime);margin-left:-14px"></span></span></div>`)
+    const typed = pill.querySelector('#typed'), cur = pill.querySelector('#cur')
+    const url = add(s, `<div class="abs" style="left:0;right:0;top:780px;text-align:center;font-size:32px;font-weight:500;color:var(--soft)">Copy it from ${URL_}, not from replies.</div>`)
+    return (t) => {
+      const p = spring(t - 0.2, 0.8); mat(logo, p, { y: 40 * (1 - p), s: 0.04, blur: 18 })
+      wipe(tagChars, spring(t - 0.9, 0.9), { stagger: 0.02 })
+      mat(pill, spring(t - 1.8, 0.7), { y: 24 * (1 - spring(t - 1.8, 0.7)) })
+      const n = clamp(Math.floor((t - 2.3) / 0.075), 0, CA.length)
+      typed.textContent = CA.slice(0, n)
+      const done = n >= CA.length
+      cur.style.opacity = done ? (Math.floor(t * 2) % 2 ? 0 : 1) : 1
+      mat(url, spring(t - 5.9, 0.7), { y: 16 * (1 - spring(t - 5.9, 0.7)) })
+    }
+  } },
+
+  // 2. Trade stocks / ETFs / gold / treasuries. 14s.
+  stocks: { duration: 14, build() {
+    const s = add(stage, `<div class="abs" style="inset:0"></div>`)
+    const flyHost = add(s, `<div class="abs" style="inset:0"></div>`)
+    const box = add(s, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center"><div style="position:relative;width:1300px;height:400px"></div></div>`).firstElementChild
+    const tradeEl = add(box, `<div class="serif" style="position:absolute;right:50%;margin-right:22px;top:140px;font-size:150px;white-space:nowrap">Trade</div>`)
+    const WORDS = ['stocks', 'ETFs', 'gold', 'treasuries']
+    const words = WORDS.map((w) => add(box, `<div class="serif" style="position:absolute;left:50%;margin-left:22px;top:140px;font-size:150px;color:var(--lime);white-space:nowrap;will-change:transform,opacity">${w}</div>`))
+    const FLY = [['88a0e630', '2a11a6bd', 'e8ca24f9', '0b00cc62', '39c11fed', '4d76db13'], ['c025dcd9', '8fbe91e2', '1da01b55', '454862a2', '9e189df1', '0a5c861d'], ['941acb6b', '7869a6ce', '941acb6b', '7869a6ce', 'f52ab302', '34514ffd'], ['1b790bc1', '1efa740a', '5c6daea9', '48f06241', 'fa2b34f1', 'f2f095b3']]
+    const R = rnd(7)
+    const spot = () => { for (;;) { const x = 160 + R() * 1600, y = 100 + R() * 880; if (x < 470 || x > 1450 || y < 360 || y > 720) return { x, y } } }
+    const fly = FLY.map((set) => set.map((h) => { const { x, y } = spot(); return { el: add(flyHost, `<img class="lg" src="${L(h)}" style="width:80px;height:80px;margin:-40px 0 0 -40px">`), x, y, s: 0.55 + R() * 0.9, dir: R() > 0.5 ? 1 : -1, rot: (R() - 0.5) * 60 } }))
+    const end = endCard(stage)
+    const STEP = [0.6, 2.4, 4.2, 6.0], LH = 165
+    return (t) => {
+      const out = clamp(spring(t - 8.6, 0.5)); sceneOut(s, out); show(s, t < 9.6)
+      const pt = spring(t - 0.4, 0.7); mat(tradeEl, pt, { x: -60 * (1 - pt), s: 0, blur: 16 })
+      words.forEach((w, i) => {
+        const sIn = spring(t - STEP[i], 0.55), sNext = i + 1 < STEP.length ? spring(t - STEP[i + 1], 0.55) : 0
+        const nAfter = STEP.slice(i + 1).reduce((n, st) => n + clamp(spring(t - st, 0.55)), 0)
+        w.style.transform = `translate3d(0, ${((1 - sIn) * LH - nAfter * LH).toFixed(2)}px, 0)`
+        const cur = sIn * (1 - sNext)
+        w.style.opacity = t < STEP[i] ? 0 : 0.22 + 0.78 * cur
+        w.style.filter = `blur(${((1 - sIn) * 14).toFixed(2)}px)`
+        w.style.color = cur > 0.5 ? 'var(--lime)' : 'rgba(255,255,255,.5)'
+      })
+      fly.forEach((set, k) => set.forEach((f, j) => {
+        const t0 = STEP[k] - 0.15 + j * 0.06, p = clamp((t - t0) / 2.0), on = p > 0 && p < 1
+        f.el.style.opacity = on ? Math.sin(p * Math.PI) * 0.9 : 0
+        f.el.style.transform = `translate3d(${(f.x + (p - 0.5) * 240 * f.dir).toFixed(1)}px, ${(f.y - p * 120).toFixed(1)}px, 0) scale(${(f.s * (0.7 + 0.6 * p)).toFixed(3)}) rotate(${(f.rot * (p - 0.5)).toFixed(1)}deg)`
+        f.el.style.filter = f.s < 0.85 ? 'blur(2px)' : 'none'
+      }))
+      end(t, 9.3)
+    }
+  } },
+
+  // 3. A swap, start to finish. 13s.
+  swap: { duration: 13, build() {
+    const s = add(stage, `<div class="abs" style="inset:0"></div>`)
+    const h = add(s, `<div class="abs serif" style="left:0;right:0;top:110px;text-align:center;font-size:130px;white-space:nowrap"><div></div></div>`)
+    const hChars = letters(h.firstElementChild, 'One order.')
+    const box = (label, id, tok, logo, chain, chainName) => `<div style="background:#181818;border-radius:18px;padding:18px 22px"><div style="font-size:17px;color:var(--muted)">${label}</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px"><div id="${id}" style="font-size:46px;font-weight:500;letter-spacing:-0.02em;height:56px">0</div><span style="display:inline-flex;align-items:center;gap:10px;background:var(--chip);border-radius:14px;padding:8px 14px 8px 8px;font-size:21px;font-weight:600;position:relative"><img src="${logo}" style="width:34px;height:34px;border-radius:50%"><img src="${CH(chain)}" style="position:absolute;left:30px;top:30px;width:16px;height:16px;border-radius:50%;border:2px solid var(--chip)">${tok}</span></div><div style="font-size:17px;color:var(--muted);margin-top:4px">on ${chainName}</div></div>`
+    const card = add(s, `<div class="abs" style="left:730px;top:290px;width:460px;box-sizing:border-box;padding:20px;border-radius:26px;background:#0F0F0F;border:1px solid rgba(255,255,255,.08);box-shadow:0 60px 140px rgba(0,0,0,.75);will-change:transform,opacity">
+      <div style="display:flex;gap:6px;margin-bottom:14px"><span class="pill" style="background:#fff;color:#060606;font-size:17px;padding:7px 14px;border:0">Swap</span><span class="pill" style="background:transparent;color:var(--muted);font-size:17px;padding:7px 14px;border:0">Bridge</span></div>
+      ${box('You pay', 'pay', 'USDC', `${PUB}/img/tokens/usdc.png`, '8453', 'Base')}
+      <div style="height:8px;position:relative"><div style="position:absolute;left:50%;top:-20px;margin-left:-20px;width:40px;height:40px;border-radius:12px;background:#242424;border:4px solid #0F0F0F;display:grid;place-items:center;color:var(--soft);font-size:18px">↓</div></div>
+      ${box('You receive', 'get', 'NVDA', L('88a0e630'), '4663', 'Robinhood Chain')}
+      <div id="route" style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:17px;color:var(--soft)"><span style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:50%;background:var(--lime)"></span>Best route</span><span style="display:flex;align-items:center;gap:6px"><img src="${PUB}/logos/tools/relaydepository.svg" style="width:22px;height:22px;border-radius:50%"><img src="${PUB}/logos/tools/across.svg" style="width:22px;height:22px;border-radius:50%">2 steps</span></div>
+      <div id="cta" style="height:58px;border-radius:14px;background:#fff;color:#060606;display:grid;place-items:center;font-size:21px;font-weight:600;margin-top:14px">Buy NVDA</div>
+    </div>`)
+    const pay = card.querySelector('#pay'), get = card.querySelector('#get'), route = card.querySelector('#route'), cta = card.querySelector('#cta')
+    const cursor = add(s, `<svg class="abs" width="34" height="34" viewBox="0 0 24 24" style="left:0;top:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#fff" stroke="#060606" stroke-width="1.2" stroke-linejoin="round"/></svg>`)
+    const toast = add(s, `<div class="toast" style="left:1230px;top:700px"><span class="ok">✓</span>Bought 4.4579 NVDA<span class="ms">0.9s</span></div>`)
+    const cap = add(s, `<div class="abs" style="left:0;right:0;top:960px;text-align:center;font-size:32px;font-weight:500;color:var(--soft)">Swap, bridge and buy in one signature.</div>`)
+    const end = endCard(stage)
+    return (t) => {
+      const out = clamp(spring(t - 8.9, 0.5)); sceneOut(s, out); show(s, t < 9.9)
+      wipe(hChars, spring(t - 0.2, 0.8), { stagger: 0.05, dx: 26 })
+      const pc = spring(t - 0.6, 0.7); mat(card, pc, { y: 80 * (1 - pc), s: 0.06, blur: 16 })
+      const typed = '1,000'.slice(0, clamp(Math.floor((t - 1.8) / 0.12), 0, 5))
+      pay.textContent = typed || '0'; pay.style.color = typed ? '#fff' : 'var(--muted)'
+      get.textContent = t < 2.8 ? '0' : (4.4579 * easeOut(clamp((t - 2.8) / 0.9))).toFixed(4)
+      get.style.color = t < 2.8 ? 'var(--muted)' : '#fff'
+      mat(route, spring(t - 3.4, 0.5), { y: 10 * (1 - spring(t - 3.4, 0.5)), s: 0 })
+      const cp = spring(t - 3.9, 0.9), bx = 960, by = 812
+      cursor.style.opacity = clamp(spring(t - 3.8, 0.4)) * (1 - clamp(spring(t - 6.2, 0.4)))
+      cursor.style.transform = `translate3d(${lerp(1700, bx, cp).toFixed(1)}px, ${lerp(1000, by, cp).toFixed(1)}px, 0)`
+      const press = t >= 5.0 && t < 5.15, done = t >= 5.15
+      cta.style.transform = `scale(${press ? 0.97 : 1})`; cta.style.background = done ? 'var(--lime)' : '#fff'; cta.textContent = done ? '✓  Order filled' : 'Buy NVDA'
+      const pto = spring(t - 5.5, 0.5, 0.75); toast.style.opacity = clamp(pto * 3); toast.style.transform = `translate3d(${((1 - pto) * 40).toFixed(1)}px, 0, 0) scale(${(0.9 + 0.1 * pto).toFixed(3)})`
+      mat(cap, spring(t - 6.0, 0.7), { y: 20 * (1 - spring(t - 6.0, 0.7)) })
+      end(t, 9.6)
+    }
+  } },
+
+  // 4. The same stock on four chains, one search. 12s.
+  one: { duration: 12, build() {
+    const s = add(stage, `<div class="abs" style="inset:0"></div>`)
+    const ROWS = [['NVDA', 'Robinhood Chain', '4663'], ['NVDAon', 'Ethereum', '1'], ['NVDAx', 'Solana', '1151111081099710'], ['NVDAB', 'BNB Chain', '56']]
+    const rows = ROWS.map(([sym, chain, id], i) => add(s, `<div class="row" style="top:${200 + i * 118}px"><img class="a" src="${L('88a0e630')}"><b>${sym}</b><span class="nm">on ${chain}</span><img class="c" src="${CH(id)}"></div>`))
+    const h = add(s, `<div class="abs serif" style="left:0;right:0;top:720px;text-align:center;font-size:130px;white-space:nowrap"><div></div></div>`)
+    const hChars = letters(h.firstElementChild, 'One search.')
+    const sub = add(s, `<div class="abs" style="left:0;right:0;top:880px;text-align:center;font-size:32px;font-weight:500;color:var(--soft)">Same stock, every issuer and chain, side by side.</div>`)
+    const end = endCard(stage)
+    return (t) => {
+      const out = clamp(spring(t - 7.9, 0.5)); sceneOut(s, out); show(s, t < 8.9)
+      rows.forEach((r, i) => { const p = spring(t - 0.3 - i * 0.9, 0.6); mat(r, p, { y: 60 * (1 - p), s: 0.06, blur: 12 }) })
+      wipe(hChars, spring(t - 4.2, 0.8), { stagger: 0.05, dx: 26 })
+      mat(sub, spring(t - 5.0, 0.7), { y: 20 * (1 - spring(t - 5.0, 0.7)) })
+      end(t, 8.6)
+    }
+  } },
+
+  // 5. Every issuer. Every chain. 13s.
+  issuers: { duration: 13, build() {
+    const s = add(stage, `<div class="abs" style="inset:0"></div>`)
+    const h = add(s, `<div class="abs serif" style="left:0;right:0;top:150px;text-align:center;font-size:150px;white-space:nowrap"><div></div></div>`)
+    const ISS = ['ondo.png', 'xstocks.png', 'bstocks.svg', 'robinhood.svg', 'coinbase.png', 'backed.png', 'tether.png', 'paxos.png', 'maple.png', 'ethena.png', 'usdai.png', 'theo.png']
+    const issuers = ISS.map((f, i) => add(s, `<div class="tile" style="left:${340 + (i % 6) * 216}px;top:${440 + Math.floor(i / 6) * 216}px"><img src="${PUB}/logos/issuers/${f}"></div>`))
+    const CHS = ['1', '8453', '42161', '56', '4663', '5042', '1151111081099710', '10', '137', '43114', '999', '146']
+    const chains = CHS.map((c, i) => add(s, `<div class="tile rd" style="left:${340 + (i % 6) * 216}px;top:${440 + Math.floor(i / 6) * 216}px"><img src="${CH(c)}"></div>`))
+    const cap = add(s, `<div class="abs" style="left:0;right:0;top:940px;text-align:center;font-size:32px;font-weight:500;color:var(--soft)">12 issuers. 70 chains. One marketplace.</div>`)
+    const end = endCard(stage)
+    const H = [[0.3, 'Every issuer.'], [3.6, 'Every chain.'], [6.9, 'One order.']]
+    return (t) => {
+      const out = clamp(spring(t - 8.9, 0.5)); sceneOut(s, out); show(s, t < 9.9)
+      let cur = H[0]; for (const x of H) if (t >= x[0]) cur = x
+      if (h.dataset.k !== cur[1]) { h.dataset.k = cur[1]; h._chars = letters(h.firstElementChild, cur[1]) }
+      wipe(h._chars, spring(t - cur[0], 0.8), { stagger: 0.05, dx: 26 })
+      issuers.forEach((el, i) => { const p = spring(t - 0.45 - i * 0.07, 0.55, 0.72); const off = clamp(spring(t - 3.5, 0.45)); el.style.opacity = clamp(p * 2) * (1 - off); el.style.transform = `scale(${(p * (1 - 0.15 * off)).toFixed(3)}) translate3d(0, ${((1 - p) * 40).toFixed(1)}px, 0)` })
+      chains.forEach((el, i) => { const p = spring(t - 3.75 - i * 0.07, 0.55, 0.72); const off = clamp(spring(t - 6.8, 0.45)); el.style.opacity = clamp(p * 2) * (1 - off); el.style.transform = `scale(${(p * (1 - 0.15 * off)).toFixed(3)}) translate3d(0, ${((1 - p) * 40).toFixed(1)}px, 0)` })
+      mat(cap, spring(t - 7.1, 0.7) * (1 - clamp(spring(t - 8.6, 0.4))), { y: 20 * (1 - spring(t - 7.1, 0.7)) })
+      end(t, 9.6)
+    }
+  } },
+
+  // 6. The numbers. 11s.
+  numbers: { duration: 11, build() {
+    const s = add(stage, `<div class="abs" style="inset:0"></div>`)
+    const STATS = [[226, 'real-world assets'], [12, 'issuers'], [70, 'chains'], [1, 'order']]
+    const cells = STATS.map(([n, l], i) => add(s, `<div class="abs" style="left:${200 + i * 390}px;top:360px;width:340px;text-align:center"><div class="serif" style="font-size:190px;color:${i === 3 ? 'var(--lime)' : '#fff'}"><span class="n">0</span></div><div style="font-size:30px;font-weight:500;color:var(--soft);margin-top:10px">${l}</div></div>`))
+    const cap = add(s, `<div class="abs serif" style="left:0;right:0;top:760px;text-align:center;font-size:96px;white-space:nowrap"><div></div></div>`)
+    const capChars = letters(cap.firstElementChild, 'Wall Street, onchain.')
+    const end = endCard(stage)
+    return (t) => {
+      const out = clamp(spring(t - 6.9, 0.5)); sceneOut(s, out); show(s, t < 7.9)
+      cells.forEach((c, i) => {
+        const t0 = 0.3 + i * 0.55, p = spring(t - t0, 0.7)
+        mat(c, p, { y: 50 * (1 - p), s: 0.06, blur: 14 })
+        c.querySelector('.n').textContent = Math.round(STATS[i][0] * easeOut(clamp((t - t0) / 1.3)))
+      })
+      wipe(capChars, spring(t - 3.2, 0.9), { stagger: 0.04, dx: 24 })
+      end(t, 7.6)
+    }
+  } },
+}
+
+async function build() {
+  const q = new URLSearchParams(location.search)
+  const clip = CLIPS[q.get('clip')] ?? CLIPS.ca
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.14),rgba(194,234,138,0));pointer-events:none"></div>`)
+  const render = clip.build()
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+  const D = clip.duration
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.6 + 0.4 * Math.sin(t * 0.8)
+    render(t)
+    fade.style.opacity = Math.max(1 - clamp(t / 0.35), clamp((t - (D - 0.4)) / 0.4))
+  }
+  window.DURATION = D
+  await document.fonts.ready
+  await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+  window.renderAt(0)
+  window.__ready = true
+  if (q.has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % D); requestAnimationFrame(loop) }; loop() }
+}
+build()
+</script>
+</body>
+</html>

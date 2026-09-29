@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex brand film</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --deep: #01271C; --chip: #1A1A1A; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.lg { position: absolute; border-radius: 50%; object-fit: cover; will-change: transform, opacity, filter; background: #111; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.row { position: absolute; left: 50%; width: 900px; margin-left: -450px; height: 84px; display: flex; align-items: center; gap: 20px; padding: 0 22px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.07); will-change: transform, opacity; }
+.row img { width: 48px; height: 48px; border-radius: 50%; }
+.row b { font-weight: 600; font-size: 24px; letter-spacing: -0.01em; }
+.row .nm { font-size: 17px; color: var(--muted); margin-top: 2px; }
+.row .pr { margin-left: auto; text-align: right; font-size: 24px; font-weight: 500; letter-spacing: -0.01em; }
+.row .sub { font-size: 16px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.tile { position: absolute; width: 150px; height: 150px; border-radius: 26px; background: #111; border: 1px solid rgba(255,255,255,.07); display: grid; place-items: center; will-change: transform, opacity; }
+.tile img { width: 72px; height: 72px; border-radius: 20px; object-fit: cover; }
+.tile.rd img { border-radius: 50%; }
+.win { position: absolute; border-radius: 20px; overflow: hidden; background: #0F0F0F; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 60px 140px rgba(0,0,0,.75); transform-style: preserve-3d; will-change: transform, opacity; }
+.win .bar { height: 36px; background: #141414; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.win .bar i { width: 11px; height: 11px; border-radius: 50%; background: #2A2A2A; display: block; }
+.win .view { position: relative; overflow: hidden; }
+.win .view img { display: block; width: 100%; will-change: transform; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; }
+.toast .ms { color: var(--lime); font-family: ui-monospace, Menlo, monospace; font-size: 20px; margin-left: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.line { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Brand film: kinetic type, real logos in depth, the product as floating cards. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const DURATION = 34
+const BEAT = 0.5 // 120 BPM grid, so a music bed lines up with the cuts
+
+// Springs and helpers (critically damped by default; bounce only where something is thrown in).
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeOut = (p) => 1 - Math.pow(1 - p, 3)
+const easeInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2)
+const rnd = (seed) => () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14, extra = '' } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)}) ${extra}`
+}
+// Split text into letter spans, then reveal them left to right with a blur, like the reference "Introducing".
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const sceneOut = (el, p) => { el.style.opacity = 1 - p; el.style.filter = p > 0.001 ? `blur(${(p * 12).toFixed(2)}px)` : 'none'; el.style.transform = `scale(${1 - 0.04 * p})` }
+
+let DATA
+async function build() {
+  DATA = await (await fetch('data.json')).json()
+  const stock = (tk) => DATA.stocks.find((s) => s.ticker === tk)
+  const price = (v) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.14),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. "Introducing" then the name with a ring of logos in depth.
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const introEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:44px;font-weight:500;letter-spacing:-0.01em;color:var(--soft)"><div></div></div>`)
+  const introChars = letters(introEl.firstElementChild, 'Introducing')
+  const ringHost = add(s1, `<div class="abs" style="inset:0"></div>`)
+  const RING = ['88a0e630', '2a11a6bd', 'e8ca24f9', '0b00cc62', '4d76db13', '39c11fed', '9e189df1', '1efa740a', 'c025dcd9', '941acb6b', 'f2f095b3', '0a5c861d', '5c6daea9', 'fa2b34f1']
+  const ring = RING.map((h) => add(ringHost, `<img class="lg" src="${L(h)}" style="width:96px;height:96px;margin:-48px 0 0 -48px;left:960px;top:540px">`))
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:150px;height:150px;display:inline-flex;margin-top:14px">${MARK()}</span><span class="serif" style="font-size:230px">Verdex</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:770px;text-align:center;font-size:36px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Everything tokenized. One marketplace.')
+
+  // 2. Kinetic stack: Trade STOCKS / ETFs / GOLD / TREASURIES with logos flying past.
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const flyHost = add(s2, `<div class="abs" style="inset:0"></div>`)
+  const stackWrap = add(s2, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center"><div style="position:relative;width:1300px;height:400px"></div></div>`)
+  const stackBox = stackWrap.firstElementChild
+  const tradeEl = add(stackBox, `<div class="serif" style="position:absolute;right:50%;margin-right:22px;top:140px;font-size:150px;color:#fff;white-space:nowrap">Trade</div>`)
+  const WORDS = ['stocks', 'ETFs', 'gold', 'treasuries']
+  const words = WORDS.map((w) => add(stackBox, `<div class="serif" style="position:absolute;left:50%;margin-left:22px;top:140px;font-size:150px;color:var(--lime);white-space:nowrap;will-change:transform,opacity">${w}</div>`))
+  const FLY = [['88a0e630', '2a11a6bd', 'e8ca24f9', '0b00cc62', '39c11fed', '4d76db13'], ['c025dcd9', '8fbe91e2', '1da01b55', '454862a2', '9e189df1', '0a5c861d'], ['941acb6b', '7869a6ce', '941acb6b', '7869a6ce', 'f52ab302', '34514ffd'], ['1b790bc1', '1efa740a', '5c6daea9', '48f06241', 'fa2b34f1', 'f2f095b3']]
+  const R2 = rnd(7)
+  const spot = () => { for (;;) { const x = 160 + R2() * 1600, y = 100 + R2() * 880; if (x < 470 || x > 1450 || y < 360 || y > 720) return { x, y } } }
+  const fly = FLY.map((set) => set.map((h) => { const { x, y } = spot(); return { el: add(flyHost, `<img class="lg" src="${L(h)}" style="width:80px;height:80px;margin:-40px 0 0 -40px">`), x, y, s: 0.55 + R2() * 0.9, dir: R2() > 0.5 ? 1 : -1, rot: (R2() - 0.5) * 60 } }))
+
+  // 3. "And more." over a field of real logos the camera flies through.
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const fieldHost = add(s3, `<div class="abs" style="inset:0"></div>`)
+  const FIELD = [...DATA.stocks.map((s) => s.logo), ...DATA.extra].slice(0, 80)
+  const R3 = rnd(11)
+  const field = FIELD.map((h) => ({ el: add(fieldHost, `<img class="lg" src="${L(h)}" style="width:64px;height:64px;margin:-32px 0 0 -32px">`), x: (R3() - 0.5) * 2.6, y: (R3() - 0.5) * 1.7, z: 0.3 + R3() * 3.2 }))
+  const moreEl = add(s3, `<div class="abs serif" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:170px"><div></div></div>`)
+  const moreChars = letters(moreEl.firstElementChild, 'And more.')
+
+  // 4. From one logo to the market: rows of real assets, then the assets page as a card.
+  const s4 = add(stage, `<div class="scene" style="perspective:2400px"></div>`)
+  const heroLogo = add(s4, `<img class="lg" src="${L('2a11a6bd')}" style="width:220px;height:220px;margin:-110px 0 0 -110px;left:960px;top:540px;box-shadow:0 30px 80px rgba(0,0,0,.6)">`)
+  const ROWS = ['AAPL', 'NVDA', 'TSLA', 'META', 'GOOGL', 'AMZN'].map(stock)
+  const rows = ROWS.map((s, i) => add(s4, `<div class="row" style="top:${205 + i * 100}px"><img src="${L(s.logo)}"><div><b>${s.ticker}</b><div class="nm">${s.name}</div></div><div class="pr">${price(s.price)}<div class="sub">${s.issuers} issuers · ${s.chains} chains</div></div></div>`))
+  const winAssets = add(s4, `<div class="win" style="left:360px;top:150px;width:1200px;height:800px"><div class="bar"><i></i><i></i><i></i></div><div class="view" style="height:762px"><img src="shots/assets.png"></div></div>`)
+  const imgAssets = winAssets.querySelector('img')
+  const cap4 = add(s4, `<div class="abs" style="left:0;right:0;top:960px;text-align:center;font-size:34px;font-weight:500;color:var(--soft)"><span style="color:#fff;font-weight:600">${DATA.assets}</span> real-world assets. Every issuer, side by side.</div>`)
+
+  // 5. Every issuer. Every chain. One order.
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="abs serif" style="left:0;right:0;top:150px;text-align:center;font-size:150px;white-space:nowrap"><div></div></div>`)
+  const ISS = ['ondo.png', 'xstocks.png', 'bstocks.svg', 'robinhood.svg', 'coinbase.png', 'backed.png', 'tether.png', 'paxos.png', 'maple.png', 'ethena.png', 'usdai.png', 'theo.png']
+  const issuers = ISS.map((f, i) => add(s5, `<div class="tile" style="left:${340 + (i % 6) * 216}px;top:${440 + Math.floor(i / 6) * 216}px"><img src="${PUB}/logos/issuers/${f}"></div>`))
+  const CH = ['1', '8453', '42161', '56', '4663', '5042', '1151111081099710', '10', '137', '43114', '999', '146']
+  const chains = CH.map((c, i) => add(s5, `<div class="tile rd" style="left:${340 + (i % 6) * 216}px;top:${440 + Math.floor(i / 6) * 216}px"><img src="${PUB}/logos/chains/${c}.svg"></div>`))
+  // The swap card is built here (not a screenshot) so it shows a filled-in order.
+  const box = (label, amt, tok, logo, chain, chainName, dim) => `<div style="background:#181818;border-radius:18px;padding:18px 22px"><div style="font-size:17px;color:var(--muted)">${label}</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px"><div style="font-size:46px;font-weight:500;letter-spacing:-0.02em;color:${dim ? 'var(--soft)' : '#fff'}">${amt}</div><span style="display:inline-flex;align-items:center;gap:10px;background:var(--chip);border-radius:14px;padding:8px 14px 8px 8px;font-size:21px;font-weight:600;position:relative"><img src="${logo}" style="width:34px;height:34px;border-radius:50%"><img src="${PUB}/logos/chains/${chain}.svg" style="position:absolute;left:30px;top:30px;width:16px;height:16px;border-radius:50%;border:2px solid var(--chip)">${tok}</span></div><div style="font-size:17px;color:var(--muted);margin-top:4px">on ${chainName}</div></div>`
+  const swapWin = add(s5, `<div class="abs" style="left:730px;top:290px;width:460px;box-sizing:border-box;padding:20px;border-radius:26px;background:#0F0F0F;border:1px solid rgba(255,255,255,.08);box-shadow:0 60px 140px rgba(0,0,0,.75);will-change:transform,opacity">
+    <div style="display:flex;gap:6px;margin-bottom:14px"><span class="pill" style="background:#fff;color:#060606;font-size:17px;padding:7px 14px">Swap</span><span class="pill" style="background:transparent;color:var(--muted);font-size:17px;padding:7px 14px">Bridge</span></div>
+    ${box('You pay', '1,000', 'USDC', `${PUB}/img/tokens/usdc.png`, '8453', 'Base', false)}
+    <div style="height:8px;position:relative"><div style="position:absolute;left:50%;top:-20px;margin-left:-20px;width:40px;height:40px;border-radius:12px;background:#242424;border:4px solid #0F0F0F;display:grid;place-items:center;color:var(--soft);font-size:18px">↓</div></div>
+    ${box('You receive', '4.4579', 'NVDA', L('88a0e630'), '4663', 'Robinhood Chain', false)}
+    <div style="height:58px;border-radius:14px;background:var(--lime);color:#052;display:grid;place-items:center;font-size:21px;font-weight:600;margin-top:14px">Buy NVDA</div>
+  </div>`)
+  const toast = add(s5, `<div class="toast" style="left:1230px;top:700px"><span class="ok">✓</span>Bought 4.4579 NVDA<span class="ms">0.9s</span></div>`)
+  const oneLine = add(s5, `<div class="abs" style="left:0;right:0;top:960px;text-align:center;font-size:34px;font-weight:500;color:var(--soft)">Swap, bridge and buy in one signature.</div>`)
+
+  // 6. Benefits, one per beat.
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const ben = [
+    { a: 'More', b: 'assets', mid: `<span class="pill" style="padding:8px 14px;gap:0">${['88a0e630', '2a11a6bd', 'c025dcd9', '941acb6b', '1b790bc1'].map((h, i) => `<img src="${L(h)}" style="width:44px;height:44px;border-radius:50%;margin-left:${i ? -12 : 0}px;border:2px solid #1A1A1A">`).join('')}<span style="margin-left:12px;font-size:26px">${DATA.assets}+</span></span>` },
+    { a: 'More', b: 'chains', mid: `<span class="pill" style="padding:8px 14px;gap:0">${['1', '8453', '4663', '1151111081099710', '56'].map((c, i) => `<img src="${PUB}/logos/chains/${c}.svg" style="width:44px;height:44px;border-radius:50%;margin-left:${i ? -12 : 0}px;border:2px solid #1A1A1A">`).join('')}<span style="margin-left:12px;font-size:26px">70</span></span>` },
+    { a: 'Fewer', b: 'steps', mid: `<span class="pill" style="background:var(--lime);color:#052;font-size:26px;font-weight:600">1 signature</span>` },
+  ].map((b, i) => add(s6, `<div class="abs serif" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px;font-size:150px;white-space:nowrap"><span>${b.a}</span>${b.mid}<span style="color:var(--lime)">${b.b}</span></div>`))
+
+  // 7. Product cards in space with a lime path, like a route being drawn.
+  const s7 = add(stage, `<div class="scene" style="perspective:2600px"></div>`)
+  const path = add(s7, `<svg class="line" viewBox="0 0 1920 1080"><path id="rt" d="M-100 900 C 400 700, 700 1000, 1000 620 S 1500 200, 2020 150" fill="none" stroke="#C2EA8A" stroke-width="3" stroke-linecap="round" style="filter:drop-shadow(0 0 12px rgba(194,234,138,.8))"/></svg>`)
+  const rt = path.querySelector('#rt'); const rtLen = 3200
+  rt.style.strokeDasharray = rtLen
+  const winB = add(s7, `<div class="win" style="left:1080px;top:120px;width:760px;height:520px"><div class="bar"><i></i><i></i><i></i></div><div class="view" style="height:482px"><img src="shots/discover.png"></div></div>`)
+  const winC = add(s7, `<div class="win" style="left:120px;top:440px;width:760px;height:520px"><div class="bar"><i></i><i></i><i></i></div><div class="view" style="height:482px"><img src="shots/lend.png"></div></div>`)
+  const winA = add(s7, `<div class="win" style="left:560px;top:200px;width:820px;height:600px"><div class="bar"><i></i><i></i><i></i></div><div class="view" style="height:562px"><img src="shots/baskets.png"></div></div>`)
+  const imgA = winA.querySelector('img'), imgB = winB.querySelector('img'), imgC = winC.querySelector('img')
+  const cap7 = add(s7, `<div class="abs" style="left:0;right:0;top:960px;text-align:center;font-size:34px;font-weight:500;color:var(--soft)"><span style="color:#fff;font-weight:600">Baskets.</span> <span style="color:#fff;font-weight:600">Lending.</span> <span style="color:#fff;font-weight:600">Bridging.</span> All in one place.</div>`)
+
+  // 8. End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Trade real-world assets onchain.</div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:ui-monospace,Menlo,monospace">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+
+  // Film grain, vignette, fades.
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. Introducing (0-1.6), name + ring (1.6-5.5)
+    show(s1, t < 6.2)
+    wipe(introChars, spring(t - 0.3, 0.9), { out: clamp(spring(t - 1.5, 0.35)) })
+    const pn = spring(t - 1.75, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 5.4, 0.5))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 2.6, 0.9), { stagger: 0.02, out: clamp(spring(t - 5.3, 0.4)) })
+    const rin = spring(t - 1.9, 0.9), rout = clamp(spring(t - 5.0, 0.7))
+    const R = lerp(0, 760, rin) + rout * 1200
+    ring.forEach((el, i) => {
+      const a = (i / ring.length) * Math.PI * 2 + (t - 1.9) * 0.55
+      const z = Math.sin(a) // front when positive
+      const x = 960 + Math.cos(a) * R, y = 520 + z * R * 0.2
+      const sc = (0.85 + 0.35 * z) * lerp(0.4, 1, rin) * (1 + rout * 2.5)
+      el.style.transform = `translate3d(${x - 960}px, ${y - 540}px, 0) scale(${sc.toFixed(3)})`
+      el.style.left = '960px'; el.style.top = '540px'
+      el.style.opacity = clamp(rin * 1.5) * (0.5 + 0.5 * (z + 1) / 2) * (1 - rout)
+      el.style.filter = `blur(${((1 - z) * 1.4).toFixed(2)}px)`
+      el.style.zIndex = 1
+    })
+    nameEl.style.zIndex = 3
+
+    // 2. Kinetic stack (6.0-11.0)
+    show(s2, t > 5.8 && t < 11.6)
+    const out2 = clamp(spring(t - 10.9, 0.5)); sceneOut(s2, out2)
+    const pt = spring(t - 6.0, 0.7); mat(tradeEl, pt, { x: -60 * (1 - pt), s: 0, blur: 16 })
+    const STEP = [6.15, 7.35, 8.55, 9.75]
+    const LH = 165
+    words.forEach((w, i) => {
+      const sIn = spring(t - STEP[i], 0.55)
+      const sNext = i + 1 < STEP.length ? spring(t - STEP[i + 1], 0.55) : 0
+      const nAfter = STEP.slice(i + 1).reduce((n, st) => n + clamp(spring(t - st, 0.55)), 0) // how many lines it has been pushed up
+      const y = (1 - sIn) * LH - nAfter * LH
+      w.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`
+      const cur = sIn * (1 - sNext)
+      w.style.opacity = t < STEP[i] ? 0 : 0.22 + 0.78 * cur
+      w.style.filter = `blur(${((1 - sIn) * 14).toFixed(2)}px)`
+      w.style.color = cur > 0.5 ? 'var(--lime)' : 'rgba(255,255,255,.5)'
+    })
+    fly.forEach((set, k) => set.forEach((f, j) => {
+      const t0 = STEP[k] - 0.15 + j * 0.06, life = 1.6
+      const p = clamp((t - t0) / life)
+      const on = p > 0 && p < 1
+      f.el.style.opacity = on ? Math.sin(p * Math.PI) * 0.9 : 0
+      const drift = (p - 0.5) * 240 * f.dir
+      f.el.style.transform = `translate3d(${(f.x + drift).toFixed(1)}px, ${(f.y - p * 120).toFixed(1)}px, 0) scale(${(f.s * (0.7 + 0.6 * p)).toFixed(3)}) rotate(${(f.rot * (p - 0.5)).toFixed(1)}deg)`
+      f.el.style.filter = f.s < 0.85 ? 'blur(2px)' : 'none'
+    }))
+
+    // 3. Field + "And more." (11.2-14.0)
+    show(s3, t > 11.0 && t < 14.6)
+    const out3 = clamp(spring(t - 13.9, 0.5)); sceneOut(s3, out3)
+    const cam = (t - 11.0) * 0.55
+    field.forEach((f) => {
+      const dz = f.z - cam
+      if (dz < 0.08) { f.el.style.opacity = 0; return }
+      const k = 0.85 / dz
+      const sx = 960 + f.x * 960 * k, sy = 540 + f.y * 540 * k
+      f.el.style.transform = `translate3d(${(sx - 960).toFixed(1)}px, ${(sy - 540).toFixed(1)}px, 0) scale(${(k * 1.1).toFixed(3)})`
+      f.el.style.left = '960px'; f.el.style.top = '540px'
+      f.el.style.opacity = clamp((dz - 0.08) * 4) * clamp(spring(t - 11.1, 0.6)) * (dz > 2.4 ? clamp((3.6 - dz) / 1.2) : 1)
+      f.el.style.filter = dz < 0.5 ? `blur(${((0.5 - dz) * 10).toFixed(1)}px)` : dz > 2.2 ? 'blur(1.5px)' : 'none'
+    })
+    wipe(moreChars, spring(t - 11.6, 0.9), { stagger: 0.06, dx: 30 })
+
+    // 4. One logo to the market (14.2-19.0)
+    show(s4, t > 14.0 && t < 19.6)
+    const out4 = clamp(spring(t - 18.9, 0.5)); sceneOut(s4, out4)
+    const ph = spring(t - 14.25, 0.7)
+    const toRow = clamp(spring(t - 15.2, 0.7))
+    // the hero logo shrinks and slides into the first row's slot
+    const hx = lerp(0, 510 - 960 + 22 + 24, toRow), hy = lerp(0, 205 + 42 - 540, toRow), hs = lerp(1, 48 / 220, toRow)
+    heroLogo.style.transform = `translate3d(${hx.toFixed(1)}px, ${hy.toFixed(1)}px, 0) scale(${hs.toFixed(4)})`
+    heroLogo.style.opacity = clamp(ph) * (1 - clamp((toRow - 0.97) * 40))
+    heroLogo.style.filter = ph >= 0.999 ? 'none' : `blur(${((1 - ph) * 20).toFixed(1)}px)`
+    const toWin = clamp(spring(t - 17.0, 0.8))
+    rows.forEach((r, i) => {
+      const p = spring(t - 15.25 - i * 0.09, 0.6)
+      mat(r, p * (1 - toWin), { y: 60 * (1 - p) - toWin * 120, s: 0.06, blur: 10 })
+      if (i === 0) r.querySelector('img').style.opacity = toRow > 0.97 ? 1 : 0
+    })
+    winAssets.style.opacity = toWin
+    winAssets.style.transform = `translate3d(0, ${((1 - toWin) * 200).toFixed(1)}px, ${(-400 * (1 - toWin)).toFixed(0)}px) rotateX(${lerp(24, 8, toWin).toFixed(2)}deg)`
+    imgAssets.style.transform = `translate3d(0, ${(-easeInOut(clamp((t - 17.1) / 1.9)) * 1150).toFixed(1)}px, 0)`
+    mat(cap4, spring(t - 17.5, 0.7), { y: 20 * (1 - spring(t - 17.5, 0.7)) })
+
+    // 5. Every issuer / every chain / one order (19.2-25.5)
+    show(s5, t > 19.0 && t < 26.2)
+    const out5 = clamp(spring(t - 25.5, 0.5)); sceneOut(s5, out5)
+    const H5 = [[19.3, 'Every issuer.'], [21.3, 'Every chain.'], [23.3, 'One order.']]
+    let cur5 = H5[0]
+    for (const h of H5) if (t >= h[0]) cur5 = h
+    if (h5.dataset.k !== cur5[1]) { h5.dataset.k = cur5[1]; h5._chars = letters(h5.firstElementChild, cur5[1]) }
+    wipe(h5._chars, spring(t - cur5[0], 0.8), { stagger: 0.05, dx: 26 })
+    issuers.forEach((el, i) => { const p = spring(t - 19.45 - i * 0.07, 0.55, 0.72); const off = clamp(spring(t - 21.2, 0.45)); el.style.opacity = clamp(p * 2) * (1 - off); el.style.transform = `scale(${(p * (1 - 0.15 * off)).toFixed(3)}) translate3d(0, ${((1 - p) * 40).toFixed(1)}px, 0)` })
+    chains.forEach((el, i) => { const p = spring(t - 21.45 - i * 0.07, 0.55, 0.72); const off = clamp(spring(t - 23.2, 0.45)); el.style.opacity = clamp(p * 2) * (1 - off); el.style.transform = `scale(${(p * (1 - 0.15 * off)).toFixed(3)}) translate3d(0, ${((1 - p) * 40).toFixed(1)}px, 0)` })
+    const ps = spring(t - 23.45, 0.7); mat(swapWin, ps, { y: 80 * (1 - ps), s: 0.06, blur: 16 })
+    const pto = spring(t - 24.4, 0.5, 0.75); toast.style.opacity = clamp(pto * 3); toast.style.transform = `translate3d(${((1 - pto) * 40).toFixed(1)}px, 0, 0) scale(${(0.9 + 0.1 * pto).toFixed(3)})`
+    mat(oneLine, spring(t - 24.6, 0.7), { y: 20 * (1 - spring(t - 24.6, 0.7)) })
+
+    // 6. Benefits (25.8-28.8)
+    show(s6, t > 25.6 && t < 29.2)
+    const B6 = [25.85, 26.85, 27.85]
+    ben.forEach((el, i) => {
+      const pin = spring(t - B6[i], 0.6), pout = i < 2 ? clamp(spring(t - B6[i + 1], 0.4)) : clamp(spring(t - 28.7, 0.5))
+      mat(el, pin * (1 - pout), { y: 70 * (1 - pin) - 70 * pout, s: 0.05, blur: 18 })
+    })
+
+    // 7. Product cards (28.8-31.6)
+    show(s7, t > 28.6 && t < 32.2)
+    const out7 = clamp(spring(t - 31.5, 0.5)); sceneOut(s7, out7)
+    rt.style.strokeDashoffset = rtLen * (1 - easeInOut(clamp((t - 28.8) / 2.4)))
+    const pa = spring(t - 28.95, 0.9), pb = spring(t - 29.15, 0.9), pc = spring(t - 29.3, 0.9)
+    winA.style.opacity = clamp(pa); winA.style.transform = `translate3d(0, ${((1 - pa) * 180).toFixed(1)}px, 0) rotateY(${lerp(-22, -10, pa).toFixed(2)}deg) rotateX(${lerp(16, 6, pa).toFixed(2)}deg)`
+    winB.style.opacity = clamp(pb) * 0.85; winB.style.transform = `translate3d(0, ${((1 - pb) * 180).toFixed(1)}px, -300px) rotateY(${lerp(-22, -12, pb).toFixed(2)}deg) rotateX(${lerp(16, 6, pb).toFixed(2)}deg)`
+    winC.style.opacity = clamp(pc) * 0.85; winC.style.transform = `translate3d(0, ${((1 - pc) * 180).toFixed(1)}px, -300px) rotateY(${lerp(-22, -12, pc).toFixed(2)}deg) rotateX(${lerp(16, 6, pc).toFixed(2)}deg)`
+    const sc7 = easeInOut(clamp((t - 29.2) / 2.6))
+    imgA.style.transform = `translate3d(0, ${(-sc7 * 1100).toFixed(1)}px, 0)`; imgB.style.transform = `translate3d(0, ${(-sc7 * 600).toFixed(1)}px, 0)`; imgC.style.transform = `translate3d(0, ${(-sc7 * 500).toFixed(1)}px, 0)`
+    mat(cap7, spring(t - 29.6, 0.7), { y: 20 * (1 - spring(t - 29.6, 0.7)) })
+
+    // 8. End card (31.6-33)
+    show(s8, t > 31.4)
+    glow.style.opacity = t > 31.4 ? 1 : 0.5 + 0.5 * Math.sin(t * 0.8)
+    const pe = spring(t - 31.7, 0.8); mat(endLogo, pe, { y: 50 * (1 - pe), s: 0.04, blur: 20 })
+    mat(endTag, spring(t - 32.1, 0.7), { y: 20 * (1 - spring(t - 32.1, 0.7)) })
+    mat(endUrl, spring(t - 32.2, 0.7), { y: 20 * (1 - spring(t - 32.2, 0.7)) })
+    mat(endCa, spring(t - 32.45, 0.7), { y: 20 * (1 - spring(t - 32.45, 0.7)) })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+  window.DURATION = DURATION
+  await document.fonts.ready
+  await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+  window.renderAt(0)
+  window.__ready = true
+  if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+}
+build()
+</script>
+</body>
+</html>

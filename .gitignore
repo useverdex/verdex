@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+.DS_Store
+npm-debug.log*
+dist-preview
+preview-shots
+
+# Rendered promo video (large binary; rebuild with node promo/render.mjs)
+promo/*.mp4
+promo/phone/
+promo/.segments-*
+promo/showcase/

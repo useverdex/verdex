@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex X banner</title>
+<style>
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+html, body { margin: 0; background: #000; }
+#banner { position: relative; width: 1500px; height: 500px; overflow: hidden; background: #000; }
+.abs { position: absolute; }
+#land { left: -2%; width: 104%; bottom: 0; height: 500px; object-fit: cover; object-position: center 100%; }
+#fade { inset: 0; background: linear-gradient(180deg, #000 0%, #000 46%, rgba(0,0,0,.55) 62%, rgba(0,0,0,0) 80%, rgba(0,0,0,.2) 100%); }
+#glow { left: 50%; top: 46%; width: 900px; height: 420px; margin: -210px 0 0 -450px; background: radial-gradient(closest-side, rgba(194,234,138,.10), rgba(194,234,138,0)); }
+#name { left: 0; right: 0; top: 0; height: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; margin-top: -30px; }
+#phrase { font-family: 'LT Remark', serif; font-size: 104px; line-height: 1; letter-spacing: -0.035em; color: #fff; white-space: nowrap; }
+#phrase em { font-style: normal; color: #C2EA8A; }
+#brand { display: none; align-items: center; gap: 10px; }
+#brand.on { display: flex; }
+#brand svg { width: 26px; height: 26px; display: block; }
+#brand span { font-family: 'LT Remark', serif; font-size: 40px; line-height: 1; letter-spacing: -0.02em; color: rgba(255,255,255,.85); }
+.logo { position: absolute; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+.far { opacity: .6; filter: blur(1.4px); }
+.mid { opacity: .75; filter: blur(.4px); }
+.near { opacity: .95; }
+/* quiet: smaller, fainter logos for a more minimal banner */
+.quiet .logo { transform: scale(.72); }
+.quiet .near { opacity: .8; }
+.quiet .mid { opacity: .6; }
+.quiet .far { opacity: .45; }
+#vignette { inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,.55) 100%); }
+</style>
+</head>
+<body>
+<div id="banner">
+  <img id="land" class="abs" src="../public/design/particles.webp" alt="">
+  <div id="fade" class="abs"></div>
+  <div id="glow" class="abs"></div>
+  <div id="logos"></div>
+  <div id="name" class="abs">
+    <div id="phrase"></div>
+    <div id="brand"><svg viewBox="0 0 100 100" fill="#C2EA8A"><path id="mark"/></svg><span>Verdex</span></div>
+  </div>
+  <div id="vignette" class="abs"></div>
+</div>
+<script type="module">
+// A few real asset logos floating around the name: small, sparse, with depth, never louder than the name.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+document.getElementById('mark').setAttribute('d', MARK_PATH)
+const q = new URLSearchParams(location.search)
+const phrase = q.get('phrase') ?? 'Everything *tokenized*.'
+document.getElementById('phrase').style.fontSize = (q.get('size') ?? '52') + 'px'
+if (q.get('quiet') !== '0') document.getElementById('banner').classList.add('quiet')
+document.getElementById('phrase').innerHTML = phrase.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+if (q.get('name') === '1') document.getElementById('brand').classList.add('on')
+const L = (h) => `../public/img/logos/${h}.webp`
+const LOGOS = [
+  // the phrase spans roughly x 260..1240, y 160..260: logos keep out of that band
+  { src: L('88a0e630'), x: 205, y: 112, s: 58, d: 'near' },  // NVDA
+  { src: L('4d76db13'), x: 368, y: 60, s: 30, d: 'far' },    // GOOGL
+  { src: L('2a11a6bd'), x: 640, y: 58, s: 34, d: 'mid' },    // AAPL
+  { src: L('941acb6b'), x: 88, y: 226, s: 40, d: 'mid' },    // XAUT (gold)
+  { src: L('c025dcd9'), x: 250, y: 314, s: 28, d: 'far' },   // SPY
+  { src: L('e8ca24f9'), x: 1088, y: 92, s: 44, d: 'mid' },   // TSLA
+  { src: L('39c11fed'), x: 1222, y: 48, s: 28, d: 'far' },   // AMZN
+  { src: L('0b00cc62'), x: 1320, y: 162, s: 58, d: 'near' }, // META
+  { src: L('7869a6ce'), x: 1250, y: 306, s: 30, d: 'far' },  // PAXG (gold)
+  { src: L('1efa740a'), x: 1428, y: 300, s: 34, d: 'mid' },  // COIN
+]
+const host = document.getElementById('logos')
+for (const l of LOGOS) {
+  const img = document.createElement('img')
+  img.className = `logo ${l.d}`
+  img.src = l.src
+  Object.assign(img.style, { left: `${l.x - l.s / 2}px`, top: `${l.y - l.s / 2}px`, width: `${l.s}px`, height: `${l.s}px` })
+  host.appendChild(img)
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.__ready = true
+</script>
+</body>
+</html>

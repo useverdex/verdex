@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex tweet cards</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --lime: #C2EA8A; --chip: #1A1A1A; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); }
+html, body { margin: 0; background: #000; }
+#card { position: relative; width: 1600px; height: 900px; overflow: hidden; background: #050505; color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: 1; }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+#land { left: -2%; width: 104%; bottom: 0; height: 900px; object-fit: cover; object-position: center 100%; }
+#fade { inset: 0; background: linear-gradient(180deg, #050505 0%, #050505 44%, rgba(5,5,5,.6) 62%, rgba(5,5,5,.15) 82%, rgba(5,5,5,.35) 100%); }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+#glow { left: 50%; top: 45%; width: 1000px; height: 500px; margin: -250px 0 0 -500px; background: radial-gradient(closest-side, rgba(194,234,138,.12), rgba(194,234,138,0)); }
+#wrap { left: 0; right: 0; top: 0; height: 900px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+.pill { display: inline-flex; align-items: center; gap: 14px; padding: 14px 24px; border-radius: 16px; background: var(--chip); border: 1px solid rgba(255,255,255,.08); font-size: 26px; font-weight: 500; }
+.pill .l { font-size: 18px; font-weight: 600; letter-spacing: .08em; color: var(--lime); }
+.foot { position: absolute; left: 0; right: 0; bottom: 44px; display: flex; justify-content: center; align-items: center; gap: 14px; font-size: 22px; color: var(--muted); }
+.foot svg { width: 26px; height: 26px; }
+.row { width: 900px; height: 92px; display: flex; align-items: center; gap: 22px; padding: 0 26px; box-sizing: border-box; border-radius: 18px; background: #111; border: 1px solid rgba(255,255,255,.07); }
+.row img.a { width: 52px; height: 52px; border-radius: 50%; }
+.row img.c { width: 32px; height: 32px; border-radius: 50%; margin-left: auto; }
+.row b { font-weight: 600; font-size: 28px; }
+.row .nm { font-size: 21px; color: var(--muted); }
+#vignette { inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,.55) 100%); }
+</style>
+</head>
+<body>
+<div id="card"></div>
+<script type="module">
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = `<svg viewBox="0 0 100 100" fill="#C2EA8A" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const CA = '0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43'
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (c) => `${PUB}/logos/chains/${c}.svg`
+const card = document.getElementById('card')
+const q = new URLSearchParams(location.search)
+const kind = q.get('card') ?? 'numbers'
+const land = kind === 'quote' || kind === 'numbers'
+card.innerHTML = (land ? `<img id="land" class="abs" src="${PUB}/design/particles.webp" alt=""><div id="fade" class="abs"></div>` : `<div class="grid"></div>`) + `<div id="glow" class="abs"></div><div id="wrap" class="abs"></div><div class="foot"><span style="display:inline-flex">${MARK}</span><span>Verdex</span><span style="opacity:.5">·</span><span>useverdex.xyz</span></div><div id="vignette" class="abs"></div>`
+const wrap = document.getElementById('wrap')
+const CARDS = {
+  numbers: () => {
+    wrap.style.marginTop = '-40px'
+    wrap.innerHTML = `<div style="display:flex;gap:70px">${[[226, 'real-world assets'], [12, 'issuers'], [70, 'chains'], [1, 'order']].map(([n, l], i) => `<div style="text-align:center;min-width:260px"><div class="serif" style="font-size:170px;color:${i === 3 ? 'var(--lime)' : '#fff'}">${n}</div><div style="font-size:28px;font-weight:500;color:var(--soft);margin-top:8px">${l}</div></div>`).join('')}</div><div class="serif" style="font-size:72px;margin-top:20px">Wall Street, onchain.</div>`
+  },
+  quote: () => {
+    wrap.style.marginTop = '-30px'
+    wrap.innerHTML = `<div class="serif" style="font-size:104px;text-align:center;line-height:1.05;max-width:1300px">You shouldn't need <span style="color:var(--lime)">six apps</span><br>to buy one stock.</div><div style="font-size:30px;font-weight:500;color:var(--soft);margin-top:10px">Every issuer, every chain, one marketplace.</div>`
+  },
+  nvda: () => {
+    wrap.style.gap = '16px'
+    wrap.style.marginTop = '-20px'
+    const rows = [['NVDA', 'Robinhood Chain', '4663'], ['NVDAon', 'Ethereum', '1'], ['NVDAx', 'Solana', '1151111081099710'], ['NVDAB', 'BNB Chain', '56']]
+    wrap.innerHTML = rows.map(([s, c, id]) => `<div class="row"><img class="a" src="${L('88a0e630')}"><b>${s}</b><span class="nm">on ${c}</span><img class="c" src="${CH(id)}"></div>`).join('') + `<div class="serif" style="font-size:84px;margin-top:22px">One search.</div>`
+  },
+  ca: () => {
+    wrap.style.marginTop = '-30px'
+    wrap.innerHTML = `<div style="display:flex;align-items:center;gap:22px"><span style="width:96px;height:96px;display:inline-flex">${MARK}</span><span class="serif" style="font-size:150px">Verdex</span></div><div style="font-size:34px;font-weight:500;color:var(--soft)">Everything tokenized. One marketplace.</div><div class="pill" style="font-size:30px;padding:20px 28px;margin-top:8px"><span class="l">CA</span><span class="mono">${CA}</span></div>`
+    document.querySelector('.foot').remove()
+  },
+}
+CARDS[kind]()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.__ready = true
+</script>
+</body>
+</html>

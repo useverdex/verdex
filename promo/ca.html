@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex CA card</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --lime: #C2EA8A; --chip: #1A1A1A; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); }
+html, body { margin: 0; background: #000; }
+#card { position: relative; width: 1600px; height: 900px; overflow: hidden; background: #050505; color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+#land { left: -2%; width: 104%; bottom: 0; height: 900px; object-fit: cover; object-position: center 100%; }
+#fade { inset: 0; background: linear-gradient(180deg, #050505 0%, #050505 44%, rgba(5,5,5,.6) 62%, rgba(5,5,5,.15) 82%, rgba(5,5,5,.35) 100%); }
+#glow { left: 50%; top: 40%; width: 1000px; height: 500px; margin: -250px 0 0 -500px; background: radial-gradient(closest-side, rgba(194,234,138,.12), rgba(194,234,138,0)); }
+#wrap { left: 0; right: 0; top: 0; height: 900px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; margin-top: -40px; }
+#brand { display: flex; align-items: center; gap: 22px; }
+#brand svg { width: 96px; height: 96px; display: block; }
+#brand span { font-family: 'LT Remark', serif; font-size: 150px; line-height: 1; letter-spacing: -0.035em; }
+#tag { font-size: 34px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+#ca { display: inline-flex; align-items: center; gap: 18px; padding: 20px 28px; border-radius: 18px; background: var(--chip); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); margin-top: 8px; }
+#ca .l { font-size: 20px; font-weight: 600; letter-spacing: .08em; color: var(--lime); }
+#ca .a { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 30px; letter-spacing: -0.01em; }
+#chain { display: inline-flex; align-items: center; gap: 10px; font-size: 22px; color: var(--muted); }
+#chain img { width: 26px; height: 26px; border-radius: 50%; }
+#vignette { inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,.55) 100%); }
+</style>
+</head>
+<body>
+<div id="card">
+  <img id="land" class="abs" src="../public/design/particles.webp" alt="">
+  <div id="fade" class="abs"></div>
+  <div id="glow" class="abs"></div>
+  <div id="wrap" class="abs">
+    <div id="brand"><svg viewBox="0 0 100 100" fill="#C2EA8A"><path id="mark"/></svg><span>Verdex</span></div>
+    <div id="tag">Everything tokenized. One marketplace.</div>
+    <div id="ca"><span class="l">CA</span><span class="a" id="addr"></span></div>
+    <div id="chain"><img id="chainlogo" alt=""><span id="chainname"></span></div>
+  </div>
+  <div id="vignette" class="abs"></div>
+</div>
+<script type="module">
+import { MARK_PATH } from '../src/components/logoPath.ts'
+document.getElementById('mark').setAttribute('d', MARK_PATH)
+const q = new URLSearchParams(location.search)
+document.getElementById('addr').textContent = q.get('ca') ?? '0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43'
+const chain = q.get('chain') ?? ''
+const logo = q.get('chainlogo') ?? ''
+document.getElementById('chain').style.display = chain ? '' : 'none'
+document.getElementById('chainname').textContent = chain
+if (logo) document.getElementById('chainlogo').src = `../public/logos/chains/${logo}.svg`; else document.getElementById('chainlogo').remove()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.__ready = true
+</script>
+</body>
+</html>

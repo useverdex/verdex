@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex roadmap</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 8px; background: rgba(194,234,138,.14); color: var(--lime); font-size: 22px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.head { position: absolute; left: 120px; right: 120px; will-change: transform, opacity, filter; }
+.head h1 { margin: 14px 0 0; font-size: 104px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); max-width: 1100px; }
+.tiles { position: absolute; left: 120px; right: 120px; top: 430px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.tile { position: relative; height: 210px; padding: 28px 30px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); will-change: transform, opacity; }
+.tile .ic { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); }
+.tile .ic svg { width: 26px; height: 26px; }
+.tile b { display: block; margin-top: 24px; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+.tile span { display: block; margin-top: 6px; font-size: 20px; color: var(--muted); }
+.tile .ok { position: absolute; right: 26px; top: 26px; width: 40px; height: 40px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 22px; will-change: transform, opacity; }
+.cards { position: absolute; left: 120px; right: 120px; top: 400px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.card { position: relative; min-height: 470px; padding: 36px; box-sizing: border-box; border-radius: 26px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); overflow: hidden; will-change: transform, opacity, filter; }
+.card .n { font-size: 20px; font-weight: 600; letter-spacing: .08em; color: var(--lime); }
+.card .ic { margin-top: 40px; width: 72px; height: 72px; border-radius: 20px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: #fff; }
+.card .ic svg { width: 36px; height: 36px; }
+.card b { display: block; margin-top: 34px; font-size: 44px; font-weight: 400; font-family: 'LT Remark', serif; letter-spacing: -0.02em; line-height: 1.05; }
+.card span { display: block; margin-top: 16px; font-size: 22px; line-height: 1.4; color: var(--soft); }
+.card .glow { position: absolute; left: 50%; bottom: -120px; width: 500px; height: 300px; margin-left: -250px; background: radial-gradient(closest-side, rgba(194,234,138,.18), rgba(194,234,138,0)); }
+.lg { position: absolute; border-radius: 50%; object-fit: cover; will-change: transform, opacity, filter; background: #111; }
+.rail { position: absolute; left: 160px; right: 160px; bottom: 60px; height: 2px; background: rgba(255,255,255,.1); }
+.rail .fill { position: absolute; left: 0; top: 0; height: 2px; width: 0; background: var(--lime); }
+.node { position: absolute; top: -7px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: #1c1c1c; border: 2px solid rgba(255,255,255,.18); box-sizing: border-box; will-change: transform, background; }
+.node.on { background: var(--lime); border-color: var(--lime); }
+.node span { position: absolute; top: 26px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 16px; font-weight: 600; letter-spacing: .1em; color: var(--muted); }
+.node.on span { color: #fff; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Roadmap: what is live, what is next, what comes after, and the token. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const DURATION = 40
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const rnd = (seed) => () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const I = {
+  grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  swap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M13 3l4 4-4 4M20 17H7M11 13l-4 4 4 4"/></svg>',
+  layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5M3 17l9 5 9-5"/></svg>',
+  hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="6" r="3"/><path d="M3 14h3l4 3h5a2 2 0 0 0 0-4h-3"/><path d="M3 20h3l5 1c2 0 4-1 6-3l4-4"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg>',
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  drop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>',
+  pct: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg>',
+  brief: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>',
+  vault: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="4"/><path d="M12 10v2l1.5 1.5M3 9h2M3 15h2"/></svg>',
+  rocket: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15l4 4M14 4c3 0 6 3 6 6-2 4-5 7-9 9l-6-6c2-4 5-7 9-9z"/><circle cx="14" cy="10" r="1.5"/><path d="M4 20l3-3"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+}
+const LOGOS = ['88a0e630', '2a11a6bd', 'e8ca24f9', '0b00cc62', '4d76db13', '39c11fed', '9e189df1', '1efa740a', 'c025dcd9', '941acb6b', 'f2f095b3', '0a5c861d', '5c6daea9', 'fa2b34f1', '8fbe91e2', '1da01b55', '454862a2', '7869a6ce', 'f52ab302', '34514ffd', '1b790bc1', '48f06241']
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. Opening lines.
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const l1 = add(s1, `<div class="abs serif" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:132px;text-align:center"><div></div></div>`)
+  const l1c = letters(l1.firstElementChild, 'Wall Street is onchain.')
+  const l2 = add(s1, `<div class="abs serif" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:132px;text-align:center;color:var(--lime)"><div></div></div>`)
+  const l2c = letters(l2.firstElementChild, 'This is what comes next.')
+
+  // 2. Live today.
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:150px"><div class="tag">Live today</div><h1 class="serif">Already in your wallet.</h1></div>`)
+  const NOW = [[I.grid, 'Marketplace', '226 assets from 12 issuers'], [I.swap, 'Swap and Bridge', '70 chains, one order'], [I.layers, 'Baskets', '27 baskets, one token each'], [I.hand, 'Lend and Borrow', 'Earn on stocks, borrow against them'], [I.phone, 'Mobile app', 'Full screen, from your home screen'], [I.cal, 'Auto-Invest', 'Recurring buys, one tap each']]
+  const tilesEl = add(s2, `<div class="tiles"></div>`)
+  const tiles = NOW.map(([ic, b, s]) => add(tilesEl, `<div class="tile"><div class="ic">${ic}</div><b>${b}</b><span>${s}</span><div class="ok">✓</div></div>`))
+
+  // 3. Next, 4. Then: three cards each.
+  const mkCards = (parent, items) => items.map(([n, ic, b, s], i) => add(parent, `<div class="card"><div class="n">${n}</div><div class="ic">${ic}</div><b>${b}</b><span>${s}</span><div class="glow"></div></div>`))
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:120px"><div class="tag">Next</div><h1 class="serif">Set it and forget it.</h1></div>`)
+  const cards3 = mkCards(add(s3, `<div class="cards"></div>`), [['01', I.lock, 'Auto-Invest runs without you', 'Sign once with session permissions. Buys fire on schedule, wallet closed.'], ['02', I.drop, 'Verdex Pools', 'Liquidity for tokenized stocks, rewarded in VERDEX.'], ['03', I.pct, 'Asset Yield', 'Idle stocks earn while you hold them.']])
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:120px"><div class="tag">Then</div><h1 class="serif">Let the pros run it.</h1></div>`)
+  const cards4 = mkCards(add(s4, `<div class="cards"></div>`), [['04', I.brief, 'Asset Management', 'Portfolios run by managers you choose, held in your own wallet.'], ['05', I.vault, 'Automated Vaults', 'Strategies that rebalance themselves.'], ['06', I.rocket, 'Basket-Backed Token Launch', 'Launch a token backed by a basket of real assets.']])
+
+  // 5. Beyond: private markets, with logos flying past.
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const flyHost = add(s5, `<div class="abs" style="inset:0;z-index:1"></div>`)
+  const R = rnd(11)
+  const fly = LOGOS.map((h) => ({ el: add(flyHost, `<img class="lg" src="${L(h)}" style="width:110px;height:110px;margin:-55px 0 0 -55px;left:960px;top:540px">`), x: (R() - 0.5) * 1.6, y: (R() - 0.5) * 1.1, z: R() }))
+  add(s5, `<div class="abs" style="left:50%;top:50%;width:1500px;height:800px;margin:-400px 0 0 -750px;z-index:2;background:radial-gradient(closest-side,rgba(5,5,5,.92),rgba(5,5,5,0))"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:0;height:1080px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;left:0;right:0;z-index:3"><div class="tag">Beyond</div><h1 class="serif" style="font-size:120px">Private markets,<br>one search away.</h1><p style="margin-top:22px">Pre-IPO shares, private credit, real estate. Every issuer, every chain, one marketplace.</p></div>`)
+
+  // 6. VERDEX.
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const tokenTile = add(s6, `<div class="abs" style="left:50%;top:190px;width:150px;height:150px;margin-left:-75px;border-radius:36px;background:#000;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;box-shadow:0 30px 80px rgba(0,0,0,.7);will-change:transform,opacity,filter"><span style="width:86px;height:86px;display:inline-flex">${MARK()}</span></div>`)
+  const h6 = add(s6, `<div class="head" style="top:380px;text-align:center;left:0;right:0"><div class="tag">Hold VERDEX</div><h1 class="serif">Every step, cheaper for holders.</h1><p style="margin:22px auto 0">Zero Verdex fee on Auto-Invest today. Swaps, baskets and pools next.</p></div>`)
+  const ca6 = add(s6, `<div class="abs" style="left:0;right:0;top:820px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:ui-monospace,Menlo,monospace">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  // 7. End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Everything tokenized. One marketplace.</div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:ui-monospace,Menlo,monospace">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  // Rail with the four stops, visible through the middle of the film.
+  const rail = add(stage, `<div class="rail"><div class="fill"></div></div>`)
+  const railFill = rail.firstElementChild
+  const STOPS = ['Live', 'Next', 'Then', 'Beyond']
+  const nodes = STOPS.map((s, i) => add(rail, `<div class="node" style="left:${(i / 3) * 100}%"><span>${s.toUpperCase()}</span></div>`))
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  const headIn = (el, t0, t, out) => { const p = spring(t - t0, 0.9); mat(el, p * (1 - out), { y: 26 * (1 - p), s: 0.02, blur: 16 }) }
+  const NEXT_AT = 10.4, THEN_AT = 18.6, BEYOND_AT = 26.4, TOKEN_AT = 32.4, END_AT = 36.6
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. Lines (0.3-3.6)
+    show(s1, t < 4.2)
+    wipe(l1c, spring(t - 0.3, 0.8), { stagger: 0.03, out: clamp(spring(t - 1.9, 0.35)) })
+    wipe(l2c, spring(t - 2.1, 0.8), { stagger: 0.03, out: clamp(spring(t - 3.7, 0.35)) })
+
+    // 2. Live today (3.9-10.2): tiles thrown in with bounce, checks land after.
+    show(s2, t >= 3.8 && t < NEXT_AT + 0.4)
+    const o2 = clamp(spring(t - (NEXT_AT - 0.35), 0.45))
+    headIn(h2, 3.9, t, o2)
+    tiles.forEach((el, i) => {
+      const at = 4.5 + i * 0.22
+      const p = spring(t - at, 0.55, 0.6)
+      el.style.opacity = clamp(p * 2) * (1 - o2)
+      el.style.transform = `translate3d(0, ${(1 - p) * 140 + o2 * 30}px, 0) scale(${lerp(0.9, 1, p).toFixed(3)})`
+      const ok = spring(t - at - 0.55, 0.4, 0.5)
+      const okEl = el.querySelector('.ok')
+      okEl.style.opacity = clamp(ok * 2)
+      okEl.style.transform = `scale(${lerp(0.2, 1, ok).toFixed(3)})`
+    })
+
+    // 3. Next (10.4-18.4), 4. Then (18.6-26.2)
+    const cardsIn = (scene, head, cards, t0, tEnd) => {
+      show(scene, t >= t0 - 0.1 && t < tEnd + 0.4)
+      const o = clamp(spring(t - (tEnd - 0.35), 0.45))
+      headIn(head, t0, t, o)
+      cards.forEach((el, i) => {
+        const p = spring(t - t0 - 0.35 - i * 0.28, 0.9)
+        mat(el, p * (1 - o), { y: 60 * (1 - p) + 30 * o, s: 0.05, blur: 18 })
+      })
+    }
+    cardsIn(s3, h3, cards3, NEXT_AT, THEN_AT)
+    cardsIn(s4, h4, cards4, THEN_AT, BEYOND_AT)
+
+    // 5. Beyond (26.4-32.2): logos fly toward the camera while the line holds.
+    show(s5, t >= BEYOND_AT - 0.1 && t < TOKEN_AT + 0.4)
+    const o5 = clamp(spring(t - (TOKEN_AT - 0.35), 0.45))
+    headIn(h5, BEYOND_AT, t, o5)
+    fly.forEach((f) => {
+      const zz = ((f.z + (t - BEYOND_AT) * 0.16) % 1 + 1) % 1
+      const sc = lerp(0.2, 2.6, zz * zz)
+      const x = 960 + f.x * 1500 * sc * 0.6, y = 540 + f.y * 900 * sc * 0.6
+      f.el.style.transform = `translate3d(${(x - 960).toFixed(1)}px, ${(y - 540).toFixed(1)}px, 0) scale(${sc.toFixed(3)})`
+      f.el.style.opacity = clamp(zz * 3) * (1 - clamp((zz - 0.85) / 0.15)) * 0.42 * (1 - o5) * clamp(spring(t - BEYOND_AT, 0.8) * 2)
+      f.el.style.filter = `blur(${(Math.abs(zz - 0.55) * 6).toFixed(2)}px)`
+    })
+
+    // 6. VERDEX (32.4-36.4)
+    show(s6, t >= TOKEN_AT - 0.1 && t < END_AT + 0.4)
+    const o6 = clamp(spring(t - (END_AT - 0.35), 0.45))
+    const tk = spring(t - TOKEN_AT, 0.7, 0.62)
+    mat(tokenTile, clamp(tk * 1.5) * (1 - o6), { y: -40 * (1 - tk), s: 0.3, blur: 18 })
+    headIn(h6, TOKEN_AT + 0.3, t, o6)
+    const c6 = spring(t - TOKEN_AT - 1.0, 0.8)
+    mat(ca6, c6 * (1 - o6), { y: 20 * (1 - c6), s: 0.02 })
+
+    // Rail: stops light up as the film reaches them.
+    const railOn = t >= 3.9 && t < END_AT - 0.2
+    rail.style.opacity = railOn ? clamp(spring(t - 4.2, 0.8)) * (1 - clamp(spring(t - (END_AT - 0.6), 0.4))) : 0
+    const stops = [3.9, NEXT_AT, THEN_AT, BEYOND_AT]
+    let prog = 0
+    for (let i = 0; i < 3; i++) if (t >= stops[i]) prog = (i + clamp((t - stops[i]) / (stops[i + 1] - stops[i]))) / 3
+    railFill.style.width = `${(prog * 100).toFixed(2)}%`
+    nodes.forEach((n, i) => { const on = t >= stops[i]; n.classList.toggle('on', on); const p = spring(t - stops[i], 0.4, 0.55); n.style.transform = on ? `scale(${(1 + 0.5 * (1 - p)).toFixed(3)})` : 'scale(1)' })
+
+    // 7. End card (36.6-40)
+    show(s8, t >= END_AT - 0.2)
+    const e1 = spring(t - END_AT, 0.7), e2 = spring(t - END_AT - 0.35, 0.7), e3 = spring(t - END_AT - 0.6, 0.7), e4 = spring(t - END_AT - 0.8, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endCa, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

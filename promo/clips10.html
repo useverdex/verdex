@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex tweet clips, batch three</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.line { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.line .t { font-size: 112px; }
+.line .s { margin-top: 18px; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 26px; font-weight: 500; will-change: transform, opacity, filter; }
+.tag { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 8px; background: rgba(194,234,138,.14); color: var(--lime); font-size: 22px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.card { position: absolute; padding: 34px 36px; box-sizing: border-box; border-radius: 24px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.card b { display: block; font-family: 'LT Remark', serif; font-weight: 400; font-size: 46px; letter-spacing: -0.02em; line-height: 1.05; }
+.card span { display: block; margin-top: 14px; font-size: 22px; line-height: 1.4; color: var(--soft); }
+.card .ic { width: 64px; height: 64px; border-radius: 18px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); margin-bottom: 28px; }
+.card .ic svg { width: 32px; height: 32px; }
+.row { position: absolute; left: 50%; width: 1040px; margin-left: -520px; height: 86px; display: flex; align-items: center; gap: 20px; padding: 0 26px; box-sizing: border-box; border-radius: 18px; background: #111; border: 1px solid rgba(255,255,255,.07); will-change: transform, opacity, filter; }
+.row img.l { width: 46px; height: 46px; border-radius: 50%; }
+.row img.c { width: 26px; height: 26px; border-radius: 50%; }
+.row img.i { width: 26px; height: 26px; border-radius: 50%; }
+.row b { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; width: 150px; }
+.row .nm { font-size: 20px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex: 1; }
+.row .pr { font-size: 26px; font-weight: 500; letter-spacing: -0.01em; }
+.lg { position: absolute; border-radius: 50%; object-fit: cover; background: #111; will-change: transform, opacity, filter; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.toast .mk { width: 40px; height: 40px; border-radius: 10px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; flex-shrink: 0; }
+.toast .sub { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+/* Vault card (weights against targets) */
+.vcard { position: absolute; left: 50%; width: 1000px; margin-left: -500px; padding: 30px 36px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter, border-color; }
+.vcard.due { border-color: rgba(194,234,138,.4); }
+.vcard .hd { display: flex; align-items: center; gap: 16px; }
+.vcard .ic { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.vcard .nm b { font-size: 25px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.vcard .nm span { font-size: 17px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.vcard .nm img { width: 18px; height: 18px; border-radius: 50%; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); will-change: transform; }
+.badge.due { background: rgba(194,234,138,.16); color: var(--lime); }
+.rows { margin-top: 24px; display: grid; gap: 13px; }
+.vrow { display: grid; grid-template-columns: 34px 82px 1fr 170px; align-items: center; gap: 14px; }
+.vrow img { width: 34px; height: 34px; border-radius: 50%; }
+.vrow b { font-size: 18px; font-weight: 500; }
+.bar { position: relative; height: 12px; border-radius: 6px; background: #1c1c1c; overflow: hidden; }
+.bar .tg { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255,255,255,.12); }
+.bar .ac { position: absolute; left: 0; top: 0; bottom: 0; background: var(--lime); }
+.vrow .pc { font-size: 16px; color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.vrow .pc i { font-style: normal; color: var(--faint); }
+.vrow .pc em { font-style: normal; color: var(--faint); margin-left: 6px; }
+.vrow .pc em.hot { color: var(--lime); }
+/* Plan panel */
+.plan { position: absolute; left: 50%; width: 760px; margin-left: -380px; padding: 30px 34px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.plan .t { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; }
+.plan .tr { display: grid; grid-template-columns: 16px 62px 1fr auto; align-items: center; gap: 14px; margin-top: 18px; font-size: 22px; }
+.plan .tr .dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.18); will-change: transform, background; }
+.plan .tr .dot.on { background: var(--lime); }
+.plan .tr .sd { font-weight: 500; }
+.plan .tr .sd.s { color: var(--red); } .plan .tr .sd.b { color: var(--lime); }
+.plan .tr .q { color: var(--faint); font-size: 18px; }
+.plan .rt { display: flex; align-items: center; gap: 10px; margin: 6px 0 0 92px; font-size: 17px; color: var(--muted); will-change: transform, opacity; }
+.plan .rt img { width: 20px; height: 20px; border-radius: 50%; }
+.plan .rt .ck { margin-left: auto; color: var(--lime); font-weight: 600; }
+.plan .btns { margin-top: 28px; display: flex; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 26px; border-radius: 12px; font-size: 20px; font-weight: 500; letter-spacing: -0.02em; will-change: transform; }
+.btn.pri { background: #fff; color: #000; }
+.btn.sec { background: rgba(255,255,255,.1); color: #fff; }
+/* Strategy tiles */
+.tpl { position: absolute; width: 520px; padding: 26px 30px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.tpl .t { display: flex; align-items: center; justify-content: space-between; }
+.tpl .t b { font-size: 27px; font-weight: 500; letter-spacing: -0.02em; }
+.tpl .t span { padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 16px; font-weight: 500; color: var(--soft); }
+.tpl p { margin: 6px 0 0; font-size: 18px; color: var(--muted); }
+.tpl .seg { display: flex; gap: 3px; height: 12px; border-radius: 6px; overflow: hidden; background: var(--tile); margin-top: 18px; }
+.tpl .seg i { display: block; height: 100%; }
+.tpl .lg2 { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 12px; font-size: 15px; color: var(--muted); }
+.tpl .lg2 span { display: inline-flex; align-items: center; gap: 6px; }
+.tpl .lg2 span i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+/* Builder rows */
+.brow { position: absolute; left: 50%; width: 900px; margin-left: -450px; height: 84px; display: flex; align-items: center; gap: 18px; padding: 0 22px; box-sizing: border-box; border-radius: 16px; background: var(--tile); border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter; }
+.brow img { width: 42px; height: 42px; border-radius: 50%; }
+.brow b { font-size: 24px; font-weight: 500; width: 110px; }
+.brow .n { flex: 1; font-size: 19px; color: var(--muted); }
+.brow .w { display: flex; align-items: center; gap: 6px; height: 46px; padding: 0 16px; border-radius: 10px; background: var(--chip); font-size: 22px; font-weight: 500; }
+.brow .w span { color: var(--faint); }
+/* Chips that split */
+.money { position: absolute; display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); font-size: 30px; font-weight: 500; white-space: nowrap; will-change: transform, opacity, filter; }
+.money img { width: 34px; height: 34px; border-radius: 50%; }
+.money small { font-size: 18px; color: var(--muted); font-weight: 500; }
+/* Route diagram */
+.node { position: absolute; top: 420px; width: 420px; padding: 24px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); display: flex; align-items: center; gap: 18px; will-change: transform, opacity, filter; }
+.node img { width: 56px; height: 56px; border-radius: 50%; }
+.node b { font-size: 32px; font-weight: 500; letter-spacing: -0.02em; display: block; }
+.node span { font-size: 19px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.node span img { width: 20px; height: 20px; }
+.wire { position: absolute; top: 478px; height: 3px; background: rgba(255,255,255,.12); }
+.wire i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--lime); width: 0; }
+.wire .lab { position: absolute; left: 50%; top: 24px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; white-space: nowrap; font-size: 18px; color: var(--muted); font-weight: 500; will-change: opacity, transform; }
+.wire .lab img { width: 22px; height: 22px; border-radius: 50%; }
+.stamp { position: absolute; left: 50%; top: 640px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 14px; padding: 16px 28px; border-radius: 14px; border: 2px solid var(--lime); color: var(--lime); font-size: 30px; font-weight: 600; letter-spacing: .02em; will-change: transform, opacity, filter; }
+/* Wallet */
+.wallet { position: absolute; left: 50%; top: 250px; width: 760px; margin-left: -380px; padding: 28px 32px 30px; box-sizing: border-box; border-radius: 26px; background: var(--panel); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.wallet .hd { display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 500; }
+.wallet .hd i { width: 14px; height: 14px; border-radius: 50%; background: #7084FF; display: inline-block; }
+.wallet .hd img { width: 22px; height: 22px; margin-left: auto; }
+.wallet .tk { display: flex; align-items: center; gap: 16px; margin-top: 16px; font-size: 21px; will-change: transform, opacity; }
+.wallet .tk img { width: 36px; height: 36px; border-radius: 50%; }
+.wallet .tk b { font-weight: 500; width: 90px; }
+.wallet .tk span { color: var(--muted); flex: 1; }
+.wallet .tk em { font-style: normal; font-weight: 500; }
+.fee { position: absolute; left: 50%; width: 900px; margin-left: -450px; padding: 24px 36px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: space-between; font-size: 28px; font-weight: 500; will-change: transform, opacity, filter; }
+.fee .old { position: relative; color: var(--faint); }
+.fee .old i { position: absolute; left: 0; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.fee .new { color: var(--lime); font-family: 'LT Remark', serif; font-size: 56px; letter-spacing: -0.03em; line-height: 1; will-change: transform, opacity; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Ten 12-second clips, one per tweet of the third batch. ?clip=vault|drift|rebalance|fund|sixty40|custody|strategies|bridge|treasuries|issuers
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const IS = (f) => `${PUB}/logos/issuers/${f}`
+const TOOL = (k) => `${PUB}/logos/tools/${k}.svg`
+const LOGO = { NVDA: L('88a0e630'), AAPL: L('2a11a6bd'), MSFT: L('9e189df1'), GOOGL: L('4d76db13'), AMZN: L('39c11fed'), META: L('0b00cc62'), TSLA: L('e8ca24f9'), AVGO: L('454862a2'), AMD: L('0a5c861d'), TSM: L('ae4207a3'), MU: L('21a84899'), PLTR: L('5c6daea9'), SPY: L('c025dcd9'), QQQ: L('8fbe91e2'), SGOV: L('4f0c7bb8'), SLV: L('29352778'), USO: L('f34687ee'), MSTR: L('48f06241'), COIN: L('1efa740a'), SPCX: L('5a9801c3'), RKLB: L('1f78f0b6'), COST: L('fcbae652') }
+const USDG = `${PUB}/img/tokens/usdg.png`, USDC = `${PUB}/img/tokens/usdc.png`
+const clip = new URLSearchParams(location.search).get('clip') ?? 'vault'
+const DURATION = 12
+const PAL = ['#C2EA8A', '#8FA661', '#F6F0E9', '#6F8549', '#DDE9C6', '#4E6032', '#B9B2A8', '#9DC77A']
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const rnd = (seed) => () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const line = (parent, text, { top = 460, size = 112, color = '#fff', sub = '' } = {}) => {
+  const el = add(parent, `<div class="line" style="top:${top}px"><div class="serif t" style="font-size:${size}px;color:${color}"></div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`)
+  return { el, chars: letters(el.querySelector('.t'), text), sub: el.querySelector('.s') }
+}
+const runLine = (ln, t, t0, t1, stagger = 0.035) => { show(ln.el, t >= t0 - 0.05 && t < t1 + 0.6); wipe(ln.chars, spring(t - t0, 0.8), { stagger, out: clamp(spring(t - t1, 0.35)) }); if (ln.sub) { const p = spring(t - t0 - 0.5, 0.9) * (1 - clamp(spring(t - t1, 0.35))); ln.sub.style.opacity = p; ln.sub.style.transform = `translate3d(0, ${(1 - p) * 12}px, 0)` } }
+const toastIn = (el, t, t0, t1, centred = false) => {
+  const p = spring(t - t0, 0.55, 0.7), o = clamp(spring(t - t1, 0.45))
+  show(el, t >= t0 - 0.05 && t < t1 + 0.8)
+  el.style.opacity = clamp(p * 2) * (1 - o)
+  el.style.transform = `translate3d(${centred ? '-50%' : '0'}, ${((1 - p) * 30 - o * 14).toFixed(2)}px, 0) scale(${lerp(0.94, 1, p).toFixed(3)})`
+}
+const pressAt = (btn, t, t0) => { const press = t >= t0 && t < t0 + 0.2 ? 1 : clamp(1 - spring(t - t0 - 0.2, 0.3)); btn.style.transform = `scale(${(1 - 0.05 * (t >= t0 ? press : 0)).toFixed(3)})`; btn.style.background = t >= t0 && press > 0.5 ? '#E6E1DA' : '#fff' }
+const I = {
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  vault: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><circle cx="12" cy="11.5" r="3"/><path d="M12 8.5V7M12 16v-1.5M7 19v2M17 19v2"/></svg>',
+  pie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9h-9V3z"/><path d="M15.5 2.8a9 9 0 0 1 5.7 5.7h-5.7V2.8z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+}
+// A vault card with target/actual rows. weights(t) returns the actual weights.
+function vaultCard(parent, { name, sub, tickers, targets, top = 250 }) {
+  const el = add(parent, `<div class="vcard" style="top:${top}px">
+    <div class="hd"><div class="ic"><span style="width:28px;height:28px;display:inline-flex">${I.vault}</span></div><div class="nm"><b>${name}</b><span><img src="${CH(4663)}" alt="">${sub}</span></div><span class="badge">On target</span></div>
+    <div class="rows">${tickers.map((tk, i) => `<div class="vrow"><img src="${LOGO[tk]}" alt=""><b>${tk}</b><div class="bar"><div class="tg" style="width:${(targets[i] * 2).toFixed(2)}%"></div><div class="ac" style="background:${PAL[i % PAL.length]}"></div></div><div class="pc"><span class="a">${targets[i].toFixed(1)}%</span> <i>/ ${targets[i].toFixed(0)}%</i><em>+0.0</em></div></div>`).join('')}</div>
+  </div>`)
+  const badge = el.querySelector('.badge')
+  const rows = [...el.querySelectorAll('.vrow')].map((r) => ({ ac: r.querySelector('.ac'), a: r.querySelector('.a'), em: r.querySelector('em') }))
+  const set = (w, threshold = 5, dueAt = null, t = 0) => {
+    let max = 0
+    rows.forEach((r, i) => { const d = w[i] - targets[i]; max = Math.max(max, Math.abs(d)); r.ac.style.width = `${(w[i] * 2).toFixed(2)}%`; r.a.textContent = `${w[i].toFixed(1)}%`; r.em.textContent = `${d >= 0 ? '+' : ''}${d.toFixed(1)}`; r.em.classList.toggle('hot', Math.abs(d) > threshold) })
+    const due = max > threshold
+    el.classList.toggle('due', due); badge.classList.toggle('due', due); badge.textContent = due ? 'Rebalance due' : 'On target'
+    if (dueAt != null) { const bp = spring(t - dueAt, 0.4, 0.55); badge.style.transform = due ? `scale(${(1 + 0.12 * (1 - bp)).toFixed(3)})` : 'none' }
+    return max
+  }
+  return { el, set, badge }
+}
+function planPanel(parent, { trades, top = 300, title }) {
+  const el = add(parent, `<div class="plan" style="top:${top}px"><div class="t">${title ?? `${trades.length} trades to reach target`}</div>
+    ${trades.map(([side, tk, amt, route, chain]) => `<div class="tr"><span class="dot"></span><span class="sd ${side[0]}">${side === 'sell' ? 'Sell' : 'Buy'}</span><span>${usd(amt)} of ${tk}</span><span class="q">${side === 'sell' ? '→ USDG' : '← USDG'}</span></div><div class="rt"><img src="${TOOL(route[0])}" alt="">via ${route[1]} · ${chain ?? 'Robinhood Chain'}<span class="ck">✓ confirmed</span></div>`).join('')}
+    <div class="btns"><span class="btn pri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="lb">Confirm ${trades.length} trades</span></span><span class="btn sec">Cancel</span></div>
+  </div>`)
+  const dots = [...el.querySelectorAll('.dot')], rts = [...el.querySelectorAll('.rt')], btn = el.querySelector('.btn.pri'), lb = el.querySelector('.lb')
+  const run = (t, pressT, fires) => {
+    pressAt(btn, t, pressT)
+    fires.forEach((at, k) => { const fired = t >= at, p = spring(t - at, 0.45, 0.55); dots[k].classList.toggle('on', fired); dots[k].style.transform = fired ? `scale(${(1 + 0.6 * (1 - p)).toFixed(3)})` : 'scale(1)'; const rp = spring(t - at - 0.1, 0.6, 0.75); rts[k].style.opacity = fired ? clamp(rp * 1.5) : 0; rts[k].style.transform = `translate3d(0, ${((1 - clamp(rp)) * 10).toFixed(2)}px, 0)` })
+    const n = fires.filter((at) => t >= at).length
+    btn.style.opacity = t >= fires[0] ? 0.55 : 1
+    lb.textContent = t >= fires[fires.length - 1] + 0.5 ? 'Rebalanced' : t >= fires[0] ? `Confirm in wallet · ${Math.min(fires.length, n + 1)}/${fires.length}` : `Confirm ${fires.length} trades`
+    btn.nextElementSibling.style.opacity = t >= fires[fires.length - 1] + 0.5 ? 0.35 : 1
+  }
+  return { el, run }
+}
+const MAG7 = ['NVDA', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA']
+const EQ = MAG7.map(() => 100 / 7)
+
+const CLIPS = {
+  // 1. Set the weights. Verdex keeps them.
+  vault(s) {
+    const l1 = line(s, 'Set the weights.', { top: 470, size: 112 })
+    const l2 = line(s, 'Verdex keeps them.', { top: 470, size: 112, color: 'var(--lime)' })
+    const card = vaultCard(s, { name: 'Magnificent 7', sub: 'Robinhood Chain · 7 assets · every month or 5% drift', tickers: MAG7, targets: EQ, top: 230 })
+    const D = [21.4, 11.0, 14.2, 14.2, 14.2, 14.2, 10.8]
+    const toast = add(s, `<div class="toast" style="left:50%;top:880px"><span class="ok">✓</span><span>Back on target<span class="sub">3 trades, each confirmed in your wallet.</span></span></div>`)
+    const cap = add(s, `<div class="abs" style="left:0;right:0;top:120px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">Every asset against its target, read live from your wallet.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.6); runLine(l2, t, 2.9, 5.0)
+      const cp = spring(t - 5.8, 0.9); show(cap, t > 5.6); mat(cap, cp, { y: 16 * (1 - cp), s: 0.02 })
+      const cin = spring(t - 5.3, 0.9); show(card.el, t > 5.1); mat(card.el, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      const p = easeIO(clamp((t - 6.0) / 2.0))
+      let w = D.map((d) => lerp(100 / 7, d, p))
+      const back = spring(t - 9.0, 0.8, 0.7)
+      w = w.map((x, i) => lerp(x, 100 / 7 + (i === 0 ? 0.1 : -0.02), clamp(back)))
+      card.set(w, 5, 7.3, t)
+      toastIn(toast, t, 9.9, 99, true)
+    }
+  },
+  // 2. Your portfolio drifted. Did you notice?
+  drift(s) {
+    const big = add(s, `<div class="abs" style="left:0;right:0;top:200px;text-align:center;will-change:transform,opacity,filter"><div style="font-size:26px;font-weight:500;color:var(--muted)">Max drift</div><div class="serif n" style="font-size:250px;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums;margin-top:6px">0.0%</div></div>`)
+    const n = big.querySelector('.n')
+    const l1 = line(s, 'Your portfolio drifted. Did you notice?', { top: 600, size: 84 })
+    const l2 = line(s, 'Verdex did.', { top: 600, size: 112, color: 'var(--lime)' })
+    const toast = add(s, `<div class="toast" style="left:50%;top:330px;font-size:28px;padding:22px 30px 22px 24px"><span class="mk" style="width:52px;height:52px"><span style="width:28px;height:28px;display:inline-flex">${MARK()}</span></span><span>Magnificent 7 is due for a rebalance<span class="sub" style="font-size:20px">Vaults · review the trades, then confirm</span></span></div>`)
+    const card = vaultCard(s, { name: 'Magnificent 7', sub: 'Robinhood Chain · 7 assets · every month or 5% drift', tickers: MAG7, targets: EQ, top: 470 })
+    const D = [21.4, 11.0, 14.2, 14.2, 14.2, 14.2, 10.8]
+    const foot = line(s, 'Set a threshold. Get the reminder. Confirm the fix.', { top: 150, size: 64 })
+    return (t) => {
+      const p = easeIO(clamp((t - 0.4) / 3.4)); const md = lerp(0, 7.1, p)
+      n.textContent = `${md.toFixed(1)}%`; n.style.color = md > 5 ? 'var(--lime)' : '#fff'
+      const bi = spring(t - 0.2, 0.9), bo = clamp(spring(t - 5.2, 0.45)); mat(big, bi * (1 - bo), { y: 20 * (1 - bi), s: 0.03, blur: 18 }); if (md > 5) { const k = spring(t - 3.3, 0.4, 0.5); big.style.transform += ` scale(${(1 + 0.05 * (1 - k)).toFixed(3)})` }
+      runLine(l1, t, 1.0, 4.6); runLine(l2, t, 4.9, 6.6)
+      toastIn(toast, t, 5.8, 8.6, true)
+      const ci = spring(t - 7.2, 0.9); show(card.el, t > 7.0); mat(card.el, ci, { y: 40 * (1 - ci), s: 0.05, blur: 18 })
+      card.set(D, 5, 7.2, t)
+      card.el.style.transform += ` translate3d(0, ${lerp(0, -180, clamp(spring(t - 8.4, 0.9)))}px, 0)`
+      runLine(foot, t, 9.4, 99, 0.025)
+    }
+  },
+  // 3. Rebalancing used to be a spreadsheet and six tabs.
+  rebalance(s) {
+    const l1 = line(s, 'Rebalancing used to be a spreadsheet and six tabs.', { top: 470, size: 84 })
+    const l2 = line(s, "Now it's three taps.", { top: 470, size: 112, color: 'var(--lime)' })
+    const plan = planPanel(s, { trades: [['sell', 'NVDA', 800, ['kyberswap', 'KyberSwap']], ['buy', 'AAPL', 370, ['1inch', '1inch']], ['buy', 'TSLA', 381, ['paraswap', 'ParaSwap']]], top: 270 })
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:820px;text-align:center;font-size:36px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Sells first, then buys. Best route each time. <span style="color:var(--lime)">You confirm every one.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 3.0, 0.025); runLine(l2, t, 3.3, 5.3)
+      const pin = spring(t - 5.6, 0.9); show(plan.el, t > 5.4); mat(plan.el, pin, { y: 40 * (1 - pin), s: 0.05, blur: 18 })
+      plan.run(t, 6.6, [7.2, 8.3, 9.4])
+      const fp = spring(t - 10.0, 0.9); show(foot, t > 9.8); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 4. Add $1,000. Verdex splits it by weight.
+  fund(s) {
+    const big = add(s, `<div class="money" style="left:50%;top:300px;transform:translateX(-50%);font-size:44px;padding:20px 32px"><img src="${USDG}" alt="" style="width:48px;height:48px"><span>$1,000</span><small style="font-size:24px">USDG · Robinhood Chain</small></div>`)
+    const l1 = line(s, 'Add $1,000.', { top: 470, size: 120 })
+    const l2 = line(s, 'Verdex splits it by weight.', { top: 150, size: 96, color: 'var(--lime)' })
+    const W = [['NVDA', 25], ['AVGO', 15], ['AMD', 12], ['TSM', 12], ['MU', 10], ['MSFT', 10], ['GOOGL', 8], ['PLTR', 8]]
+    const chips = W.map(([tk, w], i) => add(s, `<div class="money" style="left:${140 + i * 210}px;top:560px;flex-direction:column;gap:10px;width:170px;padding:22px 0;justify-content:center"><img src="${LOGO[tk]}" alt="" style="width:48px;height:48px"><span>${usd(10 * w)}</span><small>${tk} · ${w}%</small></div>`))
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:830px;text-align:center;font-size:36px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Eight buys in one sitting, each confirmed in your wallet. <span style="color:var(--lime)">AI Leaders, funded.</span></div>`)
+    const tag = add(s, `<div class="abs" style="left:0;right:0;top:270px;text-align:center;will-change:opacity,transform,filter"><span class="tag">AI Leaders · 8 assets</span></div>`)
+    return (t) => {
+      const bi = spring(t - 0.3, 0.8), bo = clamp(spring(t - 3.6, 0.5))
+      show(big, t < 4.6); big.style.opacity = bi * (1 - bo); big.style.transform = `translate3d(-50%, ${(1 - bi) * 30}px, 0) scale(${lerp(0.9, 1, bi) * lerp(1, 0.7, bo)})`; big.style.filter = bo > 0 ? `blur(${(bo * 14).toFixed(2)}px)` : 'none'
+      runLine(l1, t, 0.8, 3.4); runLine(l2, t, 4.2, 99)
+      const tp = spring(t - 4.6, 0.9); show(tag, t > 4.4); mat(tag, tp, { y: 16 * (1 - tp), s: 0.02 })
+      chips.forEach((c, i) => { const p = spring(t - 3.9 - i * 0.14, 0.75, 0.8); show(c, t > 3.7); const x = lerp(960 - (140 + i * 210) - 85, 0, clamp(p)), y = lerp(-240, 0, clamp(p)); c.style.opacity = clamp(p * 1.6); c.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${lerp(0.4, 1, clamp(p)).toFixed(3)})`; c.style.filter = p > 0.999 ? 'none' : `blur(${((1 - clamp(p)) * 10).toFixed(2)}px)` })
+      const fp = spring(t - 7.6, 0.9); show(foot, t > 7.4); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 5. 60/40 is back. On chain.
+  sixty40(s) {
+    const l1 = line(s, '60/40 is back.', { top: 470, size: 128 })
+    const l2 = line(s, 'On chain.', { top: 470, size: 128, color: 'var(--lime)' })
+    const card = vaultCard(s, { name: 'Balanced 60/40', sub: 'Robinhood Chain · 3 assets · every quarter or 5% drift', tickers: ['SPY', 'QQQ', 'SGOV'], targets: [40, 20, 40], top: 250 })
+    const plan = planPanel(s, { trades: [['sell', 'SPY', 640, ['kyberswap', 'KyberSwap']], ['sell', 'QQQ', 410, ['1inch', '1inch']], ['buy', 'SGOV', 1050, ['paraswap', 'ParaSwap']]], top: 430, title: 'Equities ran. 3 trades back to 60/40' })
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:930px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Equities run, Treasuries catch the profit. <span style="color:var(--lime)">Planned by Verdex, confirmed by you.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.4); runLine(l2, t, 2.7, 4.6)
+      const cin = spring(t - 4.9, 0.9); show(card.el, t > 4.7); mat(card.el, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      const p = easeIO(clamp((t - 5.4) / 1.8))
+      let w = [lerp(40, 46, p), lerp(20, 24, p), lerp(40, 30, p)]
+      const back = clamp(spring(t - 10.4, 0.8, 0.7))
+      w = w.map((x, i) => lerp(x, [40.1, 20, 39.9][i], back))
+      card.set(w, 5, 6.5, t)
+      card.el.style.transform += ` translate3d(0, ${lerp(0, -150, clamp(spring(t - 7.4, 0.9)))}px, 0)`
+      const pin = spring(t - 7.6, 0.9); show(plan.el, t > 7.4); mat(plan.el, pin, { y: 40 * (1 - pin), s: 0.05, blur: 18 })
+      plan.run(t, 8.4, [9.0, 9.7, 10.4])
+      const fp = spring(t - 11.0, 0.9); show(foot, t > 10.8); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 6. No vault contract. The vault is your wallet.
+  custody(s) {
+    const l1 = line(s, 'No vault contract.', { top: 470, size: 112 })
+    const l2 = line(s, 'No deposits. No withdrawals.', { top: 470, size: 100 })
+    const l3 = line(s, 'The vault is your wallet.', { top: 130, size: 96, color: 'var(--lime)' })
+    const TK = [['NVDA', 'NVIDIA', '7.16'], ['AAPL', 'Apple', '4.78'], ['MSFT', 'Microsoft', '3.25'], ['GOOGL', 'Alphabet', '4.69'], ['AMZN', 'Amazon', '6.17'], ['META', 'Meta Platforms', '2.06'], ['TSLA', 'Tesla', '4.24']]
+    const wallet = add(s, `<div class="wallet"><div class="hd"><i></i>0x8f3C…A063<img src="${CH(4663)}" alt=""></div>${TK.map(([tk, nm, q]) => `<div class="tk"><img src="${LOGO[tk]}" alt=""><b>${tk}</b><span>${nm}</span><em>${q}</em></div>`).join('')}</div>`)
+    const tks = [...wallet.querySelectorAll('.tk')]
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:900px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Verdex reads what is there and plans the trades. <span style="color:var(--lime)">Nothing moves unless you sign.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.3); runLine(l2, t, 2.6, 4.7); runLine(l3, t, 5.0, 99)
+      const wi = spring(t - 5.4, 0.9); show(wallet, t > 5.2); mat(wallet, wi, { y: 50 * (1 - wi), s: 0.05, blur: 18 })
+      tks.forEach((el, i) => { const p = spring(t - 6.0 - i * 0.18, 0.7); el.style.opacity = p; el.style.transform = `translate3d(${(1 - p) * 16}px, 0, 0)` })
+      const fp = spring(t - 8.4, 0.9); show(foot, t > 8.2); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 7. Six strategies. Or yours.
+  strategies(s) {
+    const l1 = line(s, 'Six strategies.', { top: 100, size: 96 })
+    const T = [['Magnificent 7', 'The seven megacaps, equal weight.', MAG7.map((tk) => [tk, 14.3])], ['AI Leaders', 'Chips, cloud and the labs that buy them.', [['NVDA', 25], ['AVGO', 15], ['AMD', 12], ['TSM', 12], ['MU', 10], ['MSFT', 10], ['GOOGL', 8], ['PLTR', 8]]], ['Core Index', 'Two indexes, one line.', [['SPY', 50], ['QQQ', 30], ['SGOV', 20]]], ['Balanced 60/40', 'Equities and Treasuries, classic split.', [['SPY', 40], ['QQQ', 20], ['SGOV', 40]]], ['Hard Assets', 'Silver, oil and the miners of bitcoin.', [['SLV', 35], ['USO', 25], ['MSTR', 25], ['COIN', 15]]], ['Space and Frontier', 'Launch, satellites and quantum.', [['SPCX', 30], ['RKLB', 20], ['ASTS', 15], ['LUNR', 10], ['IONQ', 15], ['RGTI', 10]]]]
+    const tpls = T.map(([nm, tg, ws], i) => add(s, `<div class="tpl" style="left:${150 + (i % 3) * 550}px;top:${260 + Math.floor(i / 3) * 300}px"><div class="t"><b>${nm}</b><span>${ws.length} assets</span></div><p>${tg}</p><div class="seg">${ws.map((w, j) => `<i style="background:${PAL[j % PAL.length]};width:calc(${w[1]}% - 3px)"></i>`).join('')}</div><div class="lg2">${ws.slice(0, 4).map((w, j) => `<span><i style="background:${PAL[j % PAL.length]}"></i>${w[0]} ${w[1] >= 10 ? w[1].toFixed(0) : w[1].toFixed(1)}%</span>`).join('')}${ws.length > 4 ? `<span>+${ws.length - 4}</span>` : ''}</div></div>`))
+    const l2 = line(s, 'Or yours.', { top: 100, size: 112, color: 'var(--lime)' })
+    const B = [['NVDA', 'NVIDIA', 30], ['COST', 'Costco', 20], ['SLV', 'iShares Silver Trust', 25], ['SGOV', '0-3 Month Treasuries', 25]]
+    const brows = B.map(([tk, nm, w], i) => add(s, `<div class="brow" style="top:${290 + i * 104}px"><img src="${LOGO[tk]}" alt=""><b>${tk}</b><span class="n">${nm}</span><span class="w"><span class="v">0</span><span>%</span></span></div>`))
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;will-change:opacity,transform,filter"><span class="btn pri" style="font-size:24px;height:64px;padding:0 32px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Create vault</span><div style="font-size:30px;font-weight:500;color:var(--soft);margin-top:26px">Up to twelve assets, on any chain Verdex lists.</div></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 4.6)
+      tpls.forEach((el, i) => { const p = spring(t - 0.8 - i * 0.16, 0.85), o = clamp(spring(t - 4.6 - i * 0.05, 0.45)); show(el, t < 5.8); mat(el, p * (1 - o), { y: 40 * (1 - p) + 20 * o, s: 0.05, blur: 16 }) })
+      runLine(l2, t, 5.2, 99)
+      brows.forEach((el, i) => { const at = 5.8 + i * 0.5, p = spring(t - at, 0.8); show(el, t > at - 0.1); mat(el, p, { y: 30 * (1 - p), s: 0.04, blur: 14 }); const n = Math.round(B[i][2] * clamp((t - at - 0.3) / 0.6)); el.querySelector('.v').textContent = n })
+      const fp = spring(t - 8.6, 0.9); show(foot, t > 8.4); mat(foot, fp, { y: 24 * (1 - fp), s: 0.02 }); pressAt(foot.querySelector('.btn'), t, 10.2)
+    }
+  },
+  // 8. Bridge and buy in one signature.
+  bridge(s) {
+    const l1 = line(s, 'Bridge and buy in one signature.', { top: 160, size: 96 })
+    const from = add(s, `<div class="node" style="left:180px"><img src="${USDC}" alt=""><div><b>500 USDC</b><span><img src="${CH(8453)}" alt="">Base</span></div></div>`)
+    const to = add(s, `<div class="node" style="left:1320px"><img src="${LOGO.NVDA}" alt=""><div><b>2.23 NVDA</b><span><img src="${CH(4663)}" alt="">Robinhood Chain</span></div></div>`)
+    const wire = add(s, `<div class="wire" style="left:600px;width:720px"><i></i><div class="lab"><img src="${TOOL('across')}" alt="">Across bridge<span style="opacity:.4">·</span><img src="${TOOL('kyberswap')}" alt="">KyberSwap</div></div>`)
+    const fill = wire.querySelector('i'), lab = wire.querySelector('.lab')
+    const stamp = add(s, `<div class="stamp"><span style="width:30px;height:30px;display:inline-flex">${I.check}</span>Signed once</div>`)
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:800px;text-align:center;font-size:36px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Any chain in, any stock out. <span style="color:var(--lime)">Verdex picks the route.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 99)
+      const a = spring(t - 1.2, 0.9); show(from, t > 1.0); mat(from, a, { x: -40 * (1 - a), s: 0.04, blur: 16 })
+      const b = spring(t - 1.5, 0.9); show(to, t > 1.3); mat(to, b, { x: 40 * (1 - b), s: 0.04, blur: 16 })
+      show(wire, t > 1.6); wire.style.opacity = spring(t - 1.8, 0.8)
+      fill.style.width = `${(easeIO(clamp((t - 2.6) / 2.4)) * 100).toFixed(1)}%`
+      const lp = spring(t - 2.4, 0.9); lab.style.opacity = lp; lab.style.transform = `translate3d(-50%, ${(1 - lp) * 10}px, 0)`
+      const sp = spring(t - 5.4, 0.45, 0.5); show(stamp, t > 5.2); stamp.style.opacity = clamp(sp * 2); stamp.style.transform = `translate3d(-50%, 0, 0) scale(${lerp(1.5, 1, clamp(sp)).toFixed(3)}) rotate(${lerp(-6, -3, clamp(sp)).toFixed(2)}deg)`; stamp.style.filter = sp > 0.999 ? 'none' : `blur(${((1 - clamp(sp)) * 8).toFixed(2)}px)`
+      const fp = spring(t - 7.4, 0.9); show(foot, t > 7.2); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 9. T-bills. Tokenized. In your wallet.
+  treasuries(s) {
+    const l1 = line(s, 'T-bills.', { top: 470, size: 150 })
+    const l2 = line(s, 'Tokenized.', { top: 470, size: 150 })
+    const l3 = line(s, 'In your wallet.', { top: 470, size: 150, color: 'var(--lime)' })
+    const row = add(s, `<div class="row" style="top:330px;width:1240px;margin-left:-620px;height:104px"><img class="l" src="${LOGO.SGOV}" style="width:56px;height:56px"><b style="width:120px;font-size:30px">SGOV</b><span class="nm" style="font-size:22px;white-space:nowrap">iShares 0-3 Month Treasury Bond ETF<span style="opacity:.4">·</span><img class="c" src="${CH(4663)}">Robinhood Chain</span><span class="pr" style="font-size:30px">$100.71</span></div>`)
+    const pills = [[I.check, 'Buy any hour, any day'], [I.vault, 'Hold it inside a vault'], [I.refresh, 'Sell back to USDG in one tap']].map(([ic, tx], i) => add(s, `<div class="abs" style="left:50%;top:${500 + i * 96}px;transform:translateX(-50%);will-change:opacity,transform,filter"><span class="pill" style="font-size:30px;padding:16px 28px"><span style="width:26px;height:26px;display:inline-flex;color:var(--lime)">${ic}</span>${tx}</span></div>`))
+    const foot = line(s, 'Cash that pays, between trades.', { top: 840, size: 72, color: 'var(--lime)' })
+    return (t) => {
+      runLine(l1, t, 0.3, 1.9); runLine(l2, t, 2.1, 3.7); runLine(l3, t, 3.9, 5.8)
+      const ri = spring(t - 6.1, 0.9); show(row, t > 5.9); mat(row, ri, { y: 30 * (1 - ri), s: 0.03, blur: 16 }); row.style.transform += ' translateX(0)'
+      pills.forEach((p, i) => { const q = spring(t - 6.8 - i * 0.35, 0.8); show(p, t > 6.6); p.style.opacity = q; p.style.transform = `translate3d(-50%, ${(1 - q) * 24}px, 0)`; p.style.filter = q > 0.999 ? 'none' : `blur(${((1 - q) * 12).toFixed(2)}px)` })
+      runLine(foot, t, 9.2, 99)
+    }
+  },
+  // 10. Twelve issuers. One row.
+  issuers(s) {
+    const ISS = [['Ondo', 'ondo.png'], ['xStocks', 'xstocks.png'], ['bStocks', 'bstocks.svg'], ['Robinhood', 'robinhood.svg'], ['Coinbase', 'coinbase.png'], ['Backed', 'backed.png'], ['Paxos', 'paxos.png'], ['Tether', 'tether.png'], ['Ethena', 'ethena.png'], ['Maple', 'maple.png'], ['Reserve', 'reserve.png'], ['Theo', 'theo.png']]
+    const R = rnd(11)
+    const host = add(s, `<div class="abs" style="inset:0"></div>`)
+    const logos = ISS.map(([nm, f], i) => ({ el: add(host, `<div class="abs" style="left:960px;top:540px;margin:-52px 0 0 -52px;display:flex;flex-direction:column;align-items:center;gap:10px;will-change:transform,opacity,filter"><img class="lg" src="${IS(f)}" style="position:static;width:104px;height:104px"><span style="font-size:20px;font-weight:500;color:var(--soft)">${nm}</span></div>`), a: (i / ISS.length) * Math.PI * 2 + 0.2, r: 520 + (i % 2) * 150, d: R() }))
+    const cnt = add(s, `<div class="abs serif" style="left:0;right:0;top:390px;text-align:center;font-size:220px;letter-spacing:-0.04em;will-change:opacity,transform"><span class="n">0</span> <span style="font-size:110px">issuers.</span></div>`)
+    const row = add(s, `<div class="row" style="top:480px;width:1160px;margin-left:-580px;height:110px"><img class="l" src="${LOGO.NVDA}" style="width:58px;height:58px"><b style="width:130px;font-size:32px">NVDA</b><span class="nm" style="font-size:22px;gap:14px"><span style="display:inline-flex;margin-right:6px">${['ondo.png', 'xstocks.png', 'bstocks.svg', 'robinhood.svg', 'coinbase.png'].map((f, i) => `<img class="i" src="${IS(f)}" style="width:30px;height:30px;margin-left:${i ? -8 : 0}px;border:2px solid #111;border-radius:50%">`).join('')}</span>5 issuers<span style="opacity:.4">·</span>7 chains<span style="opacity:.4">·</span>from $224.06</span><span class="pr" style="font-size:30px">Best price</span></div>`)
+    const l2 = line(s, 'One row.', { top: 640, size: 128, color: 'var(--lime)' })
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:860px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Every issuer of a stock, side by side. <span style="color:var(--lime)">You pick the best price.</span></div>`)
+    return (t) => {
+      const c = clamp(t / 2.4); cnt.querySelector('.n').textContent = Math.round(12 * (1 - Math.pow(1 - c, 3)))
+      const cin = spring(t - 0.2, 0.8), cout = clamp(spring(t - 3.4, 0.4)); mat(cnt, cin * (1 - cout), { y: 20 * (1 - cin), s: 0.03 })
+      const collapse = spring(t - 3.6, 1.0)
+      logos.forEach((l) => { const p = spring(t - 0.3 - l.d * 0.8, 0.9); const r = l.r * (1 - collapse); const x = Math.cos(l.a + t * 0.22) * r, y = Math.sin(l.a + t * 0.22) * r * 0.62; l.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${(lerp(0.3, 1, p) * (1 - collapse * 0.9)).toFixed(3)})`; l.el.style.opacity = clamp(p * 1.5) * (1 - clamp(collapse * 1.3)) })
+      const ri = spring(t - 4.3, 0.8, 0.7); show(row, t > 4.1); mat(row, clamp(ri * 1.4), { y: 20 * (1 - clamp(ri)), s: 0.3, blur: 18 }); row.style.transform += ' translateX(0)'
+      runLine(l2, t, 5.0, 99)
+      const fp = spring(t - 7.4, 0.9); show(foot, t > 7.2); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+}
+
+add(stage, `<div class="grid"></div>`)
+const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+const scene = add(stage, `<div class="scene"></div>`)
+const draw = CLIPS[clip](scene)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+const fade = add(stage, `<div id="fade"></div>`)
+window.renderAt = async (t) => {
+  glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+  await draw(t)
+  fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

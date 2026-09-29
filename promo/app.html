@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex app promo</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.copy { position: absolute; top: 0; height: 1080px; width: 600px; display: flex; flex-direction: column; justify-content: center; gap: 26px; will-change: transform, opacity, filter; }
+.copy .lab { display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px; border-radius: 9px; background: var(--chip); font-size: 20px; font-weight: 500; align-self: flex-start; }
+.copy .lab span { width: 16px; height: 16px; display: inline-flex; }
+.copy h1 { margin: 0; font-size: 108px; color: #fff; }
+.copy h1 em { font-style: normal; color: var(--lime); }
+.copy p { margin: 0; font-size: 30px; line-height: 1.35; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); max-width: 540px; }
+#persp { position: absolute; inset: 0; perspective: 2400px; perspective-origin: 50% 50%; }
+.phone { position: absolute; left: 50%; top: 50%; width: 456px; height: 954px; margin: -477px 0 0 -228px; border-radius: 70px; background: linear-gradient(160deg, #2a2a2c, #151517 55%, #232325); box-shadow: inset 0 0 0 2px rgba(255,255,255,.14), inset 0 0 0 5px #0a0a0a, 0 60px 140px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.6); transform-style: preserve-3d; will-change: transform, opacity; }
+.phone .btn { position: absolute; width: 4px; background: #2c2c2e; border-radius: 2px; }
+.phone .screen { position: absolute; left: 15px; top: 15px; width: 426px; height: 924px; border-radius: 57px; overflow: hidden; background: #060606; }
+.phone .screen img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; object-fit: cover; will-change: opacity; }
+.phone .island { position: absolute; left: 50%; top: 15px; width: 124px; height: 36px; margin-left: -62px; border-radius: 20px; background: #000; z-index: 50; }
+.phone .status { position: absolute; left: 36px; right: 32px; top: 22px; height: 24px; display: flex; justify-content: space-between; align-items: center; z-index: 50; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
+.phone .status svg { display: block; }
+.phone .glare { position: absolute; inset: 0; z-index: 55; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 38%); }
+.phone .home { position: absolute; left: 50%; bottom: 10px; width: 140px; height: 5px; margin-left: -70px; border-radius: 3px; background: rgba(255,255,255,.85); z-index: 50; }
+.hs { position: absolute; inset: 0; background: #08110c; }
+.hs .wall { position: absolute; left: -10%; width: 120%; bottom: 0; height: 100%; object-fit: cover; object-position: center 100%; opacity: .55; }
+.hs .dock, .hs .apps { position: absolute; display: grid; grid-template-columns: repeat(4, 64px); gap: 26px 30px; left: 37px; }
+.hs .apps { top: 100px; }
+.hs .app { width: 64px; height: 64px; border-radius: 15px; background: rgba(255,255,255,.14); backdrop-filter: blur(10px); }
+.hs .app.v { background: #000; display: grid; place-items: center; box-shadow: 0 8px 26px rgba(0,0,0,.6); will-change: transform, opacity; }
+.hs .app.v span { width: 38px; height: 38px; display: inline-flex; }
+.hs .lbl { position: absolute; font-size: 11px; font-weight: 500; text-align: center; width: 64px; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+.hs .dock { bottom: 24px; left: 25px; padding: 12px 12px; border-radius: 28px; background: rgba(255,255,255,.14); backdrop-filter: blur(14px); gap: 26px; }
+.touch { position: absolute; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(255,255,255,.35); border: 1.5px solid rgba(255,255,255,.7); z-index: 8; pointer-events: none; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// App promo: the phone as the hero, real app footage on its screen, one line of copy per scene. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const DURATION = 43
+const FPS = 30
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+
+// Scenes: which clip plays on the screen, where the phone sits (x offset from centre) and the copy beside it.
+const SCENES = [
+  { at: 3.0, clip: 'markets', x: 330, side: 'left', label: 'Markets', h: '226 real-world<br>assets.', p: 'Stocks, ETFs, gold, treasuries and private credit. Every issuer, every chain, one list.' },
+  { at: 7.6, clip: 'search', x: -330, side: 'right', label: 'Search', h: 'Search any<br>stock.', p: 'NVDA from Ondo, xStocks, bStocks and Robinhood, side by side with their chains and prices.' },
+  { at: 13.0, clip: 'swap', x: 330, side: 'left', label: 'Trade', h: 'Swap in<br>one tap.', p: 'Any token in, any stock out. Priced live across 36 bridges and 37 DEXs, signed once.', skip: 0.4 },
+  { at: 21.0, clip: 'baskets', x: -330, side: 'right', label: 'Baskets', h: 'Buy a whole<br>basket.', p: 'A portfolio in one token, fully backed at published weights. Buy it, hold it, redeem it.' },
+  { at: 26.0, clip: 'lend', x: 330, side: 'left', label: 'Lend and Borrow', h: 'Lend. Borrow.<br><em>Multiply.</em>', p: 'Earn on your stocks, or borrow against them without selling.' },
+  { at: 30.2, clip: 'portfolio', x: -330, side: 'right', label: 'Portfolio', h: 'Everything<br>you hold.', p: 'Balances, baskets and lending positions across every chain, in one view.' },
+  { at: 33.8, clip: 'install', x: 330, side: 'left', label: 'App', h: 'Add it to your<br>home screen.', p: 'No app store, no download. Open useverdex.xyz, tap Add to Home Screen, and Verdex opens full screen.' },
+]
+const END_AT = 39.2
+
+let INDEX
+async function build() {
+  INDEX = await (await fetch('phone/index.json')).json()
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none;will-change:transform,opacity"></div>`)
+
+  // 1. Intro: the mark, the name, "Now in your pocket."
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:150px;height:150px;display:inline-flex;margin-top:14px">${MARK()}</span><span class="serif" style="font-size:230px">Verdex</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:770px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Now in your pocket.')
+
+  // 2. The phone. One image layer per scene so the screen can crossfade between clips.
+  const persp = add(stage, `<div id="persp"></div>`)
+  const phone = add(persp, `<div class="phone"><div class="btn" style="left:-5px;top:180px;height:34px"></div><div class="btn" style="left:-5px;top:240px;height:64px"></div><div class="btn" style="left:-5px;top:320px;height:64px"></div><div class="btn" style="right:-5px;top:260px;height:100px"></div><div class="screen"></div><div class="island"></div><div class="status"><span style="margin-left:6px">9:41</span><span style="display:flex;gap:7px;align-items:center;margin-right:2px"><svg width="19" height="12" viewBox="0 0 19 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><path d="M8.5 12l2.4-2.9a3.4 3.4 0 0 0-4.8 0zM3.6 6.5a7.2 7.2 0 0 1 9.8 0l1.7-2A9.9 9.9 0 0 0 1.9 4.5zM0 2.4l1.7 2a10 10 0 0 1 13.6 0l1.7-2A12.7 12.7 0 0 0 0 2.4z"/></svg><svg width="28" height="13" viewBox="0 0 28 13"><rect x="0.5" y="0.5" width="24" height="12" rx="3.5" stroke="rgba(255,255,255,.5)" fill="none"/><rect x="2" y="2" width="21" height="9" rx="2" fill="#fff"/><path d="M26 4.5v4a2 2 0 0 0 0-4z" fill="rgba(255,255,255,.5)"/></svg></span></div><div class="glare"></div><div class="home"></div></div>`)
+  const screen = phone.querySelector('.screen')
+  const layers = SCENES.map((sc) => add(screen, `<img alt="" style="opacity:0">`))
+  // Home screen inside the phone for the install scene: neutral tiles, then the Verdex icon lands.
+  const hs = add(screen, `<div class="hs" style="opacity:0"><img class="wall" src="${PUB}/design/particles.webp" alt=""><div class="apps">${Array.from({ length: 15 }, () => '<div class="app"></div>').join('')}<div class="app v"><span>${MARK()}</span></div></div><div class="dock">${Array.from({ length: 4 }, () => '<div class="app"></div>').join('')}</div></div>`)
+  const vIcon = hs.querySelector('.app.v')
+  const vLabel = add(hs, `<div class="lbl" style="left:319px;top:438px;opacity:0">Verdex</div>`)
+  const touch = add(screen, `<div class="touch" style="left:351px;top:392px;opacity:0"></div>`)
+  const launch = add(screen, `<img alt="" style="opacity:0;transform-origin:351px 392px">`)
+
+  // 3. Copy beside the phone, one block per scene.
+  const copies = SCENES.map((sc) => {
+    if (sc.side === 'none') return null
+    const el = add(stage, `<div class="copy" style="${sc.side === 'left' ? 'left:150px' : 'left:1240px'}"><div class="lab"><span>${MARK()}</span>${sc.label}</div><h1 class="serif">${sc.h}</h1><p>${sc.p}</p></div>`)
+    return el
+  })
+
+  // 4. End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Everything tokenized. Now in your pocket.</div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:ui-monospace,Menlo,monospace">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  const frameSrc = (clip, f) => `phone/${clip}/${String(clamp(Math.floor(f), 0, INDEX.frames[clip] - 1)).padStart(5, '0')}.jpg`
+  const decode = (img) => (img.decode ? img.decode().catch(() => {}) : Promise.resolve())
+
+  window.renderAt = async (t) => {
+    const pending = []
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. Intro (0-3.0)
+    show(s1, t < 3.4)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 2.6, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 1.1, 0.9), { stagger: 0.03, out: clamp(spring(t - 2.5, 0.4)) })
+
+    // 2. Phone: rises in at 2.8, moves between sides on each scene, leaves before the end card.
+    const cur = SCENES.reduce((acc, sc, i) => (t >= sc.at ? i : acc), -1)
+    const rise = spring(t - 2.7, 1.1)
+    let px = SCENES[0].x, prevX = SCENES[0].x
+    for (let i = 1; i < SCENES.length; i++) if (t >= SCENES[i].at) { prevX = SCENES[i - 1].x; px = SCENES[i].x }
+    const move = cur > 0 ? spring(t - SCENES[cur].at, 1.0) : 1
+    const x = lerp(prevX, px, move)
+    const leave = clamp(spring(t - (END_AT - 0.5), 0.8))
+    const y = lerp(760, 0, rise) + 10 * Math.sin(t * 1.1) + leave * 900
+    const ry = lerp(-22, 0, rise) + 4 * Math.sin(t * 0.7) + (px - x) * 0.03
+    const rx = lerp(14, 0, rise) - 3 * Math.sin(t * 0.9)
+    const scale = 1
+    show(persp, t > 2.5 && t < END_AT + 0.6)
+    phone.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${scale.toFixed(3)})`
+    phone.style.opacity = clamp(rise * 2) * (1 - leave)
+
+    // Screen: the current clip's frame, crossfading from the previous one.
+    layers.forEach((img, i) => {
+      const sc = SCENES[i]
+      const next = SCENES[i + 1]
+      const on = t >= sc.at - 0.02 && (!next || t < next.at + 0.45)
+      show(img, on)
+      if (!on) return
+      const f = (t - sc.at + (sc.skip ?? 0)) * FPS
+      const src = frameSrc(sc.clip, Math.max(0, f))
+      if (img.getAttribute('src') !== src) { img.src = src; pending.push(decode(img)) }
+      img.style.opacity = next ? 1 - clamp(spring(t - next.at, 0.35)) : 1
+      img.style.zIndex = i
+    })
+
+    // Install scene (31.0-36.4): the sheet on screen, then the home screen with the icon landing, then the app launching from it.
+    const inst = SCENES[6]
+    const hsIn = clamp(spring(t - (inst.at + 3.3), 0.5))
+    hs.style.opacity = hsIn
+    hs.style.zIndex = 20
+    const drop = spring(t - (inst.at + 3.7), 0.7, 0.55)
+    vIcon.style.transform = `translate3d(0, ${(1 - drop) * -120}px, 0) scale(${lerp(1.6, 1, drop).toFixed(3)})`
+    vIcon.style.opacity = clamp(drop * 3)
+    vLabel.style.opacity = clamp(spring(t - (inst.at + 4.1), 0.4))
+    const tapAt = inst.at + 4.6
+    const tp = clamp((t - tapAt) / 0.5)
+    touch.style.opacity = t > tapAt ? (1 - tp) * 0.9 : 0
+    touch.style.transform = `scale(${lerp(0.45, 1.25, tp).toFixed(3)})`
+    touch.style.zIndex = 30
+    const open = clamp(spring(t - (tapAt + 0.15), 0.6))
+    launch.style.zIndex = 25
+    show(launch, open > 0)
+    if (open > 0) {
+      const src = frameSrc('markets', 0)
+      if (launch.getAttribute('src') !== src) { launch.src = src; pending.push(decode(launch)) }
+      launch.style.opacity = clamp(open * 2)
+      launch.style.transform = `scale(${lerp(0.15, 1, open).toFixed(3)})`
+      launch.style.borderRadius = `${lerp(30, 0, open).toFixed(1)}px`
+    }
+
+    // 3. Copy
+    copies.forEach((el, i) => {
+      if (!el) return
+      const sc = SCENES[i], next = SCENES[i + 1]
+      const p = spring(t - sc.at - 0.15, 0.9)
+      const out = next ? clamp(spring(t - next.at + 0.1, 0.5)) : clamp(spring(t - (END_AT - 0.5), 0.5))
+      const on = t >= sc.at && p > 0.001 && out < 0.999
+      show(el, on)
+      if (!on) return
+      mat(el, p * (1 - out), { y: 30 * (1 - p) - 20 * out, s: 0.03, blur: 16 })
+    })
+
+    // 4. End card (36.4-40)
+    show(s8, t >= END_AT - 0.2)
+    const e1 = spring(t - END_AT, 0.7), e2 = spring(t - END_AT - 0.35, 0.7), e3 = spring(t - END_AT - 0.6, 0.7), e4 = spring(t - END_AT - 0.8, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endCa, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+    await Promise.all(pending)
+  }
+}
+
+await build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

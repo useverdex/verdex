@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex showcase</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.lab { display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px; border-radius: 9px; background: var(--chip); font-size: 20px; font-weight: 500; }
+.lab span { width: 16px; height: 16px; display: inline-flex; }
+.copy { position: absolute; left: 280px; right: 280px; top: 56px; height: 170px; will-change: transform, opacity, filter; }
+.copy h1 { margin: 12px 0 0; font-size: 64px; white-space: nowrap; }
+.copy p { margin: 8px 0 0; font-size: 24px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+#persp { position: absolute; inset: 0; perspective: 2600px; }
+.win { position: absolute; left: 280px; top: 236px; width: 1360px; height: 805px; border-radius: 18px; overflow: hidden; background: #0F0F0F; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 60px 140px rgba(0,0,0,.75); will-change: transform, opacity, filter; transform-style: preserve-3d; }
+.win .bar { height: 40px; background: #141414; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.win .bar i { width: 11px; height: 11px; border-radius: 50%; background: #2A2A2A; display: block; }
+.win .bar .url { margin-left: 14px; display: inline-flex; align-items: center; gap: 8px; height: 24px; padding: 0 12px; border-radius: 7px; background: rgba(255,255,255,.06); font-size: 13px; color: var(--muted); }
+.win .bar .url b { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+.win .view { position: relative; width: 1360px; height: 765px; overflow: hidden; background: #060606; }
+.win .view img { position: absolute; left: 0; top: 0; width: 1360px; height: 765px; display: block; will-change: opacity; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Showcase: real footage of the site inside a floating window, one line of copy per clip. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const THEMES = {
+  markets: { word: 'Markets', intro: 'Every asset. Every issuer. Every chain.', clips: [
+    ['landing', '/', 'Wall Street, onchain.', 'Tokenized stocks, ETFs, gold, treasuries and private credit, in one marketplace.'],
+    ['assets', '/assets', '226 assets. One list.', 'Filter by category or issuer. Most traded, top by market cap, most available.'],
+    ['search', '/assets', 'Search anything.', 'A ticker, a company, gold. Every version of it, side by side, with its chains and price.'],
+    ['issuers', '/issuers', '12 issuers, side by side.', 'Ondo, xStocks, bStocks, Robinhood, Backed, Tether, Paxos and more. Never pick one blind.'],
+    ['discover', '/rwa-baskets/discover', 'Every basket in one table.', 'Index and automated baskets, with holdings, market cap, price and returns.'],
+  ] },
+  trade: { word: 'Trade', intro: 'One order. Any chain.', clips: [
+    ['wallet', '/', 'Connect any wallet.', 'MetaMask, Rabby, Phantom, Coinbase Wallet. Non-custodial, always.', 0.3],
+    ['swap', '/', 'Swap in one signature.', 'Any token in, any stock out. Priced live across 36 bridges and 37 DEXs.', 7.4],
+    ['bridge', '/', 'Bridge in the same step.', 'Robinhood Chain, Arc, Base, Solana, Ethereum. 70 chains, one route.', 5.6],
+    ['private', '/', 'Private when you want it.', 'Swap to a fresh address you control, through partner liquidity.', 8.2],
+    ['swap', '/', 'Everything shown before you sign.', 'Route, minimum received, network fee and time, all up front. Then one signature.', 12.0],
+  ] },
+  invest: { word: 'Invest', intro: 'Baskets. Lending. On schedule.', clips: [
+    ['baskets', '/rwa-baskets', 'A portfolio in one token.', '27 baskets, fully backed at published weights, redeemable any time.', 1.0],
+    ['lend', '/lend', 'Lend. Borrow. Multiply.', 'Earn on your stocks, or borrow against them without selling.', 0.5],
+    ['pools', '/rwa-pools', 'Every pool, every chain.', 'Where tokenized stocks trade, with liquidity, volume and fee APR.', 0.5],
+    ['autoinvest', '/auto-invest', 'Buy the market on schedule.', 'Recurring buys, one tap each. Zero Verdex fee for VERDEX holders.', 2.2],
+    ['portfolio', '/portfolio', 'Everything you hold.', 'Balances, baskets and lending positions across every chain, in one view.', 1.5],
+  ] },
+}
+const theme = new URLSearchParams(location.search).get('theme') ?? 'markets'
+const T = THEMES[theme]
+const INTRO = 3.2, SCENE = 6.6, SKIP = 0.3
+const START = INTRO + 0.2
+const END_AT = START + SCENE * T.clips.length + 0.2
+const DURATION = END_AT + 3.6
+const FPS = 30
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+
+let INDEX
+async function build() {
+  INDEX = await (await fetch(`showcase/${theme}/index.json`)).json()
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // Intro: the mark, the theme word, one line.
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:130px;height:130px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:210px">${T.word}</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, T.intro)
+
+  // The window with one image layer per clip.
+  const persp = add(stage, `<div id="persp"></div>`)
+  const win = add(persp, `<div class="win"><div class="bar"><i></i><i></i><i></i><span class="url"><b></b><span></span></span></div><div class="view"></div></div>`)
+  const urlEl = win.querySelector('.url span')
+  const view = win.querySelector('.view')
+  const layers = T.clips.map(() => add(view, `<img alt="" style="opacity:0">`))
+
+  // Copy per clip above the window.
+  const copies = T.clips.map(([, , h, p]) => {
+    const el = add(stage, `<div class="copy"><div class="lab"><span>${MARK()}</span>${T.word}</div><h1 class="serif"></h1><p>${p}</p></div>`)
+    return { el, chars: letters(el.querySelector('h1'), h), p: el.querySelector('p') }
+  })
+
+  // End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Everything tokenized. One marketplace.</div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:ui-monospace,Menlo,monospace">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  const frameSrc = (clip, f) => `showcase/${theme}/${clip}/${String(clamp(Math.floor(f), 1, INDEX.clips[clip])).padStart(5, '0')}.jpg`
+  const decode = (img) => (img.decode ? img.decode().catch(() => {}) : Promise.resolve())
+
+  window.renderAt = async (t) => {
+    const pending = []
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // Intro (0-3.2)
+    show(s1, t < INTRO + 0.5)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - (INTRO - 0.5), 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 1.0, 0.9), { stagger: 0.03, out: clamp(spring(t - (INTRO - 0.6), 0.4)) })
+
+    // Window: rises in at the end of the intro, floats, leaves before the end card.
+    const cur = clamp(Math.floor((t - START) / SCENE), 0, T.clips.length - 1)
+    const rise = spring(t - (START - 0.3), 1.0)
+    const leave = clamp(spring(t - (END_AT - 0.4), 0.7))
+    show(persp, t > START - 0.4 && t < END_AT + 0.5)
+    const nudge = spring(t - START - cur * SCENE, 0.5, 0.7)
+    const y = lerp(520, 0, rise) + 6 * Math.sin(t * 0.9) + leave * 700
+    const rx = lerp(16, 0, rise) - 1.5 * Math.sin(t * 0.7)
+    win.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0) rotateX(${rx.toFixed(2)}deg) scale(${lerp(0.985, 1, nudge).toFixed(4)})`
+    win.style.opacity = clamp(rise * 2) * (1 - leave)
+    urlEl.textContent = 'useverdex.xyz' + T.clips[cur][1]
+    layers.forEach((img, i) => {
+      const at = START + i * SCENE
+      const on = t >= at - 0.02 && t < at + SCENE + 0.5
+      show(img, on)
+      if (!on) return
+      const f = (t - at + (T.clips[i][4] ?? SKIP)) * FPS + 1
+      const src = frameSrc(T.clips[i][0], f)
+      if (img.getAttribute('src') !== src) { img.src = src; pending.push(decode(img)) }
+      img.style.opacity = i < T.clips.length - 1 ? 1 - clamp(spring(t - (at + SCENE), 0.35)) : 1
+      img.style.zIndex = i
+    })
+
+    // Copy: one per clip.
+    copies.forEach((c, i) => {
+      const at = START + i * SCENE
+      const on = t >= at - 0.05 && t < at + SCENE + 0.3
+      show(c.el, on)
+      if (!on) return
+      const out = i < T.clips.length - 1 ? clamp(spring(t - (at + SCENE - 0.35), 0.4)) : clamp(spring(t - (END_AT - 0.5), 0.4))
+      c.el.style.opacity = 1 - out
+      c.el.style.transform = `translate3d(0, ${(-14 * out).toFixed(1)}px, 0)`
+      c.el.style.filter = out > 0.001 ? `blur(${(out * 10).toFixed(2)}px)` : 'none'
+      wipe(c.chars, spring(t - at - 0.1, 0.8), { stagger: 0.035 })
+      const pp = spring(t - at - 0.5, 0.9)
+      c.p.style.opacity = pp
+      c.p.style.transform = `translate3d(0, ${(1 - pp) * 10}px, 0)`
+      c.el.querySelector('.lab').style.opacity = i === 0 ? clamp(spring(t - at, 0.8)) : 1
+    })
+
+    // End card
+    show(s8, t >= END_AT - 0.2)
+    const e1 = spring(t - END_AT, 0.7), e2 = spring(t - END_AT - 0.35, 0.7), e3 = spring(t - END_AT - 0.6, 0.7), e4 = spring(t - END_AT - 0.8, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endCa, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+    await Promise.all(pending)
+  }
+}
+
+await build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

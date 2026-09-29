@@ -1,0 +1,7 @@
+# Verdex security contact
+Contact: mailto:feedback@verdex.app
+Contact: https://x.com/useverdex
+Canonical: https://useverdex.xyz/.well-known/security.txt
+Preferred-Languages: en, es
+Policy: https://useverdex.xyz/terms
+Expires: 2027-09-28T00:00:00.000Z
