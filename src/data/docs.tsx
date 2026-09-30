@@ -19,7 +19,7 @@ export const DOC_SECTIONS: DocSection[] = [
     blocks: [
       { kind: 'p', text: `${N} is the unified marketplace for real-world assets. Stock tokens from Ondo, xStocks, Robinhood, Coinbase and bStocks trade in one place, alone or as whole baskets. Every swap and bridge is priced across bridges, exchanges and intent solvers, and you sign from your own address.` },
       { kind: 'p', text: `${N} never holds your funds. Transfers go from your own address through audited routing contracts to the destination address you choose.` },
-      { kind: 'p', text: 'Tokenized Baskets are live: index baskets you hold as one token, and strategy baskets you hold stock by stock. Tokenized Pools lists the liquidity pools of tokenized stocks across chains, and you can add liquidity to any of them. Lend and Borrow lets you earn on tokenized stocks, borrow against them, or hold more of one with Multiply.' },
+      { kind: 'p', text: 'Tokenized Baskets are live: index baskets you hold as one token, and strategy baskets you hold stock by stock. Tokenized Pools lists the liquidity pools of tokenized stocks across chains, and Verdex Pools lets you provide liquidity to the ones on Robinhood Chain from your wallet. Lend and Borrow lets you earn on tokenized stocks, borrow against them, or hold more of one with Multiply.' },
     ],
   },
   {
@@ -143,6 +143,21 @@ export const DOC_SECTIONS: DocSection[] = [
         { term: 'Fee', text: 'The pool’s own fee tier, paid by traders to liquidity providers.' },
         { term: 'Fee APR', text: 'One day of fees at the current volume, times 365, divided by liquidity. Shown only where the pool states a fee tier. It changes with volume and is not a promise.' },
         { term: 'Adding liquidity', text: 'Open a pool and choose Add Liquidity. Set a price range and the amounts, approve each token once, and one transaction adds the position to your address. It earns the pool’s fee while the price is inside your range.' },
+      ] },
+    ],
+  },
+  {
+    id: 'verdex-pools',
+    title: 'Verdex Pools',
+    blocks: [
+      { kind: 'p', text: `Verdex Pools is where you provide that liquidity. It reads every Uniswap v3 pool of a tokenized stock on Robinhood Chain from the factory, against USDG and ETH at every fee tier, and lets you open, top up, collect from and close positions from ${N}, signed in your own wallet. ${N} adds no contract and takes no fee on it.` },
+      { kind: 'defs', items: [
+        { term: 'Where the numbers come from', text: 'The pool list, the price and the tick from the chain, refreshed every minute. Liquidity and volume in dollars from DexScreener. Fee APR is one day of the pool fee at the current volume, times 365, divided by the liquidity: a snapshot, not a forecast.' },
+        { term: 'Range', text: 'Presets of ±2%, ±5%, ±10% and ±25% around the current price, full range, or your own bounds. A tighter range earns a larger share of the fees while the price is inside and stops earning when it leaves; a full-range position always earns, but less.' },
+        { term: 'Amounts', text: 'Type one side and the other follows from the range and the price. Outside the range only one token is needed. The minimums sent with the transaction allow 0.5% of movement; the deadline is 20 minutes.' },
+        { term: 'The transaction', text: 'One approval per token the first time, then one call to the Uniswap v3 position manager. ETH is sent as ETH and wrapped inside the call, with any excess refunded in the same transaction. The position is an NFT held by your address.' },
+        { term: 'Your positions', text: 'Every position your address holds in these pools, with the amounts it represents at the current price, whether the price is inside its range, and the fees it has earned but not yet collected. Collect pays the fees out; Remove takes out a share and the fees together, and closing the position burns the NFT.' },
+        { term: 'Impermanent loss', text: 'A position is a bet the price stays inside the range. If the stock rises past the top you hold only the quote token; if it falls below the bottom you hold only the stock. The fees are the compensation for taking that side of every trade.' },
       ] },
     ],
   },

@@ -53,6 +53,8 @@ The feature lives at `/orders` (`src/pages/OrdersPage.tsx` on top of `src/lib/or
 
 ## Token page film
 
+`pools.html` is a 34-second film for Verdex Pools: the name, the live stats strip, the pool table rising row by row, the composer typing one amount and getting the other, a position earning its first fees, and the end card at `useverdex.xyz/pools`. Render with `node promo/render.mjs --page promo/pools.html --out promo/verdex-pools.mp4`.
+
 `holders.html` is a 34-second film for the holder perks: the claim, a quote whose Verdex fee flips to a struck-through zero when the wallet chip lands, the eight surfaces it covers, the early-access gate, the status panel filling in, and the end card at `useverdex.xyz/verdex`. Render with `node promo/render.mjs --page promo/holders.html --out promo/verdex-holders.mp4`.
 
 `token.html` is a 36-second film for the $VERDEX page: the name, the live stats strip counting in, the creator-fees panel filling from the escrow's events, the dev wallet panel (held, burned, never sold) with its buys and burns, the four bounty tiers, and the end card at `useverdex.xyz/verdex`. Render with `node promo/render.mjs --page promo/token.html --out promo/verdex-token.mp4`. The figures in `NUM` are the day's readings; the page itself reads live.

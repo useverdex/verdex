@@ -29,6 +29,10 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   the live price feed and the connected wallet through a fixed set of tools and drafts each action as
   a card. Nothing is placed, scheduled or created until the card is approved, and the wallet still
   confirms every trade. Without a key, a small rules-based helper drafts the same cards.
+- **Verdex Pools.** Liquidity for tokenized stocks on Robinhood Chain through the Uniswap v3
+  contracts already there: every stock pool from the factory with live price, liquidity, volume and
+  fee APR, a range and amount composer, and your positions with fees, collect and remove. No Verdex
+  contract and no Verdex fee.
 - **$VERDEX page.** The token, read from the chain: market data, creator fees and sweeps, the dev
   wallet's holding, buys and burns, the bug bounty tiers, all live in the browser with a link to every
   transaction.

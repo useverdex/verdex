@@ -38,7 +38,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Earn',
     match: ['/rwa-pools'],
-    items: [{ label: 'Tokenized Pools', icon: DropIcon, path: '/rwa-pools' }, soon('Verdex Pools', BoltIcon, true), soon('Asset Yield', PercentIcon)],
+    items: [{ label: 'Verdex Pools', icon: BoltIcon, path: '/pools' }, { label: 'Tokenized Pools', icon: DropIcon, path: '/rwa-pools' }, soon('Asset Yield', PercentIcon, true)],
   },
   {
     label: 'Lend and Borrow',
@@ -68,6 +68,7 @@ export const NAV_GROUPS: NavGroup[] = [
       doc('Overview', 'overview', BookIcon),
       doc('Tokenized Baskets', 'tokenized-baskets', LayersIcon),
       doc('Tokenized Pools', 'tokenized-pools', DropIcon),
+      doc('Verdex Pools', 'verdex-pools', BoltIcon),
       doc('Lend and Borrow', 'lend-and-borrow', HandCoinIcon),
       doc('Fees', 'fees', ReceiptIcon),
       doc('Holding VERDEX', 'holding', CoinIcon),

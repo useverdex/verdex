@@ -293,6 +293,58 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Verdex Pools (`verdex-pools.mp4`, 34 s, post with the video)
+
+### Announcement
+
+> Verdex Pools is live.
+>
+> Provide liquidity to tokenized stocks on Robinhood Chain from your own wallet: 130 Uniswap v3 pools, $36M of liquidity, $68M traded in a day, $77k of fees to LPs.
+>
+> Pick a pool, set a range, deposit both sides. Leave whenever.
+>
+> useverdex.xyz/pools
+
+> NVDA, SPY, QQQ, GOOGL, SpaceX, oil. Onchain, with a fee tier and a price range.
+>
+> Verdex Pools reads every stock pool on Robinhood Chain and lets you be the liquidity, from Verdex, signed in your wallet. Your positions and their fees on the same page.
+>
+> useverdex.xyz/pools
+
+### Thread under the announcement
+
+> 1/ What it is: the Uniswap v3 pools where tokenized stocks trade on Robinhood Chain, found in the factory for every stock Verdex lists, against USDG and ETH at every fee tier. 130 of them today, with liquidity, volume, price and fee APR read live.
+
+> 2/ Adding: pick a pool, a range (±2% to full, or your own), and one amount. The other side follows from the range and the price. One approval per token, then one transaction to the Uniswap position manager. ETH goes in as ETH, the change comes back in the same call.
+
+> 3/ Your positions: everything your address holds in these pools, what it represents at today's price, in or out of range, and the fees earned but not collected. Collect them, remove 25 to 100%, or close the position, each in one transaction.
+
+> 4/ What Verdex adds: nothing onchain. No contract, no fee, no custody. The page talks to the same factory and position manager the Uniswap app uses, so a position opened here shows up there and the other way round. Open source, like the rest.
+
+> 5/ What to know before: a range is a bet the price stays inside it. If the stock runs, you end up with the quote; if it drops, with the stock. Fees are the compensation, not a guarantee. Fee APR is today's fees times 365, and today changes.
+
+### Standalone
+
+> Tokenized stocks trade 24/7 onchain. Someone has to be the liquidity. Now it can be you, from Verdex.
+>
+> useverdex.xyz/pools
+
+> $77k of fees went to liquidity providers on Robinhood Chain's stock pools in the last 24 hours. Verdex Pools shows every one of them and lets you join from your wallet.
+>
+> useverdex.xyz/pools
+
+> Verdex Pools, in one line: every Uniswap v3 stock pool on Robinhood Chain, a range and two amounts, one transaction, and your fees on the same page.
+
+### Spanish
+
+> Verdex Pools ya está en marcha.
+>
+> Provee liquidez a acciones tokenizadas en Robinhood Chain desde tu wallet: 130 pools de Uniswap v3, $36M de liquidez, $68M operados en un día y $77k de fees para los LPs.
+>
+> Elige pool, rango y cantidades. Sal cuando quieras.
+>
+> useverdex.xyz/pools
+
 ## Holder perks (`verdex-holders.mp4`, 34 s, post with the video)
 
 ### Announcement
