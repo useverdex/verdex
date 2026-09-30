@@ -236,7 +236,7 @@ export default function AutoInvestPage() {
                   <SearchIcon size={16} />
                 </Box>
               )}
-              <InputBase value={q} onChange={(e) => setQ(e.target.value)} placeholder={asset && !q ? 'Change' : 'Search a stock, ETF or basket'} aria-label="Search an asset" sx={{ flex: asset && !q ? 'none' : 1, width: asset && !q ? 110 : 'auto', fontSize: 14, color: t.color.text, '& input': { textAlign: asset && !q ? 'right' : 'left' }, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
+              <InputBase value={q} onChange={(e) => setQ(e.target.value)} placeholder={asset && !q ? 'Change' : 'Search a stock, ETF or basket'} inputProps={{ 'aria-label': 'Search an asset' }} sx={{ flex: asset && !q ? 'none' : 1, width: asset && !q ? 110 : 'auto', fontSize: 14, color: t.color.text, '& input': { textAlign: asset && !q ? 'right' : 'left' }, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
             </Box>
             {results.length > 0 && (
               <Box sx={{ position: 'absolute', left: 0, right: 0, top: 'calc(100% + 6px)', zIndex: 5, background: t.color.menu, border: `1px solid ${t.color.border}`, borderRadius: t.radius.card, boxShadow: '0 12px 40px rgba(0,0,0,.55)', p: 0.75 }}>
@@ -274,7 +274,7 @@ export default function AutoInvestPage() {
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', height: 34, px: 1.5, borderRadius: t.radius.input, background: t.color.tile, gap: 0.5 }}>
                 <Typography sx={{ fontSize: 14, color: t.color.textLabel }}>$</Typography>
-                <InputBase type="number" inputMode="decimal" value={draft.amount} onChange={(e) => setDraft({ amount: Math.max(1, Math.min(100000, Number(e.target.value) || 0)) })} aria-label="Amount in dollars" sx={{ width: 72, fontSize: 14, fontWeight: 500, color: t.color.text }} />
+                <InputBase type="number" inputMode="decimal" value={draft.amount} onChange={(e) => setDraft({ amount: Math.max(1, Math.min(100000, Number(e.target.value) || 0)) })} inputProps={{ 'aria-label': 'Amount in dollars' }} sx={{ width: 72, fontSize: 14, fontWeight: 500, color: t.color.text }} />
               </Box>
               {AMOUNTS.map((a) => (
                 <Choice key={a} on={draft.amount === a} onClick={() => setDraft({ amount: a })}>

@@ -21,14 +21,22 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   and prices are read live, drift is computed against the targets, and when a vault passes its
   threshold or its date, Verdex plans the trades (sells of the overweight, buys of the underweight)
   and the wallet confirms them one by one.
+- **Strategies and Orders.** Follow a published allocation into your own vault, or share one as a
+  link. Limit and stop orders on any listed asset, watched while the app is open and filled with a
+  swap the wallet confirms.
+- **Agent.** Ask for an order, a recurring buy or a vault in plain words. Bring your own Anthropic or
+  OpenAI key (kept in the browser, sent only to that provider); the agent reads the market snapshot,
+  the live price feed and the connected wallet through a fixed set of tools and drafts each action as
+  a card. Nothing is placed, scheduled or created until the card is approved, and the wallet still
+  confirms every trade. Without a key, a small rules-based helper drafts the same cards.
 - **Baskets, Pools, Lend and Borrow.** Reserve index baskets and automated baskets, tokenized-stock
   liquidity pools, and Kamino lending markets for tokenized assets.
 - **Portfolio.** Everything the connected wallet holds across the listed chains.
 - **App.** Installable as a home-screen app (PWA) with a tab bar, offline shell, and reminders when a
   scheduled buy or a rebalance is due.
 
-Holding any amount of VERDEX removes the Verdex fee on Auto-Invest buys and vault rebalances, checked
-onchain each time.
+Holding any amount of VERDEX removes the Verdex fee on Auto-Invest buys, order fills and vault
+rebalances, checked onchain each time.
 
 ## Non-custodial by construction
 
@@ -85,9 +93,9 @@ Details in [promo/README.md](promo/README.md).
 src/
   landing/     Hero, feature sections, token card, swap intro
   swap/        Swap widget and token picker (LI.FI quotes, viem execution)
-  pages/       App routes: markets, issuers, baskets, discover, pools, lend, portfolio, auto-invest, vaults, docs
+  pages/       App routes: markets, issuers, baskets, discover, pools, lend, portfolio, auto-invest, vaults, strategies, orders, agent, docs
   components/  Nav, tab bar, footer, icons, motion helpers, wallet provider, install sheet, due reminders
-  lib/         Data hooks, LI.FI client, Auto-Invest and Vaults engines, PWA helpers, image resolver
+  lib/         Data hooks, LI.FI client, Auto-Invest, Vaults, Strategies, Orders and Agent engines, PWA helpers, image resolver
   theme/       Design tokens, MUI theme, shared style objects
   data/        Docs content, logo manifest
 public/

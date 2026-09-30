@@ -45,6 +45,40 @@ The feature itself lives at `/auto-invest` (`src/pages/AutoInvestPage.tsx` on to
 
 The feature lives at `/vaults` (`src/pages/VaultsPage.tsx` on top of `src/lib/vaults.ts`): a vault is a set of target weights on one chain, stored on the device for the wallet that made it. Balances and prices are read live, drift is computed against the targets, and a vault is due when it passes its threshold or its date. Rebalancing plans sells of the overweight assets and buys of the underweight ones, prices each through LI.FI, approves once per token and confirms every trade in the wallet. `src/components/DueBuys.tsx` also reminds the user of due rebalances. The page shots in `shots/vaults-*.png` come from the preview build.
 
+## Orders launch
+
+`orders.html` is a 40-second film for the feature: "New on Verdex" and the name, the order form filling itself in (buy NVDA below $210, $500, USDG) and placed, a price chart drifting for a week until it crosses the level with the reminder firing, the triggered order card confirmed and filled through KyberSwap, four order-type tiles, three non-custodial lines, the fee line going to zero for holders, and the end card. Render with `node promo/render.mjs --page promo/orders.html --out promo/verdex-orders.mp4`.
+
+The feature lives at `/orders` (`src/pages/OrdersPage.tsx` on top of `src/lib/orders.ts`): orders are stored on the device for the wallet that placed them, watched every 30 to 45 seconds while the app is open through the LI.FI price feed with the snapshot as fallback, marked triggered when the level is crossed, reminded through `DueBuys`, and filled with a LI.FI swap the wallet confirms. The page shots in `shots/orders-*.png` come from the preview build.
+
+## Audit film
+
+`audit.html` is a 38-second film for the site audit: the name and "We audited every line.", eight scope tiles ticking green, a runner card typing the tool results (npm audit, eslint, tsc, the route crawl), the six fixes, the two trade-offs kept on purpose, and the end card pointing at `useverdex.xyz/docs#audit` and `AUDIT.md`. Render with `node promo/render.mjs --page promo/audit.html --out promo/verdex-audit.mp4`. The teaser still is `photos/teaser-audit.png` (`teaser.html?bg=audit`).
+
+## Agent launch
+
+`agent.html` is a 40-second film for the feature: "New on Verdex" and the name, a sentence typed into the chat ("Buy $250 of NVDA if it drops 5%") with the tool lines, the proposal card and the reply, the card approved and saved to Orders, two more asks side by side (a weekly SPY plan and an AI vault) approved in turn, the three-step approval rail, the key setup with the Anthropic key typed in, three non-custodial lines, the fee line going to zero for holders, and the end card. Render with `node promo/render.mjs --page promo/agent.html --out promo/verdex-agent.mp4`.
+
+The feature lives at `/agent` (`src/pages/AgentPage.tsx` on top of `src/lib/agent.ts`). The key is kept in localStorage and sent only to the chosen provider (Anthropic through `@anthropic-ai/sdk` in the browser, OpenAI through its chat completions endpoint); a rules-based helper covers the no-key case. The tools are `search_assets`, `get_price`, `get_holdings`, `list_activity`, `propose_order`, `propose_plan` and `propose_vault`; the three proposal tools emit cards, and approving a card writes to the same stores the Orders, Auto-Invest and Vaults pages use. The page shots in `shots/agent-*.png` come from the preview build with the built-in helper.
+
+`teaser.html?line=…&sub=…` is a single still for a teaser tweet: the next feature's card and chart blurred past reading under a line and a time. Render with `node promo/render.mjs --page "promo/teaser.html?line=One%20more.&sub=In%205%20hours." --still 0 --dir promo/photos` and rename the still; `photos/teaser-5h.png` and `photos/teaser-0600.png` are the two variants for the Orders teaser.
+
+`clips12.html?clip=<name>` holds the ten 12-second clips of the fifth tweet batch (`sentence`, `key`, `steps`, `holdings`, `stoploss`, `nokey`, `tools`, `level`, `fourtypes`, `cancel`): the first seven around Agent, the last three around Orders. Render each with `node promo/render.mjs --page "promo/clips12.html?clip=sentence" --fps 30 --out promo/clip-sentence.mp4`. `photos/photo3-*.png` are the five stills for the third set of photo tweets, four from the Agent film and one from the Orders film.
+
+`clips13.html?clip=<name>` holds the ten 12-second clips of the sixth tweet batch, one per part of the product (`privateswap`, `gold`, `pools`, `multiply`, `portfolio`, `discover`, `route`, `opensource`, `receipt`, `audit`). Render each with `node promo/render.mjs --page "promo/clips13.html?clip=gold" --fps 30 --out promo/clip-gold.mp4`. Pool, multiply and basket figures come from the bundled snapshots.
+
+## Strategies launch
+
+`strategies.html` is a 38-second film for the feature: "New on Verdex" and the name, three strategy cards with the first one followed, the follower's vault beside the change log while a new version arrives, the update banner adopted and the targets shifting until the vault is due, three non-custodial lines, a vault shared as a link with the copy button pressed, the fee line going to zero for holders, and the end card. Render with `node promo/render.mjs --page promo/strategies.html --out promo/verdex-strategies.mp4`.
+
+The feature lives at `/strategies` (`src/pages/StrategiesPage.tsx` on top of `src/lib/strategies.ts`) with the registry in `public/data/strategies.json`. Following creates a vault that remembers the version it adopted; `VaultsPage` shows the update banner and `DueBuys` reminds the user. Share links encode the weights in the URL. The page shots in `shots/strategies-*.png` come from the preview build.
+
+`clips11.html?clip=<name>` holds the ten 12-second clips of the fourth tweet batch (`manager`, `note`, `delegation`, `link`, `pr`, `changelog`, `leave`, `two`, `registry`, `free`), rendered like the earlier batches at 30 fps. `photos/photo2-*.png` are the five stills for the second set of photo tweets.
+
+## Open source film
+
+`opensource.html` is a 32-second film for the day the repository goes public: "Verdex is" and the name, a terminal cloning the repository into a GitHub-style file list, a real excerpt of the Auto-Invest engine under "Non-custodial. Now you can check it.", eight tiles for what is inside, the repository card with the star pressed, and the end card with the GitHub address. Render it with `node promo/render.mjs --page promo/opensource.html --out promo/verdex-opensource.mp4`.
+
 ## Roadmap and showcase films
 
 `roadmap.html` is a 40-second roadmap: two opening lines, the six things that are live thrown in as tiles, three cards each for Next and Then, the private-markets line with logos flying past, the VERDEX step and the end card, with a rail at the bottom that lights up each stop. Render with `node promo/render.mjs --page promo/roadmap.html --out promo/verdex-roadmap.mp4`.

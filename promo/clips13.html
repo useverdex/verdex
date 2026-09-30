@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex tweet clips, batch six</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.line { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.line .t { font-size: 112px; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 26px; font-weight: 500; will-change: transform, opacity, filter; }
+.pill svg { width: 24px; height: 24px; color: var(--lime); }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+.panel { position: absolute; left: 50%; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.chip { display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background, color; }
+.chip img { width: 20px; height: 20px; border-radius: 50%; }
+.chip.on { background: #fff; color: #000; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); white-space: nowrap; }
+.badge.done { background: rgba(194,234,138,.16); color: var(--lime); }
+/* Wallet tiles */
+.wal { position: absolute; top: 330px; width: 520px; padding: 26px 30px 28px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.65); will-change: transform, opacity, filter, border-color; }
+.wal.hot { border-color: rgba(194,234,138,.45); }
+.wal .hd { display: flex; align-items: center; gap: 14px; }
+.wal .hd i { width: 44px; height: 44px; border-radius: 12px; display: block; }
+.wal .hd b { font-size: 22px; font-weight: 500; display: block; font-family: var(--mono); letter-spacing: 0; }
+.wal .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 2px; }
+.wal .row { display: flex; align-items: center; gap: 14px; margin-top: 22px; height: 60px; padding: 0 16px; border-radius: 12px; background: var(--tile); font-size: 22px; font-weight: 500; will-change: opacity, transform; }
+.wal .row img { width: 30px; height: 30px; border-radius: 50%; }
+.wal .row small { margin-left: auto; font-size: 17px; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.money { position: absolute; display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.1); font-size: 28px; font-weight: 500; white-space: nowrap; box-shadow: 0 20px 60px rgba(0,0,0,.6); will-change: transform, opacity; }
+.money img { width: 32px; height: 32px; border-radius: 50%; }
+.node { position: absolute; left: 50%; top: 372px; width: 380px; margin-left: -190px; padding: 20px 24px; box-sizing: border-box; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; will-change: opacity, transform, filter; }
+.node img { width: 44px; height: 44px; border-radius: 50%; }
+.node b { font-size: 22px; font-weight: 500; display: block; }
+.node span { font-size: 15px; color: var(--muted); display: block; margin-top: 2px; }
+.addr { position: absolute; left: 50%; top: 610px; width: 1040px; margin-left: -520px; display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); font-family: var(--mono); font-size: 22px; will-change: opacity, transform; }
+.addr .k { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); width: 200px; }
+.addr .cur { display: inline-block; width: 2px; height: 26px; background: #fff; vertical-align: -5px; margin-left: 2px; }
+/* Asset tiles */
+.atile { position: absolute; width: 400px; padding: 26px 28px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.atile img { width: 56px; height: 56px; border-radius: 50%; }
+.atile b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.atile span { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; }
+.atile em { display: block; font-style: normal; font-family: 'LT Remark', serif; font-size: 44px; letter-spacing: -0.02em; margin-top: 14px; font-variant-numeric: tabular-nums; }
+.clock { position: absolute; left: 50%; top: 190px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 14px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 28px; font-weight: 500; font-variant-numeric: tabular-nums; will-change: opacity; }
+.clock i { width: 12px; height: 12px; border-radius: 50%; background: var(--lime); }
+/* Table rows */
+.trow { position: absolute; left: 50%; width: 1240px; margin-left: -620px; height: 84px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.trow.on { border-color: rgba(194,234,138,.45); background: #131513; }
+.trow img.l { width: 44px; height: 44px; border-radius: 50%; }
+.trow img.c { width: 22px; height: 22px; border-radius: 50%; }
+.trow b { font-size: 24px; font-weight: 500; width: 190px; letter-spacing: -0.01em; }
+.trow .nm { font-size: 18px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex: 1; }
+.trow .v { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; text-align: right; min-width: 160px; }
+.trow .v.lime { color: var(--lime); }
+.trow .s { font-size: 17px; color: var(--muted); text-align: right; min-width: 150px; font-variant-numeric: tabular-nums; }
+.trow .tag { padding: 4px 9px; border-radius: 6px; background: rgba(255,255,255,.08); font-size: 14px; font-weight: 500; color: var(--soft); }
+.total { position: absolute; left: 50%; width: 1240px; margin-left: -620px; display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; font-size: 24px; color: var(--muted); will-change: opacity, transform; }
+.total b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+/* Leverage card */
+.lev { position: absolute; left: 50%; top: 300px; width: 960px; margin-left: -480px; padding: 30px 36px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lev .hd { display: flex; align-items: center; gap: 16px; }
+.lev .hd img { width: 52px; height: 52px; border-radius: 50%; }
+.lev .hd b { font-size: 26px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.lev .hd span { font-size: 17px; color: var(--muted); display: block; margin-top: 3px; }
+.lev .x { font-family: 'LT Remark', serif; font-size: 72px; letter-spacing: -0.03em; line-height: 1; margin-left: auto; font-variant-numeric: tabular-nums; }
+.lev .bars { margin-top: 26px; display: grid; gap: 14px; }
+.lev .br { display: grid; grid-template-columns: 150px 1fr 170px; align-items: center; gap: 16px; font-size: 19px; }
+.lev .br .bar { height: 16px; border-radius: 8px; background: #1c1c1c; overflow: hidden; }
+.lev .br .bar i { display: block; height: 100%; border-radius: 8px; will-change: width; }
+.lev .br .n { text-align: right; font-variant-numeric: tabular-nums; color: var(--soft); }
+.lev .slider { margin-top: 26px; position: relative; height: 40px; }
+.lev .slider .ln { position: absolute; left: 0; right: 0; top: 19px; height: 3px; background: rgba(255,255,255,.14); }
+.lev .slider .fill { position: absolute; left: 0; top: 19px; height: 3px; background: var(--lime); will-change: width; }
+.lev .slider .kn { position: absolute; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transform: translateX(-50%); box-shadow: 0 4px 14px rgba(0,0,0,.6); will-change: left; }
+.lev .slider .lb { position: absolute; top: 46px; font-size: 15px; color: var(--faint); transform: translateX(-50%); }
+.lev .meta { display: flex; justify-content: space-between; margin-top: 44px; font-size: 18px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lev .meta b { color: #fff; font-weight: 500; }
+/* Route rows */
+.rt { position: absolute; left: 50%; width: 1100px; margin-left: -550px; height: 88px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.rt.on { border-color: rgba(194,234,138,.5); background: #131513; }
+.rt img { width: 40px; height: 40px; border-radius: 50%; }
+.rt img + img { margin-left: -14px; }
+.rt b { font-size: 23px; font-weight: 500; width: 300px; letter-spacing: -0.01em; }
+.rt .t { font-size: 18px; color: var(--muted); flex: 1; }
+.rt .out { font-size: 26px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.rt .out small { font-size: 16px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+/* Terminal */
+.term { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 24px 30px 28px; box-sizing: border-box; border-radius: 20px; background: #0a0a0a; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 23px; line-height: 1.7; color: var(--soft); will-change: transform, opacity, filter; }
+.term .dots { display: flex; gap: 8px; margin-bottom: 14px; }
+.term .dots i { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.term .ln { will-change: opacity; white-space: pre; }
+.term .ln .p { color: var(--lime); }
+.term .ln .d { color: var(--faint); }
+.term .cur { display: inline-block; width: 12px; height: 24px; background: var(--soft); vertical-align: -4px; }
+/* Receipt */
+.rcpt { position: absolute; left: 50%; top: 290px; width: 760px; margin-left: -380px; padding: 30px 36px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.rcpt .hd { display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 500; }
+.rcpt .hd img { width: 34px; height: 34px; border-radius: 50%; }
+.rcpt .hd img + img { margin-left: -12px; }
+.rcpt .it { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; font-size: 22px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.07); will-change: opacity, transform; }
+.rcpt .it span { color: var(--muted); font-size: 17px; margin-left: 10px; }
+.rcpt .it .a { font-variant-numeric: tabular-nums; font-weight: 500; position: relative; }
+.rcpt .it .a i { position: absolute; left: -4px; right: -4px; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.rcpt .it .a em { font-style: normal; color: var(--lime); margin-left: 14px; }
+.rcpt .tot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; font-size: 22px; color: var(--muted); }
+.rcpt .tot b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 56px; color: #fff; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+/* Runner */
+.run { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 30px 38px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 25px; line-height: 1.8; will-change: transform, opacity, filter; }
+.run .hd { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 12px; }
+.run .ln { display: flex; align-items: center; gap: 20px; will-change: opacity, transform; }
+.run .ln .k { color: var(--soft); width: 560px; flex-shrink: 0; }
+.run .ln .v { color: #fff; }
+.run .ln .ok { color: var(--lime); font-weight: 700; width: 34px; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Ten 12-second clips for the sixth tweet batch, each on a different part of the product. ?clip=<name>
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const TOOL = (k) => `${PUB}/logos/tools/${k}.svg`
+const LOGO = { NVDA: L('88a0e630'), SPY: L('c025dcd9'), TSLA: L('e8ca24f9'), GLD: L('8123a79a'), SLV: L('29352778'), USO: L('f34687ee'), PAXG: L('7869a6ce'), XAUT: L('941acb6b'), META: L('0b00cc62'), GOOGL: L('4d76db13'), SPCX: L('5a9801c3'), AMZN: L('39c11fed'), QQQ: L('8fbe91e2'), MSTR: L('48f06241'), IBIT: L('4c80de69'), TLT: L('0ee1c35f') }
+const USDG = `${PUB}/img/tokens/usdg.png`, USDC = `${PUB}/img/tokens/usdc.png`
+const clip = new URLSearchParams(location.search).get('clip') ?? 'privateswap'
+const DURATION = 12
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const line = (parent, text, { top = 460, size = 112, color = '#fff' } = {}) => {
+  const el = add(parent, `<div class="line" style="top:${top}px"><div class="serif t" style="font-size:${size}px;color:${color}"></div></div>`)
+  return { el, chars: letters(el.querySelector('.t'), text) }
+}
+const runLine = (ln, t, t0, t1, stagger = 0.035) => { show(ln.el, t >= t0 - 0.05 && t < t1 + 0.6); wipe(ln.chars, spring(t - t0, 0.8), { stagger, out: clamp(spring(t - t1, 0.35)) }) }
+const rise = (el, t, t0, { y = 14, r = 0.6 } = {}) => { const p = spring(t - t0, r); show(el, t >= t0 - 0.05); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const capIn = (el, t, t0) => { const q = spring(t - t0, 0.9); show(el, t > t0 - 0.1); mat(el, q, { y: 16 * (1 - q), s: 0.02 }) }
+const pick = (list, idx, t0, t) => list.forEach((c, i) => { const p = spring(t - t0, 0.35, 0.6); const on = i === idx && t >= t0; c.classList.toggle('on', on); c.style.transform = on ? `scale(${(1 + 0.08 * (1 - p)).toFixed(3)})` : 'none' })
+const typed = (el, text, t, t0, cps = 26, cursor = true) => { const n = clamp(Math.floor((t - t0) * cps), 0, text.length); const done = n >= text.length; el.innerHTML = text.slice(0, n) + (cursor && !done && t >= t0 ? '<span class="cur"></span>' : ''); return done }
+const I = {
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+}
+
+const CLIPS = {
+  // 1. Private swap: pay from one wallet, receive in another.
+  privateswap(s) {
+    const l1 = line(s, 'Pay from one wallet.', { top: 470, size: 104 })
+    const l2 = line(s, 'Receive in another.', { top: 470, size: 104, color: 'var(--lime)' })
+    const A = add(s, `<div class="wal" style="left:150px"><div class="hd"><i style="background:linear-gradient(135deg,#7084FF,#2b3a8f)"></i><div><b>0x7c3a…91e4</b><span>The wallet that holds the stable</span></div></div><div class="row"><img src="${USDC}" alt="">USDC<small class="a">500.00</small></div></div>`)
+    const B = add(s, `<div class="wal" style="left:1250px"><div class="hd"><i style="background:linear-gradient(135deg,#C2EA8A,#4E6032)"></i><div><b>0x9b2f…c410</b><span>The address you choose</span></div></div><div class="row r2"><img src="${LOGO.NVDA}" alt="">NVDA<small class="b">0.000</small></div></div>`)
+    const node = add(s, `<div class="node"><img src="${TOOL('kyberswap')}" alt=""><div><b>KyberSwap</b><span>Robinhood Chain · best route</span></div></div>`)
+    const addr = add(s, `<div class="addr"><span class="k">Receiving address</span><span class="tx"></span></div>`)
+    const m1 = add(s, `<div class="money"><img src="${USDC}" alt="">500 USDC</div>`)
+    const m2 = add(s, `<div class="money"><img src="${LOGO.NVDA}" alt="">2.184 NVDA</div>`)
+    const cap = add(s, `<div class="cap" style="top:760px">The swap is signed by the first wallet. The output lands where you said. Nothing else changes.</div>`)
+    const rowB = B.querySelector('.r2'), aA = A.querySelector('.a'), bB = B.querySelector('.b')
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.3)
+      const w = spring(t - 4.5, 0.9); show(A, t > 4.4); show(B, t > 4.4); mat(A, w, { y: 40 * (1 - w), s: 0.05, blur: 18 }); mat(B, w, { y: 40 * (1 - w), s: 0.05, blur: 18 })
+      rise(addr, t, 5.0); typed(addr.querySelector('.tx'), '0x9b2f4e7a1c0d8b6f3e2a9c5d7b1f4e8a2c6d0c410', t, 5.3, 34)
+      const n = spring(t - 6.9, 0.9); show(node, t > 6.8); mat(node, n, { y: 20 * (1 - n), s: 0.03 })
+      // 500 USDC leaves A for the node (7.4-8.4), then NVDA flies from the node to B (8.6-9.6)
+      const p1 = easeIO(clamp((t - 7.4) / 1.0)), p2 = easeIO(clamp((t - 8.6) / 1.0))
+      show(m1, t >= 7.3 && t < 8.5); m1.style.left = `${lerp(330, 830, p1)}px`; m1.style.top = `${lerp(440, 386, p1)}px`; m1.style.opacity = t >= 7.3 ? 1 - clamp((t - 8.3) / 0.2) : 0
+      show(m2, t >= 8.55 && t < 9.7); m2.style.left = `${lerp(1090, 1350, p2)}px`; m2.style.top = `${lerp(386, 440, p2)}px`; m2.style.opacity = t >= 8.55 ? 1 - clamp((t - 9.5) / 0.2) : 0
+      aA.textContent = t >= 7.4 ? '0.00' : '500.00'
+      const q = clamp((t - 9.5) / 0.6); bB.textContent = (2.184 * q).toFixed(3); B.classList.toggle('hot', t >= 9.5); rowB.style.background = t >= 9.5 ? 'rgba(194,234,138,.12)' : ''
+      capIn(cap, t, 10.0)
+    }
+  },
+  // 2. Gold, silver, oil at 3 AM.
+  gold(s) {
+    const l1 = line(s, 'Gold. Silver. Oil.', { top: 470 })
+    const l2 = line(s, 'At 3 AM. From your wallet.', { top: 470, size: 100, color: 'var(--lime)' })
+    const clock = add(s, `<div class="clock"><i></i><span class="tm">4:00 PM</span><span style="color:var(--muted);font-weight:400">New York</span></div>`)
+    const T = [['GLD', 'SPDR Gold Shares', 393.06, 'GLD'], ['SLV', 'iShares Silver Trust', 57.76, 'SLV'], ['USO', 'United States Oil Fund', 150.51, 'USO'], ['PAXG', 'Pax Gold · 1 oz', 4275.02, 'PAXG']]
+    const tiles = T.map(([tk, nm, px, lg], i) => add(s, `<div class="atile" style="left:${120 + i * 420}px;top:330px"><img src="${LOGO[lg]}" alt=""><b>${tk}</b><span>${nm}</span><em class="px">${usd(0, 2)}</em></div>`))
+    const cap = add(s, `<div class="cap" style="top:720px">8 tokenized commodities. Markets closed, wallet open. 24/7, every day of the year.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.4)
+      const c = spring(t - 4.6, 0.8); show(clock, t > 4.5); clock.style.opacity = c
+      const flip = t >= 6.2; clock.querySelector('.tm').textContent = flip ? '3:00 AM' : '4:00 PM'; clock.querySelector('i').style.background = flip ? 'var(--lime)' : 'rgba(255,255,255,.3)'
+      tiles.forEach((el, i) => { const p = spring(t - 4.9 - i * 0.22, 0.85); mat(el, p, { y: 50 * (1 - p), s: 0.06, blur: 16 }); show(el, t > 4.8); const q = clamp((t - 5.3 - i * 0.22) / 0.9); el.querySelector('.px').textContent = usd(T[i][2] * easeIO(q), 2) })
+      capIn(cap, t, 8.6)
+    }
+  },
+  // 3. Tokenized pools: earn the spread.
+  pools(s) {
+    const l1 = line(s, 'Earn the spread.', { top: 470 })
+    const l2 = line(s, 'On tokenized stocks.', { top: 470, color: 'var(--lime)' })
+    const P = [['NVDA', 'USDG', 'Uniswap v3', 4663, 52.7, 6604754], ['SPCX', 'USDG', 'Uniswap v3', 4663, 146.1, 2121606], ['SPY', 'WETH', 'Uniswap v3', 4663, 126.3, 1794239], ['META', 'USDG', 'Uniswap v4', 4663, 429.3, 2911718], ['GOOGL', 'USDG', 'Uniswap v3', 4663, 184.9, 1072251]]
+    const rows = P.map(([tk, q, dex, ch, apr, liq], i) => add(s, `<div class="trow" style="top:${300 + i * 96}px"><img class="l" src="${LOGO[tk]}" alt=""><b>${tk} / ${q}</b><span class="nm"><img class="c" src="${CH(ch)}" alt="">${dex} · Robinhood Chain</span><span class="s">${usd(liq)} liquidity</span><span class="v lime"><span class="apr">0.0</span>%</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:800px">Fee APR over 24 hours at the snapshot; it moves with volume. 19 pools, add liquidity from Verdex.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.3)
+      rows.forEach((el, i) => { const p = spring(t - 4.6 - i * 0.28, 0.85); show(el, t > 4.5); mat(el, p, { y: 40 * (1 - p), s: 0.04, blur: 16 }); const q = easeIO(clamp((t - 5.0 - i * 0.28) / 1.0)); el.querySelector('.apr').textContent = (P[i][4] * q).toFixed(1) })
+      capIn(cap, t, 8.4)
+    }
+  },
+  // 4. Multiply: borrow against your stocks, or lever them.
+  multiply(s) {
+    const l1 = line(s, 'Borrow against SPY.', { top: 470 })
+    const l2 = line(s, 'Or lever it.', { top: 470, color: 'var(--lime)' })
+    const card = add(s, `<div class="lev"><div class="hd"><img src="${LOGO.SPY}" alt=""><div><b>SPY · Multiply</b><span>Kamino market · collateral SPY, debt USDC</span></div><span class="x">1.0x</span></div>
+      <div class="bars"><div class="br"><span>Collateral</span><div class="bar"><i style="background:var(--lime);width:27%"></i></div><span class="n c">$1,000</span></div><div class="br"><span>Debt</span><div class="bar"><i style="background:var(--red);width:0%"></i></div><span class="n d">$0</span></div><div class="br"><span>Exposure</span><div class="bar"><i style="background:#F6F0E9;width:27%"></i></div><span class="n e">$1,000</span></div></div>
+      <div class="slider"><div class="ln"></div><div class="fill"></div><div class="kn"></div>${[1, 2, 3, 3.7].map((x) => `<span class="lb" style="left:${((x - 1) / 2.7) * 100}%">${x}x</span>`).join('')}</div>
+      <div class="meta"><span>Borrow APY <b>5.9%</b></span><span>Max LTV <b>73%</b></span><span>Liquidation at <b class="lq">none</b></span></div></div>`)
+    const x = card.querySelector('.x'), bars = [...card.querySelectorAll('.bar i')], nC = card.querySelector('.n.c'), nD = card.querySelector('.n.d'), nE = card.querySelector('.n.e'), fill = card.querySelector('.fill'), kn = card.querySelector('.kn'), lq = card.querySelector('.lq')
+    const cap = add(s, `<div class="cap" style="top:850px">One position, one confirmation. The liquidation level is on the card before you sign.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.2)
+      const c = spring(t - 4.4, 0.9); show(card, t > 4.3); mat(card, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      const lev = lerp(1, 2, easeIO(clamp((t - 6.0) / 2.2)))
+      x.textContent = `${lev.toFixed(1)}x`
+      const col = 1000 * lev, debt = 1000 * (lev - 1)
+      bars[0].style.width = `${(col / 3700) * 100}%`; bars[1].style.width = `${(debt / 3700) * 100}%`; bars[2].style.width = `${(col / 3700) * 100}%`
+      nC.textContent = usd(col); nD.textContent = usd(debt); nE.textContent = usd(col)
+      const pos = ((lev - 1) / 2.7) * 100; fill.style.width = `${pos}%`; kn.style.left = `${pos}%`
+      lq.textContent = lev > 1.02 ? `SPY ${usd(767 * (1 - (1 - 1 / lev) / 0.8), 0)}` : 'none'
+      capIn(cap, t, 8.8)
+    }
+  },
+  // 5. Portfolio: everything you hold, one page.
+  portfolio(s) {
+    const l1 = line(s, 'Everything you hold.', { top: 470, size: 104 })
+    const l2 = line(s, 'One page.', { top: 470, color: 'var(--lime)' })
+    const H = [['NVDA', 4663, 'Robinhood Chain', 2.184, 228.92], ['SPY', 8453, 'Base', 0.61, 767.15], ['GLD', 1, 'Ethereum', 1.2, 393.06], ['USDC', 8453, 'Base', 277, 1], ['MSTR', 56, 'BNB Chain', 1.5, 314.2]]
+    const LG = { USDC }
+    const rows = H.map(([tk, ch, chn, u, px], i) => add(s, `<div class="trow" style="top:${280 + i * 96}px"><img class="l" src="${LOGO[tk] ?? LG[tk]}" alt=""><b>${tk}</b><span class="nm"><img class="c" src="${CH(ch)}" alt="">${chn}</span><span class="s"><span class="u">0</span> units</span><span class="v"><span class="usd">$0</span></span></div>`))
+    const total = add(s, `<div class="total" style="top:770px"><span>Across four chains, read from the chain</span><b class="tt">$0</b></div>`)
+    const cap = add(s, `<div class="cap" style="top:860px">No account, no import. Connect and the page reads what the wallet holds.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.2)
+      let sum = 0
+      rows.forEach((el, i) => { const t0 = 4.5 + i * 0.3; const p = spring(t - t0, 0.85); show(el, t > t0 - 0.1); mat(el, p, { y: 36 * (1 - p), s: 0.04, blur: 16 }); const q = easeIO(clamp((t - t0 - 0.2) / 1.0)); const [, , , u, px] = H[i]; const uu = u * q, vv = uu * px; sum += vv; el.querySelector('.u').textContent = u >= 10 ? uu.toFixed(0) : uu.toFixed(3); el.querySelector('.usd').textContent = usd(vv) })
+      rise(total, t, 7.4); total.querySelector('.tt').textContent = usd(sum)
+      capIn(cap, t, 8.6)
+    }
+  },
+  // 6. Discover baskets: every basket, every chain, one list.
+  discover(s) {
+    const l1 = line(s, 'Every basket.', { top: 470 })
+    const l2 = line(s, 'Every chain. One list.', { top: 470, color: 'var(--lime)' })
+    const B = [['CMC20', 'CoinMarketCap 20 Index', 56, 'BNB Chain', 18, ['Majors', 'L1'], 6122470], ['LCAP', 'CF Large Cap Index', 8453, 'Base', 8, ['Majors'], 5321535], ['PHOTON', 'Reserve AI Photonics', 56, 'BNB Chain', 9, ['AI', 'RWA'], 2321524], ['NEOCLOUD', 'Reserve AI Capacity and Neocloud', 56, 'BNB Chain', 8, ['AI', 'RWA'], 2249947], ['MAG7', 'Reserve Magnificent 7', 8453, 'Base', 7, ['RWA'], 404820]]
+    const PAL = ['#C2EA8A', '#8FA661', '#F6F0E9', '#6F8549', '#DDE9C6']
+    const chips = add(s, `<div class="abs" style="left:50%;top:230px;transform:translateX(-50%);display:flex;gap:10px;will-change:opacity">${['All', 'RWA', 'AI', 'Majors'].map((c) => `<span class="chip">${c}</span>`).join('')}</div>`)
+    const cl = [...chips.querySelectorAll('.chip')]
+    const rows = B.map(([sym, nm, ch, chn, n, tags, mc], i) => add(s, `<div class="trow" style="top:${310 + i * 92}px"><span style="width:44px;height:44px;border-radius:12px;background:${PAL[i]};color:#000;display:grid;place-items:center;font-size:13px;font-weight:700;flex-shrink:0">${sym.slice(0, 4)}</span><b>${sym}</b><span class="nm"><img class="c" src="${CH(ch)}" alt="">${nm} · ${chn}</span>${tags.map((tg) => `<span class="tag">${tg}</span>`).join('')}<span class="s">${n} holdings</span><span class="v">${usd(mc)}</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:800px">18 baskets from Reserve and CF Benchmarks, filtered by tag, priced live. Buy any of them in one order.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.3)
+      const c = spring(t - 4.5, 0.8); show(chips, t > 4.4); chips.style.opacity = c
+      pick(cl, t >= 7.6 ? 1 : 0, t >= 7.6 ? 7.6 : 4.8, t)
+      rows.forEach((el, i) => { const p = spring(t - 4.8 - i * 0.2, 0.85); show(el, t > 4.7); const keep = t < 7.6 || B[i][5].includes('RWA'); const hide = keep ? 0 : clamp(spring(t - 7.6, 0.5)); mat(el, p * (1 - hide), { y: 36 * (1 - p) + 20 * hide, s: 0.04, blur: 16 }); if (!keep) return; const idx = t >= 7.6 ? B.filter((b, j) => j < i && b[5].includes('RWA')).length : i; const target = 310 + idx * 92; el.style.top = `${lerp(310 + i * 92, target, clamp(spring(t - 7.8, 0.7)))}px` })
+      capIn(cap, t, 9.0)
+    }
+  },
+  // 7. Routes: 37 DEXs, 36 bridges, one quote.
+  route(s) {
+    const l1 = line(s, '37 DEXs. 36 bridges.', { top: 470 })
+    const l2 = line(s, 'One quote.', { top: 470, color: 'var(--lime)' })
+    const R = [['kyberswap', null, 'KyberSwap', 'Robinhood Chain · 1 step', 2.191, '~30 s'], ['1inch', null, '1inch', 'Robinhood Chain · 1 step', 2.187, '~30 s'], ['paraswap', null, 'ParaSwap', 'Robinhood Chain · 1 step', 2.184, '~35 s'], ['across', 'kyberswap', 'Across + KyberSwap', 'Base → Robinhood Chain · 2 steps', 2.180, '~2 min']]
+    const rows = R.map(([a, b, nm, sub, out, tm], i) => add(s, `<div class="rt" style="top:${300 + i * 100}px"><img src="${TOOL(a)}" alt="">${b ? `<img src="${TOOL(b)}" alt="">` : ''}<b>${nm}</b><span class="t">${sub} · ${tm}</span><span class="out">${out.toFixed(3)} NVDA<small>for 500 USDC</small></span><span class="badge">quote</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:740px">Every route priced through the LI.FI aggregator. Best return by default; fastest one tap away.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.3); runLine(l2, t, 2.6, 4.2)
+      rows.forEach((el, i) => { const p = spring(t - 4.4 - i * 0.22, 0.85); show(el, t > 4.3); const best = i === 0 && t >= 7.2; const dim = i !== 0 ? clamp(spring(t - 7.2, 0.5)) * 0.55 : 0; mat(el, p, { y: 40 * (1 - p), s: 0.04, blur: 16 }); el.style.opacity = clamp(p) * (1 - dim); el.classList.toggle('on', best); const bd = el.querySelector('.badge'); bd.textContent = best ? 'Recommended' : 'quote'; bd.classList.toggle('done', best) })
+      capIn(cap, t, 8.4)
+    }
+  },
+  // 8. Open source: git clone. Read it.
+  opensource(s) {
+    const l1 = line(s, 'git clone.', { top: 470 })
+    const l2 = line(s, 'Then read it.', { top: 470, color: 'var(--lime)' })
+    const term = add(s, `<div class="term"><div class="dots"><i></i><i></i><i></i></div><div class="ln l0"><span class="p">$ </span><span class="cmd"></span></div>${['Cloning into \'verdex\'...', 'remote: Enumerating objects: 1,940, done.', 'Receiving objects: 100% (1940/1940), done.'].map((x) => `<div class="ln out"><span class="d">${x}</span></div>`).join('')}<div class="ln l1"><span class="p">$ </span><span class="cmd2"></span></div>${['src/lib/autoInvest.ts   the recurring buys', 'src/lib/vaults.ts       the rebalances', 'src/lib/orders.ts       the limit and stop orders', 'src/lib/agent.ts        the tools the model can call', 'src/swap/               the swap and bridge widget', 'public/sw.js            what the app caches'].map((x) => `<div class="ln fl">${x}</div>`).join('')}</div>`)
+    const outs = [...term.querySelectorAll('.out')], fls = [...term.querySelectorAll('.fl')], l1e = term.querySelector('.l1')
+    const pill = add(s, `<div class="cap" style="top:900px"><span class="pill">${I.check}MIT license · github.com/useverdex/verdex</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.0)
+      const c = spring(t - 4.2, 0.9); show(term, t > 4.1); mat(term, c, { y: 40 * (1 - c), s: 0.04, blur: 16 })
+      const done = typed(term.querySelector('.cmd'), 'git clone https://github.com/useverdex/verdex.git', t, 4.6, 40)
+      outs.forEach((el, i) => { el.style.opacity = t >= 6.0 + i * 0.25 ? 1 : 0 })
+      l1e.style.opacity = t >= 6.9 ? 1 : 0
+      typed(term.querySelector('.cmd2'), 'ls src/lib src/swap public', t, 7.0, 40)
+      fls.forEach((el, i) => { el.style.opacity = t >= 7.9 + i * 0.22 ? 1 : 0 })
+      capIn(pill, t, 9.6)
+      void done
+    }
+  },
+  // 9. The receipt: what you pay, all of it.
+  receipt(s) {
+    const l1 = line(s, 'What you pay.', { top: 470 })
+    const l2 = line(s, 'All of it.', { top: 470, color: 'var(--lime)' })
+    const r = add(s, `<div class="rcpt"><div class="hd"><img src="${USDC}" alt=""><img src="${LOGO.NVDA}" alt="">500 USDC → NVDA · KyberSwap · Robinhood Chain</div>
+      <div class="it i1"><div>Network gas<span>Robinhood Chain</span></div><div class="a">$0.02</div></div>
+      <div class="it i2"><div>DEX fee<span>0.05% pool fee, in the price</span></div><div class="a">$0.25</div></div>
+      <div class="it i3"><div>Verdex fee<span>0.25%, or 0% for VERDEX holders</span></div><div class="a"><span class="old">$1.25<i></i></span><em class="nw" style="opacity:0">$0.00</em></div></div>
+      <div class="tot"><span>You receive</span><b class="tb">2.184 NVDA</b></div></div>`)
+    const items = ['.i1', '.i2', '.i3'].map((c) => r.querySelector(c)), strike = r.querySelector('.old i'), nw = r.querySelector('.nw'), tot = r.querySelector('.tot')
+    const cap = add(s, `<div class="cap" style="top:850px">Every line is in your wallet before you confirm. Nothing hides in the price.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.0)
+      const c = spring(t - 4.2, 0.9); show(r, t > 4.1); mat(r, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      items.forEach((el, i) => rise(el, t, 4.8 + i * 0.5, { y: 10 }))
+      rise(tot, t, 6.4, { y: 10 })
+      strike.style.width = `${(clamp(spring(t - 7.4, 0.4)) * 100).toFixed(1)}%`
+      const nz = spring(t - 7.7, 0.5, 0.55); nw.style.opacity = clamp(nz * 2); nw.style.display = 'inline'
+      capIn(cap, t, 8.8)
+    }
+  },
+  // 10. The audit: by us, checkable by you.
+  audit(s) {
+    const l1 = line(s, 'Audited.', { top: 470 })
+    const l2 = line(s, 'Checkable by you.', { top: 470, color: 'var(--lime)' })
+    const RUN = [['npm audit, production and dev', '0 vulnerabilities'], ['eslint, whole repository', '0 problems'], ['tsc, strict', '0 errors'], ['20 routes × desktop and mobile', '0 errors, 0 failed'], ['fixed and shipped', '6 findings'], ['kept, and explained', '2 trade-offs']]
+    const run = add(s, `<div class="run"><div class="hd">verdex · audit · 30 Sep 2026</div>${RUN.map(([k]) => `<div class="ln"><span class="ok"></span><span class="k">${k}</span><span class="v"></span></div>`).join('')}</div>`)
+    const lines = [...run.querySelectorAll('.ln')]
+    const pill = add(s, `<div class="cap" style="top:860px"><span class="pill">${I.check}useverdex.xyz/docs#audit · AUDIT.md in the repository</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.0)
+      const c = spring(t - 4.2, 0.9); show(run, t > 4.1); mat(run, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      lines.forEach((ln, i) => { const t0 = 4.8 + i * 0.6; rise(ln, t, t0, { y: 8 }); const done = typed(ln.querySelector('.v'), RUN[i][1], t, t0 + 0.2, 44, false); ln.querySelector('.ok').textContent = done ? '✓' : t >= t0 ? '›' : '' })
+      capIn(pill, t, 9.4)
+    }
+  },
+}
+add(stage, `<div class="grid"></div>`)
+const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+const scene = add(stage, `<div class="scene"></div>`)
+const draw = CLIPS[clip](scene)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+const fade = add(stage, `<div id="fade"></div>`)
+window.renderAt = async (t) => {
+  glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+  await draw(t)
+  fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

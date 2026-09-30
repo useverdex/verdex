@@ -249,6 +249,503 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > Los holders de VERDEX no pagan comisión de Verdex. Ya disponible en useverdex.xyz/auto-invest
 
+## Open source (`verdex-opensource.mp4`, 32 s)
+
+### Hype, 30 minutes before (09:30 UTC, 11:30 in Madrid)
+
+> In 30 minutes we do something most projects never do.
+>
+> 10:00 UTC. Set the alarm.
+
+> Half an hour. Then every line of Verdex is yours to read.
+>
+> 10:00 UTC · 11:00 London · 12:00 Madrid · 06:00 New York.
+
+### Announcement (10:00 UTC, post with the video)
+
+> Verdex is open source.
+>
+> Every line of the site, the swap and bridge routing, Auto-Invest, Vaults, the app and the launch films. MIT licensed, non-custodial by construction, and now you can check that yourself.
+>
+> github.com/useverdex/verdex
+
+### Thread under the announcement
+
+> 1/ Why: we say Verdex never holds funds or keys, never signs on load, and only sends transactions your own wallet confirms. Words are cheap. The code is not. Read src/lib and see for yourself.
+
+> 2/ What is inside: the marketplace, the LI.FI routing, the Auto-Invest and Vaults engines, the installable app, the data snapshots and every logo, plus the HTML timelines every launch film was rendered from.
+
+> 3/ MIT licensed. Fork it, build on it, run your own front end. Issues and pull requests are open, CI runs lint, typecheck and build on every push, and CONTRIBUTING.md has the rules that keep it non-custodial.
+
+> 4/ Security: SECURITY.md lists what the site never does and how to report anything that breaks it, in private. A front end you can audit is a front end you can trust.
+
+> 5/ VERDEX stays what it was: hold any amount and Auto-Invest buys and vault rebalances run with zero Verdex fee, checked onchain. Now the check is public too. github.com/useverdex/verdex
+
+### Spanish
+
+> En 30 minutos hacemos algo que casi ningún proyecto hace.
+>
+> 12:00 en Madrid. Pon la alarma.
+
+> Verdex es open source.
+>
+> Cada línea de la web, el enrutado de swaps y puentes, Auto-Invest, Vaults, la app y las películas de lanzamiento. Licencia MIT, no custodial por construcción, y ahora puedes comprobarlo tú mismo.
+>
+> github.com/useverdex/verdex
+
+## Audit (`verdex-audit.mp4`, 38 s, post at 12:00 UTC; teaser `photos/teaser-audit.png` a few hours before)
+
+### Teaser (with `photos/teaser-audit.png`)
+
+> We audited every line of Verdex.
+>
+> Custody, approvals, the agent, fees, routes, dependencies, privacy. Findings, fixes and what we left as is: published 12:00 UTC.
+
+### Announcement (with the video)
+
+> The Verdex audit is out.
+>
+> Eight areas, every route, every package, every data flow. Six things fixed and shipped, two trade-offs kept and explained, nothing hidden. Read it, then check it against the code, because the code is public.
+>
+> useverdex.xyz/docs#audit
+
+### Thread under the announcement
+
+> 1/ Scope: custody, approvals, the agent, fees, routes, dependencies, the installed app, privacy. Plus the machines: npm audit (0 vulnerabilities, production and dev), eslint (0), tsc strict (0), 20 routes on desktop and mobile (0 errors, 0 failed requests).
+
+> 2/ Fixed and live: the privacy policy now names every data flow and who receives it (LI.FI for quotes, public RPCs for reads, your own wallet for transactions, your chosen model provider for the agent). No analytics, no cookies, no server.
+
+> 3/ Also fixed: one title per route, a social preview image, 13 inputs properly labelled for screen readers, private-swap addresses checksummed, and vendor code split so the largest file went from 1.1 MB to 288 kB.
+
+> 4/ Kept on purpose: one unlimited allowance per token to the router named by each quote, so recurring buys and rebalances stay one confirmation. Revoke it any time; the next trade asks again. And the agent key lives in your browser, because there is no Verdex server to hold it.
+
+> 5/ Out of scope, and said so: the router contracts, the issuers' tokens and the launchpad behind VERDEX have their own audits. Ours covers the site and everything it does with your wallet.
+
+> 6/ The full report, with the commit it applies to, is in the repository: github.com/useverdex/verdex/blob/main/AUDIT.md. Found something we missed? feedback@verdex.app.
+
+### Standalone
+
+> An audit you can verify is worth more than one you have to trust.
+>
+> Every finding in ours points at a file you can open.
+
+### Spanish
+
+> El audit de Verdex ya está publicado.
+>
+> Ocho áreas, todas las rutas, todos los paquetes, todos los flujos de datos. Seis cosas corregidas y en producción, dos decisiones mantenidas y explicadas. Léelo y compáralo con el código: es público.
+>
+> useverdex.xyz/docs#audit
+
+## Agent launch (`verdex-agent.mp4`, 40 s, post with the video)
+
+### FOMO, before the drop
+
+> Robinhood showed an agent that trades for you, with approval by default.
+>
+> Ours ships tonight. Open source. Your key. Your wallet.
+
+> You type one sentence. A card comes back. You approve it. Your wallet signs it.
+>
+> Soon.
+
+### Announcement
+
+> New on Verdex: Agent.
+>
+> Say it in plain words: "buy $250 of NVDA if it drops 5%", "every week put $100 into SPY", "build an AI vault". The agent reads the market and your wallet and drafts the action as a card. Nothing happens until you approve it.
+>
+> useverdex.xyz/agent
+
+> Say it. Approve it.
+>
+> Bring your own Anthropic or OpenAI key. It stays in your browser and goes only to that provider. Verdex has no server in the loop, holds no keys and no funds. The tools the agent can call are fixed and open source.
+>
+> Agent is live.
+
+### Thread under the announcement
+
+> 1/ Three things it drafts: limit and stop orders, Auto-Invest plans, and vaults. Each comes back as a card with every field filled in: asset, chain, level, size, cadence, weights. Approve or dismiss.
+
+> 2/ Approval by default. The agent proposes; you approve; your wallet confirms. Three separate steps, none of them skippable. There is no mode that trades on its own.
+
+> 3/ An approved card becomes a normal order, plan or vault, in the same store the buttons write to. Same routes, same fees, same reminders. Dismiss it and nothing has happened.
+
+> 4/ It reads: live prices, the stables you pay with, the assets in your plans, orders and vaults, and any ticker you name. It reads nothing else, and only when you ask.
+
+> 5/ Your key, your browser. Paste an Anthropic or OpenAI key in Setup; it lives in localStorage and is sent straight to that provider over HTTPS. No key? A built-in helper drafts the same cards from the common phrasings.
+
+> 6/ VERDEX holders pay no Verdex fee on any trade it drafts, checked onchain each time. Open source at github.com/useverdex/verdex. useverdex.xyz/agent
+
+### Between the two drops (post 15 to 20 minutes after the Agent announcement, image: `photos/teaser-5h.png` or `photos/teaser-0600.png`)
+
+> If Agent wasn't enough: one more lands in 5 hours.
+>
+> Not a feature you've seen on Verdex before. Set an alarm.
+
+> Not done tonight.
+>
+> Something else has been in the build all week, and it goes live in 5 hours. Holders will like this one.
+
+> Two drops in one night.
+>
+> The first one talks to you. The second one waits for you. 5 hours.
+
+### Standalone
+
+> "Set a stop-loss on my TSLA at $380."
+>
+> The agent reads how much TSLA your wallet holds, drafts a stop sell for all of it, and waits for you to approve. That is the whole feature.
+
+> Robinhood Agents run on Robinhood's servers with Robinhood's models.
+>
+> Verdex Agent runs in your browser with your key. Same approval-by-default. No account, no custody, and you can read every line of it.
+
+### Spanish
+
+> Nuevo en Verdex: Agent.
+>
+> Dilo en palabras normales: "compra 250 dólares de NVDA si cae un 5%", "cada semana 100 en SPY", "monta un vault de IA". El agente lee el mercado y tu wallet y redacta la acción como una tarjeta. Nada pasa hasta que la apruebas.
+>
+> useverdex.xyz/agent
+
+## Sixth batch, each with its clip (`clip-privateswap.mp4`, `clip-gold.mp4`, `clip-pools.mp4`, `clip-multiply.mp4`, `clip-portfolio.mp4`, `clip-discover.mp4`, `clip-route.mp4`, `clip-opensource.mp4`, `clip-receipt.mp4`, `clip-audit.mp4`, 12 s each)
+
+Ten different parts of the product, so the timeline does not repeat itself. The last one is for after the audit goes out at 12:00 UTC.
+
+**1. `clip-privateswap.mp4`**
+> Pay from one wallet. Receive in another.
+>
+> Private Swap: the wallet with the stable signs, the address you type receives. Same routes, same price. Nothing else changes.
+
+**2. `clip-gold.mp4`**
+> Gold. Silver. Oil. At 3 AM.
+>
+> GLD, SLV, USO, PAXG and four more tokenized commodities, tradable from your own wallet when every market is closed. 24/7, every day of the year.
+
+**3. `clip-pools.mp4`**
+> Earn the spread on tokenized stocks.
+>
+> 19 liquidity pools for NVDA, SPY, META, GOOGL, SPCX and more, on Uniswap and Aerodrome, with the fee APR of the last 24 hours on each. Add liquidity from Verdex in one transaction.
+
+**4. `clip-multiply.mp4`**
+> Borrow against your SPY. Or lever it.
+>
+> Kamino markets for tokenized stocks, reachable from Verdex: collateral, debt, leverage on a slider, liquidation level on the card before you sign. One position, one confirmation.
+
+**5. `clip-portfolio.mp4`**
+> Everything you hold, one page.
+>
+> Every listed chain, read straight from the chain. No account, no import, no sync. Connect and it is there.
+
+**6. `clip-discover.mp4`**
+> Every basket. Every chain. One list.
+>
+> 18 index baskets from Reserve and CF Benchmarks, filtered by tag, priced live. One token each, redeemable any time. Buy any of them in one order.
+
+**7. `clip-route.mp4`**
+> 37 DEXs. 36 bridges. One quote.
+>
+> Every route priced through the LI.FI aggregator, the best return picked by default, the fastest one tap away. You see who fills it before you sign.
+
+**8. `clip-opensource.mp4`**
+> git clone. Then read it.
+>
+> The recurring buys, the rebalances, the orders, the agent's tools, the swap widget, the service worker. All of it, MIT licensed: github.com/useverdex/verdex
+
+**9. `clip-receipt.mp4`**
+> What you pay. All of it.
+>
+> Network gas, the pool fee, the Verdex fee. Three lines, in your wallet before you confirm, and the third one is $0.00 for VERDEX holders. Nothing hides in the price.
+
+**10. `clip-audit.mp4`** (after 12:00 UTC)
+> Audited. Checkable by you.
+>
+> 0 vulnerabilities, 0 lint problems, 0 type errors, 20 routes clean on desktop and mobile. 6 findings fixed, 2 trade-offs explained. The report points at files you can open: useverdex.xyz/docs#audit
+
+## Fifth batch, each with its clip (`clip-sentence.mp4`, `clip-key.mp4`, `clip-steps.mp4`, `clip-holdings.mp4`, `clip-stoploss.mp4`, `clip-nokey.mp4`, `clip-tools.mp4`, `clip-level.mp4`, `clip-fourtypes.mp4`, `clip-cancel.mp4`, 12 s each)
+
+The first seven are about Agent and can go any time after its announcement. The last three are about Orders: post them after the Orders drop, not before.
+
+**1. `clip-sentence.mp4`**
+> One sentence. One card. One tap.
+>
+> "Buy $250 of NVDA if it drops 5%." The agent reads the price, drafts a limit buy at $217, and waits. You approve. Your wallet signs the fill. useverdex.xyz/agent
+
+**2. `clip-key.mp4`**
+> Your key. Your browser.
+>
+> Paste an Anthropic or OpenAI key once. It lives in localStorage and goes straight to that provider over HTTPS. Verdex has no server in the loop and never sees it. Forget it with one tap.
+
+**3. `clip-steps.mp4`**
+> Approval by default.
+>
+> The agent proposes. You approve. Your wallet confirms. Three steps, none of them skippable. There is no mode that trades on its own, and there never will be.
+
+**4. `clip-holdings.mp4`**
+> "What do I hold?"
+>
+> Balances read from four chains, priced, totalled. Nothing moved to read them. Then it asks whether you want the idle stable put to work.
+
+**5. `clip-stoploss.mp4`**
+> "Set a stop-loss on my TSLA at $380."
+>
+> It reads how much TSLA your wallet holds, drafts a stop sell for all of it, and explains the level in one line. You approve or dismiss. That is the whole feature.
+
+**6. `clip-nokey.mp4`**
+> No key? Same cards.
+>
+> Pick "No key" and a small built-in helper drafts the same orders, plans and vaults from the common phrasings. Add a key when you want open conversation. Either way, nothing moves without you.
+
+**7. `clip-tools.mp4`**
+> Seven tools. Nothing else.
+>
+> Four that read: assets, price, holdings, activity. Three that draft: an order, a plan, a vault. The model cannot call anything else, and you can read every line: github.com/useverdex/verdex
+
+**8. `clip-level.mp4`** (after the Orders drop)
+> Name your price.
+>
+> NVDA at $224. You want it at $210. Place the order and close the tab. When it gets there Verdex reminds you and one tap buys it. Your USDG never left your wallet.
+
+**9. `clip-fourtypes.mp4`** (after the Orders drop)
+> Four ways to name it.
+>
+> Limit buy, stop buy, limit sell, stop sell. On every listed stock, ETF and commodity, with an expiry or until cancelled. Cancel any time and nothing has happened.
+
+**10. `clip-cancel.mp4`** (after the Orders drop)
+> Dismiss it. Nothing happened.
+>
+> A card is a draft and an open order is a note on your device. No deposit, no allowance, no trade until your wallet signs. That is what non-custodial means here.
+
+## Photo tweets, third set (`photos/photo3-*.png`, one image each)
+
+**1. `photo3-1-chat.png`**
+> This is the whole interface.
+>
+> A sentence in, a card out, two buttons. Everything else is your wallet.
+
+**2. `photo3-2-cards.png`**
+> Two more, one sentence each.
+>
+> A weekly $100 into SPY. An AI vault at 40/30/30. Every field filled in, both waiting for your approval.
+
+**3. `photo3-3-approval.png`**
+> Proposes. Approves. Confirms.
+>
+> Three different parties: the model, you, your wallet. The model is the only one that cannot move money.
+
+**4. `photo3-4-key.png`**
+> The setup screen, in full.
+>
+> One key, saved in your browser, sent only to the provider you chose. No account on Verdex, because there is no Verdex server to have one on.
+
+**5. `photo3-5-orders.png`** (after the Orders drop)
+> The moment it crosses.
+>
+> A week of watching, then the level. Verdex tells you, one tap fills it, and the fill lands in your wallet.
+
+## Orders launch (`verdex-orders.mp4`, 40 s, post with the video at 01:00 UTC)
+
+### FOMO, before the drop
+
+> You've been buying the market at whatever price it gives you.
+>
+> Tonight that ends. 01:00 UTC.
+
+> 30 minutes. Name your price.
+>
+> 01:00 UTC.
+
+### Announcement
+
+> New on Verdex: Orders.
+>
+> Name your price. Limit and stop orders on any tokenized stock, ETF or commodity. Set the level; Verdex watches the price and when it crosses, one tap fills the swap through the best route, confirmed in your wallet. Nothing moves before that tap.
+>
+> VERDEX holders pay no Verdex fee. Live now at useverdex.xyz/orders
+
+> Name your price. Keep your keys.
+>
+> NVDA at $224. You want it at $210. Place the order, close the tab. When it gets there, Verdex tells you and one tap buys it. Your USDG never left your wallet.
+>
+> Orders are live.
+
+### Thread under the announcement
+
+> 1/ Four order types: limit buy (buy when it falls to your level), stop buy (buy when it breaks above), limit sell (take profit when it rises), stop sell (a stop-loss). On every listed asset, on Robinhood Chain, Base, Arbitrum or Ethereum.
+
+> 2/ An open order is a note on your device. No deposit, no allowance, no contract. Your stable and your tokens stay in your wallet until the fill.
+
+> 3/ Verdex checks the price every 30 seconds while the app is open, through the same feed that prices every swap. When your level is crossed the order turns Triggered and you get a reminder, in the app and as a notification.
+
+> 4/ One tap fills it: the swap is priced through the best route at that moment, approved once if needed, and confirmed in your wallet. The fill lands in your wallet. Cancel any time and nothing has happened.
+
+> 5/ Sells read your balance of the token, however it got there. Set an expiry or leave it good until cancelled. Fill now at market if you change your mind.
+
+> 6/ VERDEX holders pay no Verdex fee on the fill, checked onchain each time. useverdex.xyz/orders
+
+### Spanish
+
+> Nuevo en Verdex: Orders.
+>
+> Pon tu precio. Órdenes limitadas y stop sobre cualquier acción, ETF o materia prima tokenizada. Fija el nivel; Verdex vigila el precio y cuando lo cruza, un toque ejecuta el swap por la mejor ruta, confirmado en tu wallet. Nada se mueve antes de ese toque.
+>
+> Los holders de VERDEX no pagan comisión de Verdex. Ya disponible en useverdex.xyz/orders
+
+## Strategies launch (`verdex-strategies.mp4`, 38 s, post with the video)
+
+> New on Verdex: Strategies.
+>
+> Follow a manager, keep your keys. Published allocations with a change log and the reason for every move. Follow one and it becomes a vault in your own wallet; when the manager changes the weights you get the note, adopt it with one tap, and confirm the trades yourself.
+>
+> VERDEX holders pay no Verdex fee. Live now at useverdex.xyz/strategies
+
+> Follow a manager. Keep your keys.
+>
+> Verdex Research trims NVDA to 22 and adds Nebius. You get the note, not the transfer. Adopt the new weights, confirm three trades, done. Nothing ever leaves your wallet.
+>
+> Strategies are live.
+
+### Thread under the launch
+
+> 1/ A strategy is a set of target weights with a manager's name on it and a log of every change, with the reason. Six from Verdex Research at launch: AI Infrastructure, Compounders, Quantum and Space, Rates Hedge, Semis Only, Global Growth.
+
+> 2/ Follow one and it becomes a vault in your wallet at the current version. The tokens are yours, in your address. The manager cannot see them and cannot move them.
+
+> 3/ When the manager publishes a new version, your vault shows the note and Verdex reminds you. Adopt it with one tap and the vault plans the trades to the new targets. Ignore it and nothing changes.
+
+> 4/ Every trade is a normal rebalance: sells first, then buys, best route each time, one confirmation per trade in your own wallet. No delegation, no allowance, no contract between you and the manager.
+
+> 5/ Any vault is a link. Share it and the weights travel inside the URL; your balances and your address do not. To be listed, add your strategy to the registry with a pull request. The registry is open source, like everything else.
+
+> 6/ No management fee, no performance fee, and no Verdex fee for VERDEX holders, checked onchain each time. useverdex.xyz/strategies
+
+### Spanish
+
+> Nuevo en Verdex: Strategies.
+>
+> Sigue a un gestor sin soltar tus llaves. Carteras publicadas con un registro de cambios y el motivo de cada movimiento. Sigue una y se convierte en un vault en tu propia wallet; cuando el gestor cambia los pesos te llega la nota, la adoptas con un toque y confirmas las operaciones tú mismo.
+>
+> Los holders de VERDEX no pagan comisión de Verdex. Ya disponible en useverdex.xyz/strategies
+
+## Fourth batch, each with its clip (`clip-manager.mp4`, `clip-note.mp4`, `clip-delegation.mp4`, `clip-link.mp4`, `clip-pr.mp4`, `clip-changelog.mp4`, `clip-leave.mp4`, `clip-two.mp4`, `clip-registry.mp4`, `clip-free.mp4`, 12 s each)
+
+> Follow a manager. Keep your keys.
+>
+> A strategy is a vault in your own wallet at the manager's weights. They publish, you hold. Strategies are live on Verdex.
+
+> You get the note. Not the transfer.
+>
+> When a manager changes the weights, your vault shows the reason and waits. Adopt it with one tap; nothing moves until you sign.
+
+> No delegation. No allowance. No contract between you.
+>
+> A manager on Verdex can publish weights and nothing else. Your tokens never leave your wallet, and only your wallet can trade them.
+
+> Your vault is a link.
+>
+> Share it and the weights travel inside the URL. Your balances and your address stay where they are. Anyone who opens it can follow it into their own wallet.
+
+> Publish a strategy with a pull request.
+>
+> One entry in the registry: your name, the weights, a note. Every later change is another entry, in the open. The registry is open source, like the rest of Verdex.
+
+> Every move has a reason.
+>
+> Strategies carry a change log. NVDA 25 to 22, AMD 10 to 8, Nebius in at 5, and the sentence that explains it. Followers read it before they adopt it.
+
+> Stop following any time.
+>
+> The vault stays yours, same tokens, same wallet. From then on the weights are whatever you say they are.
+
+> Two managers. One wallet.
+>
+> Follow as many strategies as you like. Each one is its own vault, every one of them in the same address you already hold.
+
+> Six strategies at launch.
+>
+> AI Infrastructure, Compounders, Quantum and Space, Rates Hedge, Semis Only, Global Growth. Verdex Research publishes the house book. Anyone can publish next.
+
+> Holders follow for free.
+>
+> No management fee, no performance fee, and 0% Verdex fee on every rebalance trade for anyone holding VERDEX. Checked onchain, every time.
+
+### Spanish
+
+> Sigue a un gestor. Conserva tus llaves.
+>
+> Una estrategia es un vault en tu propia wallet con los pesos del gestor. Él publica, tú custodias. Strategies ya está en Verdex.
+
+> Te llega la nota. No la transferencia.
+>
+> Cuando un gestor cambia los pesos, tu vault muestra el motivo y espera. Adóptalo con un toque; nada se mueve hasta que firmas.
+
+> Sin delegación. Sin allowance. Sin contrato entre vosotros.
+>
+> Un gestor en Verdex publica pesos y nada más. Tus tokens no salen de tu wallet, y solo tu wallet puede operarlos.
+
+> Tu vault es un enlace.
+>
+> Compártelo y los pesos viajan dentro de la URL. Tus saldos y tu dirección se quedan donde están. Quien lo abra puede seguirlo en su propia wallet.
+
+> Publica una estrategia con un pull request.
+>
+> Una entrada en el registro: tu nombre, los pesos, una nota. Cada cambio posterior es otra entrada, a la vista. El registro es open source, como el resto de Verdex.
+
+> Cada movimiento tiene un motivo.
+>
+> Las estrategias llevan registro de cambios. NVDA de 25 a 22, AMD de 10 a 8, Nebius entra al 5, y la frase que lo explica. Los seguidores lo leen antes de adoptarlo.
+
+> Deja de seguir cuando quieras.
+>
+> El vault sigue siendo tuyo, mismos tokens, misma wallet. A partir de ahí los pesos son los que tú digas.
+
+> Dos gestores. Una wallet.
+>
+> Sigue tantas estrategias como quieras. Cada una es su propio vault, todas en la dirección que ya tienes.
+
+> Seis estrategias de salida.
+>
+> AI Infrastructure, Compounders, Quantum and Space, Rates Hedge, Semis Only, Global Growth. Verdex Research publica el libro de la casa. Cualquiera puede publicar el siguiente.
+
+> Los holders siguen gratis.
+>
+> Sin comisión de gestión, sin comisión de éxito, y 0% de comisión de Verdex en cada operación de rebalanceo para quien tenga VERDEX. Comprobado en cadena, cada vez.
+
+## Photo tweets, second set (`photos/photo2-*.png`, one image each)
+
+> `photo2-follow.png`
+>
+> Three strategies, one press of Follow, and AI Infrastructure is a vault in your wallet at v2. Nothing moved yet; the trades wait for you.
+
+> `photo2-update.png`
+>
+> This is what a manager's update looks like from the follower's side: the new version, the note, and two buttons. Adopt, or stop following. The weights are still yours either way.
+
+> `photo2-adopted.png`
+>
+> Adopted. The targets moved to v2, NVDA is now overweight, Nebius is missing, and the vault is due. Three trades, three confirmations, all in your own wallet.
+
+> `photo2-share.png`
+>
+> Any vault is a link. The weights travel inside it; your balances and your address do not. Paste it anywhere and anyone can follow it into their own wallet.
+
+> `photo2-page.png`
+>
+> Strategies is live at useverdex.xyz/strategies. Six from Verdex Research to start, a change log on every one, and a pull request away for anyone who wants to publish.
+
+### Spanish
+
+> `photo2-follow.png` · Tres estrategias, un toque en Follow, y AI Infrastructure es un vault en tu wallet en la v2. Todavía no se ha movido nada; las operaciones te esperan.
+
+> `photo2-update.png` · Así se ve la actualización de un gestor desde el lado del seguidor: la nueva versión, la nota y dos botones. Adoptar, o dejar de seguir. Los pesos siguen siendo tuyos en ambos casos.
+
+> `photo2-adopted.png` · Adoptado. Los objetivos pasan a la v2, NVDA queda sobreponderado, falta Nebius y el vault toca rebalancear. Tres operaciones, tres confirmaciones, todas en tu propia wallet.
+
+> `photo2-share.png` · Cualquier vault es un enlace. Los pesos viajan dentro; tus saldos y tu dirección no. Pégalo donde quieras y cualquiera puede seguirlo en su propia wallet.
+
+> `photo2-page.png` · Strategies ya está en useverdex.xyz/strategies. Seis de Verdex Research para empezar, registro de cambios en cada una, y a un pull request de distancia para quien quiera publicar.
+
 ## Vaults teaser (post the day of, a few hours before)
 
 > Something new goes live on Verdex today at 14:30 UTC.

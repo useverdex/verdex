@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex tweet clips, batch three</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.line { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.line .t { font-size: 112px; }
+.line .s { margin-top: 18px; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 26px; font-weight: 500; will-change: transform, opacity, filter; }
+.tag { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 8px; background: rgba(194,234,138,.14); color: var(--lime); font-size: 22px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.card { position: absolute; padding: 34px 36px; box-sizing: border-box; border-radius: 24px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.card b { display: block; font-family: 'LT Remark', serif; font-weight: 400; font-size: 46px; letter-spacing: -0.02em; line-height: 1.05; }
+.card span { display: block; margin-top: 14px; font-size: 22px; line-height: 1.4; color: var(--soft); }
+.card .ic { width: 64px; height: 64px; border-radius: 18px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); margin-bottom: 28px; }
+.card .ic svg { width: 32px; height: 32px; }
+.row { position: absolute; left: 50%; width: 1040px; margin-left: -520px; height: 86px; display: flex; align-items: center; gap: 20px; padding: 0 26px; box-sizing: border-box; border-radius: 18px; background: #111; border: 1px solid rgba(255,255,255,.07); will-change: transform, opacity, filter; }
+.row img.l { width: 46px; height: 46px; border-radius: 50%; }
+.row img.c { width: 26px; height: 26px; border-radius: 50%; }
+.row img.i { width: 26px; height: 26px; border-radius: 50%; }
+.row b { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; width: 150px; }
+.row .nm { font-size: 20px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex: 1; }
+.row .pr { font-size: 26px; font-weight: 500; letter-spacing: -0.01em; }
+.lg { position: absolute; border-radius: 50%; object-fit: cover; background: #111; will-change: transform, opacity, filter; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.toast .mk { width: 40px; height: 40px; border-radius: 10px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; flex-shrink: 0; }
+.toast .sub { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+/* Vault card (weights against targets) */
+.vcard { position: absolute; left: 50%; width: 1000px; margin-left: -500px; padding: 30px 36px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter, border-color; }
+.vcard.due { border-color: rgba(194,234,138,.4); }
+.vcard .hd { display: flex; align-items: center; gap: 16px; }
+.vcard .ic { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.vcard .nm b { font-size: 25px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.vcard .nm span { font-size: 17px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.vcard .nm img { width: 18px; height: 18px; border-radius: 50%; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); will-change: transform; }
+.badge.due { background: rgba(194,234,138,.16); color: var(--lime); }
+.rows { margin-top: 24px; display: grid; gap: 13px; }
+.vrow { display: grid; grid-template-columns: 34px 82px 1fr 170px; align-items: center; gap: 14px; }
+.vrow img { width: 34px; height: 34px; border-radius: 50%; }
+.vrow b { font-size: 18px; font-weight: 500; }
+.bar { position: relative; height: 12px; border-radius: 6px; background: #1c1c1c; overflow: hidden; }
+.bar .tg { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255,255,255,.12); }
+.bar .ac { position: absolute; left: 0; top: 0; bottom: 0; background: var(--lime); }
+.vrow .pc { font-size: 16px; color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.vrow .pc i { font-style: normal; color: var(--faint); }
+.vrow .pc em { font-style: normal; color: var(--faint); margin-left: 6px; }
+.vrow .pc em.hot { color: var(--lime); }
+/* Plan panel */
+.plan { position: absolute; left: 50%; width: 760px; margin-left: -380px; padding: 30px 34px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.plan .t { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; }
+.plan .tr { display: grid; grid-template-columns: 16px 62px 1fr auto; align-items: center; gap: 14px; margin-top: 18px; font-size: 22px; }
+.plan .tr .dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.18); will-change: transform, background; }
+.plan .tr .dot.on { background: var(--lime); }
+.plan .tr .sd { font-weight: 500; }
+.plan .tr .sd.s { color: var(--red); } .plan .tr .sd.b { color: var(--lime); }
+.plan .tr .q { color: var(--faint); font-size: 18px; }
+.plan .rt { display: flex; align-items: center; gap: 10px; margin: 6px 0 0 92px; font-size: 17px; color: var(--muted); will-change: transform, opacity; }
+.plan .rt img { width: 20px; height: 20px; border-radius: 50%; }
+.plan .rt .ck { margin-left: auto; color: var(--lime); font-weight: 600; }
+.plan .btns { margin-top: 28px; display: flex; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 26px; border-radius: 12px; font-size: 20px; font-weight: 500; letter-spacing: -0.02em; will-change: transform; }
+.btn.pri { background: #fff; color: #000; }
+.btn.sec { background: rgba(255,255,255,.1); color: #fff; }
+/* Strategy tiles */
+.tpl { position: absolute; width: 520px; padding: 26px 30px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.tpl .t { display: flex; align-items: center; justify-content: space-between; }
+.tpl .t b { font-size: 27px; font-weight: 500; letter-spacing: -0.02em; }
+.tpl .t span { padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 16px; font-weight: 500; color: var(--soft); }
+.tpl p { margin: 6px 0 0; font-size: 18px; color: var(--muted); }
+.tpl .seg { display: flex; gap: 3px; height: 12px; border-radius: 6px; overflow: hidden; background: var(--tile); margin-top: 18px; }
+.tpl .seg i { display: block; height: 100%; }
+.tpl .lg2 { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 12px; font-size: 15px; color: var(--muted); }
+.tpl .lg2 span { display: inline-flex; align-items: center; gap: 6px; }
+.tpl .lg2 span i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+/* Builder rows */
+.brow { position: absolute; left: 50%; width: 900px; margin-left: -450px; height: 84px; display: flex; align-items: center; gap: 18px; padding: 0 22px; box-sizing: border-box; border-radius: 16px; background: var(--tile); border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter; }
+.brow img { width: 42px; height: 42px; border-radius: 50%; }
+.brow b { font-size: 24px; font-weight: 500; width: 110px; }
+.brow .n { flex: 1; font-size: 19px; color: var(--muted); }
+.brow .w { display: flex; align-items: center; gap: 6px; height: 46px; padding: 0 16px; border-radius: 10px; background: var(--chip); font-size: 22px; font-weight: 500; }
+.brow .w span { color: var(--faint); }
+/* Chips that split */
+.money { position: absolute; display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); font-size: 30px; font-weight: 500; white-space: nowrap; will-change: transform, opacity, filter; }
+.money img { width: 34px; height: 34px; border-radius: 50%; }
+.money small { font-size: 18px; color: var(--muted); font-weight: 500; }
+/* Route diagram */
+.node { position: absolute; top: 420px; width: 420px; padding: 24px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); display: flex; align-items: center; gap: 18px; will-change: transform, opacity, filter; }
+.node img { width: 56px; height: 56px; border-radius: 50%; }
+.node b { font-size: 32px; font-weight: 500; letter-spacing: -0.02em; display: block; }
+.node span { font-size: 19px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.node span img { width: 20px; height: 20px; }
+.wire { position: absolute; top: 478px; height: 3px; background: rgba(255,255,255,.12); }
+.wire i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--lime); width: 0; }
+.wire .lab { position: absolute; left: 50%; top: 24px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; white-space: nowrap; font-size: 18px; color: var(--muted); font-weight: 500; will-change: opacity, transform; }
+.wire .lab img { width: 22px; height: 22px; border-radius: 50%; }
+.stamp { position: absolute; left: 50%; top: 640px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 14px; padding: 16px 28px; border-radius: 14px; border: 2px solid var(--lime); color: var(--lime); font-size: 30px; font-weight: 600; letter-spacing: .02em; will-change: transform, opacity, filter; }
+/* Wallet */
+.wallet { position: absolute; left: 50%; top: 250px; width: 760px; margin-left: -380px; padding: 28px 32px 30px; box-sizing: border-box; border-radius: 26px; background: var(--panel); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.wallet .hd { display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 500; }
+.wallet .hd i { width: 14px; height: 14px; border-radius: 50%; background: #7084FF; display: inline-block; }
+.wallet .hd img { width: 22px; height: 22px; margin-left: auto; }
+.wallet .tk { display: flex; align-items: center; gap: 16px; margin-top: 16px; font-size: 21px; will-change: transform, opacity; }
+.wallet .tk img { width: 36px; height: 36px; border-radius: 50%; }
+.wallet .tk b { font-weight: 500; width: 90px; }
+.wallet .tk span { color: var(--muted); flex: 1; }
+.wallet .tk em { font-style: normal; font-weight: 500; }
+.fee { position: absolute; left: 50%; width: 900px; margin-left: -450px; padding: 24px 36px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: space-between; font-size: 28px; font-weight: 500; will-change: transform, opacity, filter; }
+.fee .old { position: relative; color: var(--faint); }
+.fee .old i { position: absolute; left: 0; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.fee .new { color: var(--lime); font-family: 'LT Remark', serif; font-size: 56px; letter-spacing: -0.03em; line-height: 1; will-change: transform, opacity; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+
+.mgr { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 500; }
+.mgr .mk { width: 32px; height: 32px; border-radius: 9px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; }
+.mgr span { color: var(--muted); font-weight: 400; font-size: 16px; }
+.scard { position: absolute; width: 560px; padding: 28px 32px 30px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.scard.on { border-color: rgba(194,234,138,.55); }
+.scard .t { display: flex; align-items: center; justify-content: space-between; }
+.scard .t .v { padding: 5px 11px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 16px; font-weight: 500; color: var(--soft); }
+.scard.on .t .v { background: rgba(194,234,138,.16); color: var(--lime); }
+.scard b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.scard p { margin: 6px 0 0; font-size: 18px; color: var(--muted); }
+.scard .seg { display: flex; gap: 3px; height: 13px; border-radius: 7px; overflow: hidden; background: var(--tile); margin-top: 20px; }
+.scard .seg i { display: block; height: 100%; }
+.scard .lgd { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-top: 14px; font-size: 15px; color: var(--muted); }
+.scard .lgd span { display: inline-flex; align-items: center; gap: 6px; }
+.scard .lgd span i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.scard .rl { margin-top: 18px; font-size: 15px; color: var(--faint); }
+.scard .btns { display: flex; gap: 10px; margin-top: 22px; }
+.log { position: absolute; left: 50%; width: 760px; margin-left: -380px; padding: 28px 32px 30px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.log .t { font-size: 24px; font-weight: 500; letter-spacing: -0.02em; }
+.log .e { display: flex; gap: 14px; align-items: flex-start; margin-top: 18px; will-change: opacity, transform, filter; }
+.log .e i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.2); margin-top: 9px; flex-shrink: 0; }
+.log .e.new i { background: var(--lime); }
+.log .e b { font-size: 20px; font-weight: 500; display: block; }
+.log .e span { font-size: 18px; color: var(--muted); line-height: 1.4; display: block; margin-top: 3px; }
+.upd { position: absolute; left: 50%; width: 820px; margin-left: -410px; padding: 24px 28px; box-sizing: border-box; border-radius: 16px; background: rgba(194,234,138,.08); border: 1px solid rgba(194,234,138,.3); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: opacity, transform, filter; }
+.upd b { font-size: 23px; font-weight: 500; display: block; }
+.upd p { margin: 8px 0 0; font-size: 19px; color: var(--muted); line-height: 1.4; }
+.upd .btns { display: flex; gap: 12px; margin-top: 18px; }
+.share { position: absolute; left: 50%; top: 300px; width: 1000px; margin-left: -500px; padding: 30px 36px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.share .lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.share .chips { display: flex; gap: 10px; margin-top: 14px; }
+.schip { display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 18px; font-weight: 500; }
+.schip.on { background: #fff; color: #000; }
+.share .seg { display: flex; gap: 3px; height: 12px; border-radius: 6px; overflow: hidden; background: var(--tile); margin-top: 22px; }
+.share .seg i { display: block; height: 100%; }
+.share .box { display: flex; align-items: center; gap: 12px; margin-top: 22px; height: 64px; padding: 0 12px 0 22px; border-radius: 12px; background: var(--tile); font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 21px; color: var(--soft); }
+.share .box .u { flex: 1; white-space: nowrap; overflow: hidden; }
+.share .box .cur { width: 12px; height: 26px; background: var(--lime); }
+.share .box .btn { height: 44px; font-size: 17px; padding: 0 16px; }
+.share .box .btn.ok { background: var(--lime); color: #052; }
+.code { position: absolute; left: 50%; top: 280px; width: 1100px; margin-left: -550px; border-radius: 18px; background: #0B0B0B; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 40px 100px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.code .fn { padding: 14px 26px; background: #141414; border-bottom: 1px solid rgba(255,255,255,.08); font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 18px; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+.code pre { margin: 0; padding: 18px 26px 22px; font-family: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; font-size: 22px; line-height: 1.55; color: rgba(255,255,255,.85); }
+.code .l { display: block; white-space: pre; will-change: opacity, transform; }
+.code .k { color: #82AAFF; } .code .s { color: var(--lime); } .code .n { color: #F78C6C; }
+.pr { position: absolute; left: 50%; top: 640px; width: 900px; margin-left: -450px; padding: 22px 28px; box-sizing: border-box; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 30px 80px rgba(0,0,0,.6); display: flex; align-items: center; gap: 18px; will-change: transform, opacity, filter; }
+.pr .st { padding: 6px 12px; border-radius: 999px; font-size: 16px; font-weight: 600; background: rgba(63,185,80,.18); color: #7EE787; }
+.pr .st.m { background: rgba(163,113,247,.2); color: #C4A6FF; }
+.pr b { font-size: 22px; font-weight: 500; display: block; }
+.pr span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.pr .btn { margin-left: auto; height: 46px; font-size: 18px; }
+.vmini { position: absolute; width: 760px; padding: 24px 28px 26px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.vmini .hd { display: flex; align-items: center; gap: 14px; }
+.vmini .ic { width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.vmini .nm b { font-size: 23px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.vmini .nm span { font-size: 15px; color: var(--muted); display: block; margin-top: 2px; }
+.vmini .nm em { font-style: normal; font-size: 14px; color: var(--faint); display: block; margin-top: 2px; will-change: opacity; }
+.vmini .rows { margin-top: 18px; gap: 9px; }
+.crow { display: grid; grid-template-columns: 34px 90px 1fr 200px; align-items: center; gap: 14px; }
+.vmini .vrow { grid-template-columns: 26px 70px 1fr 150px; gap: 10px; }
+.vmini .vrow img { width: 26px; height: 26px; }
+.vmini .vrow b { font-size: 15px; }
+.vmini .bar { height: 9px; }
+.vmini .vrow .pc { font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Ten 12-second clips, one per tweet of the fourth batch. ?clip=manager|note|delegation|link|pr|changelog|leave|two|registry|free
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const IS = (f) => `${PUB}/logos/issuers/${f}`
+const TOOL = (k) => `${PUB}/logos/tools/${k}.svg`
+const LOGO2 = { QBTS: L('f6bd82c5'), ASTS: L('86041d3a'), IONQ: L('8361cfb2'), RGTI: L('d83e1b07'), AMAT: L('d37abc8c'), ASML: L('95d993ee'), CRWV: L('b41a72ff'), NBIS: L('7e7ecba3'), LLY: L('566c78e0'), INTU: L('91195e3f'), CRWD: L('0305b0a5') }
+const LOGO = { ...LOGO2, NVDA: L('88a0e630'), AAPL: L('2a11a6bd'), MSFT: L('9e189df1'), GOOGL: L('4d76db13'), AMZN: L('39c11fed'), META: L('0b00cc62'), TSLA: L('e8ca24f9'), AVGO: L('454862a2'), AMD: L('0a5c861d'), TSM: L('ae4207a3'), MU: L('21a84899'), PLTR: L('5c6daea9'), SPY: L('c025dcd9'), QQQ: L('8fbe91e2'), SGOV: L('4f0c7bb8'), SLV: L('29352778'), USO: L('f34687ee'), MSTR: L('48f06241'), COIN: L('1efa740a'), SPCX: L('5a9801c3'), RKLB: L('1f78f0b6'), COST: L('fcbae652') }
+const USDG = `${PUB}/img/tokens/usdg.png`, USDC = `${PUB}/img/tokens/usdc.png`
+const clip = new URLSearchParams(location.search).get('clip') ?? 'manager'
+const DURATION = 12
+const PAL = ['#C2EA8A', '#8FA661', '#F6F0E9', '#6F8549', '#DDE9C6', '#4E6032', '#B9B2A8', '#9DC77A']
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const rnd = (seed) => () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const line = (parent, text, { top = 460, size = 112, color = '#fff', sub = '' } = {}) => {
+  const el = add(parent, `<div class="line" style="top:${top}px"><div class="serif t" style="font-size:${size}px;color:${color}"></div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`)
+  return { el, chars: letters(el.querySelector('.t'), text), sub: el.querySelector('.s') }
+}
+const runLine = (ln, t, t0, t1, stagger = 0.035) => { show(ln.el, t >= t0 - 0.05 && t < t1 + 0.6); wipe(ln.chars, spring(t - t0, 0.8), { stagger, out: clamp(spring(t - t1, 0.35)) }); if (ln.sub) { const p = spring(t - t0 - 0.5, 0.9) * (1 - clamp(spring(t - t1, 0.35))); ln.sub.style.opacity = p; ln.sub.style.transform = `translate3d(0, ${(1 - p) * 12}px, 0)` } }
+const toastIn = (el, t, t0, t1, centred = false) => {
+  const p = spring(t - t0, 0.55, 0.7), o = clamp(spring(t - t1, 0.45))
+  show(el, t >= t0 - 0.05 && t < t1 + 0.8)
+  el.style.opacity = clamp(p * 2) * (1 - o)
+  el.style.transform = `translate3d(${centred ? '-50%' : '0'}, ${((1 - p) * 30 - o * 14).toFixed(2)}px, 0) scale(${lerp(0.94, 1, p).toFixed(3)})`
+}
+const pressAt = (btn, t, t0) => { const press = t >= t0 && t < t0 + 0.2 ? 1 : clamp(1 - spring(t - t0 - 0.2, 0.3)); btn.style.transform = `scale(${(1 - 0.05 * (t >= t0 ? press : 0)).toFixed(3)})`; btn.style.background = t >= t0 && press > 0.5 ? '#E6E1DA' : '#fff' }
+const I = {
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  vault: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><circle cx="12" cy="11.5" r="3"/><path d="M12 8.5V7M12 16v-1.5M7 19v2M17 19v2"/></svg>',
+  pie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9h-9V3z"/><path d="M15.5 2.8a9 9 0 0 1 5.7 5.7h-5.7V2.8z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+}
+// A vault card with target/actual rows. weights(t) returns the actual weights.
+function vaultCard(parent, { name, sub, tickers, targets, top = 250 }) {
+  const el = add(parent, `<div class="vcard" style="top:${top}px">
+    <div class="hd"><div class="ic"><span style="width:28px;height:28px;display:inline-flex">${I.vault}</span></div><div class="nm"><b>${name}</b><span><img src="${CH(4663)}" alt="">${sub}</span></div><span class="badge">On target</span></div>
+    <div class="rows">${tickers.map((tk, i) => `<div class="vrow"><img src="${LOGO[tk]}" alt=""><b>${tk}</b><div class="bar"><div class="tg" style="width:${(targets[i] * 2).toFixed(2)}%"></div><div class="ac" style="background:${PAL[i % PAL.length]}"></div></div><div class="pc"><span class="a">${targets[i].toFixed(1)}%</span> <i>/ ${targets[i].toFixed(0)}%</i><em>+0.0</em></div></div>`).join('')}</div>
+  </div>`)
+  const badge = el.querySelector('.badge')
+  const rows = [...el.querySelectorAll('.vrow')].map((r) => ({ ac: r.querySelector('.ac'), a: r.querySelector('.a'), em: r.querySelector('em') }))
+  const set = (w, threshold = 5, dueAt = null, t = 0) => {
+    let max = 0
+    rows.forEach((r, i) => { const d = w[i] - targets[i]; max = Math.max(max, Math.abs(d)); r.ac.style.width = `${(w[i] * 2).toFixed(2)}%`; r.a.textContent = `${w[i].toFixed(1)}%`; r.em.textContent = `${d >= 0 ? '+' : ''}${d.toFixed(1)}`; r.em.classList.toggle('hot', Math.abs(d) > threshold) })
+    const due = max > threshold
+    el.classList.toggle('due', due); badge.classList.toggle('due', due); badge.textContent = due ? 'Rebalance due' : 'On target'
+    if (dueAt != null) { const bp = spring(t - dueAt, 0.4, 0.55); badge.style.transform = due ? `scale(${(1 + 0.12 * (1 - bp)).toFixed(3)})` : 'none' }
+    return max
+  }
+  return { el, set, badge }
+}
+function planPanel(parent, { trades, top = 300, title }) {
+  const el = add(parent, `<div class="plan" style="top:${top}px"><div class="t">${title ?? `${trades.length} trades to reach target`}</div>
+    ${trades.map(([side, tk, amt, route, chain]) => `<div class="tr"><span class="dot"></span><span class="sd ${side[0]}">${side === 'sell' ? 'Sell' : 'Buy'}</span><span>${usd(amt)} of ${tk}</span><span class="q">${side === 'sell' ? '→ USDG' : '← USDG'}</span></div><div class="rt"><img src="${TOOL(route[0])}" alt="">via ${route[1]} · ${chain ?? 'Robinhood Chain'}<span class="ck">✓ confirmed</span></div>`).join('')}
+    <div class="btns"><span class="btn pri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="lb">Confirm ${trades.length} trades</span></span><span class="btn sec">Cancel</span></div>
+  </div>`)
+  const dots = [...el.querySelectorAll('.dot')], rts = [...el.querySelectorAll('.rt')], btn = el.querySelector('.btn.pri'), lb = el.querySelector('.lb')
+  const run = (t, pressT, fires) => {
+    pressAt(btn, t, pressT)
+    fires.forEach((at, k) => { const fired = t >= at, p = spring(t - at, 0.45, 0.55); dots[k].classList.toggle('on', fired); dots[k].style.transform = fired ? `scale(${(1 + 0.6 * (1 - p)).toFixed(3)})` : 'scale(1)'; const rp = spring(t - at - 0.1, 0.6, 0.75); rts[k].style.opacity = fired ? clamp(rp * 1.5) : 0; rts[k].style.transform = `translate3d(0, ${((1 - clamp(rp)) * 10).toFixed(2)}px, 0)` })
+    const n = fires.filter((at) => t >= at).length
+    btn.style.opacity = t >= fires[0] ? 0.55 : 1
+    lb.textContent = t >= fires[fires.length - 1] + 0.5 ? 'Rebalanced' : t >= fires[0] ? `Confirm in wallet · ${Math.min(fires.length, n + 1)}/${fires.length}` : `Confirm ${fires.length} trades`
+    btn.nextElementSibling.style.opacity = t >= fires[fires.length - 1] + 0.5 ? 0.35 : 1
+  }
+  return { el, run }
+}
+const MAG7 = ['NVDA', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA']
+const EQ = MAG7.map(() => 100 / 7)
+
+
+const MGR = (name = 'Verdex Research', handle = '@useverdex') => `<div class="mgr"><span class="mk"><span style="width:18px;height:18px;display:inline-flex">${MARK()}</span></span>${name}<span>${handle}</span></div>`
+const LOCKS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'
+const VIC = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><circle cx="12" cy="11.5" r="3"/><path d="M12 8.5V7M12 16v-1.5M7 19v2M17 19v2"/></svg>`
+const AI2 = [['NVDA', 22], ['AVGO', 15], ['TSM', 15], ['AMD', 8], ['MU', 10], ['AMAT', 10], ['ASML', 10], ['CRWV', 5], ['NBIS', 5]]
+const AI1 = [['NVDA', 25], ['AVGO', 15], ['TSM', 15], ['AMD', 10], ['MU', 10], ['AMAT', 10], ['ASML', 10], ['CRWV', 5]]
+const STRATS = [['AI Infrastructure', 'The chips, the fabs and the clouds that rent them.', AI2, 'Every month, or past 5% drift', 'v2'], ['Compounders', 'Six businesses that raise prices and keep the customer.', [['COST', 16.7], ['MSFT', 16.7], ['LLY', 16.7], ['ASML', 16.7], ['INTU', 16.7], ['CRWD', 16.7]], 'Every quarter, or past 5% drift', 'v1'], ['Quantum and Space', 'The two frontiers, sized for their volatility.', [['SPCX', 30], ['RKLB', 15], ['ASTS', 10], ['IONQ', 20], ['RGTI', 15], ['QBTS', 10]], 'Every month, or past 10% drift', 'v2'], ['Rates Hedge', 'Half in T-bills, the rest in the index and silver.', [['SGOV', 50], ['SPY', 30], ['SLV', 20]], 'Every quarter, or past 2% drift', 'v1'], ['Semis Only', 'The whole chip stack, nothing else.', [['NVDA', 20], ['AVGO', 15], ['AMD', 15], ['TSM', 15], ['MU', 10], ['QCOM', 10], ['INTC', 5], ['AMAT', 10]], 'Every week, or past 5% drift', 'v1'], ['Global Growth', 'Growth outside the S&P 500.', [['BABA', 25], ['FUTU', 15], ['NU', 20], ['SHOP', 20], ['TSM', 20]], 'Every month, or past 5% drift', 'v1']]
+const scard = (parent, [nm, tg, ws, rl, v], style, { buttons = true } = {}) => add(parent, `<div class="scard" style="${style}"><div class="t">${MGR()}<span class="v">${v}</span></div><b>${nm}</b><p>${tg}</p><div class="seg">${ws.map((w, j) => `<i style="background:${PAL[j % PAL.length]};width:calc(${w[1]}% - 3px)"></i>`).join('')}</div><div class="lgd">${ws.slice(0, 6).map((w, j) => `<span><i style="background:${PAL[j % PAL.length]}"></i>${w[0]} ${w[1] >= 10 ? w[1].toFixed(0) : w[1].toFixed(1)}%</span>`).join('')}${ws.length > 6 ? `<span>+${ws.length - 6}</span>` : ''}</div><div class="rl">${rl}</div>${buttons ? `<div class="btns"><span class="btn pri">${LOCKS}Follow</span><span class="btn sec">Change log · ${v === 'v2' ? 2 : 1}</span></div>` : ''}</div>`)
+const vmini = (parent, { name, sub, follow, ws, style }) => {
+  const el = add(parent, `<div class="vmini" style="${style}"><div class="hd"><div class="ic">${VIC}</div><div class="nm"><b>${name}</b><span>${sub}</span><em>${follow}</em></div><span class="badge">On target</span></div><div class="rows">${ws.map(([tk, w], i) => `<div class="vrow"><img src="${LOGO[tk] ?? ''}" alt=""><b>${tk}</b><div class="bar"><div class="tg" style="width:${(w * 3.2).toFixed(2)}%"></div><div class="ac" style="background:${PAL[i % PAL.length]};width:${(w * 3.2).toFixed(2)}%"></div></div><div class="pc"><span class="a">${w.toFixed(1)}%</span> <i>/ ${w % 1 ? w.toFixed(1) : w}%</i><em>+0.0</em></div></div>`).join('')}</div></div>`)
+  return { el, em: el.querySelector('.nm em'), badge: el.querySelector('.badge') }
+}
+
+const CLIPS = {
+  // 1. Follow a manager. Keep your keys.
+  manager(s) {
+    const l1 = line(s, 'Follow a manager.', { top: 470, size: 112 })
+    const l2 = line(s, 'Keep your keys.', { top: 470, size: 112, color: 'var(--lime)' })
+    const card = scard(s, STRATS[0], 'left:50%;top:230px;margin-left:-280px')
+    const btn = card.querySelector('.btn.pri')
+    const toast = add(s, `<div class="toast" style="left:50%;top:840px"><span class="ok">✓</span><span>Following AI Infrastructure<span class="sub">A vault in your wallet at v2. The manager publishes weights; your wallet holds the tokens.</span></span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.4); runLine(l2, t, 2.7, 4.8)
+      const cin = spring(t - 5.2, 0.9); show(card, t > 5.0); mat(card, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      const on = t >= 7.0; card.classList.toggle('on', on)
+      pressAt(btn, t, 6.8)
+      toastIn(toast, t, 7.3, 99, true)
+    }
+  },
+  // 2. You get the note. Not the transfer.
+  note(s) {
+    const l1 = line(s, 'You get the note.', { top: 130, size: 96 })
+    const l2 = line(s, 'Not the transfer.', { top: 130, size: 96, color: 'var(--lime)' })
+    const log = add(s, `<div class="log" style="top:300px"><div class="t">AI Infrastructure · change log</div><div class="e new"><i></i><div><b>v2 · Sep 28</b><span>Trimmed NVDA to 22 and AMD to 8, added Nebius at 5 for neocloud exposure.</span></div></div><div class="e"><i></i><div><b>v1 · Sep 14</b><span>Published.</span></div></div></div>`)
+    const nw = log.querySelector('.e.new')
+    const upd = add(s, `<div class="upd" style="top:610px"><b>Verdex Research updated AI Infrastructure to v2</b><p>Your vault keeps v1 until you say otherwise. Adopt the new weights and the trades wait for your signature.</p><div class="btns"><span class="btn pri">Adopt the new weights</span><span class="btn sec" style="background:transparent;color:var(--muted)">Stop following</span></div></div>`)
+    const adopt = upd.querySelector('.btn.pri')
+    const toast = add(s, `<div class="toast" style="left:50%;top:880px"><span class="mk"><span style="width:22px;height:22px;display:inline-flex">${MARK()}</span></span><span>Targets updated to v2<span class="sub">3 trades to get there. Nothing moves until you sign each one.</span></span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 4.4); runLine(l2, t, 4.7, 99)
+      const li = spring(t - 0.8, 0.9); show(log, t > 0.6); mat(log, li, { y: 30 * (1 - li), s: 0.04, blur: 16 })
+      const np = spring(t - 2.6, 0.7, 0.7); nw.style.opacity = clamp(np * 1.5); nw.style.transform = `translate3d(0, ${((1 - clamp(np)) * -16).toFixed(2)}px, 0)`; nw.style.filter = np > 0.999 ? 'none' : `blur(${((1 - clamp(np)) * 10).toFixed(2)}px)`
+      const ui = spring(t - 5.0, 0.85); show(upd, t > 4.8); mat(upd, ui * (1 - clamp(spring(t - 8.6, 0.45))), { y: 30 * (1 - ui), s: 0.04, blur: 16 })
+      pressAt(adopt, t, 7.4)
+      toastIn(toast, t, 8.2, 99, true)
+    }
+  },
+  // 3. No delegation. No allowance. No contract between you.
+  delegation(s) {
+    const l1 = line(s, 'No delegation.', { top: 470, size: 120 })
+    const l2 = line(s, 'No allowance.', { top: 470, size: 120 })
+    const l3 = line(s, 'No contract between you.', { top: 470, size: 112 })
+    const l4 = line(s, "The manager can't touch your money.", { top: 330, size: 92, color: 'var(--lime)' })
+    const pills = [[I.check, 'They publish weights'], [I.lock, 'You confirm every trade'], [I.vault, 'Tokens stay in your wallet']].map(([ic, tx], i) => add(s, `<div class="abs" style="left:50%;top:${540 + i * 100}px;transform:translateX(-50%);will-change:opacity,transform,filter"><span class="pill" style="font-size:30px;padding:16px 28px"><span style="width:26px;height:26px;display:inline-flex;color:var(--lime)">${ic}</span>${tx}</span></div>`))
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.2, 3.9); runLine(l3, t, 4.1, 6.2); runLine(l4, t, 6.5, 99, 0.025)
+      pills.forEach((p, i) => { const q = spring(t - 7.6 - i * 0.4, 0.8); show(p, t > 7.4); p.style.opacity = q; p.style.transform = `translate3d(-50%, ${(1 - q) * 24}px, 0)`; p.style.filter = q > 0.999 ? 'none' : `blur(${((1 - q) * 12).toFixed(2)}px)` })
+    }
+  },
+  // 4. Your vault is a link.
+  link(s) {
+    const l1 = line(s, 'Your vault is a link.', { top: 130, size: 100 })
+    const URL = 'useverdex.xyz/strategies?s=eyJuIjoiQ29tcG91bmRlcnMiLCJjIjo0NjYzLCJ3IjpbWyJDT1NUIiwxNi43XSxb'
+    const share = add(s, `<div class="share" style="top:300px"><div class="lab">Share a vault</div><div class="chips"><span class="schip on">Compounders</span><span class="schip">Magnificent 7</span><span class="schip">Rates Hedge</span></div><div class="seg">${[16.7, 16.7, 16.7, 16.7, 16.7, 16.7].map((w, j) => `<i style="background:${PAL[j]};width:calc(${w}% - 3px)"></i>`).join('')}</div><div class="box"><span class="u"></span><span class="cur"></span><span class="btn sec cp">Copy</span></div></div>`)
+    const u = share.querySelector('.u'), cur = share.querySelector('.cur'), cp = share.querySelector('.cp')
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:720px;text-align:center;font-size:36px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">The weights travel. <span style="color:var(--lime)">Your balances and your address don't.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 99)
+      const si = spring(t - 1.0, 0.9); show(share, t > 0.8); mat(share, si, { y: 40 * (1 - si), s: 0.05, blur: 18 })
+      const n = clamp(Math.floor((t - 2.0) / 0.03), 0, URL.length); u.textContent = URL.slice(0, n)
+      cur.style.opacity = t < 2.0 + URL.length * 0.03 + 0.5 ? (Math.floor(t * 2.5) % 2 ? 1 : 0.15) : 0
+      const copied = t >= 7.6; cp.classList.toggle('ok', copied); cp.textContent = copied ? 'Copied' : 'Copy'; const q = spring(t - 7.6, 0.4, 0.55); cp.style.transform = copied ? `scale(${(1 + 0.08 * (1 - q)).toFixed(3)})` : 'none'
+      const fp = spring(t - 8.6, 0.9); show(foot, t > 8.4); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 5. Publish a strategy with a pull request.
+  pr(s) {
+    const l1 = line(s, 'Publish a strategy with a pull request.', { top: 120, size: 84 })
+    const LINES = [`{ <span class="k">"id"</span>: <span class="s">"quality-growth"</span>,`, `  <span class="k">"manager"</span>: { <span class="k">"name"</span>: <span class="s">"Your name"</span> },`, `  <span class="k">"chainId"</span>: <span class="n">4663</span>, <span class="k">"rule"</span>: <span class="s">"month"</span>, <span class="k">"threshold"</span>: <span class="n">5</span>,`, `  <span class="k">"history"</span>: [{ <span class="k">"at"</span>: <span class="s">"2026-10-01"</span>, <span class="k">"note"</span>: <span class="s">"Published."</span>,`, `    <span class="k">"weights"</span>: [[<span class="s">"NVDA"</span>, <span class="n">30</span>], [<span class="s">"COST"</span>, <span class="n">20</span>], [<span class="s">"SLV"</span>, <span class="n">25</span>], [<span class="s">"SGOV"</span>, <span class="n">25</span>]] }] }`]
+    const code = add(s, `<div class="code"><div class="fn"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime);display:inline-block"></span>public/data/strategies.json</div><pre>${LINES.map((l) => `<span class="l">${l}</span>`).join('')}</pre></div>`)
+    const ls = [...code.querySelectorAll('.l')]
+    const pr = add(s, `<div class="pr"><span class="st">Open</span><div><b>Add strategy: Quality Growth</b><span>useverdex/verdex · +14 −0 · 1 file changed</span></div><span class="btn pri">Merge</span></div>`)
+    const st = pr.querySelector('.st'), mb = pr.querySelector('.btn')
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:820px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">The registry is open source. <span style="color:var(--lime)">So is the rest of Verdex.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 99, 0.025)
+      const ci = spring(t - 1.0, 0.9); show(code, t > 0.8); mat(code, ci, { y: 30 * (1 - ci), s: 0.04, blur: 16 })
+      ls.forEach((l, i) => { const p = spring(t - 1.6 - i * 0.5, 0.6); l.style.opacity = p; l.style.transform = `translate3d(${(1 - p) * 12}px, 0, 0)` })
+      const pi = spring(t - 5.4, 0.9); show(pr, t > 5.2); mat(pr, pi, { y: 30 * (1 - pi), s: 0.04, blur: 16 })
+      pressAt(mb, t, 7.4)
+      const merged = t >= 7.6; st.classList.toggle('m', merged); st.textContent = merged ? 'Merged' : 'Open'; mb.textContent = merged ? 'Merged' : 'Merge'; mb.style.opacity = merged ? 0.5 : 1
+      const fp = spring(t - 8.6, 0.9); show(foot, t > 8.4); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 6. Every move has a reason.
+  changelog(s) {
+    const l1 = line(s, 'Every move has a reason.', { top: 120, size: 96 })
+    const log = add(s, `<div class="log" style="top:280px;width:1100px;margin-left:-550px"><div class="t">AI Infrastructure · change log</div><div class="e new"><i></i><div><b>v2 · Sep 28</b><span>Trimmed NVDA to 22 and AMD to 8, added Nebius at 5 for neocloud exposure.</span></div></div><div class="e"><i></i><div><b>v1 · Sep 14</b><span>Published.</span></div></div></div>`)
+    const nw = log.querySelector('.e.new')
+    const D = [['NVDA', 25, 22], ['AMD', 10, 8], ['NBIS', 0, 5]]
+    const rows = D.map(([tk, a, b], i) => add(s, `<div class="abs crow" style="left:50%;top:${560 + i * 74}px;width:1100px;margin-left:-550px;will-change:opacity,transform,filter"><img src="${LOGO[tk]}" style="width:34px;height:34px;border-radius:50%"><b style="font-size:20px;font-weight:500">${tk}</b><div class="bar" style="height:12px"><div class="tg" style="width:${(a * 3.2).toFixed(1)}%"></div><div class="ac" style="width:${(a * 3.2).toFixed(1)}%"></div></div><div style="font-size:19px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums"><span class="w">${a}%</span> <span style="color:var(--faint)">→</span> <span class="v" style="color:var(--lime);font-weight:500">${b}%</span></div></div>`))
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:840px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Followers read what changed, and why, <span style="color:var(--lime)">before they adopt it.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 99)
+      const li = spring(t - 0.8, 0.9); show(log, t > 0.6); mat(log, li, { y: 30 * (1 - li), s: 0.04, blur: 16 })
+      const np = spring(t - 2.4, 0.7, 0.7); nw.style.opacity = clamp(np * 1.5); nw.style.transform = `translate3d(0, ${((1 - clamp(np)) * -16).toFixed(2)}px, 0)`; nw.style.filter = np > 0.999 ? 'none' : `blur(${((1 - clamp(np)) * 10).toFixed(2)}px)`
+      rows.forEach((r, i) => { const p = spring(t - 4.4 - i * 0.35, 0.8); show(r, t > 4.2); mat(r, p, { y: 20 * (1 - p), s: 0.02, blur: 12 }); const m = clamp(spring(t - 6.4 - i * 0.3, 0.8)); const [, a, b] = D[i]; r.querySelector('.ac').style.width = `${(lerp(a, b, m) * 3.2).toFixed(1)}%` })
+      const fp = spring(t - 8.6, 0.9); show(foot, t > 8.4); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 7. Stop following any time.
+  leave(s) {
+    const l1 = line(s, 'Stop following any time.', { top: 120, size: 96 })
+    const v = vmini(s, { name: 'AI Infrastructure', sub: 'Robinhood Chain · 9 assets · every month or 5% drift', follow: 'Follows AI Infrastructure by Verdex Research · v2', ws: AI2.slice(0, 6), style: 'left:50%;top:280px;margin-left:-380px' })
+    const btn = add(s, `<div class="abs" style="left:50%;top:700px;transform:translateX(-50%);will-change:opacity,transform,filter"><span class="btn sec" style="font-size:20px;height:56px;padding:0 26px">Stop following</span></div>`)
+    const l2 = line(s, 'The vault stays yours.', { top: 790, size: 84, color: 'var(--lime)' })
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:920px;text-align:center;font-size:30px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">Same tokens, same wallet. From now on the weights are whatever you say they are.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 99)
+      const vi = spring(t - 0.8, 0.9); show(v.el, t > 0.6); mat(v.el, vi, { y: 30 * (1 - vi), s: 0.04, blur: 16 })
+      const bi = spring(t - 1.6, 0.9); show(btn, t > 1.4); btn.style.opacity = bi * (1 - clamp(spring(t - 5.2, 0.4))); btn.style.transform = `translate3d(-50%, ${(1 - bi) * 16}px, 0)`
+      const inner = btn.firstElementChild; const press = t >= 4.6 && t < 4.8 ? 1 : clamp(1 - spring(t - 4.8, 0.3)); inner.style.transform = `scale(${(1 - 0.05 * (t >= 4.6 ? press : 0)).toFixed(3)})`
+      const gone = t >= 4.8; v.em.style.opacity = gone ? clamp(1 - spring(t - 4.8, 0.4)) : 1
+      if (gone && t >= 5.3) { v.em.textContent = 'Your own vault · weights are yours to edit'; v.em.style.opacity = clamp(spring(t - 5.3, 0.6)) }
+      runLine(l2, t, 5.8, 99)
+      const fp = spring(t - 8.0, 0.9); show(foot, t > 7.8); mat(foot, fp, { y: 16 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 8. Two managers. One wallet.
+  two(s) {
+    const l1 = line(s, 'Two managers. One wallet.', { top: 120, size: 96 })
+    const a = vmini(s, { name: 'Compounders', sub: 'Robinhood Chain · 6 assets · every quarter or 5% drift', follow: 'Follows Compounders by Verdex Research · v1', ws: [['COST', 16.7], ['MSFT', 16.7], ['LLY', 16.7], ['ASML', 16.7], ['INTU', 16.7], ['CRWD', 16.7]], style: 'left:120px;top:290px;width:820px' })
+    const b = vmini(s, { name: 'Quantum and Space', sub: 'Robinhood Chain · 6 assets · every month or 10% drift', follow: 'Follows Quantum and Space by Verdex Research · v2', ws: [['SPCX', 30], ['RKLB', 15], ['ASTS', 10], ['IONQ', 20], ['RGTI', 15], ['QBTS', 10]], style: 'left:980px;top:290px;width:820px' })
+    const w = add(s, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;will-change:opacity,transform,filter"><span class="pill" style="font-size:26px;padding:14px 24px"><span style="width:14px;height:14px;border-radius:50%;background:#7084FF;display:inline-block"></span>0x8f3C…A063 · Robinhood Chain · 2 vaults</span></div>`)
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:870px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Follow as many as you like. <span style="color:var(--lime)">Each one its own vault, all in the address you already hold.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 99)
+      ;[a, b].forEach((v, i) => { const p = spring(t - 1.0 - i * 0.5, 0.9); show(v.el, t > 0.8 + i * 0.5); mat(v.el, p, { y: 40 * (1 - p), s: 0.05, blur: 18 }) })
+      const wi = spring(t - 3.6, 0.9); show(w, t > 3.4); mat(w, wi, { y: 16 * (1 - wi), s: 0.02 })
+      const fp = spring(t - 5.4, 0.9); show(foot, t > 5.2); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 9. Six strategies at launch.
+  registry(s) {
+    const l1 = line(s, 'Six strategies at launch.', { top: 100, size: 96 })
+    const cards = STRATS.map((st, i) => scard(s, st, `left:${150 + (i % 3) * 550}px;top:${270 + Math.floor(i / 3) * 330}px;width:520px;padding:22px 26px 24px`, { buttons: false }))
+    const foot = add(s, `<div class="abs" style="left:0;right:0;top:940px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">Verdex Research publishes the house book. <span style="color:var(--lime)">Anyone can publish next.</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 99)
+      cards.forEach((el, i) => { const p = spring(t - 1.0 - i * 0.22, 0.85); show(el, t > 0.8); mat(el, p, { y: 40 * (1 - p), s: 0.05, blur: 16 }) })
+      const fp = spring(t - 5.0, 0.9); show(foot, t > 4.8); mat(foot, fp, { y: 20 * (1 - fp), s: 0.02 })
+    }
+  },
+  // 10. Holders follow for free.
+  free(s) {
+    const tile = add(s, `<div class="abs" style="left:50%;top:150px;width:140px;height:140px;margin-left:-70px;border-radius:34px;background:#000;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;box-shadow:0 30px 80px rgba(0,0,0,.7);will-change:transform,opacity,filter"><span style="width:80px;height:80px;display:inline-flex">${MARK()}</span></div>`)
+    const h = add(s, `<div class="abs" style="left:0;right:0;top:330px;text-align:center;will-change:transform,opacity,filter"><div class="tag" style="display:inline-flex;align-items:center;padding:8px 16px;border-radius:8px;background:rgba(194,234,138,.14);color:var(--lime);font-size:22px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Hold VERDEX</div><div class="serif" style="font-size:92px;margin-top:18px">Holders follow for free.</div></div>`)
+    const fee = add(s, `<div class="fee" style="top:560px"><span>Verdex fee per trade, following a strategy</span><span style="display:flex;align-items:center;gap:26px"><span class="old">0.25%<i></i></span><span class="new">0%</span></span></div>`)
+    const strike = fee.querySelector('.old i'), nw = fee.querySelector('.new')
+    const pills = [[I.check, 'No management fee'], [I.check, 'No performance fee'], [I.check, 'Checked onchain, every time']].map(([ic, tx], i) => add(s, `<div class="abs" style="left:${960 + (i - 1) * 440}px;top:720px;transform:translateX(-50%);will-change:opacity,transform,filter"><span class="pill" style="font-size:26px"><span style="width:22px;height:22px;display:inline-flex;color:var(--lime)">${ic}</span>${tx}</span></div>`))
+    return (t) => {
+      const tk = spring(t - 0.2, 0.7, 0.62); mat(tile, clamp(tk * 1.5), { y: -40 * (1 - tk), s: 0.3, blur: 18 })
+      const hin = spring(t - 0.6, 0.9); mat(h, hin, { y: 24 * (1 - hin), s: 0.02 })
+      const f5 = spring(t - 1.3, 0.8); mat(fee, f5, { y: 30 * (1 - f5), s: 0.04, blur: 16 })
+      strike.style.width = `${(clamp(spring(t - 2.6, 0.4)) * 100).toFixed(1)}%`
+      const nz = spring(t - 2.9, 0.5, 0.55); nw.style.opacity = clamp(nz * 2); nw.style.transform = `scale(${lerp(0.6, 1, nz).toFixed(3)})`
+      pills.forEach((p, i) => { const q = spring(t - 4.2 - i * 0.3, 0.8); show(p, t > 4.0); p.style.opacity = q; p.style.transform = `translate3d(-50%, ${(1 - q) * 24}px, 0)`; p.style.filter = q > 0.999 ? 'none' : `blur(${((1 - q) * 12).toFixed(2)}px)` })
+    }
+  },
+}
+add(stage, `<div class="grid"></div>`)
+const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+const scene = add(stage, `<div class="scene"></div>`)
+const draw = CLIPS[clip](scene)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+const fade = add(stage, `<div id="fade"></div>`)
+window.renderAt = async (t) => {
+  glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+  await draw(t)
+  fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

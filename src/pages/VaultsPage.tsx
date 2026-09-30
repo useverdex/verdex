@@ -13,11 +13,12 @@ import { useWallet } from '../components/wallet/WalletProvider'
 import { CheckIcon, ExternalIcon, LockIcon, PieIcon, RefreshIcon, RouteIcon, SearchIcon, VaultIcon } from '../components/icons'
 import { MarkIcon } from '../components/Logo'
 import { Page, PageHero, Panel } from './common'
+import { AllocBar, PALETTE, fmtPctPlain } from '../components/alloc'
+import { adoptUpdate, pendingUpdate, unfollow, useStrategies, versionOf, current as currentChange, type Strategy } from '../lib/strategies'
 
 const DRAFT_KEY = 'verdex-vaults-draft'
 type Draft = { name: string; template?: string; chainId: number; weights: [string, number][]; rule: Rule; threshold: number }
 const DEFAULT: Draft = { name: 'Magnificent 7', template: 'mag7', chainId: DEFAULT_CHAIN, weights: TEMPLATES[0].weights, rule: TEMPLATES[0].rule, threshold: TEMPLATES[0].threshold }
-const PALETTE = ['#C2EA8A', '#8FA661', '#F6F0E9', '#6F8549', '#DDE9C6', '#4E6032', '#B9B2A8', '#9DC77A', '#7A7F73', '#E4D8C8', '#5B6B45', '#2E3A1E']
 
 function loadDraft(): Draft {
   try {
@@ -35,7 +36,6 @@ function saveDraft(d: Draft) {
   }
 }
 const fmtDate = (ms: number) => new Date(ms).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-const fmtPctPlain = (n: number) => `${n.toFixed(n >= 10 ? 0 : 1)}%`
 const fmtDrift = (n: number) => `${n >= 0 ? '+' : ''}${n.toFixed(1)}`
 
 function Label({ children }: { children: React.ReactNode }) {
@@ -60,17 +60,6 @@ function Step({ n, icon, title, text }: { n: number; icon: React.ReactNode; titl
       <Typography sx={{ ...t.type.cardTitle, color: t.color.text, mt: 2.5 }}>{title}</Typography>
       <Typography sx={{ ...t.type.small, color: t.color.textMuted, mt: 1 }}>{text}</Typography>
     </Panel>
-  )
-}
-
-// A stacked allocation bar: one segment per asset, sized by target weight.
-function AllocBar({ assets, height = 10 }: { assets: { ticker: string; weight: number }[]; height?: number }) {
-  return (
-    <Box sx={{ display: 'flex', height, borderRadius: height / 2, overflow: 'hidden', background: t.color.tile, gap: '2px' }}>
-      {assets.map((a, i) => (
-        <Box key={a.ticker} title={`${a.ticker} ${fmtPctPlain(a.weight)}`} sx={{ width: `${a.weight}%`, background: PALETTE[i % PALETTE.length], transition: 'width .3s ease' }} />
-      ))}
-    </Box>
   )
 }
 
@@ -101,7 +90,7 @@ function TemplateCard({ tpl, on, count, onClick }: { tpl: Template; on: boolean;
 }
 
 // One saved vault: live weights against target, the drift, and the buttons to rebalance, fund, pause or remove it.
-function VaultCard({ vault, chain, chains, holder, prices, busy, onBusy }: { vault: Vault; chain: ChainX | undefined; chains: ChainX[] | undefined; holder: boolean; prices: Map<string, number>; busy: boolean; onBusy: (id: string | null) => void }) {
+function VaultCard({ vault, chain, chains, holder, prices, busy, onBusy, strategies, assets }: { vault: Vault; chain: ChainX | undefined; chains: ChainX[] | undefined; holder: boolean; prices: Map<string, number>; busy: boolean; onBusy: (id: string | null) => void; strategies?: Strategy[]; assets: Asset[] }) {
   const { account, openWalletMenu, switchChain, walletClient } = useWallet()
   const [state, setState] = useState<VaultState | null>(null)
   const [readError, setReadError] = useState<string | null>(null)
@@ -134,6 +123,17 @@ function VaultCard({ vault, chain, chains, holder, prices, busy, onBusy }: { vau
   }, [refresh])
 
   const due = isDue(vault, state ?? undefined)
+  const update = pendingUpdate(vault, strategies)
+  const adopt = () => {
+    if (!update) return
+    try {
+      adoptUpdate(vault, update, assets)
+      setPlan(null)
+      setProgress(null)
+    } catch (e) {
+      setProgress({ phase: 'failed', step: 0, steps: 0, error: describeError(e) })
+    }
+  }
   const rule = RULES.find((r) => r.key === vault.rule)
   const running = progress && !['idle', 'done', 'failed'].includes(progress.phase)
   const empty = !state || state.total <= 0
@@ -177,6 +177,7 @@ function VaultCard({ vault, chain, chains, holder, prices, busy, onBusy }: { vau
           <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.25, display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
             <Avatar src={chainLogo(chain)} alt="" sx={{ width: 14, height: 14, background: 'transparent' }} /> {chain?.name ?? vault.chainId} · {vault.assets.length} assets · {rule?.label.toLowerCase()}{vault.rule !== 'drift' ? ` or ${vault.threshold}% drift` : `, ${vault.threshold}%`}
           </Typography>
+          {(vault.follow || vault.sharedBy) && <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 0.25 }}>{vault.follow ? `Follows ${vault.follow.name} by ${vault.follow.manager} · v${vault.follow.version}` : `Shared by ${vault.sharedBy}`}</Typography>}
         </Box>
         <Box sx={{ ...Vg, ml: 0, ...(due && { background: 'rgba(194,234,138,.16)', color: t.color.mark }) }}>{vault.status === 'paused' ? 'Paused' : due ? 'Rebalance due' : hasDate(vault) ? `Next ${fmtDate(vault.nextRunAt)}` : 'On target'}</Box>
       </Box>
@@ -210,6 +211,23 @@ function VaultCard({ vault, chain, chains, holder, prices, busy, onBusy }: { vau
           </Box>
         ))}
       </Box>
+      {update && (
+        <Box sx={{ mt: 2.5, p: 2, borderRadius: t.radius.panel, background: 'rgba(194,234,138,.08)', border: '1px solid rgba(194,234,138,.25)' }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+            {update.manager.name} updated {update.name} to v{versionOf(update)}
+          </Typography>
+          <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.5 }}>{currentChange(update).note}</Typography>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1.5 }}>
+            <Button onClick={adopt} disabled={!!running || busy} sx={{ ...Bt, height: 36, px: '14px', fontSize: 13 }}>
+              Adopt the new weights
+            </Button>
+            <Button onClick={() => unfollow(vault)} disabled={!!running} sx={{ ...Lt, height: 36, px: '14px', fontSize: 13, backdropFilter: 'none', background: 'transparent', color: t.color.textMuted }}>
+              Stop following
+            </Button>
+          </Box>
+          <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1 }}>Adopting only changes the targets on this device. The trades to get there are a normal rebalance, each confirmed in your wallet.</Typography>
+        </Box>
+      )}
       {readError && <Typography sx={{ fontSize: 12, color: t.color.textMuted, mt: 1.5 }}>Balances could not be read: {readError}</Typography>}
       {state && empty && !plan && <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 2 }}>Empty so far. Add {vault.quote.symbol} on {chain?.name} to buy the first allocation; this wallet holds {fmtUsd(state.quoteUsd)} of it.</Typography>}
 
@@ -247,7 +265,7 @@ function VaultCard({ vault, chain, chains, holder, prices, busy, onBusy }: { vau
           </Button>
           <Box sx={{ display: 'flex', alignItems: 'center', height: 40, borderRadius: t.radius.input, background: t.color.tile, pl: 1.5, overflow: 'hidden' }}>
             <Typography sx={{ fontSize: 14, color: t.color.textLabel }}>$</Typography>
-            <InputBase type="number" inputMode="decimal" value={deposit} onChange={(e) => setDeposit(e.target.value)} placeholder="Add" aria-label="Amount to add" sx={{ width: 72, fontSize: 14, fontWeight: 500, color: t.color.text, px: 0.75, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
+            <InputBase type="number" inputMode="decimal" value={deposit} onChange={(e) => setDeposit(e.target.value)} placeholder="Add" inputProps={{ 'aria-label': 'Amount to add' }} sx={{ width: 72, fontSize: 14, fontWeight: 500, color: t.color.text, px: 0.75, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
             <Button onClick={() => preview(Math.max(0, Number(deposit) || 0))} disabled={!!running || busy || vault.status === 'paused' || !(Number(deposit) > 0)} sx={{ ...Lt, height: 40, px: '14px', fontSize: 14, backdropFilter: 'none', borderRadius: 0, background: 'rgba(255,255,255,.06)' }}>
               Add {vault.quote.symbol}
             </Button>
@@ -309,6 +327,7 @@ export default function VaultsPage() {
   const chains = chainList as ChainX[] | undefined
   const { account, openWalletMenu } = useWallet()
   const vaults = useVaults()
+  const { data: registry } = useStrategies()
   const { hash } = useLocation()
   const [draft, setDraftState] = useState<Draft>(loadDraft)
   const setDraft = (patch: Partial<Draft>) => setDraftState((d) => { const n = { ...d, ...patch }; saveDraft(n); return n })
@@ -406,7 +425,7 @@ export default function VaultsPage() {
             <Box sx={{ display: 'flex', color: t.color.mark }}>
               <VaultIcon size={18} />
             </Box>
-            <InputBase value={draft.name} onChange={(e) => setDraft({ name: e.target.value.slice(0, 40) })} placeholder="Name the vault" aria-label="Vault name" sx={{ flex: 1, fontSize: 15, fontWeight: 500, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
+            <InputBase value={draft.name} onChange={(e) => setDraft({ name: e.target.value.slice(0, 40) })} placeholder="Name the vault" inputProps={{ 'aria-label': 'Vault name' }} sx={{ flex: 1, fontSize: 15, fontWeight: 500, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
             {tpl && <Box sx={{ ...Vg, ml: 0 }}>{tpl.name}</Box>}
           </Box>
 
@@ -457,7 +476,7 @@ export default function VaultsPage() {
                 <Box sx={{ display: 'flex', color: t.color.textLabel }}>
                   <SearchIcon size={16} />
                 </Box>
-                <InputBase value={q} onChange={(e) => setQ(e.target.value)} disabled={draft.weights.length >= MAX_ASSETS} placeholder={draft.weights.length >= MAX_ASSETS ? `Up to ${MAX_ASSETS} assets` : `Add a stock, ETF or commodity on ${chain?.name ?? 'this chain'}`} aria-label="Add an asset" sx={{ flex: 1, fontSize: 14, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
+                <InputBase value={q} onChange={(e) => setQ(e.target.value)} disabled={draft.weights.length >= MAX_ASSETS} placeholder={draft.weights.length >= MAX_ASSETS ? `Up to ${MAX_ASSETS} assets` : `Add a stock, ETF or commodity on ${chain?.name ?? 'this chain'}`} inputProps={{ 'aria-label': 'Add an asset' }} sx={{ flex: 1, fontSize: 14, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
               </Box>
               {results.length > 0 && (
                 <Box sx={{ position: 'absolute', left: 0, right: 0, top: 'calc(100% + 6px)', zIndex: 5, background: t.color.menu, border: `1px solid ${t.color.border}`, borderRadius: t.radius.card, boxShadow: '0 12px 40px rgba(0,0,0,.55)', p: 0.75 }}>
@@ -585,7 +604,7 @@ export default function VaultsPage() {
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0,1fr))' }, gap: 2.5, mt: 3 }}>
             {mine.map((v) => (
               <Box key={v.id} id={`vault-${v.id}`} sx={{ scrollMarginTop: 100 }}>
-                <VaultCard vault={v} chain={chains?.find((c) => c.id === v.chainId)} chains={chains} holder={holder} prices={prices} busy={!!busyId && busyId !== v.id} onBusy={setBusyId} />
+                <VaultCard vault={v} chain={chains?.find((c) => c.id === v.chainId)} chains={chains} holder={holder} prices={prices} busy={!!busyId && busyId !== v.id} onBusy={setBusyId} strategies={registry?.strategies} assets={assets} />
               </Box>
             ))}
           </Box>

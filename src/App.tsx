@@ -19,6 +19,9 @@ const LendPage = lazy(() => import('./pages/LendPage'))
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const AutoInvestPage = lazy(() => import('./pages/AutoInvestPage'))
 const VaultsPage = lazy(() => import('./pages/VaultsPage'))
+const StrategiesPage = lazy(() => import('./pages/StrategiesPage'))
+const OrdersPage = lazy(() => import('./pages/OrdersPage'))
+const AgentPage = lazy(() => import('./pages/AgentPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
@@ -40,6 +43,34 @@ function BgLayer() {
   )
 }
 
+// One title per route, for tabs, history, sharing and search results.
+const TITLES: [string, string][] = [
+  ['/assets', 'Markets'],
+  ['/issuers', 'Issuers'],
+  ['/rwa-baskets/discover', 'Discover Baskets'],
+  ['/rwa-baskets', 'Baskets'],
+  ['/rwa-pools', 'Tokenized Pools'],
+  ['/lend', 'Lend and Borrow'],
+  ['/portfolio', 'Portfolio'],
+  ['/auto-invest', 'Auto-Invest'],
+  ['/vaults', 'Vaults'],
+  ['/strategies', 'Strategies'],
+  ['/orders', 'Orders'],
+  ['/agent', 'Agent'],
+  ['/docs', 'Docs'],
+  ['/terms', 'Terms of Service'],
+  ['/privacy', 'Privacy Policy'],
+]
+const BASE_TITLE = 'Verdex: Unified Marketplace for Real-World Assets'
+function RouteTitle() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    const hit = TITLES.find(([p]) => pathname === p || pathname.startsWith(p + '/'))
+    document.title = hit ? `${hit[1]} · Verdex` : BASE_TITLE
+  }, [pathname])
+  return null
+}
+
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
   useEffect(() => {
@@ -53,6 +84,7 @@ export default function App() {
     <>
       <BgLayer />
       <ScrollToTop />
+      <RouteTitle />
       <Nav />
       <Box component="main">
         <Suspense fallback={<Box sx={{ minHeight: '60dvh' }} />}>
@@ -68,6 +100,9 @@ export default function App() {
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/auto-invest" element={<AutoInvestPage />} />
             <Route path="/vaults" element={<VaultsPage />} />
+            <Route path="/strategies" element={<StrategiesPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/agent" element={<AgentPage />} />
             <Route path="/docs" element={<DocsPage />} />
             <Route path="/terms" element={<LegalPage kind="terms" />} />
             <Route path="/privacy" element={<LegalPage kind="privacy" />} />

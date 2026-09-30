@@ -17,14 +17,14 @@ const TERMS = {
 }
 const PRIVACY = {
   title: 'Privacy Policy',
-  intro: `${N} ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy outlines how we collect, use, and protect your information when you use our website and services.`,
+  intro: `${N} is a website that runs in your browser and talks to public blockchains and a few named services from there. It has no user accounts, no server that stores your data, and no analytics. This policy says exactly what leaves your browser, and to whom.`,
   sections: [
-    { h: '1. Information We Collect', items: ['Personal Information: We may collect limited personal information such as your email address when you contact us or subscribe to updates.', 'Usage Data: We collect anonymized data regarding interactions with our platform, including IP addresses, device types, and browsing activity.', 'Blockchain Data: Transactions conducted on blockchain networks are public and immutable; we do not control such data.'] },
-    { h: '2. How We Use Your Information', items: ['To provide and improve our services', 'To communicate updates, support, and security alerts', 'To analyze platform performance and enhance user experience', 'To comply with legal obligations'] },
-    { h: '3. Information Sharing', items: ['We do not sell or share personal data with third parties, except when required by law or to protect our rights.', 'Third-party service providers may process anonymized data to improve platform functionality.'] },
-    { h: '4. Security', p: 'We implement industry-standard security measures to protect user data, but we cannot guarantee absolute security due to the decentralized nature of blockchain technology.' },
-    { h: '5. User Rights', items: ['You may request access or deletion of your personal data.', 'You can opt-out of communications at any time.'] },
-    { h: '6. Changes to This Policy', p: 'We may update this policy periodically. Continued use of our services constitutes acceptance of the revised policy.' },
+    { h: '1. What we collect', items: [`Nothing on our side. ${N} has no backend: the site is static files, and there is no database of users, wallets or activity.`, 'We do not run analytics, tracking pixels or advertising scripts, and we set no cookies.', 'If you write to us by email, we keep that email to answer it.'] },
+    { h: '2. What stays on your device', items: ['Your Auto-Invest plans, orders, vaults and drafts are stored in your browser (localStorage) for the wallet that made them. They never leave the device unless you export or share them yourself.', 'If you use the Agent with your own model key, the key is stored in localStorage on that device and can be removed at any time with Forget key.', 'The installable app caches the site shell and artwork on your device so it opens offline. It never caches prices, quotes or wallet traffic.'] },
+    { h: '3. What leaves your browser, and to whom', items: ['Quotes and routing: to price a swap, bridge, buy, fill or rebalance, the site sends the token pair, the amount, your wallet address and, for private swaps, the receiving address to the LI.FI aggregator API (li.quest). LI.FI\'s own privacy policy applies to that request.', 'Blockchain reads: balances, allowances, holder checks and transaction receipts are read from public RPC endpoints of the chain in question, which see your IP address and the addresses queried.', 'Transactions: every swap, approval and fill is signed in your own wallet and broadcast by it. Onchain data is public by nature.', `Agent: only if you add a key, your messages, the tool results (prices, the balances you asked about, your plans, orders and vaults) and the key itself go from your browser to the provider you chose, Anthropic or OpenAI, over HTTPS. ${N} is not in that path and never sees the conversation. Without a key, nothing is sent anywhere.`, 'Notifications: reminders for due buys, triggered orders and rebalances are shown by your browser or the installed app on the device. No push server is involved.'] },
+    { h: '4. Security', p: `${N} never holds funds, keys or allowances. Every transfer is a transaction you sign in your own wallet. The code is open source at github.com/useverdex/verdex, so anything described here can be checked against what the site actually does.` },
+    { h: '5. Your rights', items: ['Everything the site stores is on your device: clear the site data in your browser and it is gone.', 'You may ask us to delete any email correspondence at the address below.'] },
+    { h: '6. Changes to this policy', p: 'When this policy changes, the date below is updated and the change is visible in the public repository.' },
   ],
 }
 
@@ -35,7 +35,7 @@ export default function LegalPage({ kind }: { kind: 'terms' | 'privacy' }) {
       <Typography component="h1" sx={{ ...t.type.pageTitle, color: t.color.text }}>
         {d.title}
       </Typography>
-      <Typography sx={{ ...t.type.caption, color: t.color.textLabel, mt: 1.5 }}>Last updated: 17 September 2026</Typography>
+      <Typography sx={{ ...t.type.caption, color: t.color.textLabel, mt: 1.5 }}>Last updated: 30 September 2026</Typography>
       <Typography sx={{ ...t.type.body, color: t.color.textMuted, mt: 3 }}>{d.intro}</Typography>
       {d.sections.map((s) => (
         <Box key={s.h} sx={{ mt: 4 }}>

@@ -590,58 +590,49 @@ function FaqSection() {
 
 function NextSection() {
   const navigate = useNavigate()
-  const rows: [string, number, number][] = [
-    ['NVDA', 14.3, 19.8],
-    ['AAPL', 14.3, 12.1],
-    ['MSFT', 14.3, 13.6],
-    ['GOOGL', 14.3, 14.9],
-    ['AMZN', 14.3, 12.4],
-    ['META', 14.3, 15.1],
-    ['TSLA', 14.3, 12.1],
-  ]
+  const go = (path: string) => { navigate(path); window.scrollTo({ top: 0 }) }
   return (
     <Container sx={{ pt: t.layout.sectionTop }}>
       <Reveal y={16}>
         <Box sx={{ ...In, position: 'relative', overflow: 'hidden', p: { xs: 3, md: 6 }, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, gap: { xs: 4, md: 6 }, alignItems: 'center' }}>
           <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Pill>Vaults</Pill>
+              <Pill>Agent</Pill>
               <Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>New</Box>
             </Box>
             <Typography component="h2" sx={{ ...t.type.h2, color: t.color.text, mt: 3 }}>
-              Your allocation. Kept on target.
+              Say it. Approve it.
             </Typography>
             <Typography sx={{ ...t.type.lead, color: t.color.textMuted, mt: 2, maxWidth: 520 }}>
-              A strategy across tokenized stocks, ETFs and commodities, held in your own wallet. When it drifts or its date comes, {BRAND.name} plans the trades back to target and you confirm them in one sitting. Holders of VERDEX pay no {BRAND.name} fee.
+              Ask for a limit order, a weekly buy or a whole vault in plain words. The agent reads the market and your wallet and drafts the action as a card. Nothing happens until you approve it and your wallet confirms. Bring your own Anthropic or OpenAI key; it stays in your browser.
             </Typography>
             <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mt: 4 }}>
-              <Button onClick={() => { navigate('/vaults'); window.scrollTo({ top: 0 }) }} sx={{ ...Bt }}>
-                Create a vault
+              <Button onClick={() => go('/agent')} sx={{ ...Bt }}>
+                Open the agent
               </Button>
-              <Button onClick={() => { navigate('/auto-invest'); window.scrollTo({ top: 0 }) }} sx={{ ...Lt, backdropFilter: 'none' }}>
-                Auto-Invest
+              <Button onClick={() => go('/vaults')} sx={{ ...Lt, backdropFilter: 'none' }}>
+                Vaults
               </Button>
             </Box>
           </Box>
-          <Box sx={{ display: 'grid', gap: 0.75 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', px: 2, pb: 0.5 }}>
-              <Typography sx={{ fontSize: 14, fontWeight: 500 }}>Magnificent 7 · equal weight</Typography>
-              <Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>Rebalance due</Box>
-            </Box>
-            {rows.map(([tk, target, actual]) => (
-              <Box key={tk} sx={{ display: 'grid', gridTemplateColumns: '56px 1fr 84px', alignItems: 'center', gap: 1.5, px: 2, py: 0.75 }}>
-                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{tk}</Typography>
-                <Box sx={{ position: 'relative', height: 8, borderRadius: 4, background: t.color.tile, overflow: 'hidden' }}>
-                  <Box sx={{ position: 'absolute', inset: 0, width: `${target * 3}%`, background: 'rgba(255,255,255,.12)' }} />
-                  <Box sx={{ position: 'absolute', inset: 0, width: `${actual * 3}%`, background: Math.abs(actual - target) > 5 ? t.color.mark : t.color.green }} />
-                </Box>
-                <Typography sx={{ fontSize: 12, color: t.color.textMuted, textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  {actual.toFixed(1)}% <Box component="span" sx={{ color: Math.abs(actual - target) > 5 ? t.color.mark : t.color.textFaint }}>{actual - target >= 0 ? '+' : ''}{(actual - target).toFixed(1)}</Box>
-                </Typography>
-              </Box>
+          <Box sx={{ display: 'grid', gap: 1.25 }}>
+            <Box sx={{ justifySelf: 'end', maxWidth: '85%', px: 2, py: 1.25, borderRadius: '16px 16px 4px 16px', background: t.color.accent, color: t.color.onAccent, fontSize: 14, fontWeight: 500 }}>Buy $250 of NVDA if it drops 5%</Box>
+            {['Pricing NVDA', 'Drafting buy order on NVDA'].map((l) => (
+              <Typography key={l} sx={{ fontSize: 12, color: t.color.textLabel, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box component="span" sx={{ width: 6, height: 6, borderRadius: '50%', background: t.color.mark }} /> {l}
+              </Typography>
             ))}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, pt: 1.5, fontSize: 13, color: t.color.textMuted }}>
-              <span>3 trades to target · {BRAND.name} fee with the token</span>
+            <Box sx={{ p: 2, borderRadius: t.radius.card, background: t.color.tile, border: '1px solid rgba(194,234,138,.35)' }}>
+              <Typography sx={{ fontSize: 11, color: t.color.textLabel, letterSpacing: '.04em', textTransform: 'uppercase' }}>Order · needs your approval</Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 500, mt: 0.5 }}>Limit buy: $250 below $217</Typography>
+              <Typography sx={{ fontSize: 12, color: t.color.textMuted, mt: 0.5 }}>NVDA on Robinhood Chain · paid in USDG · until cancelled · now $228.92</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 1.5 }}>
+                <Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>Approved</Box>
+                <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>Saved to Orders. The fill is confirmed in your wallet.</Typography>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 0.5, pt: 0.5, fontSize: 13, color: t.color.textMuted }}>
+              <span>Proposes. Never places. {BRAND.name} fee with the token</span>
               <Box component="span" sx={{ color: t.color.mark, fontWeight: 500 }}>$0.00</Box>
             </Box>
           </Box>

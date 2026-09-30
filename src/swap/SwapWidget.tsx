@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Avatar, Box, Button, InputBase, Typography } from '@mui/material'
-import { erc20Abi, encodeFunctionData, formatUnits, maxUint256, parseUnits, type Address } from 'viem'
+import { erc20Abi, encodeFunctionData, formatUnits, isAddress, maxUint256, parseUnits, type Address } from 'viem'
 import { fonts, t, z } from '../theme/tokens'
 import { Bt } from '../theme/styles'
 import { ArrowsUpDownIcon, ChevronDownIcon, ExternalIcon, SettingsIcon, WalletIcon } from '../components/icons'
@@ -102,7 +102,7 @@ export function SwapWidget() {
     }
   }, [account, from.chain, from.token, txHash])
 
-  const toAddress = tab === 'private' && /^0x[0-9a-fA-F]{40}$/.test(recipient) ? recipient : undefined
+  const toAddress = tab === 'private' && isAddress(recipient) ? recipient : undefined
   const quote = useQuote({ fromChain: from.chain?.id, toChain: to.chain?.id, fromToken: from.token, toToken: to.token, amount, fromAddress: account?.address, toAddress, slippage: slippage / 100 })
   const q = quote.data
   const fromUsd = useMemo(() => (q?.estimate.fromAmountUSD ? Number(q.estimate.fromAmountUSD) : from.token?.priceUSD && Number(amount) > 0 ? Number(from.token.priceUSD) * Number(amount) : 0), [q, from.token, amount])
@@ -208,7 +208,7 @@ export function SwapWidget() {
               )}
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <InputBase name="fromAmount" inputMode="decimal" placeholder="0" value={amount} onChange={(e) => /^\d*\.?\d*$/.test(e.target.value) && setAmount(e.target.value)} sx={{ flex: 1, minWidth: 0, fontSize: 30, fontWeight: 500, lineHeight: 1.4, height: 32, color: t.color.text, '& input': { p: 0, height: 32 }, '& input::placeholder': { color: t.color.text, opacity: 0.5 } }} />
+              <InputBase name="fromAmount" inputMode="decimal" placeholder="0" inputProps={{ 'aria-label': 'Amount to send' }} value={amount} onChange={(e) => /^\d*\.?\d*$/.test(e.target.value) && setAmount(e.target.value)} sx={{ flex: 1, minWidth: 0, fontSize: 30, fontWeight: 500, lineHeight: 1.4, height: 32, color: t.color.text, '& input': { p: 0, height: 32 }, '& input::placeholder': { color: t.color.text, opacity: 0.5 } }} />
               <TokenButton side={from} label="from" onClick={() => setPicker('from')} />
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 16 }}>
@@ -239,7 +239,7 @@ export function SwapWidget() {
         {tab === 'private' && (
           <Box sx={{ ...card, gap: 1 }}>
             <Typography sx={{ fontSize: 14, lineHeight: 1, fontWeight: 500 }}>Receiving address</Typography>
-            <InputBase placeholder="0x… a separate address you control" value={recipient} onChange={(e) => setRecipient(e.target.value.trim())} sx={{ fontSize: 14, fontFamily: fonts.code, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
+            <InputBase inputProps={{ 'aria-label': 'Receiving address' }} placeholder="0x… a separate address you control" value={recipient} onChange={(e) => setRecipient(e.target.value.trim())} sx={{ fontSize: 14, fontFamily: fonts.code, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
             <Typography sx={{ fontSize: 12, color: t.color.textLabel, lineHeight: 1.4 }}>Funds are routed through partner liquidity and settle at the receiving address. Allow 15–45 minutes for cross-chain routes.</Typography>
           </Box>
         )}

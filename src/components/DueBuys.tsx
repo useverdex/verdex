@@ -3,9 +3,11 @@ import { Box, Button, Typography } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { t } from '../theme/tokens'
 import { tn } from '../theme/styles'
-import { fmtUsd } from '../lib/api'
+import { fmtUsd, useAssets } from '../lib/api'
 import { isDue, nowMs, usePlans } from '../lib/autoInvest'
 import { isDateDue, useVaults } from '../lib/vaults'
+import { current, pendingUpdate, useStrategies } from '../lib/strategies'
+import { describe, useOrders, watch } from '../lib/orders'
 import { useWallet } from '../components/wallet/WalletProvider'
 import { MarkIcon } from './Logo'
 
@@ -16,6 +18,9 @@ type Due = { key: string; title: string; sub: string; path: string }
 export function DueBuys() {
   const plans = usePlans()
   const vaults = useVaults()
+  const { data: registry } = useStrategies()
+  const orders = useOrders()
+  const { data: assetsFile } = useAssets()
   const { account } = useWallet()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -25,13 +30,39 @@ export function DueBuys() {
     const id = window.setInterval(() => setNow(nowMs()), 30_000)
     return () => window.clearInterval(id)
   }, [])
+  // Watch the connected wallet's open orders against live prices while the app is open.
+  const fallback = useMemo(() => new Map((assetsFile?.assets ?? []).map((a) => [a.ticker, a.price])), [assetsFile])
+  useEffect(() => {
+    if (!account) return
+    const owner = account.address.toLowerCase()
+    let alive = true
+    const tick = () => {
+      if (!alive) return
+      watch(orders.filter((o) => o.owner.toLowerCase() === owner), fallback).catch(() => undefined)
+    }
+    const first = window.setTimeout(tick, 1500)
+    const id = window.setInterval(tick, 45_000)
+    return () => {
+      alive = false
+      window.clearTimeout(first)
+      window.clearInterval(id)
+    }
+    // Re-arm only when the set of live orders changes, not on every price write.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, fallback, orders.filter((o) => o.status === 'open').map((o) => o.id).join(',')])
   const due = useMemo<Due[]>(() => {
     if (!account) return []
     const owner = account.address.toLowerCase()
     const buys = plans.filter((p) => p.owner.toLowerCase() === owner && isDue(p, now)).map((p) => ({ key: `plan:${p.id}:${p.nextRunAt}`, title: `${fmtUsd(p.amountUsd, 0)} of ${p.ticker} is due`, sub: 'Auto-Invest · one tap to confirm', path: '/auto-invest#plans' }))
     const rebalances = vaults.filter((v) => v.owner.toLowerCase() === owner && isDateDue(v, now)).map((v) => ({ key: `vault:${v.id}:${v.nextRunAt}`, title: `${v.name} is due for a rebalance`, sub: 'Vaults · review the trades, then confirm', path: '/vaults#vaults' }))
-    return [...buys, ...rebalances]
-  }, [plans, vaults, account, now])
+    const updates = vaults.flatMap((v) => {
+      if (v.owner.toLowerCase() !== owner) return []
+      const s = pendingUpdate(v, registry?.strategies)
+      return s ? [{ key: `strategy:${v.id}:${s.history.length}`, title: `${s.manager.name} updated ${v.name}`, sub: `Strategies · ${current(s).note}`, path: '/vaults#vaults' }] : []
+    })
+    const fills = orders.filter((o) => o.owner.toLowerCase() === owner && o.status === 'triggered').map((o) => ({ key: `order:${o.id}`, title: `${o.ticker} hit ${fmtUsd(o.price)}: ${describe(o.side, o.trigger).toLowerCase()} ready`, sub: 'Orders · one tap to fill', path: '/orders#orders' }))
+    return [...buys, ...fills, ...rebalances, ...updates]
+  }, [plans, vaults, orders, registry, account, now])
   useEffect(() => {
     for (const d of due) {
       if (notified.current.has(d.key)) continue

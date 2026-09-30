@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex Agent reveal</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Chat panel */
+.chat { position: absolute; left: 50%; top: 290px; width: 1040px; margin-left: -520px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; overflow: hidden; }
+.chat .hd { display: flex; align-items: center; gap: 16px; padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.chat .hd .mk { width: 44px; height: 44px; border-radius: 12px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; }
+.chat .hd b { display: block; font-size: 21px; font-weight: 500; }
+.chat .hd span { display: block; font-size: 16px; color: var(--muted); margin-top: 2px; }
+.chat .body { padding: 26px 30px 24px; min-height: 380px; display: flex; flex-direction: column; gap: 18px; }
+.bub { align-self: flex-end; max-width: 80%; padding: 14px 22px; border-radius: 20px 20px 6px 20px; background: #fff; color: #000; font-size: 24px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.3; will-change: transform, opacity; }
+.bub .cur { display: inline-block; width: 2px; height: 26px; background: #000; vertical-align: -4px; margin-left: 2px; }
+.tool { display: flex; align-items: center; gap: 12px; font-size: 18px; color: rgba(255,255,255,.5); will-change: opacity, transform; }
+.tool i { width: 9px; height: 9px; border-radius: 50%; background: var(--lime); }
+.reply { font-size: 22px; line-height: 1.45; color: #fff; will-change: opacity, transform; }
+.prop { padding: 24px 28px 26px; border-radius: 18px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); will-change: transform, opacity, filter, border-color; }
+.prop.ok { border-color: rgba(194,234,138,.4); }
+.prop .top { display: flex; align-items: center; gap: 16px; }
+.prop .top img, .prop .top .sq { width: 50px; height: 50px; border-radius: 50%; }
+.prop .top .sq { border-radius: 14px; background: #1f1f1f; display: grid; place-items: center; color: var(--lime); }
+.prop .kind { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.prop .ttl { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 3px; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); will-change: transform; white-space: nowrap; }
+.badge.done { background: rgba(194,234,138,.16); color: var(--lime); }
+.prop .sub { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 18px; color: var(--muted); }
+.prop .sub img { width: 20px; height: 20px; border-radius: 50%; }
+.prop .btns { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.btn.sec { background: transparent; color: var(--muted); }
+.prop .fine { font-size: 15px; color: var(--faint); margin-left: 6px; }
+.bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 18px; background: #222; }
+.bar i { display: block; height: 100%; }
+.lgd { display: flex; gap: 18px; margin-top: 12px; font-size: 16px; color: var(--muted); }
+.lgd i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.toast .sub { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+/* Two cards */
+.twin { position: absolute; top: 330px; width: 780px; box-sizing: border-box; padding: 26px 30px 28px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.65); will-change: transform, opacity, filter; }
+.twin .ask { display: inline-block; padding: 12px 20px; border-radius: 18px 18px 6px 18px; background: #fff; color: #000; font-size: 21px; font-weight: 500; letter-spacing: -0.015em; margin-bottom: 20px; }
+/* Steps */
+.step { position: absolute; width: 500px; height: 250px; padding: 28px 30px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.step .ic { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); }
+.step .ic svg { width: 26px; height: 26px; }
+.step .n { position: absolute; right: 30px; top: 30px; font-size: 18px; color: var(--faint); font-weight: 500; }
+.step b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 22px; }
+.step span { display: block; font-size: 18px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.arrow { position: absolute; top: 440px; font-size: 40px; color: var(--faint); will-change: opacity; }
+/* Setup */
+.setup { position: absolute; left: 50%; top: 320px; width: 820px; margin-left: -410px; padding: 32px 38px 36px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.setup .lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.chips { display: flex; gap: 10px; }
+.chip { display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background, color; }
+.chip.on { background: #fff; color: #000; }
+.setup .row { margin-top: 26px; }
+.setup .in { display: flex; align-items: center; gap: 14px; height: 62px; padding: 0 20px; border-radius: 12px; background: var(--tile); font-family: var(--mono); font-size: 22px; letter-spacing: .12em; color: #fff; }
+.setup .in svg { width: 20px; height: 20px; color: var(--faint); flex-shrink: 0; }
+.setup .note { font-size: 17px; color: var(--muted); margin-top: 12px; line-height: 1.4; }
+.setup .note em { font-style: normal; color: var(--lime); }
+/* Lines */
+.line { position: absolute; left: 0; right: 0; display: flex; justify-content: center; will-change: transform, opacity, filter; }
+.line div { display: flex; align-items: center; gap: 22px; padding: 22px 34px; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 36px; font-weight: 500; letter-spacing: -0.02em; }
+.line svg { width: 34px; height: 34px; flex-shrink: 0; }
+/* Fee */
+.feebox { position: absolute; left: 50%; top: 600px; width: 900px; margin-left: -450px; padding: 30px 40px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: space-between; font-size: 30px; font-weight: 500; will-change: transform, opacity, filter; }
+.feebox .old { position: relative; color: var(--faint); }
+.feebox .old i { position: absolute; left: 0; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.feebox .new { color: var(--lime); font-family: 'LT Remark', serif; font-size: 64px; letter-spacing: -0.03em; line-height: 1; will-change: transform, opacity; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Agent reveal: the name, a sentence typed into the chat and the proposal card approved, two more asks side by side, the three-step approval rail, the key setup, non-custodial lines, fee, end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const NVDA = L('88a0e630'), SPY = L('c025dcd9')
+const DURATION = 40
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const pressAt = (btn, t, t0, light = '#E6E1DA') => { const press = t >= t0 && t < t0 + 0.2 ? 1 : clamp(1 - spring(t - t0 - 0.2, 0.3)); btn.style.transform = `scale(${(1 - 0.05 * (t >= t0 ? press : 0)).toFixed(3)})`; btn.style.background = t >= t0 && press > 0.5 ? light : '#fff' }
+const toastIn = (el, t, t0, t1, centred = false) => { const p = spring(t - t0, 0.55, 0.7), o = clamp(spring(t - t1, 0.45)); el.style.opacity = clamp(p * 2) * (1 - o); el.style.transform = `translate3d(${centred ? '-50%' : '0'}, ${((1 - p) * 30 - o * 14).toFixed(2)}px, 0) scale(${lerp(0.94, 1, p).toFixed(3)})` }
+const pick = (list, idx, t0, t) => list.forEach((c, i) => { const p = spring(t - t0, 0.35, 0.6); const on = i === idx && t >= t0; c.classList.toggle('on', on); c.style.transform = on ? `scale(${(1 + 0.08 * (1 - p)).toFixed(3)})` : 'none' })
+const rise = (el, t, t0, { y = 14, r = 0.6 } = {}) => { const p = spring(t - t0, r); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const typed = (el, text, t, t0, cps = 26, cursor = true) => { const n = clamp(Math.floor((t - t0) * cps), 0, text.length); const done = n >= text.length; el.innerHTML = text.slice(0, n) + (cursor && !done && t >= t0 ? '<span class="cur"></span>' : ''); return done }
+const CHECK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+const SPARK = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8zM5 3l.6 1.6L7.2 5.2l-1.6.6L5 7.4l-.6-1.6L2.8 5.2l1.6-.6z"/></svg>'
+const LOCKS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'
+const CHECKS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+const P0 = 228.92, LEVEL = 217
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. New on Verdex, then the name.
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const comingEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:44px;font-weight:500;letter-spacing:-0.01em;color:var(--soft)"><div></div></div>`)
+  const comingChars = letters(comingEl.firstElementChild, 'New on Verdex')
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:130px;height:130px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:230px">Agent</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Say it. Approve it.')
+
+  // 2. The chat: one sentence, a card, one approval.
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:110px"><h1 class="serif">Say it in plain words.</h1><p>The agent reads the market and your wallet, then drafts the action as a card.</p></div>`)
+  const chat = add(s2, `<div class="chat">
+    <div class="hd"><span class="mk"><span style="width:24px;height:24px;display:inline-flex">${MARK()}</span></span><div><b>Verdex Agent</b><span>Anthropic · claude-opus-5-5 · 0x7c3a…91e4</span></div></div>
+    <div class="body">
+      <div class="bub"><span class="tx"></span></div>
+      <div class="tool t1"><i></i>Pricing NVDA</div>
+      <div class="tool t2"><i></i>Drafting buy order on NVDA</div>
+      <div class="prop"><div class="top"><img src="${NVDA}" alt=""><div><div class="kind">Order · needs your approval</div><div class="ttl">Limit buy: $250 below $${LEVEL}</div></div><span class="badge">Proposed</span></div>
+        <div class="sub"><img src="${CH(4663)}" alt="">NVDA on Robinhood Chain · paid in USDG · until cancelled · now $${P0.toFixed(2)}</div>
+        <div class="btns"><span class="btn pri">${CHECK}<span class="lb">Approve</span></span><span class="btn sec">Dismiss</span><span class="fine">Approving saves the order; the fill is still confirmed in your wallet.</span></div></div>
+      <div class="reply">Drafted a limit buy of $250 of NVDA below $${LEVEL}, 5% under today's $${P0.toFixed(2)}. Review the card and approve it to place the order.</div>
+    </div></div>`)
+  const bubTx = chat.querySelector('.bub .tx'), bub = chat.querySelector('.bub'), tool1 = chat.querySelector('.t1'), tool2 = chat.querySelector('.t2'), prop = chat.querySelector('.prop'), badge = prop.querySelector('.badge'), approveBtn = prop.querySelector('.btn.pri'), reply = chat.querySelector('.reply')
+  const toast2 = add(s2, `<div class="toast" style="left:50%;top:960px;transform:translateX(-50%)"><span class="ok">✓</span><span>Saved to Orders<span class="sub">Watched while Verdex is open. The fill is confirmed in your wallet, like any order you placed by hand.</span></span></div>`)
+
+  // 3. Two more asks, side by side.
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:110px"><h1 class="serif">Orders. Plans. Vaults.</h1><p>One sentence each. Every field filled in, every card yours to approve or dismiss.</p></div>`)
+  const twinA = add(s3, `<div class="twin" style="left:160px"><span class="ask">Every week put $100 into SPY</span>
+    <div class="prop"><div class="top"><img src="${SPY}" alt=""><div><div class="kind">Auto-Invest plan · needs your approval</div><div class="ttl">Every week: buy $100 of SPY</div></div><span class="badge">Proposed</span></div>
+      <div class="sub"><img src="${CH(4663)}" alt="">SPY on Robinhood Chain · paid in USDG · first buy Oct 7</div>
+      <div class="btns"><span class="btn pri">${CHECK}Approve</span><span class="btn sec">Dismiss</span></div></div></div>`)
+  const twinB = add(s3, `<div class="twin" style="left:980px"><span class="ask">Build an AI vault: NVDA 40, AMD 30, TSM 30</span>
+    <div class="prop"><div class="top"><span class="sq">${SPARK}</span><div><div class="kind">Vault · needs your approval</div><div class="ttl">AI vault: NVDA 40%, AMD 30%, TSM 30%</div></div><span class="badge">Proposed</span></div>
+      <div class="bar"><i style="width:40%;background:#C2EA8A"></i><i style="width:30%;background:#8FA661"></i><i style="width:30%;background:#F6F0E9"></i></div>
+      <div class="lgd"><span><i style="background:#C2EA8A"></i>NVDA 40%</span><span><i style="background:#8FA661"></i>AMD 30%</span><span><i style="background:#F6F0E9"></i>TSM 30%</span></div>
+      <div class="sub" style="margin-top:12px"><img src="${CH(4663)}" alt="">Robinhood Chain · funded in USDG · every month · 5% drift</div>
+      <div class="btns"><span class="btn pri">${CHECK}Approve</span><span class="btn sec">Dismiss</span></div></div></div>`)
+
+  // 4. Approval by default: three steps.
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:130px"><h1 class="serif">Approval by default.</h1></div>`)
+  const STEPS = [[SPARK, 'The agent proposes', 'It reads prices, your balances and your plans, and drafts a complete card. It cannot place, sign or move anything.'], [CHECKS, 'You approve', 'Or dismiss. Nothing exists until you press Approve; an approved card becomes a normal order, plan or vault.'], [LOCKS, 'Your wallet confirms', 'Each trade still runs through the best route and is signed in your wallet. Verdex never holds keys or funds.']]
+  const steps = STEPS.map(([ic, b, s], i) => add(s4, `<div class="step" style="left:${150 + i * 560}px;top:340px"><div class="ic">${ic}</div><span class="n">0${i + 1}</span><b>${b}</b><span>${s}</span></div>`))
+  const arrows = [0, 1].map((i) => add(s4, `<div class="arrow" style="left:${662 + i * 560}px">→</div>`))
+  const sub4 = add(s4, `<div class="abs" style="left:0;right:0;top:660px;text-align:center;font-size:32px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">Three steps. None of them skippable. There is no mode that trades on its own.</div>`)
+
+  // 5. Your key, your browser.
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:110px"><h1 class="serif">Your model. Your key.</h1><p>Bring an Anthropic or OpenAI key. It stays in your browser and goes only to that provider.</p></div>`)
+  const setup = add(s5, `<div class="setup">
+    <div class="lab">Model</div><div class="chips"><span class="chip">Anthropic</span><span class="chip">OpenAI</span><span class="chip">No key</span></div>
+    <div class="row"><div class="lab">API key</div><div class="in">${LOCKS}<span class="kv"></span></div><div class="note">Saved in this browser only and sent only to Anthropic. <em>Verdex has no server in the loop.</em> Press Forget key to remove it.</div></div>
+    <div class="row" style="display:flex;gap:14px"><span class="btn pri" style="height:56px">Save</span><span class="btn sec">Forget key</span></div>
+  </div>`)
+  const chips5 = [...setup.querySelectorAll('.chip')], kv = setup.querySelector('.kv'), saveBtn = setup.querySelector('.btn.pri')
+  const toast5 = add(s5, `<div class="toast" style="left:50%;top:930px;transform:translateX(-50%)"><span class="ok">✓</span><span>Ready<span class="sub">The tools it can call are fixed and open source: read the market, read your wallet, draft a card.</span></span></div>`)
+
+  // 6. Non-custodial.
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const h6 = add(s6, `<div class="head" style="top:150px"><h1 class="serif">Never custodial.</h1></div>`)
+  const LK = `<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`
+  const CK = `<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`
+  const lines = [[LK, 'No keys, no seed phrase, no allowance until you confirm a trade.'], [CK, 'Same engines as the buttons: same routes, same fees, same reminders.'], [CK, 'Dismiss a card and nothing has happened.']].map(([ic, tx], i) => add(s6, `<div class="line" style="top:${420 + i * 130}px"><div>${ic}${tx}</div></div>`))
+
+  // 7. Fee.
+  const s7 = add(stage, `<div class="scene"></div>`)
+  const tokenTile = add(s7, `<div class="abs" style="left:50%;top:170px;width:150px;height:150px;margin-left:-75px;border-radius:36px;background:#000;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;box-shadow:0 30px 80px rgba(0,0,0,.7);will-change:transform,opacity,filter"><span style="width:86px;height:86px;display:inline-flex">${MARK()}</span></div>`)
+  const h7 = add(s7, `<div class="head" style="top:360px"><div class="tag" style="margin-bottom:22px">Hold VERDEX</div><h1 class="serif">Holders trade for free.</h1></div>`)
+  const fee = add(s7, `<div class="feebox"><span>Verdex fee on the trades it drafts</span><span style="display:flex;align-items:center;gap:26px"><span class="old">0.25%<i></i></span><span class="new">0%</span></span></div>`)
+  const feeStrike = fee.querySelector('.old i'), feeNew = fee.querySelector('.new')
+  const sub7 = add(s7, `<div class="abs" style="left:0;right:0;top:790px;text-align:center;font-size:30px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">0.25% becomes 0% on every order, buy and rebalance. Checked onchain, every time.</div>`)
+
+  // 8. End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Agent. Live now.</div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/agent</span></div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. (0-5.6)
+    show(s1, t < 6)
+    wipe(comingChars, spring(t - 0.3, 0.9), { out: clamp(spring(t - 1.6, 0.35)) })
+    const pn = spring(t - 1.9, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 5.2, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 2.7, 0.9), { stagger: 0.03, out: clamp(spring(t - 5.1, 0.4)) })
+
+    // 2. Chat (5.6-15.4)
+    show(s2, t >= 5.4 && t < 16)
+    const o2 = clamp(spring(t - 15.2, 0.5))
+    const h2in = spring(t - 5.6, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    const c2 = spring(t - 5.8, 0.8)
+    mat(chat, c2 * (1 - o2), { y: 50 * (1 - c2) + 20 * o2, s: 0.06, blur: 18 })
+    rise(bub, t, 6.4, { y: 10 })
+    typed(bubTx, 'Buy $250 of NVDA if it drops 5%', t, 6.6, 24)
+    rise(tool1, t, 8.4); rise(tool2, t, 9.0)
+    const pin = spring(t - 9.6, 0.8)
+    mat(prop, pin, { y: 24 * (1 - pin), s: 0.03, blur: 12 })
+    rise(reply, t, 10.3)
+    pressAt(approveBtn, t, 12.0)
+    const approved = t >= 12.25
+    badge.classList.toggle('done', approved); badge.textContent = approved ? 'Approved' : 'Proposed'
+    prop.classList.toggle('ok', approved)
+    approveBtn.style.opacity = approved ? 0.35 : 1
+    toastIn(toast2, t, 12.5, 15.0, true)
+
+    // 3. Twins (15.6-22.4)
+    show(s3, t >= 15.4 && t < 23)
+    const o3 = clamp(spring(t - 22.2, 0.5))
+    const h3in = spring(t - 15.6, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const a3 = spring(t - 16.0, 0.85), b3 = spring(t - 17.4, 0.85)
+    mat(twinA, a3 * (1 - o3), { y: 50 * (1 - a3) + 20 * o3, s: 0.06, blur: 18 })
+    mat(twinB, b3 * (1 - o3), { y: 50 * (1 - b3) + 20 * o3, s: 0.06, blur: 18 })
+    ;[[twinA, 19.0], [twinB, 20.2]].forEach(([el, t0]) => { const bt = el.querySelector('.btn.pri'), bd = el.querySelector('.badge'), pr = el.querySelector('.prop'); pressAt(bt, t, t0); const ok = t >= t0 + 0.25; bd.classList.toggle('done', ok); bd.textContent = ok ? 'Approved' : 'Proposed'; pr.classList.toggle('ok', ok); bt.style.opacity = ok ? 0.35 : 1 })
+
+    // 4. Steps (22.6-28)
+    show(s4, t >= 22.4 && t < 28.6)
+    const o4 = clamp(spring(t - 27.8, 0.5))
+    const h4in = spring(t - 22.6, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    steps.forEach((el, i) => { const p = spring(t - 22.9 - i * 0.5, 0.85); mat(el, p * (1 - o4), { y: 50 * (1 - p) + 20 * o4, s: 0.06, blur: 16 }) })
+    arrows.forEach((el, i) => { el.style.opacity = clamp(spring(t - 23.3 - i * 0.5, 0.6)) * (1 - o4) })
+    const s4in = spring(t - 24.6, 0.9)
+    mat(sub4, s4in * (1 - o4), { y: 16 * (1 - s4in), s: 0.02 })
+
+    // 5. Setup (28.2-33)
+    show(s5, t >= 28 && t < 33.6)
+    const o5 = clamp(spring(t - 32.8, 0.5))
+    const h5in = spring(t - 28.2, 0.9)
+    mat(h5, h5in * (1 - o5), { y: 24 * (1 - h5in), s: 0.02 })
+    const st = spring(t - 28.4, 0.8)
+    mat(setup, st * (1 - o5), { y: 50 * (1 - st) + 20 * o5, s: 0.06, blur: 18 })
+    pick(chips5, 0, 29.1, t)
+    const nk = clamp(Math.floor((t - 29.6) * 40), 0, 34)
+    kv.textContent = 'sk-ant-' + '•'.repeat(Math.max(0, nk - 7)).slice(0, 27)
+    if (nk < 7) kv.textContent = 'sk-ant-'.slice(0, nk)
+    pressAt(saveBtn, t, 31.0)
+    toastIn(toast5, t, 31.3, 32.7, true)
+
+    // 6. Non-custodial (33.2-35.4)
+    show(s6, t >= 33 && t < 36)
+    const o6 = clamp(spring(t - 35.4, 0.5))
+    const h6in = spring(t - 33.2, 0.9)
+    mat(h6, h6in * (1 - o6), { y: 24 * (1 - h6in), s: 0.02 })
+    lines.forEach((el, i) => { const p = spring(t - 33.5 - i * 0.3, 0.8); mat(el, p * (1 - o6), { y: 30 * (1 - p), s: 0.03, blur: 16 }) })
+
+    // 7. Fee (35.6-38.4)
+    show(s7, t >= 35.4 && t < 38.8)
+    const o7 = clamp(spring(t - 38.2, 0.5))
+    const tk = spring(t - 35.6, 0.7, 0.62)
+    mat(tokenTile, clamp(tk * 1.5) * (1 - o7), { y: -40 * (1 - tk), s: 0.3, blur: 18 })
+    const h7in = spring(t - 35.9, 0.9)
+    mat(h7, h7in * (1 - o7), { y: 24 * (1 - h7in), s: 0.02 })
+    const f7 = spring(t - 36.2, 0.8)
+    mat(fee, f7 * (1 - o7), { y: 30 * (1 - f7), s: 0.04, blur: 16 })
+    feeStrike.style.width = `${(clamp(spring(t - 36.8, 0.4)) * 100).toFixed(1)}%`
+    const nz = spring(t - 37.0, 0.5, 0.55)
+    feeNew.style.opacity = clamp(nz * 2); feeNew.style.transform = `scale(${lerp(0.6, 1, nz).toFixed(3)})`
+    const s7in = spring(t - 37.2, 0.9)
+    mat(sub7, s7in * (1 - o7), { y: 16 * (1 - s7in), s: 0.02 })
+
+    // 8. End card (38.4-40)
+    show(s8, t >= 38.2)
+    const e1 = spring(t - 38.4, 0.7), e2 = spring(t - 38.7, 0.7), e3 = spring(t - 38.9, 0.7), e4 = spring(t - 39.05, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endCa, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

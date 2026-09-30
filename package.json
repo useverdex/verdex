@@ -16,6 +16,7 @@
     "build:preview": "VITE_BASE=./ VITE_HASH_ROUTER=1 VITE_LOGO_PACK=1 vite build --outDir dist-preview && node scripts/pack-logos.mjs dist-preview"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.0",

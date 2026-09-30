@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex audit film</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Scope tiles */
+.tile { position: absolute; width: 400px; height: 190px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.tile.ok { border-color: rgba(194,234,138,.5); }
+.tile .ck { position: absolute; right: 24px; top: 24px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); will-change: transform, background; }
+.tile .ck svg { width: 18px; height: 18px; opacity: 0; }
+.tile.ok .ck { background: rgba(194,234,138,.16); }
+.tile.ok .ck svg { opacity: 1; }
+.tile b { display: block; font-size: 28px; font-weight: 500; letter-spacing: -0.02em; }
+.tile span { display: block; font-size: 17px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+/* Runner */
+.run { position: absolute; left: 50%; top: 290px; width: 1180px; margin-left: -590px; padding: 30px 38px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 25px; line-height: 1.8; will-change: transform, opacity, filter; }
+.run .hd { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 12px; }
+.run .ln { display: flex; align-items: center; gap: 20px; will-change: opacity, transform; }
+.run .ln .k { color: var(--soft); width: 560px; flex-shrink: 0; }
+.run .ln .v { color: #fff; }
+.run .ln .ok { color: var(--lime); font-weight: 700; width: 34px; }
+/* Fix rows */
+.fix { position: absolute; left: 50%; width: 1240px; margin-left: -620px; display: flex; align-items: center; gap: 22px; padding: 18px 28px; box-sizing: border-box; border-radius: 16px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 27px; font-weight: 500; letter-spacing: -0.015em; will-change: transform, opacity, filter; }
+.fix .ic { width: 40px; height: 40px; border-radius: 12px; background: rgba(194,234,138,.16); color: var(--lime); display: grid; place-items: center; flex-shrink: 0; }
+.fix .ic svg { width: 20px; height: 20px; }
+.fix small { font-size: 19px; color: var(--muted); font-weight: 400; margin-left: auto; white-space: nowrap; }
+/* Kept rows */
+.keep { position: absolute; left: 50%; width: 1240px; margin-left: -620px; padding: 26px 32px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.keep b { display: block; font-size: 28px; font-weight: 500; letter-spacing: -0.02em; }
+.keep span { display: block; font-size: 19px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+.keep .lb { display: inline-block; margin-bottom: 12px; padding: 5px 10px; border-radius: 6px; background: rgba(255,255,255,.08); color: var(--soft); font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Audit film: the claim, the scope tiles, the runner, what was fixed, what was kept and why, the end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 38
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const rise = (el, t, t0, { y = 14, r = 0.6 } = {}) => { const p = spring(t - t0, r); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const typed = (el, text, t, t0, cps = 40) => { const n = clamp(Math.floor((t - t0) * cps), 0, text.length); el.textContent = text.slice(0, n); return n >= text.length }
+const CK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. The claim.
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:130px;height:130px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:230px">Verdex</span></div>`)
+  const l1 = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center"><div class="serif" style="font-size:150px;text-align:center"></div></div>`)
+  const l1c = letters(l1.firstElementChild, 'We audited every line.')
+  const sub1 = add(s1, `<div class="abs" style="left:0;right:0;top:700px;text-align:center;font-size:36px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">Custody, approvals, the agent, fees, routes, dependencies, the app, privacy. September 2026.</div>`)
+
+  // 2. Scope tiles.
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:110px"><h1 class="serif">Eight areas.</h1><p>Everything a user trusts the site with, checked against what the code actually does.</p></div>`)
+  const SCOPE = [['Custody', 'No deposits, no pooled funds, no keys held. Every transfer is signed in your wallet.'], ['Approvals', 'Who gets an allowance, for how much, and how to take it back.'], ['Agent', 'Where the key lives, what leaves the browser, what the tools can and cannot do.'], ['Fees', 'The holder check onchain, the fee parameter, the fallback.'], ['Routes', 'Fresh quote before every send, slippage, minimum received enforced onchain.'], ['Dependencies', 'Every package, production and development, against the advisory database.'], ['App shell', 'What the installed app caches, and that prices and wallet traffic never are.'], ['Privacy', 'What leaves your browser, and to whom, written down.']]
+  const tiles = SCOPE.map(([b, s], i) => add(s2, `<div class="tile" style="left:${120 + (i % 4) * 420}px;top:${330 + Math.floor(i / 4) * 220}px"><span class="ck">${CK}</span><b>${b}</b><span>${s}</span></div>`))
+
+  // 3. Runner.
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:110px"><h1 class="serif">What the machines said.</h1></div>`)
+  const RUN = [['npm audit, production and dev', '0 vulnerabilities'], ['eslint, whole repository', '0 problems'], ['tsc, strict', '0 errors'], ['20 routes × desktop and mobile', '0 page errors, 0 console errors'], ['same-origin requests on every route', '0 failed'], ['external links', 'all reachable'], ['service worker', 'no prices, no wallet traffic']]
+  const run = add(s3, `<div class="run"><div class="hd">verdex · audit run · 30 Sep 2026</div>${RUN.map(([k]) => `<div class="ln"><span class="ok"></span><span class="k">${k}</span><span class="v"></span></div>`).join('')}</div>`)
+  const runLines = [...run.querySelectorAll('.ln')]
+
+  // 4. Fixed.
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:110px"><h1 class="serif">Found. Fixed. Shipped.</h1></div>`)
+  const FIX = [['Privacy policy rewritten', 'names every data flow, and who receives it'], ['Every route has its own title', 'tabs, history, sharing, search'], ['Social preview image', 'links unfurl on X and elsewhere'], ['13 inputs labelled for screen readers', 'the label now sits on the input itself'], ['Private-swap address checksummed', 'a mistyped address is refused'], ['Vendor code split into its own chunks', 'largest file 1.1 MB → 288 kB']]
+  const fixes = FIX.map(([b, s], i) => add(s4, `<div class="fix" style="top:${300 + i * 96}px"><span class="ic">${CK}</span>${b}<small>${s}</small></div>`))
+
+  // 5. Kept, and why.
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:110px"><h1 class="serif">Kept. And why.</h1><p>Two trade-offs we made on purpose, written down so you can disagree.</p></div>`)
+  const keeps = [['Unlimited allowance to the router', 'One approval per token and chain is what makes a recurring buy or a rebalance a single confirmation. The allowance goes to the address the audited router names for that quote, and you can revoke it at any time; the next trade simply asks again.'], ['Your model key in your browser', 'The agent needs the key on the device that talks to the provider, so it lives in localStorage and nowhere else. Forget key removes it. Verdex never sees it, because there is no Verdex server in the path.']].map(([b, s], i) => add(s5, `<div class="keep" style="top:${340 + i * 250}px"><span class="lb">Accepted</span><b>${b}</b><span>${s}</span></div>`))
+
+  // 6. End card.
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s6, `<div class="abs" style="left:0;right:0;top:300px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s6, `<div class="abs" style="left:0;right:0;top:610px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Read it all. Then check it yourself.</div>`)
+  const endUrl = add(s6, `<div class="abs" style="left:0;right:0;top:710px;text-align:center"><span class="pill" style="font-size:28px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/docs#audit</span></div>`)
+  const endGh = add(s6, `<div class="abs" style="left:0;right:0;top:810px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">OPEN SOURCE</span><span style="font-family:var(--mono)">github.com/useverdex/verdex/blob/main/AUDIT.md</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. (0-6.4)
+    show(s1, t < 7)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 2.2, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(l1c, spring(t - 2.6, 0.9), { stagger: 0.03, out: clamp(spring(t - 6.2, 0.4)) })
+    const su = spring(t - 3.6, 0.9) * (1 - clamp(spring(t - 6.2, 0.4)))
+    mat(sub1, su, { y: 16 * (1 - su), s: 0.02 })
+
+    // 2. Scope (6.6-13.6)
+    show(s2, t >= 6.4 && t < 14.2)
+    const o2 = clamp(spring(t - 13.4, 0.5))
+    const h2in = spring(t - 6.6, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    tiles.forEach((el, i) => { const p = spring(t - 6.9 - i * 0.16, 0.85); mat(el, p * (1 - o2), { y: 50 * (1 - p) + 20 * o2, s: 0.06, blur: 16 }); const ok = t >= 9.2 + i * 0.4; el.classList.toggle('ok', ok); const ck = el.querySelector('.ck'); const q = spring(t - 9.2 - i * 0.4, 0.4, 0.55); ck.style.transform = ok ? `scale(${lerp(1.4, 1, q).toFixed(3)})` : 'none' })
+
+    // 3. Runner (13.8-21)
+    show(s3, t >= 13.6 && t < 21.6)
+    const o3 = clamp(spring(t - 20.8, 0.5))
+    const h3in = spring(t - 13.8, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const rin = spring(t - 14.1, 0.85)
+    mat(run, rin * (1 - o3), { y: 40 * (1 - rin) + 20 * o3, s: 0.05, blur: 18 })
+    runLines.forEach((ln, i) => { const t0 = 14.7 + i * 0.7; rise(ln, t, t0, { y: 8 }); const done = typed(ln.querySelector('.v'), RUN[i][1], t, t0 + 0.25, 44); ln.querySelector('.ok').textContent = done ? '✓' : t >= t0 ? '›' : '' })
+
+    // 4. Fixed (21.2-28)
+    show(s4, t >= 21 && t < 28.6)
+    const o4 = clamp(spring(t - 27.8, 0.5))
+    const h4in = spring(t - 21.2, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    fixes.forEach((el, i) => { const p = spring(t - 21.6 - i * 0.42, 0.8); mat(el, p * (1 - o4), { y: 30 * (1 - p) + 16 * o4, s: 0.03, blur: 16 }) })
+
+    // 5. Kept (28.2-34.2)
+    show(s5, t >= 28 && t < 34.8)
+    const o5 = clamp(spring(t - 34.0, 0.5))
+    const h5in = spring(t - 28.2, 0.9)
+    mat(h5, h5in * (1 - o5), { y: 24 * (1 - h5in), s: 0.02 })
+    keeps.forEach((el, i) => { const p = spring(t - 28.6 - i * 0.9, 0.85); mat(el, p * (1 - o5), { y: 40 * (1 - p) + 20 * o5, s: 0.05, blur: 18 }) })
+
+    // 6. End (34.4-38)
+    show(s6, t >= 34.2)
+    const e1 = spring(t - 34.4, 0.7), e2 = spring(t - 34.75, 0.7), e3 = spring(t - 35.0, 0.7), e4 = spring(t - 35.2, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endGh, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

@@ -164,6 +164,67 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'auto-invest',
+    title: 'Auto-Invest',
+    blocks: [
+      { kind: 'p', text: `A recurring buy of one listed asset: the amount, the cadence (daily, weekly, every two weeks, monthly) and the stablecoin to pay with. Plans are stored in your browser for the wallet that made them; nothing is deposited anywhere.` },
+      { kind: 'steps', items: [
+        { title: 'Set it up', text: 'Pick the asset and its version (issuer and chain), the amount in dollars, the cadence and the pay token. The first buy can run right away or wait for the first scheduled date.' },
+        { title: 'On its day', text: `${N} reminds you, prices the buy through the aggregator, approves the pay token once if needed, and asks your wallet to confirm the swap. Nothing moves before that confirmation.` },
+        { title: 'Pause or remove', text: 'A plan is a note on your device. Pause it, change it or remove it at any time; the history of buys and their transactions stays with it.' },
+      ] },
+    ],
+  },
+  {
+    id: 'vaults',
+    title: 'Vaults',
+    blocks: [
+      { kind: 'p', text: `A target allocation across up to twelve listed assets on one chain, curated from a template or built by hand, held in your own wallet. ${N} reads balances and prices live, computes how far each asset has drifted from its target, and plans the trades back to target when the vault passes its drift threshold or its scheduled date.` },
+      { kind: 'defs', items: [
+        { term: 'Rule', text: 'Weekly, monthly, quarterly, or only when it drifts. A drift-only vault has no date.' },
+        { term: 'Threshold', text: 'The drift, in percentage points, that makes a rebalance due: 2, 5 or 10.' },
+        { term: 'Rebalance', text: 'Sells of the overweight assets and buys of the underweight ones, each priced through the aggregator and confirmed in your wallet one by one. A rebalance you start can be stopped between trades.' },
+        { term: 'Funding', text: 'Add the quote stablecoin and the next rebalance buys the assets by weight.' },
+      ] },
+    ],
+  },
+  {
+    id: 'strategies',
+    title: 'Strategies',
+    blocks: [
+      { kind: 'p', text: `Published allocations you can follow into a vault of your own. A strategy is a set of weights with a change log; following it creates a vault in your wallet at the current version. When the manager publishes a new version, your vault shows the update and adopting it plans the trades; nothing changes until you do.` },
+      { kind: 'p', text: 'Any vault can also be shared as a link. The link carries the weights, the chain and the rule, and nothing about the wallet that made it.' },
+    ],
+  },
+  {
+    id: 'orders',
+    title: 'Orders',
+    blocks: [
+      { kind: 'p', text: 'Limit and stop orders on any listed asset on an EVM chain. An order names an asset, a side, a trigger price and a size, and is stored in your browser for the wallet that placed it.' },
+      { kind: 'defs', items: [
+        { term: 'Limit buy', text: 'Buys when the price falls to your level or lower.' },
+        { term: 'Stop buy', text: 'Buys when the price breaks above your level.' },
+        { term: 'Limit sell', text: 'Sells when the price rises to your level or higher.' },
+        { term: 'Stop sell', text: 'A stop-loss: sells when the price falls to your level or lower.' },
+        { term: 'Watching', text: `The price is checked every 30 seconds while ${N} is open, including the installed app, through the same feed that prices swaps. A level crossed while the app was closed triggers on the next open.` },
+        { term: 'Fill', text: 'The fill is a market swap at the moment you confirm it, through the best route, so it lands at or near your level. Nothing is filled without that confirmation.' },
+      ] },
+    ],
+  },
+  {
+    id: 'agent',
+    title: 'Agent',
+    blocks: [
+      { kind: 'p', text: `Ask for an order, a recurring buy or a vault in plain words. The agent reads the market snapshot, the live price feed and your wallet through a fixed set of tools, and returns each action as a card with every field filled in. Approving the card saves a normal order, plan or vault; dismissing it leaves nothing behind. Your wallet still confirms every trade afterwards.` },
+      { kind: 'defs', items: [
+        { term: 'Your key', text: `Bring your own Anthropic or OpenAI key. It is stored in your browser only and sent, with your messages and the tool results, straight to that provider over HTTPS. ${N} has no server in that path.` },
+        { term: 'No key', text: 'A small built-in helper understands the common phrasings and drafts the same cards without sending anything anywhere.' },
+        { term: 'Tools', text: 'Four that read (search assets, price, holdings, activity) and three that draft (an order, a plan, a vault). The model cannot call anything else, and none of the tools can sign, send or move funds.' },
+        { term: 'Approval', text: 'The agent proposes, you approve, your wallet confirms. There is no mode that skips a step.' },
+      ] },
+    ],
+  },
+  {
     id: 'fees',
     title: 'Fees',
     blocks: [
@@ -222,6 +283,22 @@ export const DOC_SECTIONS: DocSection[] = [
         { term: 'Same-chain swaps', text: 'Atomic. A failed swap reverts completely.' },
         { term: 'Cross-chain transfers', text: 'If the bridge succeeds but the destination swap fails, you receive the bridged asset on the destination chain.' },
         { term: 'Contracts', text: 'Routing contracts are audited, open source and covered by a bug bounty.' },
+        { term: 'Approvals', text: `Before a swap from an ERC-20 token, your wallet approves the aggregator's router to spend it. ${N} asks for an unlimited allowance once per token and chain so that recurring buys and rebalances need one confirmation each; you can revoke it at any time from your wallet or a tool such as revoke.cash, and the next trade will ask again.` },
+        { term: 'Automation', text: `Plans, vaults, orders and agent proposals live in your browser. Nothing runs while the site is closed, nothing is executed without a confirmation in your wallet, and ${N} never holds keys, funds or allowances of its own.` },
+      ] },
+    ],
+  },
+  {
+    id: 'audit',
+    title: 'Audit',
+    blocks: [
+      { kind: 'p', text: `An internal audit of the site, published on 30 September 2026 so that anyone can check the findings against the code. It covers custody, approvals, routes, fees, the automation features, the agent, dependencies, the installed app and privacy, plus a crawl of every route on desktop and mobile. It is not a third-party audit, and it does not cover contracts ${N} does not own.` },
+      { kind: 'defs', items: [
+        { term: 'Automated checks', text: 'npm audit: 0 vulnerabilities in production and development packages. ESLint: 0 problems. TypeScript strict: 0 errors. 20 routes on two viewports: 0 page errors, 0 console errors, 0 failed requests.' },
+        { term: 'Fixed', text: 'The privacy policy now names every data flow and who receives it. Every route has its own title. Shared links carry a preview image. Thirteen inputs are labelled for screen readers. Private-swap addresses are checksummed. Vendor code ships in its own chunks, so the largest file went from 1.1 MB to 288 kB.' },
+        { term: 'Kept, and why', text: 'One unlimited allowance per token to the router named by each quote, so recurring buys and rebalances stay a single confirmation; revocable at any time. The agent key lives in your browser because there is no Verdex server to hold it. Order fills are market swaps at the moment you confirm.' },
+        { term: 'Out of scope', text: 'The routing contracts, the issuers\' tokens, the lending and basket protocols and the launchpad behind VERDEX have their own audits.' },
+        { term: 'Full report', text: 'AUDIT.md in the repository lists every finding with the file to open: github.com/useverdex/verdex/blob/main/AUDIT.md. Report anything it missed to feedback@verdex.app.' },
       ] },
     ],
   },

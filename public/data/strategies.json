@@ -1,0 +1,86 @@
+{
+  "updatedAt": "2026-09-29",
+  "about": "Published strategies. Each one is a target allocation on one chain with a change log. Followers hold the tokens in their own wallet; when a manager changes the weights, followers adopt the new version with one tap and confirm the trades themselves. To publish here, open a pull request adding an entry (see promo/README.md and CONTRIBUTING.md in the repository).",
+  "strategies": [
+    {
+      "id": "ai-infrastructure",
+      "manager": { "name": "Verdex Research", "handle": "useverdex", "about": "The house desk. Publishes the allocations the team runs itself, with the reasoning for every change." },
+      "name": "AI Infrastructure",
+      "tagline": "The chips, the fabs and the clouds that rent them.",
+      "about": "Overweight the companies that sell capacity into the AI build-out rather than the ones that buy it. NVIDIA, Broadcom and TSMC anchor the book; memory, equipment and the neoclouds fill it out.",
+      "chainId": 4663,
+      "rule": "month",
+      "threshold": 5,
+      "history": [
+        { "at": "2026-09-14", "note": "Published.", "weights": [["NVDA", 25], ["AVGO", 15], ["TSM", 15], ["AMD", 10], ["MU", 10], ["AMAT", 10], ["ASML", 10], ["CRWV", 5]] },
+        { "at": "2026-09-28", "note": "Trimmed NVDA to 22 and AMD to 8, added Nebius at 5 for neocloud exposure.", "weights": [["NVDA", 22], ["AVGO", 15], ["TSM", 15], ["AMD", 8], ["MU", 10], ["AMAT", 10], ["ASML", 10], ["CRWV", 5], ["NBIS", 5]] }
+      ]
+    },
+    {
+      "id": "compounders",
+      "manager": { "name": "Verdex Research", "handle": "useverdex", "about": "The house desk. Publishes the allocations the team runs itself, with the reasoning for every change." },
+      "name": "Compounders",
+      "tagline": "Six businesses that raise prices and keep the customer.",
+      "about": "Pricing power and recurring revenue: Costco, Microsoft, Eli Lilly, ASML, Intuit and CrowdStrike, equal weight. Rebalanced quarterly so the winners fund the laggards.",
+      "chainId": 4663,
+      "rule": "quarter",
+      "threshold": 5,
+      "history": [
+        { "at": "2026-09-14", "note": "Published.", "weights": [["COST", 1], ["MSFT", 1], ["LLY", 1], ["ASML", 1], ["INTU", 1], ["CRWD", 1]] }
+      ]
+    },
+    {
+      "id": "quantum-space",
+      "manager": { "name": "Verdex Research", "handle": "useverdex", "about": "The house desk. Publishes the allocations the team runs itself, with the reasoning for every change." },
+      "name": "Quantum and Space",
+      "tagline": "The two frontiers, sized for their volatility.",
+      "about": "SpaceX, Rocket Lab and AST SpaceMobile on one side; IonQ, Rigetti and D-Wave on the other. High dispersion, so the drift rule is wide and the schedule is monthly.",
+      "chainId": 4663,
+      "rule": "month",
+      "threshold": 10,
+      "history": [
+        { "at": "2026-09-14", "note": "Published.", "weights": [["SPCX", 25], ["RKLB", 15], ["ASTS", 10], ["IONQ", 20], ["RGTI", 15], ["QBTS", 15]] },
+        { "at": "2026-09-27", "note": "Moved 5 from D-Wave to SpaceX after the quantum run.", "weights": [["SPCX", 30], ["RKLB", 15], ["ASTS", 10], ["IONQ", 20], ["RGTI", 15], ["QBTS", 10]] }
+      ]
+    },
+    {
+      "id": "rates-hedge",
+      "manager": { "name": "Verdex Research", "handle": "useverdex", "about": "The house desk. Publishes the allocations the team runs itself, with the reasoning for every change." },
+      "name": "Rates Hedge",
+      "tagline": "Half in T-bills, the rest in the index and silver.",
+      "about": "For cash that should not sit idle: half in 0-3 month Treasuries, thirty percent in the S&P 500, twenty in silver. Quarterly rebalance, tight threshold.",
+      "chainId": 4663,
+      "rule": "quarter",
+      "threshold": 2,
+      "history": [
+        { "at": "2026-09-14", "note": "Published.", "weights": [["SGOV", 50], ["SPY", 30], ["SLV", 20]] }
+      ]
+    },
+    {
+      "id": "semis-only",
+      "manager": { "name": "Verdex Research", "handle": "useverdex", "about": "The house desk. Publishes the allocations the team runs itself, with the reasoning for every change." },
+      "name": "Semis Only",
+      "tagline": "The whole chip stack, nothing else.",
+      "about": "Design, foundry, memory, equipment and networking in one book: NVIDIA, Broadcom, AMD, TSMC, Micron, Qualcomm, Intel and Applied Materials.",
+      "chainId": 4663,
+      "rule": "week",
+      "threshold": 5,
+      "history": [
+        { "at": "2026-09-14", "note": "Published.", "weights": [["NVDA", 20], ["AVGO", 15], ["AMD", 15], ["TSM", 15], ["MU", 10], ["QCOM", 10], ["INTC", 5], ["AMAT", 10]] }
+      ]
+    },
+    {
+      "id": "global-growth",
+      "manager": { "name": "Verdex Research", "handle": "useverdex", "about": "The house desk. Publishes the allocations the team runs itself, with the reasoning for every change." },
+      "name": "Global Growth",
+      "tagline": "Growth outside the S&P 500.",
+      "about": "Alibaba, Futu, Nu, Shopify and TSMC: five growth names listed outside the US large-cap index, monthly rebalance.",
+      "chainId": 4663,
+      "rule": "month",
+      "threshold": 5,
+      "history": [
+        { "at": "2026-09-14", "note": "Published.", "weights": [["BABA", 25], ["FUTU", 15], ["NU", 20], ["SHOP", 20], ["TSM", 20]] }
+      ]
+    }
+  ]
+}

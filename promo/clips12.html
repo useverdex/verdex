@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex tweet clips, batch five</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.line { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.line .t { font-size: 112px; }
+.line .s { margin-top: 18px; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 26px; font-weight: 500; will-change: transform, opacity, filter; }
+.pill svg { width: 24px; height: 24px; color: var(--lime); }
+/* Chat */
+.chat { position: absolute; left: 50%; width: 1040px; margin-left: -520px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; overflow: hidden; }
+.chat .hd { display: flex; align-items: center; gap: 16px; padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.chat .hd .mk { width: 44px; height: 44px; border-radius: 12px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; }
+.chat .hd b { display: block; font-size: 21px; font-weight: 500; }
+.chat .hd span { display: block; font-size: 16px; color: var(--muted); margin-top: 2px; }
+.chat .body { padding: 26px 30px 26px; min-height: 300px; display: flex; flex-direction: column; gap: 18px; }
+.bub { align-self: flex-end; max-width: 80%; padding: 14px 22px; border-radius: 20px 20px 6px 20px; background: #fff; color: #000; font-size: 24px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.3; will-change: transform, opacity; }
+.bub .cur { display: inline-block; width: 2px; height: 26px; background: #000; vertical-align: -4px; margin-left: 2px; }
+.tool { display: flex; align-items: center; gap: 12px; font-size: 18px; color: rgba(255,255,255,.5); will-change: opacity, transform; }
+.tool i { width: 9px; height: 9px; border-radius: 50%; background: var(--lime); }
+.reply { font-size: 22px; line-height: 1.45; color: #fff; will-change: opacity, transform; }
+.prop { padding: 24px 28px 26px; border-radius: 18px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); will-change: transform, opacity, filter, border-color; }
+.prop.ok { border-color: rgba(194,234,138,.4); }
+.prop .top { display: flex; align-items: center; gap: 16px; }
+.prop .top img, .prop .top .sq { width: 50px; height: 50px; border-radius: 50%; }
+.prop .top .sq { border-radius: 14px; background: #1f1f1f; display: grid; place-items: center; color: var(--lime); }
+.prop .kind { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.prop .ttl { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 3px; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); will-change: transform; white-space: nowrap; }
+.badge.done { background: rgba(194,234,138,.16); color: var(--lime); }
+.prop .sub { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 18px; color: var(--muted); }
+.prop .sub img { width: 20px; height: 20px; border-radius: 50%; }
+.prop .btns { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.btn.sec { background: transparent; color: var(--muted); }
+.btn.dim { background: rgba(255,255,255,.1); color: #fff; }
+.prop .fine { font-size: 15px; color: var(--faint); margin-left: 6px; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.toast .mk { width: 40px; height: 40px; border-radius: 10px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; flex-shrink: 0; }
+.toast .sub { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+/* Holdings list */
+.hold { margin-top: 4px; display: grid; gap: 10px; }
+.hrow { display: grid; grid-template-columns: 40px 130px 1fr 150px; align-items: center; gap: 14px; height: 54px; padding: 0 18px; border-radius: 12px; background: #131313; font-size: 20px; will-change: opacity, transform; }
+.hrow img { width: 32px; height: 32px; border-radius: 50%; }
+.hrow b { font-weight: 500; }
+.hrow .ch2 { color: var(--muted); font-size: 18px; display: flex; align-items: center; gap: 8px; }
+.hrow .ch2 img { width: 18px; height: 18px; }
+.hrow .v { text-align: right; font-variant-numeric: tabular-nums; }
+.hrow .v small { color: var(--muted); font-size: 16px; margin-left: 8px; }
+.total { display: flex; justify-content: space-between; margin-top: 8px; padding: 0 18px; font-size: 22px; color: var(--muted); will-change: opacity, transform; }
+.total b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+/* Steps */
+.step { position: absolute; width: 500px; height: 250px; padding: 28px 30px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.step.on { border-color: rgba(194,234,138,.5); }
+.step .ic { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); }
+.step .ic svg { width: 26px; height: 26px; }
+.step .n { position: absolute; right: 30px; top: 30px; font-size: 18px; color: var(--faint); font-weight: 500; }
+.step b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 22px; }
+.step span { display: block; font-size: 18px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.arrow { position: absolute; font-size: 40px; color: var(--faint); will-change: opacity; }
+/* Setup */
+.setup { position: absolute; left: 50%; width: 820px; margin-left: -410px; padding: 32px 38px 36px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.chips { display: flex; gap: 10px; }
+.chip { display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background, color; }
+.chip.on { background: #fff; color: #000; }
+.setup .row { margin-top: 26px; }
+.setup .in { display: flex; align-items: center; gap: 14px; height: 62px; padding: 0 20px; border-radius: 12px; background: var(--tile); font-family: var(--mono); font-size: 22px; letter-spacing: .12em; color: #fff; }
+.setup .in svg { width: 20px; height: 20px; color: var(--faint); flex-shrink: 0; }
+.setup .note { font-size: 17px; color: var(--muted); margin-top: 12px; line-height: 1.4; }
+.setup .note em { font-style: normal; color: var(--lime); }
+/* Tools listing */
+.code { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 30px 36px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); font-family: var(--mono); font-size: 24px; line-height: 1.75; will-change: transform, opacity, filter; }
+.code .hd2 { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+.code .ln { display: flex; gap: 22px; will-change: opacity, transform; }
+.code .ln .k { color: var(--lime); width: 250px; flex-shrink: 0; }
+.code .ln .d { color: var(--soft); font-family: Geist, system-ui, sans-serif; font-size: 21px; letter-spacing: -0.01em; }
+.code .grp { color: var(--faint); font-family: Geist, system-ui, sans-serif; font-size: 17px; font-weight: 500; margin: 14px 0 2px; letter-spacing: .04em; text-transform: uppercase; }
+/* Order status card */
+.ocard { position: absolute; left: 50%; width: 960px; margin-left: -480px; padding: 30px 36px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter, border-color; }
+.ocard.hot { border-color: rgba(194,234,138,.4); }
+.ocard .hd { display: flex; align-items: center; gap: 16px; }
+.ocard .hd img { width: 52px; height: 52px; border-radius: 50%; }
+.ocard .nm b { font-size: 26px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.ocard .nm span { font-size: 17px; color: var(--muted); display: block; margin-top: 3px; }
+.ocard .meta { display: flex; justify-content: space-between; margin-top: 26px; font-size: 18px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ocard .meta em { font-style: normal; color: var(--lime); }
+.rail { position: relative; height: 30px; margin-top: 16px; }
+.rail .ln { position: absolute; left: 0; right: 0; top: 14px; height: 2px; background: rgba(255,255,255,.14); }
+.rail .dot { position: absolute; top: 8px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transform: translateX(-50%); will-change: left; }
+.rail .tick { position: absolute; top: 4px; width: 3px; height: 22px; background: var(--lime); transform: translateX(-50%); }
+.ocard .btns { display: flex; gap: 12px; margin-top: 28px; }
+/* Type tiles */
+.type { position: absolute; width: 400px; height: 210px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.type.on { border-color: rgba(194,234,138,.5); }
+.type .ar { width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; font-size: 26px; font-weight: 600; }
+.type .ar.b { color: var(--lime); } .type .ar.s { color: var(--red); }
+.type b { display: block; font-size: 27px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.type span { display: block; font-size: 17px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Ten 12-second clips for the fifth tweet batch, around Agent and Orders. ?clip=<name>
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const LOGO = { NVDA: L('88a0e630'), SPY: L('c025dcd9'), TSLA: L('e8ca24f9'), AMD: L('0a5c861d'), TSM: L('ae4207a3') }
+const USDG = `${PUB}/img/tokens/usdg.png`, USDC = `${PUB}/img/tokens/usdc.png`
+const clip = new URLSearchParams(location.search).get('clip') ?? 'sentence'
+const DURATION = 12
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const line = (parent, text, { top = 460, size = 112, color = '#fff', sub = '' } = {}) => {
+  const el = add(parent, `<div class="line" style="top:${top}px"><div class="serif t" style="font-size:${size}px;color:${color}"></div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`)
+  return { el, chars: letters(el.querySelector('.t'), text), sub: el.querySelector('.s') }
+}
+const runLine = (ln, t, t0, t1, stagger = 0.035) => { show(ln.el, t >= t0 - 0.05 && t < t1 + 0.6); wipe(ln.chars, spring(t - t0, 0.8), { stagger, out: clamp(spring(t - t1, 0.35)) }); if (ln.sub) { const p = spring(t - t0 - 0.5, 0.9) * (1 - clamp(spring(t - t1, 0.35))); ln.sub.style.opacity = p; ln.sub.style.transform = `translate3d(0, ${((1 - p) * 14).toFixed(2)}px, 0)` } }
+const toastIn = (el, t, t0, t1, centred = false) => {
+  const p = spring(t - t0, 0.55, 0.7), o = clamp(spring(t - t1, 0.45))
+  show(el, t >= t0 - 0.05 && t < t1 + 0.8)
+  el.style.opacity = clamp(p * 2) * (1 - o)
+  el.style.transform = `translate3d(${centred ? '-50%' : '0'}, ${((1 - p) * 30 - o * 14).toFixed(2)}px, 0) scale(${lerp(0.94, 1, p).toFixed(3)})`
+}
+const pressAt = (btn, t, t0, light = '#E6E1DA', base = '#fff') => { const press = t >= t0 && t < t0 + 0.2 ? 1 : clamp(1 - spring(t - t0 - 0.2, 0.3)); btn.style.transform = `scale(${(1 - 0.05 * (t >= t0 ? press : 0)).toFixed(3)})`; btn.style.background = t >= t0 && press > 0.5 ? light : base }
+const pick = (list, idx, t0, t) => list.forEach((c, i) => { const p = spring(t - t0, 0.35, 0.6); const on = i === idx && t >= t0; c.classList.toggle('on', on); c.style.transform = on ? `scale(${(1 + 0.08 * (1 - p)).toFixed(3)})` : 'none' })
+const rise = (el, t, t0, { y = 14, r = 0.6 } = {}) => { const p = spring(t - t0, r); show(el, t >= t0 - 0.05); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const typed = (el, text, t, t0, cps = 26) => { const n = clamp(Math.floor((t - t0) * cps), 0, text.length); const done = n >= text.length; el.innerHTML = text.slice(0, n) + (!done && t >= t0 ? '<span class="cur"></span>' : ''); return done }
+const I = {
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8zM5 3l.6 1.6L7.2 5.2l-1.6.6L5 7.4l-.6-1.6L2.8 5.2l1.6-.6z"/></svg>',
+}
+const CHECK18 = `<span style="width:18px;height:18px;display:inline-flex">${I.check}</span>`
+const chat = (parent, { top = 250, model = 'Anthropic · claude-opus-5-5 · 0x7c3a…91e4' } = {}) => add(parent, `<div class="chat" style="top:${top}px"><div class="hd"><span class="mk"><span style="width:24px;height:24px;display:inline-flex">${MARK()}</span></span><div><b>Verdex Agent</b><span>${model}</span></div></div><div class="body"></div></div>`)
+const prop = (parent, { logo, sq, kind, title, sub, fine = '' }) => add(parent, `<div class="prop"><div class="top">${sq ? `<span class="sq"><span style="width:28px;height:28px;display:inline-flex">${sq}</span></span>` : `<img src="${logo}" alt="">`}<div><div class="kind">${kind} · needs your approval</div><div class="ttl">${title}</div></div><span class="badge">Proposed</span></div><div class="sub"><img src="${CH(4663)}" alt="">${sub}</div><div class="btns"><span class="btn pri">${CHECK18}<span class="lb">Approve</span></span><span class="btn sec">Dismiss</span>${fine ? `<span class="fine">${fine}</span>` : ''}</div></div>`)
+const approveAt = (card, t, t0) => { const btn = card.querySelector('.btn.pri'), bd = card.querySelector('.badge'); pressAt(btn, t, t0); const ok = t >= t0 + 0.25; bd.classList.toggle('done', ok); bd.textContent = ok ? 'Approved' : 'Proposed'; card.classList.toggle('ok', ok); btn.style.opacity = ok ? 0.35 : 1 }
+
+const CLIPS = {
+  // 1. One sentence. One card. One tap.
+  sentence(s) {
+    const l1 = line(s, 'One sentence.', { top: 470 })
+    const l2 = line(s, 'One card.', { top: 470, color: 'var(--lime)' })
+    const c = chat(s, { top: 230 }), body = c.querySelector('.body')
+    const bub = add(body, `<div class="bub"><span class="tx"></span></div>`), tx = bub.querySelector('.tx')
+    const t1 = add(body, `<div class="tool"><i></i>Pricing NVDA</div>`), t2 = add(body, `<div class="tool"><i></i>Drafting buy order on NVDA</div>`)
+    const card = prop(body, { logo: LOGO.NVDA, kind: 'Order', title: 'Limit buy: $250 below $217', sub: 'NVDA on Robinhood Chain · paid in USDG · until cancelled · now $228.92', fine: 'Approving saves the order; the fill is still confirmed in your wallet.' })
+    const toast = add(s, `<div class="toast" style="left:50%;top:900px"><span class="ok">✓</span><span>Saved to Orders<span class="sub">One tap. The fill is confirmed in your wallet, like any order you placed by hand.</span></span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.2)
+      const cin = spring(t - 4.5, 0.9); show(c, t > 4.3); mat(c, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      rise(bub, t, 5.0, { y: 10 }); typed(tx, 'Buy $250 of NVDA if it drops 5%', t, 5.2, 26)
+      rise(t1, t, 6.7); rise(t2, t, 7.2)
+      const pin = spring(t - 7.7, 0.8); show(card, t > 7.5); mat(card, pin, { y: 24 * (1 - pin), s: 0.03, blur: 12 })
+      approveAt(card, t, 9.6)
+      toastIn(toast, t, 10.0, 99, true)
+    }
+  },
+  // 2. Your key. Your browser.
+  key(s) {
+    const l1 = line(s, 'Your key.', { top: 470 })
+    const l2 = line(s, 'Your browser.', { top: 470, color: 'var(--lime)' })
+    const setup = add(s, `<div class="setup" style="top:260px"><div class="lab">Model</div><div class="chips"><span class="chip">Anthropic</span><span class="chip">OpenAI</span><span class="chip">No key</span></div><div class="row"><div class="lab">API key</div><div class="in">${I.lock}<span class="kv"></span></div><div class="note">Saved in this browser only and sent only to Anthropic. <em>Verdex has no server in the loop.</em></div></div><div class="row" style="display:flex;gap:14px"><span class="btn pri" style="height:56px">Save</span><span class="btn sec">Forget key</span></div></div>`)
+    const chips = [...setup.querySelectorAll('.chip')], kv = setup.querySelector('.kv'), save = setup.querySelector('.btn.pri')
+    const toast = add(s, `<div class="toast" style="left:50%;top:880px"><span class="ok">✓</span><span>Ready<span class="sub">Anthropic or OpenAI, straight from your browser over HTTPS. Verdex never sees the key or the conversation.</span></span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.0)
+      const sin = spring(t - 4.3, 0.9); show(setup, t > 4.1); mat(setup, sin, { y: 40 * (1 - sin), s: 0.05, blur: 18 })
+      pick(chips, 0, 5.0, t)
+      const nk = clamp(Math.floor((t - 5.5) * 40), 0, 34)
+      kv.textContent = nk < 7 ? 'sk-ant-'.slice(0, nk) : 'sk-ant-' + '•'.repeat(nk - 7)
+      pressAt(save, t, 7.8)
+      toastIn(toast, t, 8.2, 99, true)
+    }
+  },
+  // 3. Approval by default.
+  steps(s) {
+    const l1 = line(s, 'Approval by default.', { top: 470, size: 104 })
+    const STEPS = [[I.spark, 'The agent proposes', 'Reads prices, balances and your plans. Drafts a complete card. Cannot sign or move anything.'], [I.check, 'You approve', 'Or dismiss. Nothing exists until you press Approve.'], [I.lock, 'Your wallet confirms', 'Each trade signed in your wallet, through the best route. Verdex holds no keys, no funds.']]
+    const steps = STEPS.map(([ic, b, sb], i) => add(s, `<div class="step" style="left:${150 + i * 560}px;top:340px"><div class="ic">${ic}</div><span class="n">0${i + 1}</span><b>${b}</b><span>${sb}</span></div>`))
+    const arrows = [0, 1].map((i) => add(s, `<div class="arrow" style="left:${662 + i * 560}px;top:440px">→</div>`))
+    const sub = add(s, `<div class="cap" style="top:660px">Three steps. None of them skippable. No mode trades on its own.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.6)
+      steps.forEach((el, i) => { const p = spring(t - 3.0 - i * 0.45, 0.85); show(el, t > 2.9); mat(el, p, { y: 50 * (1 - p), s: 0.06, blur: 16 }); el.classList.toggle('on', t >= 6.4 + i * 1.0 && t < 6.4 + i * 1.0 + 1.0 || (i === 2 && t >= 8.4)) })
+      arrows.forEach((el, i) => { show(el, t > 3.3); el.style.opacity = clamp(spring(t - 3.4 - i * 0.45, 0.6)) })
+      const q = spring(t - 9.4, 0.9); show(sub, t > 9.3); mat(sub, q, { y: 16 * (1 - q), s: 0.02 })
+    }
+  },
+  // 4. What do I hold?
+  holdings(s) {
+    const c = chat(s, { top: 150 }), body = c.querySelector('.body')
+    const bub = add(body, `<div class="bub"><span class="tx"></span></div>`), tx = bub.querySelector('.tx')
+    const t1 = add(body, `<div class="tool"><i></i>Reading wallet balances</div>`)
+    const ROWS = [[USDC, 'USDC', 'Base', 8453, 277.0, 277.0, 'USDC'], [USDC, 'USDC', 'Arbitrum', 42161, 109.0, 109.0, 'USDC'], [USDC, 'USDC', 'Ethereum', 1, 1110.0, 1110.0, 'USDC'], [LOGO.NVDA, 'NVDA', 'Robinhood Chain', 4663, 0.0517, 11.6, 'NVDA'], [USDG, 'USDG', 'Robinhood Chain', 4663, 0.5, 0.5, 'USDG']]
+    const hold = add(body, `<div class="hold"></div>`)
+    const rows = ROWS.map(([lg, tk, chn, cid, u, v]) => add(hold, `<div class="hrow"><img src="${lg}" alt=""><b>${tk}</b><span class="ch2"><img src="${CH(cid)}" alt="">${chn}</span><span class="v"><span class="u">0</span><small>$0</small></span></div>`))
+    const total = add(hold, `<div class="total"><span>Across four chains</span><b>$0</b></div>`)
+    const reply = add(body, `<div class="reply">About $1,508 in total. Read from the chain, nothing moved to read it. Want a stable put to work? Say "every week put $100 into SPY".</div>`)
+    return (t) => {
+      const cin = spring(t - 0.3, 0.9); mat(c, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      rise(bub, t, 0.8, { y: 10 }); typed(tx, 'What do I hold?', t, 1.0, 22)
+      rise(t1, t, 2.2)
+      show(hold, t > 3.0)
+      let sum = 0
+      rows.forEach((r, i) => { const t0 = 3.2 + i * 0.55; rise(r, t, t0); const p = clamp((t - t0) / 0.8); const [, , , , u, v] = ROWS[i]; const uu = u * p, vv = v * p; sum += vv; r.querySelector('.u').textContent = u >= 1 ? uu.toFixed(0) : uu.toFixed(4); r.querySelector('small').textContent = usd(vv, vv < 20 && vv > 0 ? 1 : 0) })
+      rise(total, t, 6.4); total.querySelector('b').textContent = usd(sum)
+      rise(reply, t, 7.6)
+    }
+  },
+  // 5. Stop-loss from a sentence.
+  stoploss(s) {
+    const c = chat(s, { top: 170 }), body = c.querySelector('.body')
+    const bub = add(body, `<div class="bub"><span class="tx"></span></div>`), tx = bub.querySelector('.tx')
+    const t1 = add(body, `<div class="tool"><i></i>Pricing TSLA</div>`), t2 = add(body, `<div class="tool"><i></i>Reading wallet balances</div>`), t3 = add(body, `<div class="tool"><i></i>Drafting sell order on TSLA</div>`)
+    const card = prop(body, { logo: LOGO.TSLA, kind: 'Order', title: 'Stop sell: 2.40 TSLA below $380', sub: 'TSLA on Robinhood Chain · into USDG · until cancelled · now $412.60' })
+    const reply = add(body, `<div class="reply">Your wallet holds 2.40 TSLA. Drafted a stop-loss for all of it below $380, 8% under today's $412.60. Review the card and approve it to place the order.</div>`)
+    const toast = add(s, `<div class="toast" style="left:50%;top:930px"><span class="ok">✓</span><span>Saved to Orders<span class="sub">Watched while Verdex is open. When TSLA crosses $380 you get a reminder and one tap sells.</span></span></div>`)
+    return (t) => {
+      const cin = spring(t - 0.3, 0.9); mat(c, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      rise(bub, t, 0.8, { y: 10 }); typed(tx, 'Set a stop-loss on my TSLA at $380', t, 1.0, 26)
+      rise(t1, t, 2.8); rise(t2, t, 3.3); rise(t3, t, 3.9)
+      const pin = spring(t - 4.5, 0.8); show(card, t > 4.3); mat(card, pin, { y: 24 * (1 - pin), s: 0.03, blur: 12 })
+      rise(reply, t, 5.6)
+      approveAt(card, t, 8.8)
+      toastIn(toast, t, 9.2, 99, true)
+    }
+  },
+  // 6. No key? Same cards.
+  nokey(s) {
+    const l1 = line(s, 'No key?', { top: 470 })
+    const l2 = line(s, 'Same cards.', { top: 470, color: 'var(--lime)' })
+    const chips = add(s, `<div class="abs" style="left:50%;top:190px;transform:translateX(-50%);will-change:opacity,filter"><div class="chips"><span class="chip">Anthropic</span><span class="chip">OpenAI</span><span class="chip">No key</span></div></div>`)
+    const cl = [...chips.querySelectorAll('.chip')]
+    const c = chat(s, { top: 290, model: 'No key · built-in helper, same proposals · 0x7c3a…91e4' }), body = c.querySelector('.body')
+    const bub = add(body, `<div class="bub"><span class="tx"></span></div>`), tx = bub.querySelector('.tx')
+    const t1 = add(body, `<div class="tool"><i></i>Drafting a weekly plan for SPY</div>`)
+    const card = prop(body, { logo: LOGO.SPY, kind: 'Auto-Invest plan', title: 'Every week: buy $100 of SPY', sub: 'SPY on Robinhood Chain · paid in USDG · first buy Oct 7' })
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.0)
+      const q = spring(t - 4.3, 0.8); show(chips, t > 4.2); chips.style.opacity = q; chips.style.filter = q > 0.999 ? 'none' : `blur(${((1 - q) * 12).toFixed(2)}px)`
+      pick(cl, 2, 5.0, t)
+      const cin = spring(t - 5.4, 0.9); show(c, t > 5.3); mat(c, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      rise(bub, t, 5.9, { y: 10 }); typed(tx, 'Every week put $100 into SPY', t, 6.1, 26)
+      rise(t1, t, 7.5)
+      const pin = spring(t - 8.0, 0.8); show(card, t > 7.9); mat(card, pin, { y: 24 * (1 - pin), s: 0.03, blur: 12 })
+      approveAt(card, t, 10.0)
+    }
+  },
+  // 7. Seven tools. Nothing else.
+  tools(s) {
+    const l1 = line(s, 'Seven tools.', { top: 470 })
+    const l2 = line(s, 'Nothing else.', { top: 470, color: 'var(--lime)' })
+    const TOOLS = [['reads', 'search_assets', 'Find a listed stock, ETF or commodity'], ['', 'get_price', 'Live USD price from the onchain feed'], ['', 'get_holdings', 'What the connected wallet holds'], ['', 'list_activity', 'Your plans, orders and vaults'], ['drafts', 'propose_order', 'A limit or stop order, as a card'], ['', 'propose_plan', 'A recurring buy, as a card'], ['', 'propose_vault', 'A target allocation, as a card']]
+    const code = add(s, `<div class="code"><div class="hd2">src/lib/agent.ts · the tools the model can call</div></div>`)
+    const lines = TOOLS.map(([g, k, d]) => { if (g) add(code, `<div class="grp">${g}</div>`); return add(code, `<div class="ln"><span class="k">${k}</span><span class="d">${d}</span></div>`) })
+    const foot = add(s, `<div class="cap" style="top:900px"><span class="pill">${I.check}Open source · github.com/useverdex/verdex</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.0)
+      const cin = spring(t - 4.3, 0.9); show(code, t > 4.2); mat(code, cin, { y: 40 * (1 - cin), s: 0.04, blur: 16 })
+      lines.forEach((el, i) => rise(el, t, 4.9 + i * 0.45, { y: 10 }))
+      const q = spring(t - 9.0, 0.9); show(foot, t > 8.9); mat(foot, q, { y: 16 * (1 - q), s: 0.02 })
+    }
+  },
+  // 8. Name your price (the rail).
+  level(s) {
+    const l1 = line(s, 'Name your price.', { top: 470 })
+    const P0 = 224.32, LEVEL = 210
+    const card = add(s, `<div class="ocard" style="top:300px"><div class="hd"><img src="${LOGO.NVDA}" alt=""><div class="nm"><b>Limit buy · $500 below ${usd(LEVEL, 2)}</b><span>NVDA on Robinhood Chain · paid in USDG · until cancelled</span></div><span class="badge">Open</span></div><div class="meta"><span>Now <b class="nw" style="color:#fff;font-weight:500">${usd(P0, 2)}</b> · <em class="ds"></em></span><span>Level ${usd(LEVEL, 2)}</span></div><div class="rail"><div class="ln"></div><div class="tick" style="left:28%"></div><div class="dot" style="left:72%"></div></div><div class="btns"><span class="btn dim">${CHECK18}<span class="lb">Fill now at market</span></span><span class="btn sec">Cancel</span></div></div>`)
+    const nw = card.querySelector('.nw'), ds = card.querySelector('.ds'), dot = card.querySelector('.dot'), badge = card.querySelector('.badge'), fill = card.querySelector('.btn.dim'), lb = card.querySelector('.lb')
+    const toast = add(s, `<div class="toast" style="left:50%;top:760px"><span class="mk"><span style="width:22px;height:22px;display:inline-flex">${MARK()}</span></span><span>NVDA hit $210.00: limit buy ready<span class="sub">Your USDG never left your wallet. One tap fills it.</span></span></div>`)
+    const sub = add(s, `<div class="cap" style="top:900px">Verdex watches the price. You keep the keys.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.4)
+      const cin = spring(t - 2.7, 0.9); show(card, t > 2.6); mat(card, cin, { y: 40 * (1 - cin), s: 0.05, blur: 18 })
+      const p = clamp((t - 3.4) / 4.6)
+      const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2
+      const price = lerp(P0, 209.4, e)
+      nw.textContent = usd(price, 2)
+      ds.textContent = `your level is ${(((LEVEL - price) / price) * 100).toFixed(1)}% from here`
+      dot.style.left = `${lerp(72, 26, e).toFixed(2)}%`
+      const hit = price <= LEVEL
+      badge.textContent = hit ? 'Triggered' : 'Open'; badge.classList.toggle('done', hit); card.classList.toggle('hot', hit)
+      fill.style.background = hit ? '#fff' : 'rgba(255,255,255,.1)'; fill.style.color = hit ? '#000' : '#fff'; lb.textContent = hit ? 'Confirm fill' : 'Fill now at market'
+      nw.style.color = hit ? 'var(--lime)' : '#fff'
+      toastIn(toast, t, 8.3, 99, true)
+      const q = spring(t - 9.6, 0.9); show(sub, t > 9.5); mat(sub, q, { y: 16 * (1 - q), s: 0.02 })
+    }
+  },
+  // 9. Four ways to name it.
+  fourtypes(s) {
+    const l1 = line(s, 'Four ways to name it.', { top: 470, size: 104 })
+    const TYPES = [['↓', 'b', 'Limit buy', 'Buy when it falls to your level.'], ['↑', 'b', 'Stop buy', 'Buy when it breaks above your level.'], ['↑', 's', 'Limit sell', 'Take profit when it rises to your level.'], ['↓', 's', 'Stop sell', 'A stop-loss: sell when it falls to your level.']]
+    const types = TYPES.map(([ar, k, b, sb], i) => add(s, `<div class="type" style="left:${120 + i * 420}px;top:360px"><div class="ar ${k}">${ar}</div><b>${b}</b><span>${sb}</span></div>`))
+    const sub = add(s, `<div class="cap" style="top:660px">On every listed asset. With an expiry or until cancelled. Cancel any time and nothing has happened.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.4)
+      types.forEach((el, i) => { const p = spring(t - 2.7 - i * 0.2, 0.85); show(el, t > 2.6); mat(el, p, { y: 50 * (1 - p), s: 0.06, blur: 16 }); el.classList.toggle('on', t >= 5.0 + i * 1.1 && t < 6.1 + i * 1.1) })
+      const q = spring(t - 9.6, 0.9); show(sub, t > 9.5); mat(sub, q, { y: 16 * (1 - q), s: 0.02 })
+    }
+  },
+  // 10. Dismiss it. Nothing happened.
+  cancel(s) {
+    const l1 = line(s, 'Dismiss it.', { top: 470 })
+    const l2 = line(s, 'Nothing happened.', { top: 470, color: 'var(--lime)' })
+    const wrap = add(s, `<div class="abs" style="left:50%;top:330px;width:960px;margin-left:-480px;will-change:transform,opacity,filter"></div>`)
+    const card = prop(wrap, { logo: LOGO.NVDA, kind: 'Order', title: 'Limit buy: $250 below $217', sub: 'NVDA on Robinhood Chain · paid in USDG · until cancelled · now $228.92' })
+    const dismiss = card.querySelector('.btn.sec')
+    const pills = [[I.lock, 'No deposit'], [I.lock, 'No allowance'], [I.check, 'No trade']].map(([ic, tx], i) => add(s, `<div class="abs" style="left:${960 + (i - 1) * 380}px;top:520px;transform:translateX(-50%);will-change:opacity,transform,filter"><span class="pill">${ic}${tx}</span></div>`))
+    const sub = add(s, `<div class="cap" style="top:640px">A card is a draft. Your wallet is the only thing that moves money, and only when you sign.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      const cin = spring(t - 4.4, 0.9), out = clamp(spring(t - 6.7, 0.5))
+      show(wrap, t > 4.3 && t < 8.0); mat(wrap, cin * (1 - out), { y: 40 * (1 - cin) + 24 * out, s: 0.05 + 0.1 * out, blur: 18 })
+      pressAt(dismiss, t, 6.4, 'rgba(255,255,255,.14)', 'transparent')
+      pills.forEach((p, i) => { const q = spring(t - 7.6 - i * 0.3, 0.8); show(p, t > 7.5); p.style.opacity = q; p.style.transform = `translate3d(-50%, ${(1 - q) * 24}px, 0)`; p.style.filter = q > 0.999 ? 'none' : `blur(${((1 - q) * 12).toFixed(2)}px)` })
+      const q = spring(t - 9.0, 0.9); show(sub, t > 8.9); mat(sub, q, { y: 16 * (1 - q), s: 0.02 })
+    }
+  },
+}
+add(stage, `<div class="grid"></div>`)
+const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+const scene = add(stage, `<div class="scene"></div>`)
+const draw = CLIPS[clip](scene)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+const fade = add(stage, `<div id="fade"></div>`)
+window.renderAt = async (t) => {
+  glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+  await draw(t)
+  fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

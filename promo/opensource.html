@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex open source reveal</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Terminal */
+.term { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 22px 30px 26px; box-sizing: border-box; border-radius: 18px; background: #0B0B0B; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 40px 100px rgba(0,0,0,.7); font-family: var(--mono); font-size: 26px; line-height: 1.6; will-change: transform, opacity, filter; }
+.term .dots { display: flex; gap: 8px; margin-bottom: 14px; }
+.term .dots i { width: 12px; height: 12px; border-radius: 50%; background: #2A2A2A; display: block; }
+.term .ln { white-space: pre; color: var(--soft); }
+.term .ln b { color: var(--lime); font-weight: 500; }
+.term .cur { display: inline-block; width: 13px; height: 28px; background: var(--lime); vertical-align: -5px; margin-left: 2px; }
+/* Repo file list */
+.repo { position: absolute; left: 50%; top: 520px; width: 1100px; margin-left: -550px; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 40px 100px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.repo .top { display: flex; align-items: center; gap: 14px; padding: 16px 24px; background: #141414; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 20px; }
+.repo .top .mk { width: 34px; height: 34px; border-radius: 8px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; }
+.repo .top .br { margin-left: auto; padding: 5px 11px; border-radius: 6px; background: rgba(255,255,255,.08); font-size: 17px; color: var(--soft); font-family: var(--mono); }
+.repo .row { display: grid; grid-template-columns: 34px 300px 1fr 150px; align-items: center; gap: 14px; padding: 11px 24px; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 20px; will-change: opacity, transform; }
+.repo .row .ic { width: 22px; height: 22px; color: var(--muted); }
+.repo .row .ic.d { color: #8AB4F8; }
+.repo .row .n { font-family: var(--mono); font-size: 19px; }
+.repo .row .m { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 18px; }
+.repo .row .t { color: var(--faint); text-align: right; font-size: 17px; }
+/* Code card */
+.code { position: absolute; left: 50%; top: 290px; width: 1180px; margin-left: -590px; border-radius: 18px; background: #0B0B0B; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 40px 100px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.code .fn { padding: 14px 26px; background: #141414; border-bottom: 1px solid rgba(255,255,255,.08); font-family: var(--mono); font-size: 18px; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+.code pre { margin: 0; padding: 20px 26px 24px; font-family: var(--mono); font-size: 23px; line-height: 1.6; color: rgba(255,255,255,.85); }
+.code .l { display: block; white-space: pre; will-change: opacity, transform; }
+.code .l i { display: inline-block; width: 56px; margin-right: 14px; color: var(--faint); font-style: normal; text-align: right; }
+.code .k { color: #C792EA; } .code .s { color: var(--lime); } .code .c { color: rgba(255,255,255,.35); } .code .f { color: #82AAFF; } .code .p { color: #F78C6C; }
+.line { position: absolute; left: 0; right: 0; display: flex; justify-content: center; will-change: transform, opacity, filter; }
+.line div { display: flex; align-items: center; gap: 22px; padding: 18px 30px; border-radius: 16px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+.line svg { width: 30px; height: 30px; flex-shrink: 0; }
+/* Product tiles */
+.tile { position: absolute; width: 400px; height: 190px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.tile .ic { width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); }
+.tile .ic svg { width: 24px; height: 24px; }
+.tile b { display: block; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.tile span { display: block; font-size: 17px; color: var(--muted); margin-top: 6px; }
+/* Repo card */
+.gh { position: absolute; left: 50%; top: 300px; width: 900px; margin-left: -450px; padding: 34px 38px 36px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.gh .h { display: flex; align-items: center; gap: 16px; font-size: 34px; font-weight: 500; letter-spacing: -0.02em; }
+.gh .h .mk { width: 54px; height: 54px; border-radius: 14px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; }
+.gh .h .pub { margin-left: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); font-size: 17px; color: var(--soft); font-weight: 500; }
+.gh p { margin: 18px 0 0; font-size: 22px; line-height: 1.45; color: var(--soft); }
+.gh .meta { display: flex; gap: 26px; margin-top: 22px; font-size: 18px; color: var(--muted); }
+.gh .meta span { display: inline-flex; align-items: center; gap: 8px; }
+.gh .meta i { width: 12px; height: 12px; border-radius: 50%; background: #3178C6; display: inline-block; }
+.gh .btns { display: flex; gap: 12px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.btn.sec { background: rgba(255,255,255,.1); color: #fff; }
+.btn.on { background: var(--lime); color: #052; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Open source reveal: the name, a clone into the file tree, a real code excerpt, what is inside, the repo card, the end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 32
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const I = {
+  folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  swap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>',
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  vault: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><circle cx="12" cy="11.5" r="3"/><path d="M12 8.5V7M12 16v-1.5M7 19v2M17 19v2"/></svg>',
+  layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+  hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="6" r="3"/><path d="M3 14h3l4 3h5a2 2 0 0 0 0-4h-3"/><path d="M3 20h3l5 1c2 0 4-1 6-3l4-4"/></svg>',
+  brief: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>',
+  film: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 10h4M3 14h4M17 10h4M17 14h4"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.4l-5.6 3 1.1-6.3L3 9.7l6.2-.9L12 3z"/></svg>',
+  fork: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><path d="M6 7v2a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4V7M12 13v4"/></svg>',
+}
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. "Verdex is", then "Open source."
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const comingEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:44px;font-weight:500;letter-spacing:-0.01em;color:var(--soft)"><div></div></div>`)
+  const comingChars = letters(comingEl.firstElementChild, 'Verdex is')
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:130px;height:130px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:200px">Open source.</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Every line of the site, in the open.')
+
+  // 2. Clone it: the terminal, then the file tree.
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:110px"><h1 class="serif">Clone it.</h1><p>The whole site, the engines, the launch films. One repository, MIT licensed.</p></div>`)
+  const CMD = 'git clone https://github.com/useverdex/verdex'
+  const term = add(s2, `<div class="term"><div class="dots"><i></i><i></i><i></i></div><div class="ln"><b>$</b> <span class="cmd"></span><span class="cur"></span></div><div class="ln o1" style="opacity:0">Cloning into 'verdex'...</div><div class="ln o2" style="opacity:0">Receiving objects: 100% (1137/1137), 18 MB, done.</div></div>`)
+  const cmdEl = term.querySelector('.cmd'), curEl = term.querySelector('.cur'), out1 = term.querySelector('.o1'), out2 = term.querySelector('.o2')
+  const FILES = [['d', '.github', 'CI: lint, typecheck, build'], ['d', 'promo', 'Launch films, clips, tweet copy'], ['d', 'public', 'Data snapshots, logos, app icons'], ['d', 'scripts', 'Logo packing, app icons, release'], ['d', 'src', 'Pages, engines, theme'], ['f', 'CONTRIBUTING.md', 'Setup and the non-custodial rules'], ['f', 'LICENSE', 'MIT'], ['f', 'README.md', 'What it does and how to run it'], ['f', 'SECURITY.md', 'How to report, what the site never does']]
+  const repo = add(s2, `<div class="repo"><div class="top"><span class="mk"><span style="width:20px;height:20px;display:inline-flex">${MARK()}</span></span><span style="font-weight:500">useverdex / verdex</span><span style="color:var(--muted)">Verdex: initial public release</span><span class="br">main</span></div>${FILES.map(([k, n, m]) => `<div class="row"><span class="ic ${k}">${k === 'd' ? I.folder : I.file}</span><span class="n">${n}</span><span class="m">${m}</span><span class="t">now</span></div>`).join('')}</div>`)
+  const rows = [...repo.querySelectorAll('.row')]
+
+  // 3. Non-custodial, now checkable: a real excerpt.
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:110px"><h1 class="serif">Non-custodial. Now you can check it.</h1></div>`)
+  const LINES = [
+    `<span class="c">// The wallet confirms every buy. Verdex never holds funds or keys.</span>`,
+    `ctx.onPhase(<span class="s">'confirming'</span>)`,
+    `<span class="k">const</span> hash = <span class="k">await</span> ctx.walletClient.<span class="f">sendTransaction</span>({`,
+    `  account: ctx.account.address, to: tx.to, data: tx.data,`,
+    `})`,
+    `ctx.onPhase(<span class="s">'pending'</span>)`,
+    `<span class="k">await</span> <span class="f">waitForTx</span>(chain, hash)`,
+  ]
+  const code = add(s3, `<div class="code"><div class="fn"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime);display:inline-block"></span>src/lib/autoInvest.ts</div><pre>${LINES.map((l, i) => `<span class="l"><i>${i + 180}</i>${l}</span>`).join('')}</pre></div>`)
+  const codeLines = [...code.querySelectorAll('.l')]
+  const lines3 = [[I.lock, 'No signatures on load. No custody, no keys.'], [I.check, 'Every transaction built in the open, confirmed in your wallet.'], [I.check, 'Read it, run it, fork it.']].map(([ic, tx], i) => add(s3, `<div class="line" style="top:${700 + i * 100}px"><div>${ic}${tx}</div></div>`))
+
+  // 4. What is inside.
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:110px"><h1 class="serif">What's inside.</h1></div>`)
+  const TILES = [[I.swap, 'Swap and Bridge', 'LI.FI routes, one signature'], [I.cal, 'Auto-Invest', 'Scheduled buys, approve once'], [I.vault, 'Vaults', 'Targets, drift, rebalancing'], [I.layers, 'Baskets and Pools', 'Reserve indexes, stock LPs'], [I.hand, 'Lend and Borrow', 'Kamino markets'], [I.brief, 'Portfolio', 'Every chain in one view'], [I.phone, 'Home-screen app', 'PWA, tab bar, reminders'], [I.film, 'Launch films', 'Rendered from HTML timelines']]
+  const tiles = TILES.map(([ic, b, s], i) => add(s4, `<div class="tile" style="left:${120 + (i % 4) * 420}px;top:${300 + Math.floor(i / 4) * 214}px"><div class="ic">${ic}</div><b>${b}</b><span>${s}</span></div>`))
+  const mit = add(s4, `<div class="abs" style="left:0;right:0;top:790px;text-align:center;font-size:36px;font-weight:500;letter-spacing:-0.015em;will-change:opacity,transform,filter">MIT licensed. <span style="color:var(--lime)">Fork it, build on it, send a pull request.</span></div>`)
+
+  // 5. The repository card.
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:130px"><h1 class="serif">github.com/useverdex/verdex</h1></div>`)
+  const gh = add(s5, `<div class="gh"><div class="h"><span class="mk"><span style="width:30px;height:30px;display:inline-flex">${MARK()}</span></span><span>useverdex / <b style="font-weight:600">verdex</b></span><span class="pub">Public</span></div>
+    <p>The front door to tokenized markets. Non-custodial marketplace for tokenized stocks, ETFs, commodities and treasuries from every issuer, on every chain.</p>
+    <div class="meta"><span><i></i>TypeScript</span><span>MIT license</span><span>main</span><span>1,137 files</span></div>
+    <div class="btns"><span class="btn sec star"><span style="width:20px;height:20px;display:inline-flex">${I.star}</span>Star</span><span class="btn sec"><span style="width:20px;height:20px;display:inline-flex">${I.fork}</span>Fork</span><span class="btn pri">Code</span></div></div>`)
+  const starBtn = gh.querySelector('.star')
+  const sub5 = add(s5, `<div class="abs" style="left:0;right:0;top:770px;text-align:center;font-size:30px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">Issues and pull requests are open. Every rule that keeps it non-custodial is in CONTRIBUTING.md.</div>`)
+
+  // 6. End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Open source. Now.</div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>github.com/useverdex/verdex</span></div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. Verdex is (0.3-1.7), Open source (1.9-5.4)
+    show(s1, t < 6)
+    wipe(comingChars, spring(t - 0.3, 0.9), { out: clamp(spring(t - 1.6, 0.35)) })
+    const pn = spring(t - 1.9, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 5.2, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 2.7, 0.9), { stagger: 0.03, out: clamp(spring(t - 5.1, 0.4)) })
+
+    // 2. Clone (5.6-12.4)
+    show(s2, t >= 5.4 && t < 13)
+    const o2 = clamp(spring(t - 12.2, 0.5))
+    const h2in = spring(t - 5.6, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    const tin = spring(t - 5.9, 0.85)
+    mat(term, tin * (1 - o2), { y: 40 * (1 - tin) + 20 * o2, s: 0.05, blur: 18 })
+    const n = clamp(Math.floor((t - 6.3) / 0.045), 0, CMD.length)
+    cmdEl.textContent = CMD.slice(0, n)
+    curEl.style.opacity = t < 7.9 ? (Math.floor(t * 2.5) % 2 ? 1 : 0.15) : 0
+    out1.style.opacity = clamp(spring(t - 8.0, 0.4))
+    out2.style.opacity = clamp(spring(t - 8.5, 0.4))
+    const rin = spring(t - 8.9, 0.85)
+    mat(repo, rin * (1 - o2), { y: 50 * (1 - rin) + 20 * o2, s: 0.05, blur: 18 })
+    rows.forEach((r, i) => { const p = spring(t - 9.2 - i * 0.12, 0.7); r.style.opacity = p; r.style.transform = `translate3d(${(1 - p) * 14}px, 0, 0)` })
+
+    // 3. Code (13-19.2)
+    show(s3, t >= 12.8 && t < 19.8)
+    const o3 = clamp(spring(t - 19.0, 0.5))
+    const h3in = spring(t - 13.0, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const cin = spring(t - 13.3, 0.85)
+    mat(code, cin * (1 - o3), { y: 40 * (1 - cin) + 20 * o3, s: 0.05, blur: 18 })
+    codeLines.forEach((l, i) => { const p = spring(t - 13.8 - i * 0.22, 0.6); l.style.opacity = p; l.style.transform = `translate3d(${(1 - p) * 12}px, 0, 0)` })
+    lines3.forEach((el, i) => { const p = spring(t - 15.9 - i * 0.5, 0.8); mat(el, p * (1 - o3), { y: 30 * (1 - p), s: 0.03, blur: 16 }) })
+
+    // 4. Inside (19.6-25.2)
+    show(s4, t >= 19.4 && t < 25.8)
+    const o4 = clamp(spring(t - 25.0, 0.5))
+    const h4in = spring(t - 19.6, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    tiles.forEach((el, i) => { const p = spring(t - 20.0 - i * 0.18, 0.85); mat(el, p * (1 - o4), { y: 50 * (1 - p) + 20 * o4, s: 0.06, blur: 16 }) })
+    const mp = spring(t - 22.4, 0.9)
+    mat(mit, mp * (1 - o4), { y: 20 * (1 - mp), s: 0.02 })
+
+    // 5. Repo card (25.4-29.6)
+    show(s5, t >= 25.2 && t < 30.2)
+    const o5 = clamp(spring(t - 29.4, 0.5))
+    const h5in = spring(t - 25.4, 0.9)
+    mat(h5, h5in * (1 - o5), { y: 24 * (1 - h5in), s: 0.02 })
+    const gin = spring(t - 25.7, 0.85)
+    mat(gh, gin * (1 - o5), { y: 40 * (1 - gin) + 20 * o5, s: 0.05, blur: 18 })
+    const press = t >= 27.2 && t < 27.4 ? 1 : clamp(1 - spring(t - 27.4, 0.3))
+    starBtn.classList.toggle('on', t >= 27.3)
+    starBtn.style.transform = `scale(${(1 - 0.06 * (t >= 27.2 ? press : 0)).toFixed(3)})`
+    starBtn.lastChild.textContent = t >= 27.3 ? 'Starred' : 'Star'
+    const s5in = spring(t - 27.8, 0.9)
+    mat(sub5, s5in * (1 - o5), { y: 16 * (1 - s5in), s: 0.02 })
+
+    // 6. End card (29.8-32)
+    show(s8, t >= 29.6)
+    const e1 = spring(t - 29.8, 0.7), e2 = spring(t - 30.15, 0.7), e3 = spring(t - 30.4, 0.7), e4 = spring(t - 30.6, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endCa, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

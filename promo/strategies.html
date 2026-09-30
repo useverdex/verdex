@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex Strategies reveal</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.btn.sec { background: rgba(255,255,255,.1); color: #fff; }
+.mgr { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 500; }
+.mgr .mk { width: 32px; height: 32px; border-radius: 9px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; }
+.mgr span { color: var(--muted); font-weight: 400; font-size: 16px; }
+/* Strategy cards */
+.scard { position: absolute; top: 300px; width: 520px; padding: 28px 32px 30px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter, border-color; }
+.scard.on { border-color: rgba(194,234,138,.55); }
+.scard .t { display: flex; align-items: center; justify-content: space-between; }
+.scard .t .v { padding: 5px 11px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 16px; font-weight: 500; color: var(--soft); }
+.scard.on .t .v { background: rgba(194,234,138,.16); color: var(--lime); }
+.scard b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.scard p { margin: 6px 0 0; font-size: 18px; color: var(--muted); }
+.scard .seg { display: flex; gap: 3px; height: 13px; border-radius: 7px; overflow: hidden; background: var(--tile); margin-top: 20px; }
+.scard .seg i { display: block; height: 100%; width: 0; }
+.scard .lg { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-top: 14px; font-size: 15px; color: var(--muted); }
+.scard .lg span { display: inline-flex; align-items: center; gap: 6px; }
+.scard .lg span i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.scard .rl { margin-top: 18px; font-size: 15px; color: var(--faint); }
+.scard .btns { display: flex; gap: 10px; margin-top: 22px; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 22px 16px 18px; border-radius: 16px; background: #161616; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 60px rgba(0,0,0,.6); font-size: 22px; font-weight: 500; will-change: transform, opacity; }
+.toast .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); color: #052; display: grid; place-items: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.toast .mk { width: 40px; height: 40px; border-radius: 10px; background: #000; border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; flex-shrink: 0; }
+.toast .sub { display: block; font-size: 17px; color: var(--muted); font-weight: 400; margin-top: 3px; }
+/* Vault card */
+.vcard { position: absolute; left: 150px; top: 290px; width: 940px; padding: 28px 34px 30px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter, border-color; }
+.vcard.due { border-color: rgba(194,234,138,.4); }
+.vcard .hd { display: flex; align-items: center; gap: 16px; }
+.vcard .ic { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.vcard .nm b { font-size: 25px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.vcard .nm span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.vcard .nm em { font-style: normal; font-size: 15px; color: var(--faint); display: block; margin-top: 2px; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); will-change: transform; white-space: nowrap; }
+.badge.due { background: rgba(194,234,138,.16); color: var(--lime); }
+.rows { margin-top: 20px; display: grid; gap: 10px; }
+.vrow { display: grid; grid-template-columns: 30px 78px 1fr 160px; align-items: center; gap: 12px; will-change: opacity, transform; }
+.vrow img { width: 30px; height: 30px; border-radius: 50%; }
+.vrow b { font-size: 17px; font-weight: 500; }
+.bar { position: relative; height: 11px; border-radius: 6px; background: #1c1c1c; overflow: hidden; }
+.bar .tg { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255,255,255,.14); }
+.bar .ac { position: absolute; left: 0; top: 0; bottom: 0; background: var(--lime); }
+.vrow .pc { font-size: 15px; color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.vrow .pc i { font-style: normal; color: var(--faint); }
+.vrow .pc em { font-style: normal; color: var(--faint); margin-left: 6px; }
+.vrow .pc em.hot { color: var(--lime); }
+.banner { margin-top: 20px; padding: 18px 20px; border-radius: 14px; background: rgba(194,234,138,.08); border: 1px solid rgba(194,234,138,.25); will-change: opacity, transform, filter; }
+.banner b { font-size: 19px; font-weight: 500; display: block; }
+.banner p { margin: 6px 0 0; font-size: 17px; color: var(--muted); }
+.banner .btns { display: flex; gap: 10px; margin-top: 14px; }
+.banner .btn { height: 44px; font-size: 17px; padding: 0 18px; }
+/* Change log */
+.log { position: absolute; left: 1130px; top: 290px; width: 640px; padding: 28px 32px 30px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.log .t { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+.log .e { display: flex; gap: 14px; align-items: flex-start; margin-top: 18px; will-change: opacity, transform, filter; }
+.log .e i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.2); margin-top: 8px; flex-shrink: 0; }
+.log .e.new i { background: var(--lime); }
+.log .e b { font-size: 18px; font-weight: 500; display: block; }
+.log .e span { font-size: 17px; color: var(--muted); line-height: 1.4; display: block; margin-top: 3px; }
+.line { position: absolute; left: 0; right: 0; display: flex; justify-content: center; will-change: transform, opacity, filter; }
+.line div { display: flex; align-items: center; gap: 22px; padding: 20px 32px; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 34px; font-weight: 500; letter-spacing: -0.02em; }
+.line svg { width: 32px; height: 32px; flex-shrink: 0; }
+/* Share card */
+.share { position: absolute; left: 50%; top: 300px; width: 1000px; margin-left: -500px; padding: 30px 36px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.share .lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.share .chips { display: flex; gap: 10px; margin-top: 14px; }
+.chip { display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 18px; font-weight: 500; }
+.chip.on { background: #fff; color: #000; }
+.share .seg { display: flex; gap: 3px; height: 12px; border-radius: 6px; overflow: hidden; background: var(--tile); margin-top: 22px; }
+.share .seg i { display: block; height: 100%; }
+.share .box { display: flex; align-items: center; gap: 12px; margin-top: 22px; height: 64px; padding: 0 12px 0 22px; border-radius: 12px; background: var(--tile); font-family: var(--mono); font-size: 21px; color: var(--soft); }
+.share .box .u { flex: 1; white-space: nowrap; overflow: hidden; }
+.share .box .cur { width: 12px; height: 26px; background: var(--lime); }
+.share .box .btn { height: 44px; font-size: 17px; padding: 0 16px; }
+.share .box .btn.ok { background: var(--lime); color: #052; }
+.share .sub { margin-top: 16px; font-size: 17px; color: var(--muted); }
+/* Fee */
+.feebox { position: absolute; left: 50%; top: 600px; width: 900px; margin-left: -450px; padding: 30px 40px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: space-between; font-size: 30px; font-weight: 500; will-change: transform, opacity, filter; }
+.feebox .old { position: relative; color: var(--faint); }
+.feebox .old i { position: absolute; left: 0; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.feebox .new { color: var(--lime); font-family: 'LT Remark', serif; font-size: 64px; letter-spacing: -0.03em; line-height: 1; will-change: transform, opacity; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Strategies reveal: pick a manager, the manager moves and you decide, never custodial, publish yours, fee to zero, end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const LOGO = { NVDA: L('88a0e630'), AVGO: L('454862a2'), TSM: L('ae4207a3'), AMD: L('0a5c861d'), MU: L('21a84899'), AMAT: L('d37abc8c'), ASML: L('95d993ee'), CRWV: L('b41a72ff'), NBIS: L('7e7ecba3') }
+const DURATION = 38
+const PAL = ['#C2EA8A', '#8FA661', '#F6F0E9', '#6F8549', '#DDE9C6', '#4E6032', '#B9B2A8', '#9DC77A', '#7A7F73']
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const pressAt = (btn, t, t0, light = '#E6E1DA') => { const press = t >= t0 && t < t0 + 0.2 ? 1 : clamp(1 - spring(t - t0 - 0.2, 0.3)); btn.style.transform = `scale(${(1 - 0.05 * (t >= t0 ? press : 0)).toFixed(3)})`; btn.style.background = t >= t0 && press > 0.5 ? light : '#fff' }
+const toastIn = (el, t, t0, t1, centred = false) => { const p = spring(t - t0, 0.55, 0.7), o = clamp(spring(t - t1, 0.45)); el.style.opacity = clamp(p * 2) * (1 - o); el.style.transform = `translate3d(${centred ? '-50%' : '0'}, ${((1 - p) * 30 - o * 14).toFixed(2)}px, 0) scale(${lerp(0.94, 1, p).toFixed(3)})` }
+const LOCK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'
+const VICON = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><circle cx="12" cy="11.5" r="3"/><path d="M12 8.5V7M12 16v-1.5M7 19v2M17 19v2"/></svg>`
+const MGR = (name = 'Verdex Research', handle = '@useverdex') => `<div class="mgr"><span class="mk"><span style="width:18px;height:18px;display:inline-flex">${MARK()}</span></span>${name}<span>${handle}</span></div>`
+
+// AI Infrastructure v1 and v2, and the drifted state of a follower's vault.
+const V1 = [['NVDA', 25], ['AVGO', 15], ['TSM', 15], ['AMD', 10], ['MU', 10], ['AMAT', 10], ['ASML', 10], ['CRWV', 5], ['NBIS', 0]]
+const V2 = [['NVDA', 22], ['AVGO', 15], ['TSM', 15], ['AMD', 8], ['MU', 10], ['AMAT', 10], ['ASML', 10], ['CRWV', 5], ['NBIS', 5]]
+const ACT = [25.4, 14.8, 15.2, 9.9, 9.8, 10.1, 10.0, 4.8, 0]
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. New on Verdex, then the name.
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const comingEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:grid;place-items:center;font-size:44px;font-weight:500;letter-spacing:-0.01em;color:var(--soft)"><div></div></div>`)
+  const comingChars = letters(comingEl.firstElementChild, 'New on Verdex')
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:130px;height:130px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:220px">Strategies</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Follow a manager. Keep your keys.')
+
+  // 2. Pick a manager.
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:110px"><h1 class="serif">Pick a manager.</h1><p>Published allocations with a change log and the reason for every move.</p></div>`)
+  const CARDS = [['AI Infrastructure', 'The chips, the fabs and the clouds that rent them.', V2.filter((w) => w[1] > 0), 'Every month, or past 5% drift', 'v2'], ['Compounders', 'Six businesses that raise prices and keep the customer.', [['COST', 16.7], ['MSFT', 16.7], ['LLY', 16.7], ['ASML', 16.7], ['INTU', 16.7], ['CRWD', 16.7]], 'Every quarter, or past 5% drift', 'v1'], ['Quantum and Space', 'The two frontiers, sized for their volatility.', [['SPCX', 30], ['RKLB', 15], ['ASTS', 10], ['IONQ', 20], ['RGTI', 15], ['QBTS', 10]], 'Every month, or past 10% drift', 'v2']]
+  const cards = CARDS.map(([nm, tg, ws, rl, v], i) => add(s2, `<div class="scard" style="left:${150 + i * 550}px"><div class="t">${MGR()}<span class="v">${v}</span></div><b>${nm}</b><p>${tg}</p><div class="seg">${ws.map((w, j) => `<i style="background:${PAL[j % PAL.length]}" data-w="${w[1]}"></i>`).join('')}</div><div class="lg">${ws.slice(0, 6).map((w, j) => `<span><i style="background:${PAL[j % PAL.length]}"></i>${w[0]} ${w[1] >= 10 ? w[1].toFixed(0) : w[1].toFixed(1)}%</span>`).join('')}${ws.length > 6 ? `<span>+${ws.length - 6}</span>` : ''}</div><div class="rl">${rl}</div><div class="btns"><span class="btn pri">${LOCK}Follow</span><span class="btn sec">Change log · ${v === 'v2' ? 2 : 1}</span></div></div>`))
+  const segs = cards.map((el) => [...el.querySelectorAll('.seg i')])
+  const followBtn = cards[0].querySelector('.btn.pri')
+  const toast2 = add(s2, `<div class="toast" style="left:50%;top:930px;transform:translateX(-50%)"><span class="ok">✓</span><span>Following AI Infrastructure<span class="sub">A vault in your wallet, at v2 by Verdex Research. Nothing moved; the trades wait for you.</span></span></div>`)
+
+  // 3. The manager moves, you decide.
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:100px"><h1 class="serif">The manager moves. You decide.</h1><p>A new version arrives with its note. Adopt it with one tap, then confirm the trades yourself.</p></div>`)
+  const vcard = add(s3, `<div class="vcard">
+    <div class="hd"><div class="ic">${VICON}</div><div class="nm"><b>AI Infrastructure</b><span>Robinhood Chain · 8 assets · every month or 5% drift</span><em class="fl">Follows AI Infrastructure by Verdex Research · v1</em></div><span class="badge">On target</span></div>
+    <div class="rows">${V1.map(([tk, w], i) => `<div class="vrow"><img src="${LOGO[tk]}" alt=""><b>${tk}</b><div class="bar"><div class="tg" style="width:${(w * 3.2).toFixed(2)}%"></div><div class="ac" style="background:${PAL[i % PAL.length]}"></div></div><div class="pc"><span class="a">0.0%</span> <i class="tt">/ ${w}%</i><em>+0.0</em></div></div>`).join('')}</div>
+    <div class="banner"><b>Verdex Research updated AI Infrastructure to v2</b><p>Trimmed NVDA to 22 and AMD to 8, added Nebius at 5 for neocloud exposure.</p><div class="btns"><span class="btn pri">Adopt the new weights</span><span class="btn sec" style="background:transparent;color:var(--muted)">Stop following</span></div></div>
+  </div>`)
+  const badge = vcard.querySelector('.badge'), fl = vcard.querySelector('.fl'), banner = vcard.querySelector('.banner'), adoptBtn = banner.querySelector('.btn.pri')
+  const vrows = [...vcard.querySelectorAll('.vrow')].map((r) => ({ el: r, tg: r.querySelector('.tg'), ac: r.querySelector('.ac'), a: r.querySelector('.a'), tt: r.querySelector('.tt'), em: r.querySelector('em') }))
+  const log = add(s3, `<div class="log"><div class="t">Change log</div>
+    <div class="e new" data-v="2"><i></i><div><b>v2 · Sep 28</b><span>Trimmed NVDA to 22 and AMD to 8, added Nebius at 5 for neocloud exposure.</span></div></div>
+    <div class="e"><i></i><div><b>v1 · Sep 14</b><span>Published.</span></div></div>
+  </div>`)
+  const logNew = log.querySelector('.e.new')
+  const toast3 = add(s3, `<div class="toast" style="right:150px;top:930px"><span class="mk"><span style="width:22px;height:22px;display:inline-flex">${MARK()}</span></span><span>3 trades to reach the new targets<span class="sub">Sell NVDA and AMD, buy NBIS. Each one confirmed in your wallet.</span></span></div>`)
+
+  // 4. Never custodial.
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:150px"><h1 class="serif">Never custodial.</h1></div>`)
+  const LK = `<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`
+  const CK = `<svg viewBox="0 0 24 24" fill="none" stroke="#C2EA8A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`
+  const lines = [[LK, 'A manager publishes weights. Only your wallet moves money.'], [CK, 'No delegation, no allowance, no contract between you.'], [CK, 'Stop following any time. The vault stays yours.']].map(([ic, tx], i) => add(s4, `<div class="line" style="top:${420 + i * 130}px"><div>${ic}${tx}</div></div>`))
+
+  // 5. Publish yours.
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:110px"><h1 class="serif">Publish yours.</h1><p>Any vault is a link. The weights travel inside it; your balances and your address do not.</p></div>`)
+  const URL = 'useverdex.xyz/strategies?s=eyJuIjoiQ29tcG91bmRlcnMiLCJjIjo0NjYzLCJ3IjpbWyJDT1NUIiwxNi43XSxb'
+  const share = add(s5, `<div class="share"><div class="lab">Share a vault</div><div class="chips"><span class="chip on">Compounders</span><span class="chip">Magnificent 7</span><span class="chip">Rates Hedge</span></div>
+    <div class="seg">${[16.7, 16.7, 16.7, 16.7, 16.7, 16.7].map((w, j) => `<i style="background:${PAL[j]};width:calc(${w}% - 3px)"></i>`).join('')}</div>
+    <div class="box"><span class="u"></span><span class="cur"></span><span class="btn sec cp">Copy</span></div>
+    <div class="sub">Or add it to the registry with a pull request. The registry, like the rest of Verdex, is open source.</div></div>`)
+  const urlEl = share.querySelector('.u'), curEl = share.querySelector('.cur'), copyBtn = share.querySelector('.cp')
+
+  // 6. Token and fee.
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const tokenTile = add(s6, `<div class="abs" style="left:50%;top:170px;width:150px;height:150px;margin-left:-75px;border-radius:36px;background:#000;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;box-shadow:0 30px 80px rgba(0,0,0,.7);will-change:transform,opacity,filter"><span style="width:86px;height:86px;display:inline-flex">${MARK()}</span></div>`)
+  const h6 = add(s6, `<div class="head" style="top:360px"><div class="tag" style="margin-bottom:22px">Hold VERDEX</div><h1 class="serif">Holders follow for free.</h1></div>`)
+  const fee = add(s6, `<div class="feebox"><span>Verdex fee per trade, following a strategy</span><span style="display:flex;align-items:center;gap:26px"><span class="old">0.25%<i></i></span><span class="new">0%</span></span></div>`)
+  const feeStrike = fee.querySelector('.old i'), feeNew = fee.querySelector('.new')
+  const sub6 = add(s6, `<div class="abs" style="left:0;right:0;top:790px;text-align:center;font-size:30px;font-weight:500;letter-spacing:-0.015em;color:var(--soft);will-change:opacity,transform,filter">No management fee, no performance fee, and no Verdex fee for holders. Checked onchain, every time.</div>`)
+
+  // 7. End card.
+  const s8 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s8, `<div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s8, `<div class="abs" style="left:0;right:0;top:640px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Strategies. Live now.</div>`)
+  const endUrl = add(s8, `<div class="abs" style="left:0;right:0;top:740px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/strategies</span></div>`)
+  const endCa = add(s8, `<div class="abs" style="left:0;right:0;top:850px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    // 1. (0-5.6)
+    show(s1, t < 6)
+    wipe(comingChars, spring(t - 0.3, 0.9), { out: clamp(spring(t - 1.6, 0.35)) })
+    const pn = spring(t - 1.9, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 5.2, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 2.7, 0.9), { stagger: 0.03, out: clamp(spring(t - 5.1, 0.4)) })
+
+    // 2. Pick a manager (5.6-12.4)
+    show(s2, t >= 5.4 && t < 13)
+    const o2 = clamp(spring(t - 12.2, 0.5))
+    const h2in = spring(t - 5.6, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    cards.forEach((el, i) => {
+      const p = spring(t - 6.0 - i * 0.22, 0.8)
+      const picked = i === 0 && t >= 8.8
+      const pop = picked ? spring(t - 8.8, 0.4, 0.55) : 1
+      el.classList.toggle('on', picked)
+      mat(el, p * (1 - o2), { y: 50 * (1 - p) + 20 * o2, s: 0.06, blur: 18 })
+      if (picked) el.style.transform += ` scale(${(1 + 0.03 * (1 - pop)).toFixed(3)})`
+      if (i !== 0 && t >= 8.8) el.style.opacity = clamp(p) * (1 - o2) * lerp(1, 0.45, clamp(spring(t - 8.8, 0.6)))
+      segs[i].forEach((sg, j) => { const q = spring(t - 6.5 - i * 0.22 - j * 0.06, 0.7); sg.style.width = `calc(${(Number(sg.dataset.w) * q).toFixed(2)}% - 3px)` })
+    })
+    pressAt(followBtn, t, 9.8)
+    toastIn(toast2, t, 10.2, 12.2, true)
+
+    // 3. The manager moves (12.8-20.4)
+    show(s3, t >= 12.6 && t < 21)
+    const o3 = clamp(spring(t - 20.2, 0.5))
+    const h3in = spring(t - 12.9, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const cin = spring(t - 13.1, 0.85)
+    mat(vcard, cin * (1 - o3), { y: 50 * (1 - cin) + 20 * o3, s: 0.05, blur: 18 })
+    const lin = spring(t - 13.4, 0.85)
+    mat(log, lin * (1 - o3), { y: 40 * (1 - lin) + 20 * o3, s: 0.05, blur: 18 })
+    const nl = spring(t - 14.6, 0.7, 0.7)
+    logNew.style.opacity = clamp(nl * 1.5)
+    logNew.style.transform = `translate3d(0, ${((1 - clamp(nl)) * -16).toFixed(2)}px, 0)`
+    logNew.style.filter = nl > 0.999 ? 'none' : `blur(${((1 - clamp(nl)) * 10).toFixed(2)}px)`
+    const bp = spring(t - 15.4, 0.8)
+    show(banner, t >= 15.3)
+    mat(banner, bp, { y: 16 * (1 - bp), s: 0.02, blur: 12 })
+    pressAt(adoptBtn, t, 17.0)
+    const adopted = t >= 17.2
+    const ap = spring(t - 17.2, 0.7)
+    fl.textContent = adopted ? 'Follows AI Infrastructure by Verdex Research · v2' : 'Follows AI Infrastructure by Verdex Research · v1'
+    banner.style.opacity = adopted ? clamp(1 - spring(t - 17.2, 0.4)) : bp
+    let maxd = 0
+    vrows.forEach((r, i) => {
+      const target = lerp(V1[i][1], V2[i][1], adopted ? clamp(ap) : 0)
+      const actual = ACT[i] * clamp(spring(t - 13.5 - i * 0.05, 0.8))
+      const d = actual - target
+      if (adopted) maxd = Math.max(maxd, Math.abs(d))
+      r.tg.style.width = `${(target * 3.2).toFixed(2)}%`
+      r.ac.style.width = `${(actual * 3.2).toFixed(2)}%`
+      r.a.textContent = `${actual.toFixed(1)}%`
+      r.tt.textContent = `/ ${target.toFixed(target % 1 ? 1 : 0)}%`
+      r.em.textContent = `${d >= 0 ? '+' : ''}${d.toFixed(1)}`
+      r.em.classList.toggle('hot', adopted && Math.abs(d) > 2)
+      const isNb = i === 8
+      r.el.style.opacity = isNb ? (adopted ? clamp(ap) : 0) : 1
+      r.el.style.height = isNb && !adopted ? '0px' : ''
+      r.el.style.overflow = isNb ? 'hidden' : ''
+      r.el.style.marginTop = isNb && !adopted ? '-10px' : ''
+    })
+    const due = adopted && t >= 17.6
+    vcard.classList.toggle('due', due); badge.classList.toggle('due', due); badge.textContent = due ? 'Rebalance due' : 'On target'
+    const bpop = spring(t - 17.6, 0.4, 0.55); badge.style.transform = due ? `scale(${(1 + 0.12 * (1 - bpop)).toFixed(3)})` : 'none'
+    toastIn(toast3, t, 18.4, 20.0)
+
+    // 4. Never custodial (20.8-25.4)
+    show(s4, t >= 20.6 && t < 26)
+    const o4 = clamp(spring(t - 25.4, 0.5))
+    const h4in = spring(t - 20.8, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    lines.forEach((el, i) => { const p = spring(t - 21.4 - i * 0.55, 0.8); mat(el, p * (1 - o4), { y: 30 * (1 - p), s: 0.03, blur: 16 }) })
+
+    // 5. Publish yours (26-31.4)
+    show(s5, t >= 25.8 && t < 32)
+    const o5 = clamp(spring(t - 31.2, 0.5))
+    const h5in = spring(t - 26.0, 0.9)
+    mat(h5, h5in * (1 - o5), { y: 24 * (1 - h5in), s: 0.02 })
+    const sin = spring(t - 26.3, 0.85)
+    mat(share, sin * (1 - o5), { y: 40 * (1 - sin) + 20 * o5, s: 0.05, blur: 18 })
+    const n = clamp(Math.floor((t - 27.0) / 0.022), 0, URL.length)
+    urlEl.textContent = URL.slice(0, n)
+    curEl.style.opacity = t < 27.0 + URL.length * 0.022 + 0.6 ? (Math.floor(t * 2.5) % 2 ? 1 : 0.15) : 0
+    const cp = t >= 29.6
+    copyBtn.classList.toggle('ok', cp)
+    copyBtn.textContent = cp ? 'Copied' : 'Copy'
+    const cpp = spring(t - 29.6, 0.4, 0.55); copyBtn.style.transform = cp ? `scale(${(1 + 0.08 * (1 - cpp)).toFixed(3)})` : 'none'
+
+    // 6. Token and fee (32-36.4)
+    show(s6, t >= 31.8 && t < 37)
+    const o6 = clamp(spring(t - 36.2, 0.5))
+    const tk = spring(t - 32.0, 0.7, 0.62)
+    mat(tokenTile, clamp(tk * 1.5) * (1 - o6), { y: -40 * (1 - tk), s: 0.3, blur: 18 })
+    const h6in = spring(t - 32.4, 0.9)
+    mat(h6, h6in * (1 - o6), { y: 24 * (1 - h6in), s: 0.02 })
+    const f6 = spring(t - 32.9, 0.8)
+    mat(fee, f6 * (1 - o6), { y: 30 * (1 - f6), s: 0.04, blur: 16 })
+    feeStrike.style.width = `${(clamp(spring(t - 33.8, 0.4)) * 100).toFixed(1)}%`
+    const nz = spring(t - 34.1, 0.5, 0.55)
+    feeNew.style.opacity = clamp(nz * 2)
+    feeNew.style.transform = `scale(${lerp(0.6, 1, nz).toFixed(3)})`
+    const s6in = spring(t - 34.4, 0.9)
+    mat(sub6, s6in * (1 - o6), { y: 16 * (1 - s6in), s: 0.02 })
+
+    // 7. End card (36.6-38)
+    show(s8, t >= 36.4)
+    const e1 = spring(t - 36.6, 0.7), e2 = spring(t - 36.95, 0.7), e3 = spring(t - 37.2, 0.7), e4 = spring(t - 37.4, 0.7)
+    mat(endLogo, e1, { y: 30 * (1 - e1), s: 0.06, blur: 20 })
+    mat(endTag, e2, { y: 20 * (1 - e2), s: 0.02 })
+    mat(endUrl, e3, { y: 20 * (1 - e3), s: 0.02 })
+    mat(endCa, e4, { y: 20 * (1 - e4), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

@@ -48,7 +48,7 @@ export function Search({ value, onChange, placeholder }: { value: string; onChan
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, height: 48, borderRadius: t.radius.input, background: t.color.tile, color: t.color.textLabel, width: '100%', maxWidth: 520 }}>
       <SearchIcon size={16} />
-      <InputBase value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} sx={{ flex: 1, fontSize: 14, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
+      <InputBase value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} inputProps={{ 'aria-label': placeholder }} sx={{ flex: 1, fontSize: 14, color: t.color.text, '& input::placeholder': { color: t.color.textLabel, opacity: 1 } }} />
     </Box>
   )
 }

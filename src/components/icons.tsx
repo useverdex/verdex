@@ -68,3 +68,5 @@ export const QuoteIcon = ({ size = 20, ...rest }: IconProps) => (
     <path d="M6.5 5A4.5 4.5 0 0 0 2 9.5C2 12 4 14 6.5 14c0 0 0 1.7-1.4 4.1-.2.5.1 1 .6 1.2.4.1.8 0 1-.3C9.8 15.5 11 11.5 11 9.5A4.5 4.5 0 0 0 6.5 5m11 0A4.5 4.5 0 0 0 13 9.5c0 2.5 2 4.5 4.5 4.5 0 0 0 1.7-1.4 4.1-.2.5.1 1 .6 1.2.4.1.8 0 1-.3C20.8 15.5 22 11.5 22 9.5A4.5 4.5 0 0 0 17.5 5" />
   </svg>
 )
+export const TargetIcon = (p: IconProps) => <Base {...p}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.5" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></Base>
+export const SparkIcon = (p: IconProps) => <Base {...p}><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8zM5 3l.6 1.6L7.2 5.2l-1.6.6L5 7.4l-.6-1.6L2.8 5.2l1.6-.6z" /></Base>

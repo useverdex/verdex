@@ -21,7 +21,9 @@ export const RULES: { key: Rule; label: string; days: number; note: string }[] =
 export const THRESHOLDS = [2, 5, 10]
 export type Trade = { at: number; txHash: string; chainId: number; side: 'buy' | 'sell'; ticker: string; usd: number; fromSymbol: string; toSymbol: string; fromAmount: string; toAmount?: string }
 export type Rebalance = { at: number; trades: Trade[]; driftBefore: number }
-export type Vault = { id: string; owner: Address; name: string; template?: string; chainId: number; quote: PlanToken; assets: VaultAsset[]; rule: Rule; threshold: number; nextRunAt: number; createdAt: number; status: 'active' | 'paused'; funded: number; history: Rebalance[] }
+// A vault that follows a published strategy remembers which version of it the weights came from.
+export type Follow = { id: string; version: number; manager: string; name: string }
+export type Vault = { id: string; owner: Address; name: string; template?: string; chainId: number; quote: PlanToken; assets: VaultAsset[]; rule: Rule; threshold: number; nextRunAt: number; createdAt: number; status: 'active' | 'paused'; funded: number; history: Rebalance[]; follow?: Follow; sharedBy?: string }
 
 // Curated allocations. Each is built from the assets available on the chosen chain at creation time; a
 // ticker the chain does not carry is dropped and the remaining weights are renormalised.

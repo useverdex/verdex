@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex teaser still</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 12px; background: var(--chip); font-size: 26px; font-weight: 500; vertical-align: middle; }
+/* The hidden card: the real thing, blurred past reading. */
+.card { position: absolute; left: 50%; top: 250px; width: 940px; margin-left: -470px; padding: 34px 40px 38px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); filter: blur(26px); opacity: .85; transform: rotate(-4deg) scale(1.02); }
+.card .lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.card .buy { display: flex; align-items: center; gap: 16px; height: 76px; padding: 0 20px; border-radius: 12px; background: var(--tile); }
+.card .buy img { width: 40px; height: 40px; border-radius: 50%; }
+.card .buy b { font-size: 23px; font-weight: 500; display: block; }
+.card .buy span { font-size: 16px; color: var(--muted); }
+.card .row { margin-top: 24px; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.chip { display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 19px; font-weight: 500; }
+.chip.on { background: #fff; color: #000; }
+.chip.lime { background: rgba(194,234,138,.18); color: var(--lime); }
+.btn { display: inline-flex; align-items: center; height: 56px; padding: 0 26px; border-radius: 12px; font-size: 20px; font-weight: 500; background: #fff; color: #000; margin-top: 32px; }
+.chart { position: absolute; left: 240px; top: 330px; width: 1440px; height: 420px; filter: blur(18px); opacity: .6; }
+.chart svg { width: 100%; height: 100%; overflow: visible; }
+.fg { position: absolute; left: 0; right: 0; top: 0; height: 1080px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; }
+.fg h1 { margin: 0; font-size: 200px; text-shadow: 0 30px 80px rgba(0,0,0,.9); }
+.fg p { margin: 0; font-size: 40px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); text-shadow: 0 10px 40px rgba(0,0,0,.9); }
+.mk { width: 120px; height: 120px; border-radius: 30px; background: #000; border: 1px solid rgba(255,255,255,.16); display: grid; place-items: center; box-shadow: 0 30px 80px rgba(0,0,0,.8); margin-bottom: 10px; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,.7) 100%); }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Teaser still: the next feature's card and chart, blurred past reading, under the line and the time. ?line=…&sub=…
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const q = new URLSearchParams(location.search)
+const line = q.get('line') ?? 'One more.'
+const sub = q.get('sub') ?? 'In 5 hours.'
+const bg = q.get('bg') ?? 'orders'
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+add(stage, `<div class="grid"></div>`)
+add(stage, `<div class="abs" style="left:50%;top:50%;width:1500px;height:900px;margin:-450px 0 0 -750px;background:radial-gradient(closest-side,rgba(194,234,138,.16),rgba(194,234,138,0))"></div>`)
+if (bg === 'audit') {
+  const ROWS = [['Custody', 'No deposits, no pooled funds, no keys held'], ['Approvals', 'Router allowance, LI.FI approval address, revocation'], ['Agent', 'Key storage, provider calls, tool surface, approval gate'], ['Fees', 'Holder check onchain, fee parameter, fallback'], ['Routes', 'Quote freshness, slippage, minimum received'], ['Dependencies', '0 known vulnerabilities'], ['App shell', 'Service worker never caches prices or wallet traffic'], ['Privacy', 'What leaves the browser, and to whom']]
+  add(stage, `<div class="card" style="top:150px;width:1100px;margin-left:-550px;transform:rotate(-3deg) scale(1.02)"><div class="lab">Verdex · site audit · September 2026</div>${ROWS.map(([k, v], i) => `<div class="row" style="display:flex;align-items:center;gap:18px;height:64px;padding:0 20px;border-radius:12px;background:var(--tile);margin-top:${i ? 12 : 0}px"><span class="chip lime" style="height:34px;padding:0 12px;font-size:16px">✓</span><b style="font-size:21px;width:190px">${k}</b><span style="font-size:18px;color:var(--muted)">${v}</span></div>`).join('')}</div>`)
+}
+const PATH = [224, 227, 229, 227, 232, 234, 230, 229, 225, 222, 220, 221, 218, 215, 212, 211, 209, 208]
+const pts = PATH.map((v, i) => [(i / (PATH.length - 1)) * 1440, 420 - ((v - 200) / 40) * 420])
+if (bg !== 'audit') add(stage, `<div class="chart"><svg viewBox="0 0 1440 420" preserveAspectRatio="none"><line x1="0" x2="1440" y1="${420 - ((210 - 200) / 40) * 420}" y2="${420 - ((210 - 200) / 40) * 420}" stroke="#C2EA8A" stroke-width="3" stroke-dasharray="12 12" opacity=".8"/><path d="${pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ')}" fill="none" stroke="#fff" stroke-width="5"/></svg></div>`)
+if (bg !== 'audit') add(stage, `<div class="card">
+  <div class="chips"><span class="chip on">Buy</span><span class="chip">Sell</span></div>
+  <div class="row"><div class="lab">Buy</div><div class="buy"><img src="../public/img/logos/88a0e630.webp" alt=""><div><b>NVDA</b><span>NVIDIA · $228.92 now</span></div></div></div>
+  <div class="row"><div class="lab">When the price is</div><div class="chips"><span class="chip on">Below</span><span class="chip">Above</span><span class="chip lime">$ 210</span></div></div>
+  <div class="row"><div class="lab">Amount</div><div class="chips"><span class="chip">$50</span><span class="chip">$100</span><span class="chip">$250</span><span class="chip on">$500</span><span class="chip">$1000</span></div></div>
+  <span class="btn">Place order</span>
+</div>`)
+add(stage, `<div class="fg"><div class="mk"><span style="width:70px;height:70px;display:inline-flex">${MARK()}</span></div><h1 class="serif">${line}</h1><p>${sub}</p><span class="pill" style="margin-top:22px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+window.renderAt = () => {}
+window.DURATION = 1
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.__ready = true
+</script>
+</body>
+</html>
