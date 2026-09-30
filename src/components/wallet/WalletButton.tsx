@@ -6,6 +6,8 @@ import { Ct, Lt, tn } from '../../theme/styles'
 import { ChevronDownIcon, CheckIcon, CloseIcon, CopyIcon, WalletIcon } from '../icons'
 import { shortAddress, useWallet } from './WalletProvider'
 import { useChains, chainLogo } from '../../lib/api'
+import { VERDEX_FEE } from '../../lib/autoInvest'
+import { fmtVerdex, useHolding } from '../../lib/holding'
 
 function CopyButton({ address }: { address: string }) {
   const [done, setDone] = useState(false)
@@ -71,6 +73,7 @@ export function WalletButton({ full }: { full?: boolean } = {}) {
   const navigate = useNavigate()
   const { data: chains } = useChains()
   const [anchor, setAnchor] = useState<HTMLElement | null>(null)
+  const holding = useHolding(account?.address)
   if (!account) {
     return (
       <Button
@@ -118,6 +121,22 @@ export function WalletButton({ full }: { full?: boolean } = {}) {
           </Box>
         </Box>
         <Divider sx={{ borderColor: z.borderSoft }} />
+        {holding.data && (
+          <MenuItem
+            data-testid="wallet-holding"
+            onClick={() => {
+              close()
+              navigate('/verdex')
+            }}
+            sx={{ fontSize: 13, py: 1.25, display: 'flex', alignItems: 'center', gap: 1.25 }}
+          >
+            <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: holding.data.holder ? t.color.mark : z.textMuted, flexShrink: 0 }} />
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography sx={{ fontSize: 13, color: z.text }}>{holding.data.holder ? `${fmtVerdex(holding.data.verdex)} VERDEX · no ${'Verdex'} fee` : `No VERDEX · ${(VERDEX_FEE * 100).toFixed(2)}% fee on trades`}</Typography>
+              <Typography sx={{ fontSize: 12, color: z.textMuted }}>{holding.data.early ? 'Early access to every new feature' : holding.data.holder ? `${fmtVerdex(holding.data.toEarly)} more for early access` : 'Hold any amount and the fee is 0'}</Typography>
+            </Box>
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => {
             close()

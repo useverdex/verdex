@@ -5,10 +5,10 @@
 import { useSyncExternalStore } from 'react'
 import { encodeFunctionData, erc20Abi, maxUint256, parseUnits, type Address, type WalletClient } from 'viem'
 import { LIFI, ROBINHOOD, lifiInit, type Chain } from './api'
-import { chainMeta, fetchQuote, isNative, publicClientFor, readAllowance, waitForTx, type ChainX, type Quote } from './lifi'
-import { BRAND } from '../theme/tokens'
+import { chainMeta, fetchQuote, isNative, readAllowance, waitForTx, type ChainX, type Quote } from './lifi'
+import { VERDEX_TOKEN, readHolding } from './holding'
 
-export const VERDEX_TOKEN = { chainId: ROBINHOOD, address: BRAND.contract as Address, symbol: 'VERDEX', decimals: 18 }
+export { VERDEX_TOKEN }
 // Verdex fee on scheduled buys for wallets that do not hold the token, as a fraction. Holders pay none.
 export const VERDEX_FEE = Number(import.meta.env.VITE_VERDEX_FEE ?? 0.0025)
 
@@ -110,18 +110,15 @@ export function firstRunAt(buyNow: boolean, cadence: Cadence) {
   return buyNow ? Date.now() : nextRunAfter(Date.now(), cadence)
 }
 
-// Holding any amount of VERDEX on Robinhood Chain removes the Verdex fee. Cached per address.
+// Holding any amount of VERDEX on Robinhood Chain removes the Verdex fee. Cached per address; the
+// balance itself comes from readHolding so every surface agrees on who is a holder.
 const holderCache = new Map<string, Promise<boolean>>()
-export function isHolder(chains: Chain[] | undefined, owner: Address) {
+export function isHolder(_chains: Chain[] | undefined, owner: Address) {
   const key = owner.toLowerCase()
   if (!holderCache.has(key)) {
-    const chain = chains?.find((c) => c.id === VERDEX_TOKEN.chainId)
-    const promise = chain
-      ? publicClientFor(chain)
-          .readContract({ address: VERDEX_TOKEN.address, abi: erc20Abi, functionName: 'balanceOf', args: [owner] })
-          .then((b) => b > 0n)
-          .catch(() => false)
-      : Promise.resolve(false)
+    const promise = readHolding(owner)
+      .then((h) => h.holder)
+      .catch(() => false)
     holderCache.set(key, promise)
     promise.then((v) => !v && holderCache.delete(key)).catch(() => holderCache.delete(key))
   }

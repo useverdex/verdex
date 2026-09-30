@@ -230,16 +230,29 @@ export const DOC_SECTIONS: DocSection[] = [
     blocks: [
       { kind: 'p', text: 'Every quote shows the full cost before you sign. A transfer can include:' },
       { kind: 'fees', items: [
-        { term: `${N} fee`, text: '0.50%' },
-        { term: `${N} fee (private swaps)`, text: '0.75%' },
+        { term: `${N} fee`, text: '0.25% of the amount sent, on swaps, bridges, private swaps, Auto-Invest buys, order fills, vault rebalances and agent trades. Zero for wallets that hold VERDEX.' },
+        { term: 'VERDEX holders', text: `No ${N} fee on anything. The balance is read from the token contract on Robinhood Chain before each quote; any amount counts.` },
         { term: 'Index baskets', text: `No ${N} fee. The basket charges its own mint fee and yearly fee, shown on each basket page.` },
         { term: 'Automated baskets', text: '0.50% per swap, rebalances included.' },
         { term: 'Strategy baskets', text: '0.50% per swap, the same as Swap and Bridge.' },
         { term: 'Lend and Borrow', text: `No ${N} fee. You pay Kamino’s borrow rate on what you borrow.` },
-        { term: 'Bridge or exchange fees', text: 'set by the route, shown in the quote' },
+        { term: 'Route fees', text: 'What the route itself charges, shown as one line in the quote. LI.FI, which prices and executes every trade, takes 0.25% of the amount sent on the routes it runs; a bridge or exchange on the route can add its own.' },
         { term: 'Network gas', text: 'paid in the source chain’s gas token' },
       ] },
-      { kind: 'p', text: `The ${N} fee is taken from the token you send. Gas on Arc is paid in USDC.` },
+      { kind: 'p', text: `Both the ${N} fee and the route fees are taken from the token you send and are already inside the amount the quote says you will receive. Gas on Arc is paid in USDC.` },
+    ],
+  },
+  {
+    id: 'holding',
+    title: 'Holding VERDEX',
+    blocks: [
+      { kind: 'p', text: `VERDEX is the token behind ${N}. Holding it changes two things, both read from the wallet's balance on Robinhood Chain and nothing else: no contract to stake into, no lock, no registration.` },
+      { kind: 'defs', items: [
+        { term: 'Any amount', text: `The ${N} fee is zero on every trade: swaps, bridges, private swaps, Auto-Invest, Orders, Vaults, Strategies and the agent. Everyone else pays 0.25%.` },
+        { term: '0.5% of the supply', text: `Early access. Each new feature opens to wallets holding at least 0.5% of the supply first, and to everyone a stated time later. The threshold is computed from the live total supply, so burns lower it.` },
+        { term: 'How it is checked', text: `Your browser reads balanceOf and totalSupply from the token contract before each quote and when you open a gated page. The result is cached for a minute. Nothing is sent to ${N}.` },
+        { term: 'Where it stands', text: 'The VERDEX page shows your balance, your share of the supply and how far you are from early access when a wallet is connected.' },
+      ] },
     ],
   },
   {
@@ -299,6 +312,19 @@ export const DOC_SECTIONS: DocSection[] = [
         { term: 'Kept, and why', text: 'One unlimited allowance per token to the router named by each quote, so recurring buys and rebalances stay a single confirmation; revocable at any time. The agent key lives in your browser because there is no Verdex server to hold it. Order fills are market swaps at the moment you confirm.' },
         { term: 'Out of scope', text: 'The routing contracts, the issuers\' tokens, the lending and basket protocols and the launchpad behind VERDEX have their own audits.' },
         { term: 'Full report', text: 'AUDIT.md in the repository lists every finding with the file to open: github.com/useverdex/verdex/blob/main/AUDIT.md. Report anything it missed to feedback@verdex.app.' },
+      ] },
+    ],
+  },
+  {
+    id: 'bug-bounty',
+    title: 'Bug bounty',
+    blocks: [
+      { kind: 'p', text: `Anyone who finds what the audit missed gets paid, in ETH on Robinhood Chain, from the creator fees the VERDEX token earns. Report privately first and give us reasonable time to fix; the channels and the full rules are in SECURITY.md in the repository.` },
+      { kind: 'fees', items: [
+        { term: 'Critical · 0.5 ETH', text: 'The site requests a signature or sends a transaction the user did not ask for, or what is sent is changed.' },
+        { term: 'High · 0.2 ETH', text: 'A wrong route, amount, address or fee at confirmation time; reading another user\'s stored plans, orders, vaults or key.' },
+        { term: 'Medium · 0.05 ETH', text: 'A data leak, a broken safety check, or automation acting on the wrong data.' },
+        { term: 'Low · credit', text: 'Anything else that misleads a user.' },
       ] },
     ],
   },

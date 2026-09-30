@@ -12,6 +12,8 @@ export type Quote = {
   estimate: { fromAmount: string; toAmount: string; toAmountMin: string; approvalAddress: string; executionDuration: number; fromAmountUSD?: string; toAmountUSD?: string; gasCosts?: { amountUSD: string }[]; feeCosts?: { name: string; amountUSD: string }[] }
   transactionRequest?: { to: Address; data: `0x${string}`; value?: string; gasLimit?: string; gasPrice?: string; chainId: number; from?: Address }
   includedSteps?: { tool: string; toolDetails: { name: string; logoURI: string }; type: string }[]
+  // Set by fetchQuoteWithFee when LI.FI accepted the Verdex fee parameter, so the UI can name it.
+  verdexFee?: number
 }
 
 export const PLACEHOLDER_ADDRESS = '0x1111111111111111111111111111111111111111'
@@ -49,7 +51,35 @@ export async function fetchQuote(p: { fromChain: number; toChain: number; fromTo
   return (await r.json()) as Quote
 }
 
-export function useQuote(p: { fromChain?: number; toChain?: number; fromToken?: Token; toToken?: Token; amount: string; fromAddress?: string; toAddress?: string; slippage: number }) {
+// A quote that carries the Verdex fee for wallets that owe it. When LI.FI rejects the fee parameter
+// (the integrator has no fee wallet configured yet) the same quote is fetched without it, so a fee
+// problem never blocks a trade, and the parameter is left off for a while to avoid paying two
+// requests per quote.
+let feeOffUntil = 0
+export async function fetchQuoteWithFee(p: Parameters<typeof fetchQuote>[0], fee?: number): Promise<Quote> {
+  if (!fee || Date.now() < feeOffUntil) return fetchQuote(p)
+  try {
+    const q = await fetchQuote({ ...p, fee })
+    return { ...q, verdexFee: fee }
+  } catch (e) {
+    if (p.signal?.aborted) throw e
+    if (/not configured for collecting fees/i.test((e as Error).message)) feeOffUntil = Date.now() + 10 * 60_000
+    return fetchQuote(p)
+  }
+}
+
+// True when LI.FI accepted the Verdex fee on this quote. LI.FI adds its own fixed fee step to quotes
+// as well, so the step list cannot tell the two apart; the flag set at fetch time can.
+export const quoteHasFee = (q: Quote) => !!q.verdexFee
+
+// Fees the route itself charges, in USD, from the quote's own fee list, without the Verdex fee.
+export function routeFeesUsd(q: Quote) {
+  const all = q.estimate.feeCosts?.reduce((s, f) => s + Number(f.amountUSD || 0), 0) ?? 0
+  const verdex = q.verdexFee && q.estimate.fromAmountUSD ? Number(q.estimate.fromAmountUSD) * q.verdexFee : 0
+  return Math.max(0, all - verdex)
+}
+
+export function useQuote(p: { fromChain?: number; toChain?: number; fromToken?: Token; toToken?: Token; amount: string; fromAddress?: string; toAddress?: string; slippage: number; fee?: number }) {
   const enabled = !!(p.fromChain && p.toChain && p.fromToken && p.toToken && Number(p.amount) > 0)
   let fromAmount = '0'
   try {
@@ -58,8 +88,8 @@ export function useQuote(p: { fromChain?: number; toChain?: number; fromToken?: 
     fromAmount = '0'
   }
   return useQuery({
-    queryKey: ['quote', p.fromChain, p.toChain, p.fromToken?.address, p.toToken?.address, fromAmount, p.fromAddress, p.toAddress, p.slippage],
-    queryFn: ({ signal }) => fetchQuote({ fromChain: p.fromChain!, toChain: p.toChain!, fromToken: p.fromToken!.address, toToken: p.toToken!.address, fromAmount, fromAddress: p.fromAddress ?? PLACEHOLDER_ADDRESS, toAddress: p.toAddress, slippage: p.slippage, signal }),
+    queryKey: ['quote', p.fromChain, p.toChain, p.fromToken?.address, p.toToken?.address, fromAmount, p.fromAddress, p.toAddress, p.slippage, p.fee ?? 0],
+    queryFn: ({ signal }) => fetchQuoteWithFee({ fromChain: p.fromChain!, toChain: p.toChain!, fromToken: p.fromToken!.address, toToken: p.toToken!.address, fromAmount, fromAddress: p.fromAddress ?? PLACEHOLDER_ADDRESS, toAddress: p.toAddress, slippage: p.slippage, signal }, p.fee),
     enabled: enabled && fromAmount !== '0',
     staleTime: 25_000,
     refetchInterval: 30_000,

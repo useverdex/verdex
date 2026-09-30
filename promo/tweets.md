@@ -293,6 +293,102 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Holder perks (`verdex-holders.mp4`, 34 s, post with the video)
+
+### Announcement
+
+> $VERDEX now does something.
+>
+> Hold any amount and the Verdex fee is 0 on every trade: swaps, bridges, private swaps, Auto-Invest, Orders, Vaults, the agent. Everyone else pays 0.25%.
+>
+> Hold 0.5% of the supply and every new feature opens for you first.
+>
+> useverdex.xyz/verdex
+
+> Hold it.
+>
+> Any VERDEX in your wallet and the Verdex fee on every trade goes to zero. 0.5% of the supply and you get each new feature before its public date. Checked onchain before every quote, no staking, no lock, no signup.
+>
+> useverdex.xyz/verdex
+
+### Thread under the announcement
+
+> 1/ How it works: before each quote the site reads your wallet's VERDEX balance from the token contract on Robinhood Chain. Above zero, the 0.25% Verdex fee comes off and the quote shows it struck through. Nothing to stake, nothing to sign, nothing to register.
+
+> 2/ Early access: wallets holding at least 0.5% of the live supply (5M VERDEX today; burns lower it) get each new feature before its public date. Everyone else sees the date on the feature's page and how much VERDEX would open it now.
+
+> 3/ Your status is on the token page: balance, share of the supply, how far you are from early access, and a Buy button. The wallet menu shows the same line wherever you are on the site.
+
+> 4/ The quote is more honest too. It now lists the route's own fees as their own line, next to the Verdex fee, so the amount you receive has no hidden pieces. Docs have a new Holding VERDEX section and a corrected fee table. All of it is in the open-source repo.
+
+### Standalone
+
+> Hold VERDEX, trade with zero Verdex fee. That is the whole pitch.
+>
+> useverdex.xyz/verdex
+
+> 0.5% of the supply gets you in first. Every new feature, before its public date, checked onchain.
+>
+> useverdex.xyz/verdex
+
+> The perk that needs no contract: the site reads balanceOf before each quote. Above zero, no Verdex fee. Below the 0.5% line, no early access. Nothing to trust, only to hold.
+
+### Spanish
+
+> $VERDEX ya sirve para algo.
+>
+> Con cualquier cantidad en la wallet, la fee de Verdex es 0 en cada operación: swaps, bridges, Auto-Invest, Orders, Vaults y el agente. Los demás pagan 0,25%.
+>
+> Con el 0,5% del supply, cada función nueva se abre antes para ti.
+>
+> useverdex.xyz/verdex
+
+## Token page (`verdex-token.mp4`, 36 s, post with the video)
+
+### Announcement
+
+> New on Verdex: the $VERDEX page.
+>
+> Every fee, every sweep, every dev buy and every burn, read from Robinhood Chain in your browser. The dev wallet has never sold: what it bought is held or burned, each transaction linked. Plus a bug bounty paid from the fees.
+>
+> useverdex.xyz/verdex
+
+> The token. Read from the chain.
+>
+> No screenshots, no promises. Price, liquidity, fees earned, what the dev wallet holds and what it burned, live, with a link to every transaction. Then a bounty for whoever breaks the site.
+>
+> useverdex.xyz/verdex
+
+### Thread under the announcement
+
+> 1/ What the page reads: market data from DexScreener, fees from the launchpad escrow's events, the pending amount from the hook, the dev wallet from the launch record, its balance, buys and burns from the token contract. Your browser does the reading; there is no Verdex server.
+
+> 2/ The fee on every swap is 3%, set at launch and locked: a 2% creator tax and a 1% pool fee. 90% reaches the creator wallet in hourly sweeps. Total so far is on the page, to the wei, with the last sweeps listed.
+
+> 3/ The dev wallet: bought on the curve, bought from the pool, and sent 7.12M VERDEX to the burn address. It has never sold. Today it added 2.5M more. All of it is listed with the transaction, and the page will show any future sell just as plainly.
+
+> 4/ Bug bounty, paid in ETH on Robinhood Chain from those fees: 0.5 ETH for a way to make the site sign or send something the user did not ask for, 0.2 for a wrong route or amount at confirmation, 0.05 for a data leak or a broken check. Rules in SECURITY.md.
+
+> 5/ Holding VERDEX still does one thing and does it onchain: it removes the Verdex fee on every Auto-Invest buy, order fill, vault rebalance and agent trade. The page has the Buy button; the fee check happens before each trade.
+
+### Standalone
+
+> A token page that reads the chain instead of describing it.
+>
+> If a number on it ever disagrees with the chain, the chain is right and we want the bug report. There is a bounty for that now.
+
+> Dev wallet, in public: bought, burned, never sold.
+>
+> Not a tweet you have to trust. A page you can check. useverdex.xyz/verdex
+
+### Spanish
+
+> Nuevo en Verdex: la página de $VERDEX.
+>
+> Cada fee, cada barrido, cada compra y cada quema del dev, leídos de Robinhood Chain en tu navegador. La wallet del dev nunca ha vendido: lo que compró está guardado o quemado. Y un bug bounty pagado con las fees.
+>
+> useverdex.xyz/verdex
+
 ## Audit (`verdex-audit.mp4`, 38 s, post at 12:00 UTC; teaser `photos/teaser-audit.png` a few hours before)
 
 ### Teaser (with `photos/teaser-audit.png`)

@@ -266,7 +266,7 @@ export async function runTool(name: string, raw: unknown, ctx: ToolCtx, emit: (e
 }
 
 function systemPrompt(ctx: ToolCtx) {
-  const wallet = ctx.account ? `Connected wallet ${ctx.account.address} on ${chainName(ctx, ctx.account.chainId)}. VERDEX holder: ${ctx.holder ? 'yes, so no Verdex fee' : 'no, so the 0.25% Verdex fee applies on fills; holding any VERDEX removes it'}.` : 'No wallet connected: the user can still ask and get proposals, but must connect to approve them.'
+  const wallet = ctx.account ? `Connected wallet ${ctx.account.address} on ${chainName(ctx, ctx.account.chainId)}. VERDEX holder: ${ctx.holder ? 'yes, so no Verdex fee' : 'no, so the 0.25% Verdex fee applies on every trade; holding any VERDEX removes it'}.` : 'No wallet connected: the user can still ask and get proposals, but must connect to approve them.'
   return `You are Verdex Agent, the assistant inside Verdex (useverdex.xyz), a non-custodial marketplace for tokenized stocks, ETFs, commodities and treasuries on EVM chains. You help the user act on those markets from their own wallet.
 
 You work only through tools. Read with search_assets, get_price, get_holdings and list_activity. Act with propose_order, propose_plan and propose_vault: each queues a card the user must approve. You never place, schedule, execute or cancel anything yourself, and after approval the wallet still confirms every trade.

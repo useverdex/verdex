@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Avatar, Box, Button, InputBase, Typography } from '@mui/material'
 import { erc20Abi, encodeFunctionData, formatUnits, isAddress, maxUint256, parseUnits, type Address } from 'viem'
-import { fonts, t, z } from '../theme/tokens'
+import { BRAND, fonts, t, z } from '../theme/tokens'
 import { Bt } from '../theme/styles'
 import { ArrowsUpDownIcon, ChevronDownIcon, ExternalIcon, SettingsIcon, WalletIcon } from '../components/icons'
 import { useSearchParams } from 'react-router-dom'
+import { VERDEX_FEE, VERDEX_TOKEN } from '../lib/autoInvest'
+import { useHolding, useRefreshHolding } from '../lib/holding'
 import { ARC, ROBINHOOD, chainLogo, useBaskets, useTokenLogo, useChains, type Chain, type Token } from '../lib/api'
-import { chainMeta, describeError, fetchQuote, fmtAmount, fmtDuration, isNative, readAllowance, readBalance, useQuote, waitForTx as waitFor, type Quote } from '../lib/lifi'
+import { chainMeta, describeError, fetchQuoteWithFee, fmtAmount, fmtDuration, isNative, quoteHasFee, readAllowance, readBalance, routeFeesUsd, useQuote, waitForTx as waitFor, type Quote } from '../lib/lifi'
 import { TOKEN_LOGOS, resolveImg } from '../lib/img'
 import { useWallet } from '../components/wallet/WalletProvider'
 import { actions, useStore } from '../store'
@@ -80,7 +82,16 @@ export function SwapWidget() {
   const { data: baskets } = useBaskets()
   const buyBasket = useMemo(() => (buy ? baskets?.baskets.find((x) => x.symbol.toLowerCase() === buy.toLowerCase()) : undefined), [buy, baskets])
   useEffect(() => {
-    if (!buy || !chains || !baskets) return
+    if (!buy || !chains) return
+    if (buy.toUpperCase() === 'VERDEX') {
+      const rh = chains.find((c) => c.id === ROBINHOOD)
+      if (!rh) return
+      setFrom({ chain: rh, token: ETH_RH })
+      setTo({ chain: rh, token: { chainId: rh.id, address: VERDEX_TOKEN.address, symbol: VERDEX_TOKEN.symbol, name: 'Verdex', decimals: VERDEX_TOKEN.decimals } })
+      actions.setSwapTab('swap')
+      return
+    }
+    if (!baskets) return
     const b = baskets.baskets.find((x) => x.symbol.toLowerCase() === buy.toLowerCase())
     const chain = b && chains.find((c) => c.id === b.chainId)
     if (!b || !chain) return
@@ -103,10 +114,24 @@ export function SwapWidget() {
   }, [account, from.chain, from.token, txHash])
 
   const toAddress = tab === 'private' && isAddress(recipient) ? recipient : undefined
-  const quote = useQuote({ fromChain: from.chain?.id, toChain: to.chain?.id, fromToken: from.token, toToken: to.token, amount, fromAddress: account?.address, toAddress, slippage: slippage / 100 })
+  // Wallets holding VERDEX pay no Verdex fee; everyone else carries it on the quote. Until the balance
+  // is known the fee stays on, so a holder only ever sees the fee disappear, never appear.
+  const holding = useHolding(account?.address)
+  const holder = !!holding.data?.holder
+  const fee = holder || !(VERDEX_FEE > 0) ? undefined : VERDEX_FEE
+  const refreshHolding = useRefreshHolding()
+  const quote = useQuote({ fromChain: from.chain?.id, toChain: to.chain?.id, fromToken: from.token, toToken: to.token, amount, fromAddress: account?.address, toAddress, slippage: slippage / 100, fee })
   const q = quote.data
   const fromUsd = useMemo(() => (q?.estimate.fromAmountUSD ? Number(q.estimate.fromAmountUSD) : from.token?.priceUSD && Number(amount) > 0 ? Number(from.token.priceUSD) * Number(amount) : 0), [q, from.token, amount])
   const toUsd = q?.estimate.toAmountUSD ? Number(q.estimate.toAmountUSD) : 0
+
+  const buyVerdex = () => {
+    const rh = chains?.find((c) => c.id === ROBINHOOD)
+    if (!rh) return
+    setFrom({ chain: rh, token: ETH_RH })
+    setTo({ chain: rh, token: { chainId: rh.id, address: VERDEX_TOKEN.address, symbol: VERDEX_TOKEN.symbol, name: 'Verdex', decimals: VERDEX_TOKEN.decimals } })
+    actions.setSwapTab('swap')
+  }
 
   const flip = () => {
     setFrom(to)
@@ -134,7 +159,7 @@ export function SwapWidget() {
     setError(null)
     setTxHash(null)
     try {
-      const fresh = await fetchQuote({ fromChain: from.chain.id, toChain: to.chain!.id, fromToken: from.token.address, toToken: to.token!.address, fromAmount: q.action.fromAmount, fromAddress: account.address, toAddress, slippage: slippage / 100 })
+      const fresh = await fetchQuoteWithFee({ fromChain: from.chain.id, toChain: to.chain!.id, fromToken: from.token.address, toToken: to.token!.address, fromAmount: q.action.fromAmount, fromAddress: account.address, toAddress, slippage: slippage / 100 }, fee)
       const tx = fresh.transactionRequest
       if (!tx) throw new Error('This route cannot be prepared right now. Try another amount or route.')
       if (!isNative(from.token.address)) {
@@ -150,6 +175,7 @@ export function SwapWidget() {
       setTxHash(hash)
       await waitFor(from.chain, hash)
       setPhase('done')
+      refreshHolding(account.address)
     } catch (e) {
       setPhase('failed')
       setError(describeError(e))
@@ -243,7 +269,7 @@ export function SwapWidget() {
             <Typography sx={{ fontSize: 12, color: t.color.textLabel, lineHeight: 1.4 }}>Funds are routed through partner liquidity and settle at the receiving address. Allow 15–45 minutes for cross-chain routes.</Typography>
           </Box>
         )}
-        {q && <RouteSummary q={q} />}
+        {q && <RouteSummary q={q} holder={holder} known={!!account && !!holding.data} onBuyVerdex={buyVerdex} />}
         {quote.error && Number(amount) > 0 && <Typography sx={{ fontSize: 12, color: t.color.red, lineHeight: 1.4 }}>{(quote.error as Error).message}</Typography>}
         {quote.error && buyBasket && to.token?.address === buyBasket.address && (
           <Box sx={{ ...card, gap: 1 }}>
@@ -274,8 +300,13 @@ export function SwapWidget() {
   )
 }
 
-function RouteSummary({ q }: { q: Quote }) {
+function RouteSummary({ q, holder, known, onBuyVerdex }: { q: Quote; holder: boolean; known: boolean; onBuyVerdex: () => void }) {
   const gas = q.estimate.gasCosts?.reduce((s, g) => s + Number(g.amountUSD || 0), 0) ?? 0
+  const feePct = `${(VERDEX_FEE * 100).toFixed(2)}%`
+  const charged = quoteHasFee(q)
+  const feeUsd = charged && q.estimate.fromAmountUSD ? Number(q.estimate.fromAmountUSD) * VERDEX_FEE : 0
+  const showsVerdex = q.action.toToken.address.toLowerCase() === VERDEX_TOKEN.address.toLowerCase()
+  const routeFees = routeFeesUsd(q)
   // LI.FI lists its integrator fee as a step; it is a fee, not a venue, so it is left out of the route.
   const all = q.includedSteps?.length ? q.includedSteps : [{ tool: q.tool, toolDetails: q.toolDetails, type: q.type }]
   const steps = all.filter((s) => s.tool !== 'feeCollection' && !/integrator fee/i.test(s.toolDetails.name))
@@ -293,8 +324,24 @@ function RouteSummary({ q }: { q: Quote }) {
         </Box>
       </Box>
       <Row label="Minimum received" value={`${fmtAmount(q.estimate.toAmountMin, q.action.toToken.decimals)} ${q.action.toToken.symbol}`} />
+      {VERDEX_FEE > 0 && known && holder && (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }} data-testid="verdex-fee-holder">
+          <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>{BRAND.name} fee</Typography>
+          <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
+            <Box component="s" sx={{ color: t.color.textLabel, mr: 0.75 }}>{feePct}</Box>0 · VERDEX holder
+          </Typography>
+        </Box>
+      )}
+      {VERDEX_FEE > 0 && !holder && charged && <Row label={`${BRAND.name} fee`} value={feeUsd ? `${feePct} · $${feeUsd.toFixed(2)}` : feePct} />}
+      {routeFees >= 0.005 && <Row label="Route fees" value={`$${routeFees.toFixed(2)}`} />}
       <Row label="Network fee" value={gas ? `$${gas.toFixed(2)}` : '-'} />
       <Row label="Estimated time" value={fmtDuration(q.estimate.executionDuration)} />
+      {VERDEX_FEE > 0 && !holder && !showsVerdex && (
+        <Box component="button" type="button" onClick={onBuyVerdex} sx={{ all: 'unset', cursor: 'pointer', mt: 0.5, pt: 1, borderTop: `1px solid ${t.color.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, fontSize: 12, color: t.color.textMuted, '&:hover': { color: t.color.text } }}>
+          <span>Hold any VERDEX and the {BRAND.name} fee is 0 on every trade.</span>
+          <Box component="span" sx={{ color: t.color.mark, fontWeight: 500, whiteSpace: 'nowrap' }}>Get VERDEX</Box>
+        </Box>
+      )}
     </Box>
   )
 }

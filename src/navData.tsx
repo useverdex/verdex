@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { BankIcon, BarsIcon, BoltIcon, BookIcon, BriefcaseIcon, BuildingIcon, CalendarIcon, CheckIcon, DocIcon, DropIcon, GemIcon, GridIcon, HandCoinIcon, HelpIcon, LayersIcon, LockIcon, PercentIcon, PieIcon, ReceiptIcon, RefreshIcon, RocketIcon, SearchIcon, ShieldIcon, SparkIcon, SwapIcon, TargetIcon, TrendIcon, UsersIcon, VaultIcon } from './components/icons'
+import { BankIcon, BarsIcon, BoltIcon, BookIcon, BriefcaseIcon, BuildingIcon, CalendarIcon, CheckIcon, CoinIcon, DocIcon, DropIcon, GemIcon, GridIcon, HandCoinIcon, HelpIcon, LayersIcon, LockIcon, PercentIcon, PieIcon, ReceiptIcon, RefreshIcon, RocketIcon, SearchIcon, ShieldIcon, SparkIcon, SwapIcon, TargetIcon, TrendIcon, UsersIcon, VaultIcon } from './components/icons'
 
 export type NavItem = { label: string; icon: ComponentType<{ size?: number }>; path: string; soon?: boolean; divider?: boolean; action?: 'swap' | 'private' }
 export type NavGroup = { label: string; match: string[]; items: NavItem[]; link?: NavItem }
@@ -57,6 +57,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: 'Auto-Invest', icon: CalendarIcon, path: '/auto-invest', divider: true },
       { label: 'Orders', icon: TargetIcon, path: '/orders' },
       { label: 'Agent', icon: SparkIcon, path: '/agent' },
+      { label: 'VERDEX token', icon: CoinIcon, path: '/verdex', divider: true },
     ],
   },
   { label: 'Portfolio', match: ['/portfolio', '/profile'], items: [], link: { label: 'Portfolio', icon: BriefcaseIcon, path: '/portfolio' } },
@@ -69,6 +70,7 @@ export const NAV_GROUPS: NavGroup[] = [
       doc('Tokenized Pools', 'tokenized-pools', DropIcon),
       doc('Lend and Borrow', 'lend-and-borrow', HandCoinIcon),
       doc('Fees', 'fees', ReceiptIcon),
+      doc('Holding VERDEX', 'holding', CoinIcon),
       doc('Safety', 'safety', ShieldIcon),
       doc('Audit', 'audit', CheckIcon),
       doc('FAQ', 'faq', HelpIcon),

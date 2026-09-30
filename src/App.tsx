@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Box } from '@mui/material'
 import { Route, Routes, useLocation } from 'react-router-dom'
+import { EarlyGate } from './components/EarlyGate'
 import { t } from './theme/tokens'
 import { Nav } from './components/Nav'
 import { Footer } from './components/Footer'
@@ -22,6 +23,7 @@ const VaultsPage = lazy(() => import('./pages/VaultsPage'))
 const StrategiesPage = lazy(() => import('./pages/StrategiesPage'))
 const OrdersPage = lazy(() => import('./pages/OrdersPage'))
 const AgentPage = lazy(() => import('./pages/AgentPage'))
+const TokenPage = lazy(() => import('./pages/TokenPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
@@ -57,6 +59,7 @@ const TITLES: [string, string][] = [
   ['/strategies', 'Strategies'],
   ['/orders', 'Orders'],
   ['/agent', 'Agent'],
+  ['/verdex', 'VERDEX token'],
   ['/docs', 'Docs'],
   ['/terms', 'Terms of Service'],
   ['/privacy', 'Privacy Policy'],
@@ -98,11 +101,12 @@ export default function App() {
             <Route path="/rwa-pools" element={<PoolsPage />} />
             <Route path="/lend" element={<LendPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
-            <Route path="/auto-invest" element={<AutoInvestPage />} />
-            <Route path="/vaults" element={<VaultsPage />} />
-            <Route path="/strategies" element={<StrategiesPage />} />
-            <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/agent" element={<AgentPage />} />
+            <Route path="/auto-invest" element={<EarlyGate path="/auto-invest"><AutoInvestPage /></EarlyGate>} />
+            <Route path="/vaults" element={<EarlyGate path="/vaults"><VaultsPage /></EarlyGate>} />
+            <Route path="/strategies" element={<EarlyGate path="/strategies"><StrategiesPage /></EarlyGate>} />
+            <Route path="/orders" element={<EarlyGate path="/orders"><OrdersPage /></EarlyGate>} />
+            <Route path="/agent" element={<EarlyGate path="/agent"><AgentPage /></EarlyGate>} />
+            <Route path="/verdex" element={<EarlyGate path="/verdex"><TokenPage /></EarlyGate>} />
             <Route path="/docs" element={<DocsPage />} />
             <Route path="/terms" element={<LegalPage kind="terms" />} />
             <Route path="/privacy" element={<LegalPage kind="privacy" />} />

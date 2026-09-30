@@ -51,6 +51,14 @@ The feature lives at `/vaults` (`src/pages/VaultsPage.tsx` on top of `src/lib/va
 
 The feature lives at `/orders` (`src/pages/OrdersPage.tsx` on top of `src/lib/orders.ts`): orders are stored on the device for the wallet that placed them, watched every 30 to 45 seconds while the app is open through the LI.FI price feed with the snapshot as fallback, marked triggered when the level is crossed, reminded through `DueBuys`, and filled with a LI.FI swap the wallet confirms. The page shots in `shots/orders-*.png` come from the preview build.
 
+## Token page film
+
+`holders.html` is a 34-second film for the holder perks: the claim, a quote whose Verdex fee flips to a struck-through zero when the wallet chip lands, the eight surfaces it covers, the early-access gate, the status panel filling in, and the end card at `useverdex.xyz/verdex`. Render with `node promo/render.mjs --page promo/holders.html --out promo/verdex-holders.mp4`.
+
+`token.html` is a 36-second film for the $VERDEX page: the name, the live stats strip counting in, the creator-fees panel filling from the escrow's events, the dev wallet panel (held, burned, never sold) with its buys and burns, the four bounty tiers, and the end card at `useverdex.xyz/verdex`. Render with `node promo/render.mjs --page promo/token.html --out promo/verdex-token.mp4`. The figures in `NUM` are the day's readings; the page itself reads live.
+
+The page lives at `/verdex` (`src/pages/TokenPage.tsx` on top of `src/lib/token.ts`): market data from DexScreener, the creator wallet from the hook's launch record, fees from the escrow's `Credited` events and the hook's `pendingCreatorTax`, the dev holding, buys and burns from the token's `Transfer` events, all read in the browser. `/?buy=VERDEX` preselects the token in the swap widget. The bounty tiers are in `SECURITY.md` and under Docs.
+
 ## Audit film
 
 `audit.html` is a 38-second film for the site audit: the name and "We audited every line.", eight scope tiles ticking green, a runner card typing the tool results (npm audit, eslint, tsc, the route crawl), the six fixes, the two trade-offs kept on purpose, and the end card pointing at `useverdex.xyz/docs#audit` and `AUDIT.md`. Render with `node promo/render.mjs --page promo/audit.html --out promo/verdex-audit.mp4`. The teaser still is `photos/teaser-audit.png` (`teaser.html?bg=audit`).

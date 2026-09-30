@@ -29,14 +29,18 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   the live price feed and the connected wallet through a fixed set of tools and drafts each action as
   a card. Nothing is placed, scheduled or created until the card is approved, and the wallet still
   confirms every trade. Without a key, a small rules-based helper drafts the same cards.
+- **$VERDEX page.** The token, read from the chain: market data, creator fees and sweeps, the dev
+  wallet's holding, buys and burns, the bug bounty tiers, all live in the browser with a link to every
+  transaction.
 - **Baskets, Pools, Lend and Borrow.** Reserve index baskets and automated baskets, tokenized-stock
   liquidity pools, and Kamino lending markets for tokenized assets.
 - **Portfolio.** Everything the connected wallet holds across the listed chains.
 - **App.** Installable as a home-screen app (PWA) with a tab bar, offline shell, and reminders when a
   scheduled buy or a rebalance is due.
 
-Holding any amount of VERDEX removes the Verdex fee on Auto-Invest buys, order fills and vault
-rebalances, checked onchain each time.
+Holding any amount of VERDEX removes the 0.25% Verdex fee on every trade: swaps, bridges, private
+swaps, Auto-Invest buys, order fills, vault rebalances and agent trades. Holding 0.5% of the supply
+opens each new feature before its public date. Both are read from the token contract each time.
 
 ## Non-custodial by construction
 
@@ -70,7 +74,7 @@ Node 22. Copy `.env.example` to `.env` for the optional variables:
 | Variable | Purpose |
 | --- | --- |
 | `VITE_LIFI_API_KEY` | Lifts the public LI.FI rate limit. Sent as `x-lifi-api-key` on every LI.FI request. |
-| `VITE_VERDEX_FEE` | Verdex fee for non-holders on Auto-Invest and vault trades, as a fraction. Default `0.0025`. |
+| `VITE_VERDEX_FEE` | Verdex fee for wallets that hold no VERDEX, on every trade, as a fraction. Default `0.0025`. Collected by LI.FI for the `verdex` integrator; when that integrator has no fee wallet configured the route rejects it and the trade goes through without it. |
 
 ### Data and logos
 
