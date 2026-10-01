@@ -297,17 +297,17 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 
 Everything in these is true on the page today: the Spark rate is read from the vault, the pool figures from the chain and DexScreener. Never promise a yield; the band only earns while the price is inside it, and the stock is sold if the price climbs through the top. Spark and Uniswap are named as what they are, public contracts, not partners.
 
-### Hype, 3 hours before (image: `photos/hype-yield.png`)
+### Hype, before the drop (image: `photos/hype-yield.png`, drop at 04:00 UTC, 06:00 in Madrid)
 
-> Something big. In 3 hours.
+> Idle is over.
 >
-> The next thing on the roadmap. Not a listing, not a polish pass. A new way to earn on Verdex, and it works on what is already sitting in your wallet.
+> 04:00 UTC. A new way to earn on Verdex, and it works on what is already sitting in your wallet. The next thing on the roadmap, done.
 >
 > useverdex.xyz
 
-> 3 hours.
+> Everything in your wallet that does nothing stops doing nothing at 04:00 UTC.
 >
-> Idle is over.
+> New on Verdex. Set an alarm.
 
 ### Announcement
 
@@ -346,6 +346,122 @@ Everything in these is true on the page today: the Spark rate is read from the v
 > Solo contratos públicos. Sin contrato de Verdex, sin fee de Verdex.
 >
 > useverdex.xyz/yield
+
+## Eighth batch, each with its clip (`clip-yieldband.mp4`, `clip-yieldcash.mp4`, `clip-roadmap.mp4` 16 s, `clip-reaudit.mp4` 18 s, `clip-sold.mp4`, `clip-stop.mp4`, `clip-earnmenu.mp4`, `clip-week.mp4`, `clip-listings.mp4`, `clip-nocontract.mp4`, 12 s unless noted)
+
+Order that reads well: the two Asset Yield clips first, then `sold`, `stop` and `nocontract` over the following days, `earnmenu` and `week` as the recap, `roadmap` on its own, the re-audit teaser photo the evening before `reaudit`, and `listings` whenever the timeline needs a quiet one. Nothing here promises a return.
+
+### 1. `clip-yieldband.mp4`
+
+> Idle stocks earn while you hold them.
+>
+> Pick +2%, +5% or +10%. Your NVDA goes into a one-sided band just above the price. Below it the shares are yours and nothing moves. Inside it they earn 0.05% of every trade. Through the top, they have been sold at a price you saw first.
+>
+> useverdex.xyz/yield
+
+### 2. `clip-yieldcash.mp4`
+
+> Cash earns too.
+>
+> USDG into Spark Savings at 3.50% APY. The rate is read from the vault contract and compounded per second, not typed into a page. You hold spUSDG, worth more USDG every block. Withdraw any share of it whenever you like, no lock, no exit fee.
+>
+> useverdex.xyz/yield
+
+### 3. `clip-roadmap.mp4` (16 s)
+
+> The roadmap, where it stands.
+>
+> 10 of 13 live: marketplace, swap and bridge, baskets, lend and borrow, the mobile app, Auto-Invest, Vaults, Strategies, Verdex Pools, Asset Yield. Plus three that were never on it: Orders, Agent, holder perks.
+>
+> Three left. Every one of them cheaper for VERDEX holders.
+
+### 4. `clip-reaudit.mp4` (18 s, post after the teaser photo)
+
+> We audited every line. Again.
+>
+> npm audit: 0 vulnerabilities. ESLint: 0 problems. TypeScript strict: 0 errors. 24 routes on two viewports: 0 errors. The three engines shipped since the last audit read line by line. Two low findings, both fixed and shipped. Four things kept, each with the reasoning.
+>
+> AUDIT.md in the open-source repo, and useverdex.xyz/docs#audit
+
+### 5. `clip-sold.mp4`
+
+> Through the top, sold at your price.
+>
+> A band is a sale you agreed to. If the stock climbs through it, you hold USDG at the average the page showed before you signed: the geometric mean of the band's two edges. Fees earned on the way. If you would keep the shares at any price, keep them in the wallet.
+
+### 6. `clip-stop.mp4`
+
+> Stop any time. One transaction.
+>
+> Collect the fees, stop the band, or withdraw the cash from the same page. Nothing is locked, there is no exit fee, and the position NFT is burned when you close.
+>
+> useverdex.xyz/yield
+
+### 7. `clip-earnmenu.mp4`
+
+> No more Soon in the Earn menu.
+>
+> Verdex Pools, Tokenized Pools, Asset Yield. Three ways to earn on tokenized stocks, all from your own wallet, none through a Verdex contract.
+
+### 8. `clip-week.mp4`
+
+> One week. Seven launches.
+>
+> Vaults, Strategies, Orders, Agent, holder perks, Verdex Pools, Asset Yield. Plus two listing applications filed. Everything open-source, everything non-custodial.
+>
+> useverdex.xyz
+
+### 9. `clip-listings.mp4`
+
+> Two trackers, two applications.
+>
+> CoinGecko request CL3009260043, under review. CoinMarketCap ticket 1461869, in the queue. Same filing both times: 1B fixed supply, no team allocation, 7.29M burned, open-source code, a published audit. Already on GeckoTerminal and CMC DexScan. We will post when either moves.
+
+### 10. `clip-nocontract.mp4`
+
+> Two addresses. Neither is ours.
+>
+> Stocks go to the Uniswap v3 position manager. Cash goes to the Spark Savings USDG vault. No Verdex contract, no Verdex fee. Both show up in those apps too, and you can close from here, from Uniswap or from Spark.
+
+### Spanish
+
+> Tus acciones paradas rentan mientras las tienes. Elige +2%, +5% o +10%: tu NVDA entra en una banda justo por encima del precio. Debajo, las acciones son tuyas y nada se mueve. Dentro, cobran el 0,05% de cada trade. Si el precio la atraviesa, se han vendido al precio que viste antes.
+
+> Hemos auditado cada línea. Otra vez. 0 vulnerabilidades, 0 problemas de lint, 0 errores de tipos, 24 rutas en dos pantallas sin errores. Dos hallazgos bajos, corregidos y publicados. AUDIT.md en el repo.
+
+## Photo tweets, fourth set (`photos/photo4-*.png`, one image each)
+
+### `photo4-reaudit-soon.png` (post the evening before `clip-reaudit.mp4`)
+
+> Re-audit.
+>
+> Seven launches in a week means seven new ways to get something wrong. So we are reading every line shipped since the last audit, running every check again, and publishing whatever we find. Results soon.
+
+### `photo4-idle.png`
+
+> Connect and see what is idle.
+>
+> Every tokenized stock and the USDG your address holds on Robinhood Chain, each next to the place it can earn and the rate there today. One click each.
+>
+> useverdex.xyz/yield
+
+### `photo4-band.png`
+
+> The whole deal, on one card, before you sign.
+>
+> The band, the fee it earns, the price it sells at if the stock climbs through, and the amount. Nothing hidden in a tooltip.
+
+### `photo4-roadmap.png`
+
+> 10 of 13. Three to go.
+>
+> The roadmap we published on day one, with today's status. Three items were not on it and shipped anyway.
+
+### `photo4-earn.png`
+
+> The Earn menu, today.
+>
+> Three items, zero "Soon".
 
 ## CoinMarketCap application (`verdex-coinmarketcap.mp4`, 26 s; photo `photos/coinmarketcap-applied.png`)
 

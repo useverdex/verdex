@@ -6,7 +6,7 @@ import { Bt, Lt, Vg } from '../theme/styles'
 import { CHAIN_NAME_LOGOS, ROBINHOOD, fmtCompact, fmtUsd, useAssets, useChains } from '../lib/api'
 import { describeError, explorerTx, type ChainX } from '../lib/lifi'
 import { PHASE_LABEL, POSITION_MANAGER, collectFees, fmtFee, fmtPrice, fmtQty, removeLiquidity, tickBand, toRaw, usePools, usePositions, type Phase, type Position } from '../lib/pools'
-import { BANDS, SPARK_URL, SPARK_USDG, WORK_LABEL, bandAverage, depositSavings, putToWork, sellBand, useIdle, useSavings, withdrawSavings, workState, type Idle, type Savings } from '../lib/yield'
+import { BANDS, SPARK_URL, SPARK_USDG, WORK_LABEL, bandAverage, depositSavings, putToWork, sellBand, thinPool, useIdle, useSavings, withdrawSavings, workState, type Idle, type Savings } from '../lib/yield'
 import { resolveImg } from '../lib/img'
 import { useWallet } from '../components/wallet/WalletProvider'
 import { CheckIcon, CoinIcon, ExternalIcon, PercentIcon, ShieldIcon, TrendIcon, WalletIcon } from '../components/icons'
@@ -182,6 +182,7 @@ function StockPanel({ idle, wallet, chain, onDone, onClose }: { idle: Idle; wall
         <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 1.5, lineHeight: 1.5 }}>
           From {fmtPrice(edges[0])} to {fmtPrice(edges[1])} {q} per {idle.stock.ticker}. Below the band your shares wait and stay yours. Inside it they earn {fmtFee(pool.fee)} of every trade. If the price climbs through the top, they have been sold at about {fmtPrice(avg)} {q} each.
         </Typography>
+        {thinPool(pool) && <Typography sx={{ fontSize: 13, color: t.color.mark, mt: 1 }}>This is a thin pool ({fmtUsd(pool.liquidityUsd, 0)} of liquidity), so its price can sit away from the market's. Check the band against the price you see elsewhere.</Typography>}
       </Box>
       <Box sx={{ mt: 3, display: 'grid', gap: 1.25 }}>
         <Label>Amount</Label>
@@ -216,6 +217,7 @@ function CashPanel({ savings, mode, wallet, chain, onDone, onClose }: { savings:
   const [tx, setTx] = useState<string | null>(null)
   const raw = toRaw(Number(amount) || 0, 6)
   const short = raw > savings.wallet
+  const overCap = (Number(amount) || 0) > savings.roomUsd
   const busy = busyPhase(phase)
   const perYear = (Number(amount) || 0) * (savings.apy / 100)
 
@@ -254,8 +256,8 @@ function CashPanel({ savings, mode, wallet, chain, onDone, onClose }: { savings:
           </Box>
           <Summary rows={[['Rate', `${savings.apy.toFixed(2)}% APY, set by Spark`], ['Over a year', perYear ? `about ${fmtUsd(perYear)} at today's rate` : '-'], ['You receive', 'spUSDG, worth more USDG every second'], ['Withdraw', 'Any time, no lock, no exit fee']]} />
           <TxNote chain={chain} tx={tx} error={error} text="Deposited. It shows below as it earns." />
-          <Button fullWidth onClick={submit} disabled={!!account && (!(raw > 0n) || short || busy)} sx={{ ...Bt, height: 48, mt: 2 }}>
-            {!account ? 'Connect wallet' : busy ? PHASE_LABEL[phase] : short ? 'Insufficient balance' : 'Deposit USDG'}
+          <Button fullWidth onClick={submit} disabled={!!account && (!(raw > 0n) || short || overCap || busy)} sx={{ ...Bt, height: 48, mt: 2 }}>
+            {!account ? 'Connect wallet' : busy ? PHASE_LABEL[phase] : short ? 'Insufficient balance' : overCap ? `Vault cap allows ${fmtUsd(savings.roomUsd, 0)} more` : 'Deposit USDG'}
           </Button>
         </>
       ) : (

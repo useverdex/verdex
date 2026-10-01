@@ -26,6 +26,7 @@ export type Savings = {
   apy: number // percent, compounded from the per-second rate the vault reports
   totalUsd: number
   capUsd: number
+  roomUsd: number // what the cap still allows in
   shares: bigint
   balance: number // USDG the shares are worth now
   wallet: bigint // USDG in the wallet, raw
@@ -53,10 +54,12 @@ export async function readSavings(owner?: Address): Promise<Savings> {
   const shares = owner ? get<bigint>(3, 0n) : 0n
   const assets = shares > 0n ? await c.readContract({ address: SPARK_USDG.address, abi: vaultAbi, functionName: 'convertToAssets', args: [shares] }) : 0n
   const wallet = owner ? get<bigint>(4, 0n) : 0n
+  const totalUsd = Number(formatUnits(get<bigint>(1, 0n), 6)), capUsd = Number(formatUnits(get<bigint>(2, 0n), 6))
   return {
     apy: apyFromRate(get<bigint>(0, 10n ** 27n)),
-    totalUsd: Number(formatUnits(get<bigint>(1, 0n), 6)),
-    capUsd: Number(formatUnits(get<bigint>(2, 0n), 6)),
+    totalUsd,
+    capUsd,
+    roomUsd: Math.max(0, capUsd - totalUsd),
     shares,
     balance: Number(formatUnits(assets, 6)),
     wallet,
@@ -109,13 +112,16 @@ export function bandAverage(pool: Pool, lower: number, upper: number) {
   return Math.sqrt(lo * hi)
 }
 
-// The best pool to put a stock to work in: USDG quote first, enough liquidity to be a real market,
-// then the highest fee APR.
+// The best pool to put a stock to work in: USDG quote first, deep enough that its price is the
+// market's (DEEP_POOL_USD of liquidity), then the highest fee APR. A stock with only thin pools gets
+// the deepest one, and the page says so.
+export const DEEP_POOL_USD = 25_000
 export function bestPool(pools: Pool[], stock: Address): Pool | null {
   const mine = pools.filter((p) => (p.stockIsToken0 ? p.token0 : p.token1).address.toLowerCase() === stock.toLowerCase())
-  const pick = (list: Pool[]) => list.filter((p) => p.liquidityUsd >= 1_000).sort((a, b) => b.feeApr - a.feeApr)[0] ?? list.sort((a, b) => b.liquidityUsd - a.liquidityUsd)[0] ?? null
+  const pick = (list: Pool[]) => list.filter((p) => p.liquidityUsd >= DEEP_POOL_USD).sort((a, b) => b.feeApr - a.feeApr)[0] ?? list.sort((a, b) => b.liquidityUsd - a.liquidityUsd)[0] ?? null
   return pick(mine.filter((p) => p.quote.symbol === 'USDG')) ?? pick(mine)
 }
+export const thinPool = (p: Pool) => p.liquidityUsd < DEEP_POOL_USD
 
 export type Idle = { stock: StockToken; balance: bigint; qty: number; pool: Pool | null; priceUsd: number; valueUsd: number }
 
