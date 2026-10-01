@@ -53,6 +53,8 @@ The feature lives at `/orders` (`src/pages/OrdersPage.tsx` on top of `src/lib/or
 
 ## Token page film
 
+`yield.html` is a 34-second film for Asset Yield: the name, the stats strip (Spark rate, Spark deposits, stock pools, the NVDA pool fee APR), the wallet table of what is idle, the stock composer with a band and an amount, the position turning from waiting to earning next to the Spark balance, and the end card at `useverdex.xyz/yield`. Render with `node promo/render.mjs --page promo/yield.html --out promo/verdex-yield.mp4`. The hype still is `photos/hype-yield.png` (`teaser.html?bg=yield&line=…&sub=…`).
+
 `pools.html` is a 34-second film for Verdex Pools: the name, the live stats strip, the pool table rising row by row, the composer typing one amount and getting the other, a position earning its first fees, and the end card at `useverdex.xyz/pools`. Render with `node promo/render.mjs --page promo/pools.html --out promo/verdex-pools.mp4`.
 
 `holders.html` is a 34-second film for the holder perks: the claim, a quote whose Verdex fee flips to a struck-through zero when the wallet chip lands, the eight surfaces it covers, the early-access gate, the status panel filling in, and the end card at `useverdex.xyz/verdex`. Render with `node promo/render.mjs --page promo/holders.html --out promo/verdex-holders.mp4`.
@@ -75,7 +77,7 @@ The feature lives at `/agent` (`src/pages/AgentPage.tsx` on top of `src/lib/agen
 
 `clips12.html?clip=<name>` holds the ten 12-second clips of the fifth tweet batch (`sentence`, `key`, `steps`, `holdings`, `stoploss`, `nokey`, `tools`, `level`, `fourtypes`, `cancel`): the first seven around Agent, the last three around Orders. Render each with `node promo/render.mjs --page "promo/clips12.html?clip=sentence" --fps 30 --out promo/clip-sentence.mp4`. `photos/photo3-*.png` are the five stills for the third set of photo tweets, four from the Agent film and one from the Orders film.
 
-`clips13.html?clip=<name>` holds the ten 12-second clips of the sixth tweet batch, one per part of the product (`privateswap`, `gold`, `pools`, `multiply`, `portfolio`, `discover`, `route`, `opensource`, `receipt`, `audit`). Render each with `node promo/render.mjs --page "promo/clips13.html?clip=gold" --fps 30 --out promo/clip-gold.mp4`. Pool, multiply and basket figures come from the bundled snapshots.
+`clips14.html?clip=<name>` holds the ten 12-second clips of the seventh tweet batch (`range`, `pairamount`, `position`, `pools130`, `holderfee`, `early`, `nothing`, `impermanent`, `coingecko`, `dead`): six on Verdex Pools, two on the holder perks, the CoinGecko application and the burn. Render each with `node promo/render.mjs --page "promo/clips14.html?clip=range" --fps 30 --out promo/clip-range.mp4`. The CoinGecko clip uses the official lockup from `brand/`.\n\n`clips13.html?clip=<name>` holds the ten 12-second clips of the sixth tweet batch, one per part of the product (`privateswap`, `gold`, `pools`, `multiply`, `portfolio`, `discover`, `route`, `opensource`, `receipt`, `audit`). Render each with `node promo/render.mjs --page "promo/clips13.html?clip=gold" --fps 30 --out promo/clip-gold.mp4`. Pool, multiply and basket figures come from the bundled snapshots.
 
 ## Strategies launch
 

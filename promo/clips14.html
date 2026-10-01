@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex tweet clips, batch seven</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.line { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.line .t { font-size: 112px; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 26px; font-weight: 500; will-change: transform, opacity, filter; }
+.pill svg { width: 24px; height: 24px; color: var(--lime); }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+.panel { position: absolute; left: 50%; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.chip { display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background, color; }
+.chip img { width: 20px; height: 20px; border-radius: 50%; }
+.chip.on { background: #fff; color: #000; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); white-space: nowrap; }
+.badge.done { background: rgba(194,234,138,.16); color: var(--lime); }
+/* Wallet tiles */
+.wal { position: absolute; top: 330px; width: 520px; padding: 26px 30px 28px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.65); will-change: transform, opacity, filter, border-color; }
+.wal.hot { border-color: rgba(194,234,138,.45); }
+.wal .hd { display: flex; align-items: center; gap: 14px; }
+.wal .hd i { width: 44px; height: 44px; border-radius: 12px; display: block; }
+.wal .hd b { font-size: 22px; font-weight: 500; display: block; font-family: var(--mono); letter-spacing: 0; }
+.wal .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 2px; }
+.wal .row { display: flex; align-items: center; gap: 14px; margin-top: 22px; height: 60px; padding: 0 16px; border-radius: 12px; background: var(--tile); font-size: 22px; font-weight: 500; will-change: opacity, transform; }
+.wal .row img { width: 30px; height: 30px; border-radius: 50%; }
+.wal .row small { margin-left: auto; font-size: 17px; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.money { position: absolute; display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.1); font-size: 28px; font-weight: 500; white-space: nowrap; box-shadow: 0 20px 60px rgba(0,0,0,.6); will-change: transform, opacity; }
+.money img { width: 32px; height: 32px; border-radius: 50%; }
+.node { position: absolute; left: 50%; top: 372px; width: 380px; margin-left: -190px; padding: 20px 24px; box-sizing: border-box; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; will-change: opacity, transform, filter; }
+.node img { width: 44px; height: 44px; border-radius: 50%; }
+.node b { font-size: 22px; font-weight: 500; display: block; }
+.node span { font-size: 15px; color: var(--muted); display: block; margin-top: 2px; }
+.addr { position: absolute; left: 50%; top: 610px; width: 1040px; margin-left: -520px; display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); font-family: var(--mono); font-size: 22px; will-change: opacity, transform; }
+.addr .k { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); width: 200px; }
+.addr .cur { display: inline-block; width: 2px; height: 26px; background: #fff; vertical-align: -5px; margin-left: 2px; }
+/* Asset tiles */
+.atile { position: absolute; width: 400px; padding: 26px 28px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.atile img { width: 56px; height: 56px; border-radius: 50%; }
+.atile b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.atile span { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; }
+.atile em { display: block; font-style: normal; font-family: 'LT Remark', serif; font-size: 44px; letter-spacing: -0.02em; margin-top: 14px; font-variant-numeric: tabular-nums; }
+.clock { position: absolute; left: 50%; top: 190px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 14px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 28px; font-weight: 500; font-variant-numeric: tabular-nums; will-change: opacity; }
+.clock i { width: 12px; height: 12px; border-radius: 50%; background: var(--lime); }
+/* Table rows */
+.trow { position: absolute; left: 50%; width: 1240px; margin-left: -620px; height: 84px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.trow.on { border-color: rgba(194,234,138,.45); background: #131513; }
+.trow img.l { width: 44px; height: 44px; border-radius: 50%; }
+.trow img.c { width: 22px; height: 22px; border-radius: 50%; }
+.trow b { font-size: 24px; font-weight: 500; width: 190px; letter-spacing: -0.01em; }
+.trow .nm { font-size: 18px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex: 1; }
+.trow .v { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; text-align: right; min-width: 160px; }
+.trow .v.lime { color: var(--lime); }
+.trow .s { font-size: 17px; color: var(--muted); text-align: right; min-width: 150px; font-variant-numeric: tabular-nums; }
+.trow .tag { padding: 4px 9px; border-radius: 6px; background: rgba(255,255,255,.08); font-size: 14px; font-weight: 500; color: var(--soft); }
+.total { position: absolute; left: 50%; width: 1240px; margin-left: -620px; display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; font-size: 24px; color: var(--muted); will-change: opacity, transform; }
+.total b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+/* Leverage card */
+.lev { position: absolute; left: 50%; top: 300px; width: 960px; margin-left: -480px; padding: 30px 36px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lev .hd { display: flex; align-items: center; gap: 16px; }
+.lev .hd img { width: 52px; height: 52px; border-radius: 50%; }
+.lev .hd b { font-size: 26px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.lev .hd span { font-size: 17px; color: var(--muted); display: block; margin-top: 3px; }
+.lev .x { font-family: 'LT Remark', serif; font-size: 72px; letter-spacing: -0.03em; line-height: 1; margin-left: auto; font-variant-numeric: tabular-nums; }
+.lev .bars { margin-top: 26px; display: grid; gap: 14px; }
+.lev .br { display: grid; grid-template-columns: 150px 1fr 170px; align-items: center; gap: 16px; font-size: 19px; }
+.lev .br .bar { height: 16px; border-radius: 8px; background: #1c1c1c; overflow: hidden; }
+.lev .br .bar i { display: block; height: 100%; border-radius: 8px; will-change: width; }
+.lev .br .n { text-align: right; font-variant-numeric: tabular-nums; color: var(--soft); }
+.lev .slider { margin-top: 26px; position: relative; height: 40px; }
+.lev .slider .ln { position: absolute; left: 0; right: 0; top: 19px; height: 3px; background: rgba(255,255,255,.14); }
+.lev .slider .fill { position: absolute; left: 0; top: 19px; height: 3px; background: var(--lime); will-change: width; }
+.lev .slider .kn { position: absolute; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transform: translateX(-50%); box-shadow: 0 4px 14px rgba(0,0,0,.6); will-change: left; }
+.lev .slider .lb { position: absolute; top: 46px; font-size: 15px; color: var(--faint); transform: translateX(-50%); }
+.lev .meta { display: flex; justify-content: space-between; margin-top: 44px; font-size: 18px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lev .meta b { color: #fff; font-weight: 500; }
+/* Route rows */
+.rt { position: absolute; left: 50%; width: 1100px; margin-left: -550px; height: 88px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.rt.on { border-color: rgba(194,234,138,.5); background: #131513; }
+.rt img { width: 40px; height: 40px; border-radius: 50%; }
+.rt img + img { margin-left: -14px; }
+.rt b { font-size: 23px; font-weight: 500; width: 300px; letter-spacing: -0.01em; }
+.rt .t { font-size: 18px; color: var(--muted); flex: 1; }
+.rt .out { font-size: 26px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.rt .out small { font-size: 16px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+/* Terminal */
+.term { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 24px 30px 28px; box-sizing: border-box; border-radius: 20px; background: #0a0a0a; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 23px; line-height: 1.7; color: var(--soft); will-change: transform, opacity, filter; }
+.term .dots { display: flex; gap: 8px; margin-bottom: 14px; }
+.term .dots i { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.term .ln { will-change: opacity; white-space: pre; }
+.term .ln .p { color: var(--lime); }
+.term .ln .d { color: var(--faint); }
+.term .cur { display: inline-block; width: 12px; height: 24px; background: var(--soft); vertical-align: -4px; }
+/* Receipt */
+.rcpt { position: absolute; left: 50%; top: 290px; width: 760px; margin-left: -380px; padding: 30px 36px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.rcpt .hd { display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 500; }
+.rcpt .hd img { width: 34px; height: 34px; border-radius: 50%; }
+.rcpt .hd img + img { margin-left: -12px; }
+.rcpt .it { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; font-size: 22px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.07); will-change: opacity, transform; }
+.rcpt .it span { color: var(--muted); font-size: 17px; margin-left: 10px; }
+.rcpt .it .a { font-variant-numeric: tabular-nums; font-weight: 500; position: relative; }
+.rcpt .it .a i { position: absolute; left: -4px; right: -4px; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.rcpt .it .a em { font-style: normal; color: var(--lime); margin-left: 14px; }
+.rcpt .tot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; font-size: 22px; color: var(--muted); }
+.rcpt .tot b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 56px; color: #fff; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+/* Runner */
+.run { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 30px 38px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 25px; line-height: 1.8; will-change: transform, opacity, filter; }
+.run .hd { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 12px; }
+.run .ln { display: flex; align-items: center; gap: 20px; will-change: opacity, transform; }
+.run .ln .k { color: var(--soft); width: 560px; flex-shrink: 0; }
+.run .ln .v { color: #fff; }
+.run .ln .ok { color: var(--lime); font-weight: 700; width: 34px; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+:root { --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+.field { padding: 18px 22px; border-radius: 16px; background: var(--tile); }
+.field .k { display: flex; justify-content: space-between; font-size: 16px; color: var(--muted); }
+.field .v { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 36px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.field .v span { font-size: 17px; color: var(--muted); font-weight: 500; }
+.pos .top { display: flex; align-items: center; gap: 16px; }
+.pos .big2 { margin-left: auto; text-align: right; }
+.pos .big2 b { font-size: 34px; font-weight: 500; display: block; font-variant-numeric: tabular-nums; }
+.pos .big2 span { font-size: 16px; color: var(--muted); }
+.pos .fees { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; font-size: 19px; color: var(--muted); }
+.pos .fees b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pos .b { padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,.08); color: #fff; font-weight: 500; font-size: 18px; will-change: background, color; }
+.pos .b.first { margin-left: auto; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #5EE0A0; margin: 0 8px 2px 14px; }
+.qrow { display: flex; justify-content: space-between; align-items: center; height: 54px; font-size: 22px; padding: 0 12px; border-radius: 10px; will-change: opacity, transform; }
+.qrow .k { color: var(--muted); }
+.qrow .a { font-weight: 500; font-variant-numeric: tabular-nums; position: relative; }
+.qrow .a s { color: var(--faint); margin-right: 12px; }
+.qrow.fee { background: rgba(194,234,138,.07); }
+.wal2 { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 10px; background: var(--chip); font-size: 18px; color: var(--soft); font-family: var(--mono); will-change: opacity, transform, filter; }
+.wal2 i { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); }
+.bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.08); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--lime); border-radius: 4px; will-change: width; }
+.status { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 999px; background: rgba(255,232,102,.12); color: #FFE866; font-size: 24px; font-weight: 500; }
+.status i { width: 12px; height: 12px; border-radius: 50%; background: #FFE866; }
+.big { font-family: 'LT Remark', serif; font-size: 150px; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
+.axis { position: relative; height: 70px; margin-top: 26px; }
+.axis .ln { position: absolute; left: 0; right: 0; top: 34px; height: 3px; background: rgba(255,255,255,.12); }
+.axis .band { position: absolute; top: 20px; height: 31px; border-radius: 8px; background: rgba(194,234,138,.18); border: 1px solid rgba(194,234,138,.5); will-change: left, width; }
+.axis .now { position: absolute; top: 12px; width: 3px; height: 47px; background: #fff; transform: translateX(-50%); }
+.axis .lb { position: absolute; top: 58px; font-size: 14px; color: var(--faint); transform: translateX(-50%); }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Ten 12-second clips for the seventh tweet batch: Verdex Pools, holder perks, the CoinGecko application and the burn. ?clip=<name>
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const TOOL = (k) => `${PUB}/logos/tools/${k}.svg`
+const LOGO = { NVDA: L('88a0e630'), SPY: L('c025dcd9'), TSLA: L('e8ca24f9'), GLD: L('8123a79a'), SLV: L('29352778'), USO: L('f34687ee'), PAXG: L('7869a6ce'), XAUT: L('941acb6b'), META: L('0b00cc62'), GOOGL: L('4d76db13'), SPCX: L('5a9801c3'), AMZN: L('39c11fed'), QQQ: L('8fbe91e2'), MSTR: L('48f06241'), IBIT: L('4c80de69'), TLT: L('0ee1c35f') }
+const USDG = `${PUB}/img/tokens/usdg.png`, USDC = `${PUB}/img/tokens/usdc.png`
+const clip = new URLSearchParams(location.search).get('clip') ?? 'range'
+const DURATION = 12
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const line = (parent, text, { top = 460, size = 112, color = '#fff' } = {}) => {
+  const el = add(parent, `<div class="line" style="top:${top}px"><div class="serif t" style="font-size:${size}px;color:${color}"></div></div>`)
+  return { el, chars: letters(el.querySelector('.t'), text) }
+}
+const runLine = (ln, t, t0, t1, stagger = 0.035) => { show(ln.el, t >= t0 - 0.05 && t < t1 + 0.6); wipe(ln.chars, spring(t - t0, 0.8), { stagger, out: clamp(spring(t - t1, 0.35)) }) }
+const rise = (el, t, t0, { y = 14, r = 0.6 } = {}) => { const p = spring(t - t0, r); show(el, t >= t0 - 0.05); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const capIn = (el, t, t0) => { const q = spring(t - t0, 0.9); show(el, t > t0 - 0.1); mat(el, q, { y: 16 * (1 - q), s: 0.02 }) }
+const pick = (list, idx, t0, t) => list.forEach((c, i) => { const p = spring(t - t0, 0.35, 0.6); const on = i === idx && t >= t0; c.classList.toggle('on', on); c.style.transform = on ? `scale(${(1 + 0.08 * (1 - p)).toFixed(3)})` : 'none' })
+const typed = (el, text, t, t0, cps = 26, cursor = true) => { const n = clamp(Math.floor((t - t0) * cps), 0, text.length); const done = n >= text.length; el.innerHTML = text.slice(0, n) + (cursor && !done && t >= t0 ? '<span class="cur"></span>' : ''); return done }
+const I = {
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+}
+
+const CLIPS = {
+  // 1. Pools: set a range, earn inside it.
+  range(s) {
+    const l1 = line(s, 'Set a range.', { top: 470 })
+    const l2 = line(s, 'Earn inside it.', { top: 470, color: 'var(--lime)' })
+    const P = [['±2%', 226.26, 235.50, 2], ['±5%', 219.23, 242.53, 5], ['±10%', 207.79, 253.97, 10], ['±25%', 173.16, 288.60, 25], ['Full range', 0, 0, 30]]
+    const panel = add(s, `<div class="panel" style="top:280px;width:960px;margin-left:-480px;padding:30px 36px 32px"><div style="display:flex;align-items:center;gap:16px"><img src="${LOGO.NVDA}" style="width:48px;height:48px;border-radius:50%" alt=""><div><b style="font-size:24px;font-weight:500;display:block">Add to NVDA/USDG <span class="badge" style="margin-left:6px;font-size:15px;padding:4px 9px">0.05%</span></b><span style="font-size:16px;color:var(--muted)">1 NVDA = 230.88 USDG · $230.87</span></div></div>
+      <div class="lab" style="margin-top:26px">Price range</div><div style="display:flex;gap:10px">${P.map(([n]) => `<span class="chip">${n}</span>`).join('')}</div>
+      <div class="axis"><div class="ln"></div><div class="band"></div><div class="now"></div><span class="lb" style="left:0">−30%</span><span class="lb" style="left:50%">now</span><span class="lb" style="left:100%">+30%</span></div>
+      <div class="bt" style="font-size:18px;color:var(--muted);margin-top:22px"></div></div>`)
+    const chips = [...panel.querySelectorAll('.chip')], band = panel.querySelector('.band'), bt = panel.querySelector('.bt'), now = panel.querySelector('.now')
+    const cap = add(s, `<div class="cap" style="top:820px">Tighter earns a larger share of the fees, and leaves the range sooner.</div>`)
+    const T0 = [5.0, 6.6, 8.2, 9.6]; const IDX = [1, 2, 4, 3]
+    return (t) => {
+      runLine(l1, t, 0.3, 2.1); runLine(l2, t, 2.4, 4.2)
+      const c = spring(t - 4.4, 0.9); show(panel, t > 4.3); mat(panel, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      let k = -1; T0.forEach((x, i) => { if (t >= x) k = i })
+      const idx = k < 0 ? 1 : IDX[k]; const t0 = k < 0 ? 4.6 : T0[k]
+      pick(chips, idx, t0, t)
+      const [, lo, hi, pct] = P[idx]; const q = easeIO(clamp((t - t0) / 0.5))
+      const prev = k <= 0 ? P[1][3] : P[IDX[k - 1]][3]; const w = lerp(prev, pct, q) / 30 * 100
+      band.style.left = `${50 - w / 2}%`; band.style.width = `${w}%`
+      bt.textContent = idx === 4 ? 'Earns at every price. The smallest share of the fees, and it never leaves the range.' : `From ${lo.toFixed(2)} to ${hi.toFixed(2)} USDG per NVDA. Fees accrue while the price is inside.`
+      now.style.left = `${50 + 1.5 * Math.sin(t * 1.7)}%`
+      capIn(cap, t, 9.8)
+    }
+  },
+  // 2. Type one side, the other follows.
+  pairamount(s) {
+    const l1 = line(s, 'Type one side.', { top: 470 })
+    const l2 = line(s, 'The other follows.', { top: 470, color: 'var(--lime)' })
+    const panel = add(s, `<div class="panel" style="top:280px;width:860px;margin-left:-430px;padding:30px 36px 32px"><div class="lab">NVDA/USDG 0.05% · ±5% around 230.88</div>
+      <div class="field"><div class="k"><span>NVDA</span><span>Balance 4.2 · Max</span></div><div class="v"><span class="n1">0</span><span>NVDA</span></div></div>
+      <div class="field" style="margin-top:12px"><div class="k"><span>USDG</span><span>Balance 1,250.00 · Max</span></div><div class="v"><span class="n2">0</span><span>USDG</span></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:22px;font-size:20px;color:var(--muted)"><span>Deposit</span><b class="dep" style="color:#fff;font-weight:500">-</b></div>
+      <div class="btn pri" style="width:100%;box-sizing:border-box;justify-content:center;margin-top:20px">Add liquidity</div></div>`)
+    const n1 = panel.querySelector('.n1'), n2 = panel.querySelector('.n2'), dep = panel.querySelector('.dep')
+    const cap = add(s, `<div class="cap" style="top:840px">Computed from the range and the pool price, in your browser. Nothing to look up.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.1); runLine(l2, t, 2.4, 4.2)
+      const c = spring(t - 4.4, 0.9); show(panel, t > 4.3); mat(panel, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      const second = t >= 8.0
+      const a = second ? 2.5 : 1
+      typed(n1, second ? '2.5' : '1', t, second ? 8.0 : 5.2, 8)
+      const q = easeIO(clamp((t - (second ? 8.4 : 5.6)) / 0.9))
+      const other = a * 242.33 * q
+      n2.textContent = t >= (second ? 8.4 : 5.6) ? other.toFixed(2) : second ? '242.33' : '0'
+      dep.textContent = t >= 5.6 ? usd(a * 230.87 * (second ? q : 1) + other, 2) : '-'
+      capIn(cap, t, 9.8)
+    }
+  },
+  // 3. Fees accrue, collect when you like.
+  position(s) {
+    const l1 = line(s, 'Fees accrue.', { top: 470 })
+    const l2 = line(s, 'Collect when you like.', { top: 470, size: 104, color: 'var(--lime)' })
+    const pos = add(s, `<div class="panel pos" style="top:330px;width:960px;margin-left:-480px;padding:30px 36px 32px"><div class="top"><img src="${LOGO.NVDA}" style="width:48px;height:48px;border-radius:50%" alt=""><div><b style="font-size:24px;font-weight:500;display:block">NVDA/USDG <span class="badge" style="margin-left:6px;font-size:15px;padding:4px 9px">0.05%</span><span class="dot"></span><span style="font-size:16px;color:#5EE0A0;font-weight:400">In range</span></b><span style="font-size:16px;color:var(--muted)">219.23 to 242.53 USDG per NVDA · now 230.88</span></div><div class="big2"><b>$473.20</b><span>1.0000 NVDA + 242.33 USDG</span></div></div>
+      <div class="fees">Fees earned, uncollected: <b class="fee">$0.00</b><span class="b first collect">Collect fees</span><span class="b">Remove</span></div></div>`)
+    const fee = pos.querySelector('.fee'), collect = pos.querySelector('.collect')
+    const got = add(s, `<div class="cap" style="top:640px"><span class="pill">${I.check}$1.84 collected · 0.0040 NVDA + 0.92 USDG to your wallet</span></div>`)
+    const cap = add(s, `<div class="cap" style="top:800px">Or remove 25 to 100% of the position, fees included, in one transaction.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      const c = spring(t - 4.4, 0.9); show(pos, t > 4.3); mat(pos, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      const q = easeIO(clamp((t - 5.0) / 2.6))
+      const pressed = t >= 8.2
+      fee.textContent = usd(pressed ? 1.84 * (1 - clamp((t - 8.4) / 0.4)) : 1.84 * q, 2)
+      const pp = spring(t - 8.2, 0.35, 0.6); collect.style.background = pressed ? 'var(--lime)' : ''; collect.style.color = pressed ? '#000' : ''; collect.style.transform = pressed ? `scale(${(1 - 0.06 * (1 - pp)).toFixed(3)})` : ''
+      capIn(got, t, 8.8)
+      capIn(cap, t, 10.0)
+    }
+  },
+  // 4. 130 pools, $36M of liquidity.
+  pools130(s) {
+    const l1 = line(s, '130 pools.', { top: 470 })
+    const l2 = line(s, '$36M of liquidity.', { top: 470, color: 'var(--lime)' })
+    const P = [['NVDA', 'USDG', '0.05%', 5331039, 20942753, 72], ['SPCX', 'USDG', '0.05%', 2155354, 9349432, 79], ['USO', 'USDG', '0.3%', 1988965, 2025349, 111], ['SPY', 'ETH', '0.05%', 1705647, 5054056, 54], ['GOOGL', 'USDG', '0.05%', 884394, 2199966, 45]]
+    const rows = P.map(([tk, q, f, liq, vol, apr], i) => add(s, `<div class="trow" style="top:${300 + i * 96}px"><img class="l" src="${LOGO[tk]}" alt=""><b style="width:290px">${tk}/${q} <span class="tag" style="margin-left:6px">${f}</span></b><span class="nm"><img class="c" src="${CH(4663)}" alt="">Uniswap v3 · Robinhood Chain</span><span class="s">${usd(vol)} 24h</span><span class="s">${usd(liq)}</span><span class="v lime"><span class="apr">0</span>%</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:800px">Every Uniswap v3 stock pool on Robinhood Chain, read from the factory as you look. Fee APR is today's fees, times 365.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      rows.forEach((el, i) => { const p = spring(t - 4.5 - i * 0.26, 0.85); show(el, t > 4.4); mat(el, p, { y: 40 * (1 - p), s: 0.04, blur: 16 }); const q = easeIO(clamp((t - 4.9 - i * 0.26) / 1.0)); el.querySelector('.apr').textContent = Math.round(P[i][5] * q) })
+      capIn(cap, t, 8.6)
+    }
+  },
+  // 5. Hold any VERDEX, pay no Verdex fee.
+  holderfee(s) {
+    const l1 = line(s, 'Hold any VERDEX.', { top: 470 })
+    const l2 = line(s, 'Pay no Verdex fee.', { top: 470, color: 'var(--lime)' })
+    const panel = add(s, `<div class="panel" style="top:300px;width:820px;margin-left:-410px;padding:26px 32px 28px"><div style="display:flex;align-items:center;gap:14px;font-size:22px;font-weight:500"><img src="${USDG}" style="width:34px;height:34px;border-radius:50%" alt="">0.05 ETH → 133.72 USDG · Robinhood Chain<span class="wal2" style="margin-left:auto"><i></i>VERDEX in wallet</span></div>
+      <div style="margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)">
+      <div class="qrow"><span class="k">Route</span><span class="a">Nordstern Finance</span></div>
+      <div class="qrow"><span class="k">Minimum received</span><span class="a">133.05 USDG</span></div>
+      <div class="qrow fee"><span class="k">Verdex fee</span><span class="a"><span class="old">0.25% · $0.34</span><span class="nw" style="position:absolute;right:0;top:0;white-space:nowrap;color:var(--lime);opacity:0"><s>0.25%</s>0 · VERDEX holder</span></span></div>
+      <div class="qrow"><span class="k">Route fees</span><span class="a">$0.34</span></div>
+      <div class="qrow"><span class="k">Network fee</span><span class="a">$0.02</span></div></div></div>`)
+    const wal = panel.querySelector('.wal2'), old = panel.querySelector('.old'), nw = panel.querySelector('.nw'), rows = [...panel.querySelectorAll('.qrow')]
+    const cap = add(s, `<div class="cap" style="top:800px">Checked onchain before each quote. No staking, no lock, no signup. 0.5% of the supply adds early access.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      const c = spring(t - 4.4, 0.9); show(panel, t > 4.3); mat(panel, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      rows.forEach((r, i) => rise(r, t, 4.9 + i * 0.22, { y: 10 }))
+      const w = spring(t - 7.2, 0.7); mat(wal, w, { y: -14 * (1 - w), s: 0.1, blur: 10 })
+      const f = spring(t - 7.7, 0.7); mat(old, 1 - f, { y: 10 * f, s: 0, blur: 10 }); mat(nw, f, { y: -10 * (1 - f), s: 0, blur: 10 })
+      capIn(cap, t, 9.4)
+    }
+  },
+  // 6. Early access at 0.5% of the supply.
+  early(s) {
+    const l1 = line(s, 'Hold 0.5%.', { top: 470 })
+    const l2 = line(s, 'Get in first.', { top: 470, color: 'var(--lime)' })
+    const panel = add(s, `<div class="panel" style="top:310px;width:900px;margin-left:-450px;padding:30px 36px 32px"><div style="display:flex;align-items:center;gap:16px"><span style="width:44px;height:44px;display:inline-flex">${MARK()}</span><div><b style="font-size:24px;font-weight:500;display:block">Your wallet</b><span class="bal" style="font-size:17px;color:var(--muted)">0 VERDEX · 0.000% of the supply</span></div><span class="badge st" style="font-size:17px;padding:8px 14px">Early access at 5.00M VERDEX</span></div>
+      <div class="bar" style="margin-top:26px"><i style="width:0%"></i></div>
+      <div class="txt" style="font-size:19px;color:var(--muted);margin-top:16px"></div></div>`)
+    const bal = panel.querySelector('.bal'), bar = panel.querySelector('.bar i'), txt = panel.querySelector('.txt'), st = panel.querySelector('.st')
+    const cap = add(s, `<div class="cap" style="top:760px">Every new feature opens to holders at the line first, then to everyone. The line follows the live supply, so burns lower it.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      const c = spring(t - 4.4, 0.9); show(panel, t > 4.3); mat(panel, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      const v = t < 7.4 ? 3_200_000 * easeIO(clamp((t - 4.9) / 1.4)) : lerp(3_200_000, 5_400_000, easeIO(clamp((t - 7.4) / 1.4)))
+      bal.textContent = `${Math.round(v).toLocaleString('en-US')} VERDEX · ${((v / 1e9) * 100).toFixed(3)}% of the supply`
+      bar.style.width = `${Math.min(100, (v / 5_000_000) * 100).toFixed(1)}%`
+      const early = v >= 5_000_000
+      txt.textContent = early ? 'Early access. Every new feature opens for this wallet before its public date.' : `${(5_000_000 - v >= 1e6 ? ((5_000_000 - v) / 1e6).toFixed(2) + 'M' : Math.round((5_000_000 - v) / 1e3) + 'k')} more for early access.`
+      st.textContent = early ? 'Early access' : 'Early access at 5.00M VERDEX'; st.classList.toggle('done', early)
+      capIn(cap, t, 9.6)
+    }
+  },
+  // 7. Verdex adds nothing onchain.
+  nothing(s) {
+    const l1 = line(s, 'Verdex adds nothing.', { top: 470, size: 104 })
+    const l2 = line(s, 'Onchain.', { top: 470, color: 'var(--lime)' })
+    const RUN = [['Pools', 'Uniswap v3 factory'], ['Positions', 'Uniswap v3 manager'], ['Verdex contract', 'none'], ['Verdex fee here', 'none'], ['Custody', 'none, you hold the NFT']]
+    const run = add(s, `<div class="run" style="top:290px"><div class="hd">verdex pools · what talks to what</div>${RUN.map(([k]) => `<div class="ln"><span class="ok"></span><span class="k" style="width:420px">${k}</span><span class="v" style="white-space:nowrap"></span></div>`).join('')}</div>`)
+    const lines = [...run.querySelectorAll('.ln')]
+    const cap = add(s, `<div class="cap" style="top:820px">The same contracts the Uniswap app uses. A position opened here shows up there, and the other way round.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.1); runLine(l2, t, 2.4, 4.2)
+      const c = spring(t - 4.4, 0.9); show(run, t > 4.3); mat(run, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      lines.forEach((ln, i) => { const t0 = 4.9 + i * 0.7; rise(ln, t, t0, { y: 8 }); const done = typed(ln.querySelector('.v'), RUN[i][1], t, t0 + 0.2, 44, false); ln.querySelector('.ok').textContent = done ? '✓' : t >= t0 ? '›' : '' })
+      capIn(cap, t, 9.4)
+    }
+  },
+  // 8. A range is a bet.
+  impermanent(s) {
+    const l1 = line(s, 'A range is a bet.', { top: 470 })
+    const l2 = line(s, 'Know the odds.', { top: 470, color: 'var(--lime)' })
+    const W = 1100, H = 320
+    const box = add(s, `<div class="panel" style="top:270px;width:${W + 72}px;margin-left:-${(W + 72) / 2}px;padding:28px 36px 30px"><div class="lab">NVDA/USDG · your range 219.23 to 242.53</div><svg class="pl" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;overflow:visible"><rect x="0" y="${H * 0.28}" width="${W}" height="${H * 0.44}" rx="10" fill="rgba(194,234,138,.10)" stroke="rgba(194,234,138,.45)"/><path class="p" d="" fill="none" stroke="#fff" stroke-width="4"/><circle class="c" r="8" fill="var(--lime)"/></svg>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px"><span class="hold" style="font-size:22px;font-weight:500">Holding 1.00 NVDA + 242 USDG</span><span class="badge done st">Earning fees</span></div></div>`)
+    const path = box.querySelector('.p'), dotc = box.querySelector('.c'), hold = box.querySelector('.hold'), st = box.querySelector('.st')
+    const cap = add(s, `<div class="cap" style="top:840px">If the stock runs past the top you hold only USDG. If it drops below, only NVDA. The fees are the compensation.</div>`)
+    const Y = (u) => { const base = H * 0.5 + Math.sin(u * 9) * H * 0.12 + Math.sin(u * 23) * H * 0.05; return u < 0.62 ? base : base - (u - 0.62) * H * 1.6 }
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      const c = spring(t - 4.4, 0.9); show(box, t > 4.3); mat(box, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      const prog = clamp((t - 4.8) / 4.6)
+      const pts = []; const n = Math.floor(prog * 120)
+      for (let i = 0; i <= n; i++) { const u = i / 120; pts.push(`${i ? 'L' : 'M'}${(u * W).toFixed(1)} ${clamp(Y(u), 8, H - 8).toFixed(1)}`) }
+      path.setAttribute('d', pts.join(' '))
+      const u = n / 120; dotc.setAttribute('cx', (u * W).toFixed(1)); dotc.setAttribute('cy', clamp(Y(u), 8, H - 8).toFixed(1))
+      const out = u > 0.7
+      hold.textContent = out ? 'Holding 0 NVDA + 485 USDG' : 'Holding 1.00 NVDA + 242 USDG'
+      st.textContent = out ? 'Out of range · fees stopped' : 'Earning fees'; st.classList.toggle('done', !out); st.style.color = out ? 'var(--red)' : ''
+      capIn(cap, t, 9.6)
+    }
+  },
+  // 9. Applied to CoinGecko.
+  coingecko(s) {
+    const l1 = line(s, 'Applied to CoinGecko.', { top: 470, size: 104 })
+    const l2 = line(s, 'Under review.', { top: 470, color: 'var(--lime)' })
+    const lock = add(s, `<div class="abs" style="left:0;right:0;top:250px;text-align:center;will-change:opacity,transform,filter"><img src="brand/coingecko-lockup.svg" style="width:760px;height:auto;display:inline-block" alt=""></div>`)
+    const st = add(s, `<div class="abs" style="left:0;right:0;top:470px;text-align:center;will-change:opacity,transform"><span class="status"><i></i>Under review</span><div style="margin-top:18px;font-size:20px;color:var(--muted)">Request ID <span style="font-family:var(--mono);color:var(--soft)">CL3009260043</span></div></div>`)
+    const C = ['Fixed supply of 1,000,000,000, no team allocation', '7,290,319 VERDEX burned', 'Already tracked on GeckoTerminal']
+    const rows = C.map((x, i) => add(s, `<div class="trow" style="top:${640 + i * 80}px;height:66px;width:1000px;margin-left:-500px"><span class="pill" style="padding:0;background:none">${I.check}</span><span style="font-size:22px;font-weight:500">${x}</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:920px">We will post the page the day it goes live.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.1); runLine(l2, t, 2.4, 4.2)
+      const c = spring(t - 4.4, 0.8); show(lock, t > 4.3); mat(lock, c, { y: 30 * (1 - c), s: 0.08, blur: 20 })
+      const p = spring(t - 5.2, 0.7); show(st, t > 5.1); mat(st, p, { y: 14 * (1 - p), s: 0.04 })
+      rows.forEach((el, i) => { const q = spring(t - 6.4 - i * 0.5, 0.75); show(el, t > 6.3 + i * 0.5); mat(el, q, { x: 30 * (1 - q), s: 0.02, blur: 10 }) })
+      capIn(cap, t, 9.6)
+    }
+  },
+  // 10. The burn.
+  dead(s) {
+    const l1 = line(s, '7,290,319 burned.', { top: 470, size: 104 })
+    const l2 = line(s, 'Verifiable.', { top: 470, color: 'var(--lime)' })
+    const big = add(s, `<div class="abs big" style="left:0;right:0;top:250px;text-align:center;will-change:opacity,transform,filter">0</div>`)
+    const addr = add(s, `<div class="addr" style="top:450px"><span class="k">Burn address</span><span class="tx"></span></div>`)
+    const B = [['Sep 30, 18:15', 171823], ['Sep 29, 01:16', 283383], ['Sep 28, 19:45', 793599], ['Sep 28, 17:12', 166091], ['Sep 28, 13:57', 875423]]
+    const rows = B.map(([w, v], i) => add(s, `<div class="trow" style="top:${560 + i * 62}px;height:52px;width:1000px;margin-left:-500px"><span style="font-size:17px;color:var(--faint);width:150px">${w}</span><span class="nm">Sent to the burn address by the creator wallet</span><span class="v">−${v.toLocaleString('en-US')} VERDEX</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:900px">Every burn is a transfer to 0x…dEaD. The list is on useverdex.xyz/verdex with a link to each transaction.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.1); runLine(l2, t, 2.4, 4.2)
+      const c = spring(t - 4.4, 0.9); show(big, t > 4.3); mat(big, c, { y: 30 * (1 - c), s: 0.06, blur: 20 })
+      big.textContent = Math.round(7_290_319 * easeIO(clamp((t - 4.7) / 1.8))).toLocaleString('en-US')
+      rise(addr, t, 5.4); typed(addr.querySelector('.tx'), '0x000000000000000000000000000000000000dEaD', t, 5.7, 40)
+      rows.forEach((el, i) => { const q = spring(t - 7.0 - i * 0.28, 0.8); show(el, t > 6.9 + i * 0.28); mat(el, q, { y: 20 * (1 - q), s: 0.02, blur: 10 }) })
+      capIn(cap, t, 9.8)
+    }
+  },
+}
+add(stage, `<div class="grid"></div>`)
+const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+const scene = add(stage, `<div class="scene"></div>`)
+const draw = CLIPS[clip](scene)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+const fade = add(stage, `<div id="fade"></div>`)
+window.renderAt = async (t) => {
+  glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+  await draw(t)
+  fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

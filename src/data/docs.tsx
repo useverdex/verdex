@@ -162,6 +162,21 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'asset-yield',
+    title: 'Asset Yield',
+    blocks: [
+      { kind: 'p', text: `Asset Yield puts what sits idle in your wallet on Robinhood Chain to work, through public contracts only. A tokenized stock goes into a one-sided Uniswap v3 band just above its price, where it earns the pool fee on every trade that reaches the band and is sold only if the price climbs through it. USDG goes into Spark Savings USDG, an ERC-4626 vault that accrues the Spark rate every second. ${N} adds no contract and takes no fee on either.` },
+      { kind: 'defs', items: [
+        { term: 'What is idle', text: 'When you connect, the page reads the balance of every tokenized stock the site lists on Robinhood Chain and your USDG, and for each stock picks the pool it would work in: a USDG pool with at least $1,000 of liquidity and the highest fee APR, or failing that the deepest pool of any quote.' },
+        { term: 'The band', text: 'Presets of +2%, +5% and +10% above the current price, aligned to the pool’s tick spacing. The position holds only the stock, so nothing else is deposited and the shares stay yours while the price is below the band. Inside the band they earn the pool fee; through the top they have been sold at about the geometric mean of the two edges, which the page shows before you sign.' },
+        { term: 'Stocks: the transaction', text: 'One approval of the stock token the first time, then one call to the Uniswap v3 position manager. The position is an NFT in your wallet and also appears on the Verdex Pools page and in the Uniswap app. Stop closes it and returns whatever it holds, stock or quote, plus the fees.' },
+        { term: 'Cash: Spark Savings USDG', text: 'Deposit sends USDG to the vault and you receive spUSDG, whose value in USDG grows at the per-second rate the vault reports. The page compounds that rate over a year to show the APY. Withdraw redeems a share of your spUSDG back to USDG in the same wallet, with no lock and no exit fee. The vault has a deposit cap set by Spark.' },
+        { term: 'Working now', text: 'Every position your address holds in these pools, labelled Earning when the price is inside its band, Waiting when it holds only the stock below the band, and Sold when the price has gone through and it holds the quote. Your Spark balance is listed with them.' },
+        { term: 'Risks', text: 'A band is a sale you agreed to: if the stock rises through it you no longer hold the stock. Fee APR is today’s figure at today’s volume. The Spark vault is a contract run and audited by Spark; its rate moves when Spark moves it, and a deposit is exposed to that contract. There is no insurance on any of it.' },
+      ] },
+    ],
+  },
+  {
     id: 'lend-and-borrow',
     title: 'Lend and Borrow',
     blocks: [

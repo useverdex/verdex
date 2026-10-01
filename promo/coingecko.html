@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CoinGecko application film</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Stats strip */
+.stats { position: absolute; left: 50%; top: 330px; width: 1400px; margin-left: -700px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.stats > div { padding: 30px 34px; border-left: 1px solid rgba(255,255,255,.08); }
+.stats > div:first-child { border-left: none; }
+.stats .l { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.stats .v { font-family: 'LT Remark', serif; font-size: 58px; letter-spacing: -0.02em; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; }
+/* Panels */
+.panel { position: absolute; width: 900px; box-sizing: border-box; padding: 30px 36px 32px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.panel .hd { display: flex; align-items: center; gap: 16px; }
+.panel .hd .ic { width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.panel .hd .ic svg { width: 24px; height: 24px; }
+.panel .hd b { font-size: 24px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.panel .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.panel .big { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 26px; }
+.panel .big b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 60px; letter-spacing: -0.02em; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+.panel .big b.lime { color: var(--lime); }
+.panel .big span { font-size: 16px; color: var(--muted); display: block; margin-top: 8px; }
+.panel .rows { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
+.panel .lab { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 8px; }
+.row { display: flex; align-items: center; gap: 16px; height: 46px; padding: 0 12px; border-radius: 10px; font-size: 18px; will-change: opacity, transform; }
+.row .w { color: var(--faint); width: 150px; flex-shrink: 0; font-size: 16px; }
+.row .t { flex: 1; color: var(--soft); }
+.row .a { font-weight: 500; font-variant-numeric: tabular-nums; }
+.row .a.lime { color: var(--lime); }
+.row .a.red { color: var(--red); }
+/* Bounty tiles */
+.tile { position: absolute; width: 400px; height: 230px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.tile .e { font-family: 'LT Remark', serif; font-size: 52px; letter-spacing: -0.02em; line-height: 1; color: var(--lime); }
+.tile .e.dim { color: var(--muted); font-size: 40px; }
+.tile b { display: block; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.tile span { display: block; font-size: 16px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+.status { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 999px; background: rgba(255,232,102,.12); color: #FFE866; font-size: 26px; font-weight: 500; }
+.status i { width: 12px; height: 12px; border-radius: 50%; background: #FFE866; }
+.check { display: flex; align-items: center; gap: 22px; height: 78px; padding: 0 28px; border-radius: 16px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); font-size: 26px; font-weight: 500; letter-spacing: -0.01em; will-change: opacity, transform; }
+.check .tick { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(194,234,138,.14); color: var(--lime); flex-shrink: 0; }
+.check .tick svg { width: 20px; height: 20px; }
+.check span.m { margin-left: auto; font-size: 20px; color: var(--muted); font-weight: 400; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// CoinGecko application film: the name, the CoinGecko logo with the application status, what the application says checked off, the supply figures, the end card. The CoinGecko logo is the official lockup from their brand kit, unmodified. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 26
+const NUM = { total: 992709680, burned: 7290319, holders: 409 }
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const rise = (el, t, t0, { y = 12, r = 0.6 } = {}) => { const p = spring(t - t0, r); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const M = (v) => `${(v / 1e6).toFixed(2)}M`
+const I = {
+  receipt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-2.5-1.5L14 21l-2-1.5L10 21l-2.5-1.5L5 21V3z"/><path d="M9 8h6M9 12h6"/></svg>',
+  wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h.01M3 10h18"/></svg>',
+}
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+  const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+
+  // 1. The name. (0-4.6)
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:130px;height:130px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:220px">$VERDEX</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:760px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Listing applications, one by one.')
+
+  // 2. CoinGecko. (4.2-10.6)
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const lock = add(s2, `<div class="abs" style="left:0;right:0;top:300px;display:flex;justify-content:center"><img src="brand/coingecko-lockup.svg" style="width:900px;height:auto;display:block"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:560px"><h1 class="serif" style="font-size:84px">Listing application submitted.</h1></div>`)
+  const st2 = add(s2, `<div class="abs" style="left:0;right:0;top:720px;text-align:center"><span class="status"><i></i>Under review</span><div style="margin-top:26px;font-size:24px;color:var(--muted);letter-spacing:.02em">Request ID <span style="font-family:var(--mono);color:var(--soft)">CL3009260043</span></div></div>`)
+
+  // 3. What the application says. (10.2-18.6)
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:90px"><h1 class="serif">Every line checks out on the chain.</h1><p>What we sent CoinGecko, and where anyone can verify it.</p></div>`)
+  const C = [['Fixed supply of 1,000,000,000', 'one mint, no mint function'], ['No team allocation', '100% sold on the bonding curve'], ['7,290,319 VERDEX burned', 'sent to 0x…dEaD'], ['Already tracked on GeckoTerminal', 'Robinhood network'], ['Open-source code and a published audit', 'github.com/useverdex/verdex'], ['A live onchain token page', 'useverdex.xyz/verdex']]
+  const checks = C.map(([a, m], i) => add(s3, `<div class="check abs" style="left:360px;width:1200px;box-sizing:border-box;top:${300 + i * 96}px"><span class="tick">${TICK}</span>${a}<span class="m">${m}</span></div>`))
+
+  // 4. Supply. (18.2-22.6)
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:130px"><h1 class="serif">The numbers we filed.</h1><p>Read from the token contract on Robinhood Chain.</p></div>`)
+  const stats = add(s4, `<div class="stats" style="top:360px">${[['Total supply', 'a'], ['Circulating', 'b'], ['Burned', 'c'], ['Holders', 'd']].map(([l, k]) => `<div><div class="l">${l}</div><div class="v ${k}">…</div></div>`).join('')}</div>`)
+  const sv = { a: stats.querySelector('.a'), b: stats.querySelector('.b'), c: stats.querySelector('.c'), d: stats.querySelector('.d') }
+  const cap4 = add(s4, `<div class="cap" style="top:660px">No vesting, no locked team wallets. Circulating equals total.</div>`)
+
+  // 5. End card. (22.2-26)
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s5, `<div class="abs" style="left:0;right:0;top:290px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s5, `<div class="abs" style="left:0;right:0;top:600px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Applied to CoinGecko. Under review.</div>`)
+  const endUrl = add(s5, `<div class="abs" style="left:0;right:0;top:700px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+  const endCa = add(s5, `<div class="abs" style="left:0;right:0;top:810px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    show(s1, t < 4.8)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 4.0, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 1.3, 0.9), { stagger: 0.03, out: clamp(spring(t - 3.9, 0.4)) })
+
+    show(s2, t >= 4.2 && t < 11)
+    const o2 = clamp(spring(t - 10.2, 0.5))
+    const l2 = spring(t - 4.5, 0.8)
+    mat(lock, l2 * (1 - o2), { y: 30 * (1 - l2), s: 0.08, blur: 20 })
+    const h2in = spring(t - 5.6, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 20 * (1 - h2in), s: 0.02 })
+    const s2p = spring(t - 6.6, 0.7)
+    mat(st2, s2p * (1 - o2), { y: 14 * (1 - s2p), s: 0.06 })
+
+    show(s3, t >= 10.2 && t < 19)
+    const o3 = clamp(spring(t - 18.2, 0.5))
+    const h3in = spring(t - 10.4, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    checks.forEach((el, i) => { const p = spring(t - 11.1 - i * 0.55, 0.7); mat(el, p * (1 - o3), { x: 30 * (1 - p), y: 10 * o3, s: 0.02, blur: 10 }); el.querySelector('.tick').style.opacity = clamp(spring(t - 11.4 - i * 0.55, 0.5)) })
+
+    show(s4, t >= 18.2 && t < 23)
+    const o4 = clamp(spring(t - 22.2, 0.5))
+    const h4in = spring(t - 18.4, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    const sp = spring(t - 18.7, 0.85)
+    mat(stats, sp * (1 - o4), { y: 40 * (1 - sp) + 20 * o4, s: 0.05, blur: 18 })
+    const q = (d) => easeIO(clamp((t - d) / 1.4))
+    sv.a.textContent = t >= 19.1 ? Math.round(NUM.total * q(19.1)).toLocaleString('en-US') : '…'
+    sv.b.textContent = t >= 19.3 ? Math.round(NUM.total * q(19.3)).toLocaleString('en-US') : '…'
+    sv.c.textContent = t >= 19.5 ? Math.round(NUM.burned * q(19.5)).toLocaleString('en-US') : '…'
+    sv.d.textContent = t >= 19.7 ? Math.round(NUM.holders * q(19.7)).toLocaleString('en-US') : '…'
+    const c4 = spring(t - 20.6, 0.9)
+    mat(cap4, c4 * (1 - o4), { y: 16 * (1 - c4), s: 0.02 })
+
+    show(s5, t >= 22.2)
+    const e1p = spring(t - 22.4, 0.7), e2p = spring(t - 22.75, 0.7), e3p = spring(t - 23.0, 0.7), e4p = spring(t - 23.2, 0.7)
+    mat(endLogo, e1p, { y: 30 * (1 - e1p), s: 0.06, blur: 20 })
+    mat(endTag, e2p, { y: 20 * (1 - e2p), s: 0.02 })
+    mat(endUrl, e3p, { y: 20 * (1 - e3p), s: 0.02 })
+    mat(endCa, e4p, { y: 20 * (1 - e4p), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? im.decode().catch(() => {}) : new Promise((r) => { im.onload = r; im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

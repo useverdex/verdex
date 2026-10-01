@@ -62,7 +62,7 @@ export type Pool = {
 }
 export type StockToken = { address: Address; symbol: string; decimals: number; ticker: string; name: string; logo?: string }
 
-const client = () => publicClientFor({ id: ROBINHOOD, key: 'robinhood', name: 'Robinhood Chain', chainType: 'EVM', logoURI: '', mainnet: true, metamask: { rpcUrls: [RPC] } })
+export const client = () => publicClientFor({ id: ROBINHOOD, key: 'robinhood', name: 'Robinhood Chain', chainType: 'EVM', logoURI: '', mainnet: true, metamask: { rpcUrls: [RPC] } })
 const lc = (a: string) => a.toLowerCase()
 const sortTokens = (a: PoolToken, b: PoolToken): [PoolToken, PoolToken] => (lc(a.address) < lc(b.address) ? [a, b] : [b, a])
 
@@ -251,33 +251,34 @@ const deadline = () => BigInt(Math.floor(Date.now() / 1000) + 20 * 60)
 const isWeth = (t: PoolToken) => lc(t.address) === lc(WETH.address)
 const chainX = (ctx: TxCtx): ChainX => ctx.chain ?? ({ id: ROBINHOOD, key: 'robinhood', name: 'Robinhood Chain', chainType: 'EVM', logoURI: '', mainnet: true, metamask: { rpcUrls: [RPC] } } as ChainX)
 
-async function ready(ctx: TxCtx) {
+export async function ensureChain(ctx: TxCtx) {
   if (ctx.account.chainId !== ROBINHOOD) {
     ctx.onPhase('switching')
     await ctx.switchChain(ROBINHOOD, chainMeta(chainX(ctx)))
   }
 }
-async function approveIfNeeded(ctx: TxCtx, token: Address, amount: bigint) {
+export async function approveIfNeeded(ctx: TxCtx, token: Address, amount: bigint, spender: Address = POSITION_MANAGER) {
   const c = client()
-  const allowance = await c.readContract({ address: token, abi: erc20Abi, functionName: 'allowance', args: [ctx.account.address, POSITION_MANAGER] })
+  const allowance = await c.readContract({ address: token, abi: erc20Abi, functionName: 'allowance', args: [ctx.account.address, spender] })
   if (allowance >= amount) return
   ctx.onPhase('approving')
-  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: token, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [POSITION_MANAGER, maxUint256] }) })
+  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: token, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [spender, maxUint256] }) })
   await waitForTx(chainX(ctx), hash)
 }
-async function send(ctx: TxCtx, data: `0x${string}`, value?: bigint) {
+export async function sendTx(ctx: TxCtx, to: Address, data: `0x${string}`, value?: bigint) {
   ctx.onPhase('confirming')
-  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: POSITION_MANAGER, data, value })
+  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to, data, value })
   ctx.onPhase('pending')
   await waitForTx(chainX(ctx), hash)
   ctx.onPhase('done')
   return hash
 }
+const send = (ctx: TxCtx, data: `0x${string}`, value?: bigint) => sendTx(ctx, POSITION_MANAGER, data, value)
 
 // Adds a new position. The WETH side is paid in ETH from the wallet and any unused ETH is refunded
 // in the same transaction.
 export async function addLiquidity(ctx: TxCtx, pool: Pool, lower: number, upper: number, amount0: bigint, amount1: bigint) {
-  await ready(ctx)
+  await ensureChain(ctx)
   const sp = sqrtRaw(pool.sqrtPriceX96)
   const L = liquidityFor(sp, lower, upper, Number(amount0), Number(amount1))
   const exp = amountsFor(sp, lower, upper, L)
@@ -294,7 +295,7 @@ export async function addLiquidity(ctx: TxCtx, pool: Pool, lower: number, upper:
 // Removes part or all of a position and collects everything owed, WETH unwrapped to ETH. Removing
 // all of it also burns the empty position.
 export async function removeLiquidity(ctx: TxCtx, p: Position, pct: number) {
-  await ready(ctx)
+  await ensureChain(ctx)
   const share = Math.min(100, Math.max(0, pct))
   const liquidity = share >= 100 ? p.liquidity : (p.liquidity * BigInt(Math.round(share * 100))) / 10_000n
   const exp = amountsFor(sqrtRaw(p.pool.sqrtPriceX96), p.lower, p.upper, Number(liquidity))
@@ -305,7 +306,7 @@ export async function removeLiquidity(ctx: TxCtx, p: Position, pct: number) {
   return send(ctx, encodeFunctionData({ abi: positionManagerAbi, functionName: 'multicall', args: [calls] }))
 }
 export async function collectFees(ctx: TxCtx, p: Position) {
-  await ready(ctx)
+  await ensureChain(ctx)
   return send(ctx, encodeFunctionData({ abi: positionManagerAbi, functionName: 'multicall', args: [collectCalls(ctx, p)] }))
 }
 function collectCalls(ctx: TxCtx, p: Position): `0x${string}`[] {

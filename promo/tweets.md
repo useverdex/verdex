@@ -293,6 +293,195 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Asset Yield (`verdex-yield.mp4`, 34 s, post with the video; hype still `photos/hype-yield.png`)
+
+Everything in these is true on the page today: the Spark rate is read from the vault, the pool figures from the chain and DexScreener. Never promise a yield; the band only earns while the price is inside it, and the stock is sold if the price climbs through the top. Spark and Uniswap are named as what they are, public contracts, not partners.
+
+### Hype, 3 hours before (image: `photos/hype-yield.png`)
+
+> Something big. In 3 hours.
+>
+> The next thing on the roadmap. Not a listing, not a polish pass. A new way to earn on Verdex, and it works on what is already sitting in your wallet.
+>
+> useverdex.xyz
+
+> 3 hours.
+>
+> Idle is over.
+
+### Announcement
+
+> Asset Yield is live.
+>
+> Idle stocks earn while you hold them. Your NVDA goes into a band just above the price: below it the shares stay yours, inside it they earn the pool fee on every trade, through the top they are sold at a price you saw before signing. Cash goes to Spark Savings at 3.50%.
+>
+> Public contracts only. No Verdex contract, no Verdex fee.
+>
+> useverdex.xyz/yield
+
+> The third "Soon" in the Earn menu is gone.
+>
+> Asset Yield: connect, see every tokenized stock and the USDG sitting in your wallet, and put each one to work in one transaction. Stop or withdraw from the same page.
+>
+> useverdex.xyz/yield
+
+### Thread under the announcement
+
+> 1/ Stocks. Pick +2%, +5% or +10%. Your shares go into a one-sided Uniswap v3 position that holds only the stock and sits just above the price. Nothing happens to them until the price rises into the band; inside it they earn 0.05% of every trade on NVDA, and 69% fee APR at today's volume.
+
+> 2/ Through the top of the band your shares have been sold, at the average the page shows first (the geometric mean of the two edges). That is the deal: fees on the way up, a sale at the price you chose. If you would keep the shares at any price, keep them in the wallet.
+
+> 3/ Cash. USDG goes into Spark Savings USDG, an ERC-4626 vault. You hold spUSDG, worth more USDG every second at the rate the vault reports, 3.50% APY today. Withdraw any share of it whenever you like. No lock, no exit fee.
+
+> 4/ Where the numbers come from: the savings rate from the vault's own per-second rate, compounded. Pool price and tick from the pool, liquidity and volume from DexScreener. Fee APR is one day of fees times 365 over the liquidity: today, not a promise.
+
+> 5/ Non-custodial, like everything else here. The position manager is Uniswap's, the vault is Spark's, both show up in those apps too. Verdex adds no contract and takes no fee. Open-source, published audit, same as always.
+
+### Spanish
+
+> Asset Yield ya está en Verdex.
+>
+> Tus acciones paradas rentan mientras las tienes. NVDA entra en una banda justo por encima del precio: debajo siguen siendo tuyas, dentro cobran la fee del pool en cada trade, y si el precio la atraviesa se venden al precio que viste antes de firmar. El cash va a Spark Savings al 3,50%.
+>
+> Solo contratos públicos. Sin contrato de Verdex, sin fee de Verdex.
+>
+> useverdex.xyz/yield
+
+## CoinMarketCap application (`verdex-coinmarketcap.mp4`, 26 s; photo `photos/coinmarketcap-applied.png`)
+
+Ticket 1461869, in the standard queue. Every line says applied, never listed, and nothing implies a partnership. The logo is the white lockup served by coinmarketcap.com, unmodified. Do not tag the CoinMarketCap account: they ask for that themselves, because scammers watch those mentions.
+
+### With the video
+
+> $VERDEX has applied for listing on CoinMarketCap. Ticket 1461869.
+>
+> Two trackers in two days. Same filing both times: 1B fixed supply, no team allocation, 7.29M burned, already on CMC DexScan, open-source code and a published audit.
+>
+> In the queue. We will post when it moves.
+
+### With the photo
+
+> Listing application submitted to CoinMarketCap.
+>
+> Ticket 1461869. Status: in the queue.
+>
+> useverdex.xyz
+
+### Reply under either
+
+> VERDEX already shows on CMC DexScan, so the chart is live today; the application is for the coin page itself. No action needed on your side.
+
+### Spanish
+
+> $VERDEX ha solicitado el listing en CoinMarketCap. Ticket 1461869.
+>
+> Dos trackers en dos días, con el mismo expediente: supply fijo de 1B, sin asignación al equipo, 7,29M quemados, ya en CMC DexScan, código abierto y audit publicado.
+>
+> En cola. Avisaremos cuando avance.
+
+## Seventh batch, each with its clip (`clip-range.mp4`, `clip-pairamount.mp4`, `clip-position.mp4`, `clip-pools130.mp4`, `clip-holderfee.mp4`, `clip-early.mp4`, `clip-nothing.mp4`, `clip-impermanent.mp4`, `clip-coingecko.mp4`, `clip-dead.mp4`, 12 s each)
+
+Verdex Pools, the holder perks, the CoinGecko application and the burn. The CoinGecko clip says applied and under review, not listed.
+
+**1. `clip-range.mp4`**
+> Set a range. Earn inside it.
+>
+> ±2%, ±5%, ±10%, ±25%, full, or your own bounds. Tighter earns a larger share of the pool's fees while the price is inside, and leaves the range sooner. Full range always earns, but less.
+>
+> useverdex.xyz/pools
+
+**2. `clip-pairamount.mp4`**
+> Type one side. The other follows.
+>
+> Enter 1 NVDA and the USDG side is computed from your range and the pool price, in your browser. Change the range, it recomputes. Nothing to look up, nothing to guess.
+>
+> useverdex.xyz/pools
+
+**3. `clip-position.mp4`**
+> Fees accrue in both tokens while the price sits in your range.
+>
+> Collect them when you like. Or remove 25 to 100% of the position, fees included, in one transaction. ETH comes back as ETH.
+>
+> useverdex.xyz/pools
+
+**4. `clip-pools130.mp4`**
+> 130 pools. $36M of liquidity. $68M traded in a day.
+>
+> Every Uniswap v3 pool of a tokenized stock on Robinhood Chain, found in the factory as you look, with price, liquidity, volume and fee APR read live.
+>
+> useverdex.xyz/pools
+
+**5. `clip-holderfee.mp4`**
+> Hold any VERDEX. Pay no Verdex fee.
+>
+> Before each quote the app reads your balance from the token contract. Above zero, the 0.25% line goes to 0, struck through so you see it. No staking, no lock, no signup.
+>
+> useverdex.xyz/verdex
+
+**6. `clip-early.mp4`**
+> Hold 0.5% of the supply. Get every new feature first.
+>
+> The line is computed from the live total supply, so burns lower it. Your distance to it is on the token page, with a Buy button next to it.
+>
+> useverdex.xyz/verdex
+
+**7. `clip-nothing.mp4`**
+> Verdex Pools adds nothing onchain.
+>
+> No contract, no fee, no custody. The page talks to the Uniswap v3 factory and position manager on Robinhood Chain, the same ones the Uniswap app uses. A position opened here shows up there.
+>
+> useverdex.xyz/pools
+
+**8. `clip-impermanent.mp4`**
+> A range is a bet the price stays inside it.
+>
+> If the stock runs past the top you end up holding only USDG. If it drops below, only the stock. Fees are the compensation for taking the other side of every trade, not a guarantee.
+
+**9. `clip-coingecko.mp4`**
+> $VERDEX has applied to CoinGecko. Request CL3009260043, under review.
+>
+> Fixed supply of 1B, no team allocation, 7.29M burned, already tracked on GeckoTerminal. All of it checkable onchain. We will post the page the day it goes live.
+
+**10. `clip-dead.mp4`**
+> 7,290,319 VERDEX burned.
+>
+> Every one a transfer from the creator wallet to 0x…dEaD, listed on the token page with a link to the transaction. Not a promise. A ledger.
+>
+> useverdex.xyz/verdex
+
+## CoinGecko application (`verdex-coingecko.mp4`, 26 s; photo `photos/coingecko-applied.png`)
+
+The application is pending. Every line says applied or under review, never listed. The CoinGecko logo is their official lockup, unmodified; CoinGecko asks third parties not to imply partnership or endorsement, so no "×" and no "partner".
+
+### With the video
+
+> $VERDEX has applied for listing on CoinGecko.
+>
+> What we filed, all verifiable onchain: 1B fixed supply, no team allocation, 7.29M burned, already tracked on GeckoTerminal, open-source code and a published audit.
+>
+> Request CL3009260043, under review. We will post when it moves.
+
+### With the photo
+
+> Listing application submitted to CoinGecko.
+>
+> Request ID: CL3009260043
+> Status: under review.
+>
+> useverdex.xyz
+
+### Reply under either
+
+> Why it matters: a CoinGecko page puts VERDEX in front of every tracker, wallet and portfolio app that reads their data. Nothing to do on your side. We will share the page the day it goes live.
+
+### Spanish
+
+> $VERDEX ha solicitado el listing en CoinGecko.
+>
+> Lo que hemos enviado se puede comprobar onchain: supply fijo de 1B, sin asignación al equipo, 7,29M quemados, ya en GeckoTerminal, código abierto y audit publicado.
+>
+> Solicitud CL3009260043, en revisión. Avisaremos cuando avance.
+
 ## Verdex Pools (`verdex-pools.mp4`, 34 s, post with the video)
 
 ### Announcement
@@ -310,6 +499,32 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 > Verdex Pools reads every stock pool on Robinhood Chain and lets you be the liquidity, from Verdex, signed in your wallet. Your positions and their fees on the same page.
 >
 > useverdex.xyz/pools
+
+### Hype, more of it (image: `photos/hype-pools-30.png`)
+
+> Something big drops in 30 minutes.
+>
+> The biggest thing we have shipped since launch. Every tokenized stock on Robinhood Chain, and a way to earn from all of them that did not exist on Verdex until tonight.
+>
+> Set an alarm. useverdex.xyz
+
+> 30 minutes.
+>
+> New. Big. Onchain. Every tokenized stock, and a way to earn from every trade of every one of them.
+>
+> Nothing like it on Verdex before tonight.
+
+### Hype, 30 minutes before the announcement (image: `photos/hype-pools.png`)
+
+> Tokenized stocks trade around the clock on Robinhood Chain. Someone earns the fee on every one of those trades.
+>
+> In 30 minutes, it can be you.
+>
+> useverdex.xyz
+
+> Be the liquidity.
+>
+> Tonight on Verdex.
 
 ### Thread under the announcement
 

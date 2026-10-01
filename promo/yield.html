@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex Asset Yield film</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Stats strip */
+.stats { position: absolute; left: 50%; top: 330px; width: 1400px; margin-left: -700px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.stats > div { padding: 30px 34px; border-left: 1px solid rgba(255,255,255,.08); }
+.stats > div:first-child { border-left: none; }
+.stats .l { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.stats .v { font-family: 'LT Remark', serif; font-size: 58px; letter-spacing: -0.02em; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; }
+/* Panels */
+.panel { position: absolute; width: 900px; box-sizing: border-box; padding: 30px 36px 32px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.panel .hd { display: flex; align-items: center; gap: 16px; }
+.panel .hd .ic { width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.panel .hd .ic svg { width: 24px; height: 24px; }
+.panel .hd b { font-size: 24px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.panel .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.panel .big { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 26px; }
+.panel .big b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 60px; letter-spacing: -0.02em; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+.panel .big b.lime { color: var(--lime); }
+.panel .big span { font-size: 16px; color: var(--muted); display: block; margin-top: 8px; }
+.panel .rows { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
+.panel .lab { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 8px; }
+.row { display: flex; align-items: center; gap: 16px; height: 46px; padding: 0 12px; border-radius: 10px; font-size: 18px; will-change: opacity, transform; }
+.row .w { color: var(--faint); width: 150px; flex-shrink: 0; font-size: 16px; }
+.row .t { flex: 1; color: var(--soft); }
+.row .a { font-weight: 500; font-variant-numeric: tabular-nums; }
+.row .a.lime { color: var(--lime); }
+.row .a.red { color: var(--red); }
+/* Bounty tiles */
+.tile { position: absolute; width: 400px; height: 230px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.tile .e { font-family: 'LT Remark', serif; font-size: 52px; letter-spacing: -0.02em; line-height: 1; color: var(--lime); }
+.tile .e.dim { color: var(--muted); font-size: 40px; }
+.tile b { display: block; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.tile span { display: block; font-size: 16px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { padding: 9px 16px; border-radius: 12px; background: var(--chip); font-size: 18px; font-weight: 500; }
+.chip.on { background: #fff; color: #000; }
+.field { padding: 18px 20px; border-radius: 16px; background: #161616; margin-top: 12px; }
+.field .k { display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+.field .v { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 34px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.field .v span { font-size: 16px; color: var(--muted); font-weight: 500; }
+.btn { margin-top: 22px; height: 56px; border-radius: 16px; background: #fff; color: #000; font-size: 20px; font-weight: 500; display: grid; place-items: center; }
+.btn.ghost { background: rgba(255,255,255,.08); color: #fff; }
+.sum { margin-top: 18px; padding: 16px 18px; border-radius: 16px; background: #161616; display: grid; gap: 8px; font-size: 16px; }
+.sum div { display: flex; justify-content: space-between; color: var(--muted); }
+.sum div b { color: #fff; font-weight: 500; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #5EE0A0; margin: 0 6px 2px 14px; }
+.pos .top { display: flex; align-items: center; gap: 16px; }
+.pos .top .big2 { margin-left: auto; text-align: right; }
+.pos .top .big2 b { font-size: 34px; font-weight: 500; display: block; font-variant-numeric: tabular-nums; }
+.pos .top .big2 span { font-size: 15px; color: var(--muted); }
+.pos .fees { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; font-size: 17px; color: var(--muted); }
+.pos .fees b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pos .fees .b { margin-left: auto; padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,.08); color: #fff; font-weight: 500; }
+.pos .fees .b + .b { margin-left: 0; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Asset Yield film: the name, the live stats strip, what is idle in a wallet, the stock composer with a band and an amount, the work in progress, the end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 34
+const NUM = { rate: 3.5, spark: 14066967, pools: 92, apr: 69 }
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const rise = (el, t, t0, { y = 12, r = 0.6 } = {}) => { const p = spring(t - t0, r); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+  const TOK = (sym, color) => `<span style="display:inline-grid;place-items:center;width:50px;height:50px;border-radius:14px;background:rgba(255,255,255,.06);font-size:13px;font-weight:600;color:${color}">${sym}</span>`
+  const CASH = `<span style="display:inline-grid;place-items:center;width:50px;height:50px;border-radius:14px;background:rgba(255,255,255,.06);color:var(--lime)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/></svg></span>`
+  const DOT = (c) => `<span class="dot" style="background:${c}"></span>`
+
+  // 1. The name. (0-5.6)
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:120px;height:120px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:200px">Asset Yield</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:750px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Idle stocks earn while you hold them.')
+
+  // 2. Stats. (5.2-12.2)
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:120px"><h1 class="serif">Two places to earn. Both public.</h1><p>Spark Savings for cash. The Uniswap v3 pools of tokenized stocks for the stocks. Read from the chain as you look.</p></div>`)
+  const stats = add(s2, `<div class="stats">${[['Savings rate', 'r'], ['In Spark Savings', 'm'], ['Stock pools', 'p'], ['NVDA pool fee APR', 'a']].map(([l, k]) => `<div><div class="l">${l}</div><div class="v ${k}">…</div></div>`).join('')}</div>`)
+  const sv = { r: stats.querySelector('.r'), m: stats.querySelector('.m'), p: stats.querySelector('.p'), a: stats.querySelector('.a') }
+  const cap2 = add(s2, `<div class="cap" style="top:640px">No Verdex contract. No Verdex fee. Nothing leaves your wallet but the transaction you sign.</div>`)
+
+  // 3. What is idle. (11.8-18.8)
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:100px"><h1 class="serif">Connect. See what is idle.</h1><p>Every tokenized stock and the USDG your address holds, with where each one can earn and the rate there today.</p></div>`)
+  const T = [[CASH, 'USDG', '1,250.00 in your wallet · Spark Savings', '$1,250.00', '3.50% APY', 'Earn'], [TOK('NVDA', '#76B900'), 'NVDA', '4.2 NVDA · 0.05% USDG pool', '$965.58', '69% fee APR', 'Put to work'], [TOK('GOOGL', '#4285F4'), 'GOOGL', '3 GOOGL · 0.05% USDG pool', '$1,022.34', '138% fee APR', 'Put to work'], [TOK('AAPL', '#fff'), 'AAPL', '10 AAPL · 0.05% USDG pool', '$3,341.40', '66% fee APR', 'Put to work'], [TOK('SPCX', '#fff'), 'SPCX', '6 SPCX · 0.05% USDG pool', '$906.84', '65% fee APR', 'Put to work']]
+  const table = add(s3, `<div class="panel" style="left:50%;top:300px;margin-left:-500px;width:1000px;padding-top:22px"><div class="row" style="height:34px;color:var(--faint);font-size:14px;letter-spacing:.06em;text-transform:uppercase"><span style="flex:1">Asset</span><span style="width:170px;text-align:right">Value</span><span style="width:190px;text-align:right">Earns</span><span style="width:130px"></span></div>${T.map(([ic, n, sub, v, e, b]) => `<div class="row" style="height:74px;gap:18px"><span style="display:flex;align-items:center;gap:16px;flex:1">${ic}<span><b style="font-size:20px;font-weight:500;display:block">${n}</b><span style="font-size:14px;color:var(--muted)">${sub}</span></span></span><span class="a" style="width:170px;text-align:right;font-size:20px">${v}</span><span class="a lime" style="width:190px;text-align:right;font-size:20px">${e}</span><span style="width:130px;text-align:right"><span class="tag">${b}</span></span></div>`).join('')}</div>`)
+  const tRows = [...table.querySelectorAll('.row')].slice(1)
+
+  // 4. The band. (18.4-26.2)
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:80px"><h1 class="serif">A band above the price.</h1><p>Your shares wait below it and stay yours. Inside it they earn the pool fee on every trade. Through the top, they have been sold at a price you saw first.</p></div>`)
+  const comp = add(s4, `<div class="panel" style="left:50%;top:300px;margin-left:-400px;width:800px"><div class="hd">${TOK('NVDA', '#76B900')}<div><b>Put NVDA to work <span class="tag" style="font-size:15px">0.05% pool</span></b><span>NVIDIA · $229.90 now · USDG pool</span></div></div>
+    <div class="lab" style="margin-top:24px">Sell band above the price</div><div class="chips"><span class="chip">+2%</span><span class="chip on">+5%</span><span class="chip">+10%</span></div>
+    <div style="font-size:16px;color:var(--muted);margin-top:14px;line-height:1.45">From 230.01 to 241.56 USDG per NVDA. Below the band your shares wait and stay yours. Inside it they earn 0.05% of every trade. Through the top, sold at about 235.72 each.</div>
+    <div class="lab" style="margin-top:22px">Amount</div>
+    <div class="field" style="margin-top:0"><div class="k"><span>NVDA</span><span>Balance 4.2 · Max</span></div><div class="v"><span class="n1" style="font-size:34px;color:#fff;font-weight:500">0</span><span>NVDA</span></div></div>
+    <div class="sum"><div>Deposit <b class="dep">-</b></div><div>Band <b>230.01 to 241.56 USDG</b></div><div>Fee APR now <b>69% while inside the band</b></div><div>If sold through <b class="sold">-</b></div></div>
+    <div class="btn">Put NVDA to work</div></div>`)
+  const n1 = comp.querySelector('.n1'), dep = comp.querySelector('.dep'), sold = comp.querySelector('.sold'), btn = comp.querySelector('.btn')
+
+  // 5. Working now. (25.8-30.8)
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:90px"><h1 class="serif">Working now.</h1><p>What each position is doing, in plain words. Collect, stop or withdraw from the same page.</p></div>`)
+  const pos = add(s5, `<div class="panel pos" style="left:50%;top:330px;margin-left:-450px"><div class="top">${TOK('NVDA', '#76B900')}<div><b style="font-size:22px;font-weight:500;display:block">NVDA <span class="tag" style="font-size:14px">0.05% pool</span><span class="st"></span></b><span style="font-size:15px;color:var(--muted)">Band 230.01 to 241.56 USDG · now <span class="now">229.90</span></span></div><div class="big2"><b>$965.58</b><span>4.2000 NVDA</span></div></div>
+    <div class="fees">Fees earned, uncollected: <b class="fee">$0.00</b><span class="b">Collect fees</span><span class="b">Stop</span></div></div>`)
+  const stEl = pos.querySelector('.st'), nowEl = pos.querySelector('.now'), feeEl = pos.querySelector('.fee')
+  const sav = add(s5, `<div class="panel pos" style="left:50%;top:640px;margin-left:-450px;padding-bottom:30px"><div class="top">${CASH}<div><b style="font-size:22px;font-weight:500;display:block">Spark Savings USDG ${DOT('#5EE0A0')}<span style="font-size:15px;color:#5EE0A0;font-weight:400">Earning</span></b><span style="font-size:15px;color:var(--muted)">3.50% APY, accruing every second · 1,238.15 spUSDG</span></div><div class="big2"><b class="bal">$1,250.00</b><span>Withdraw any time</span></div></div></div>`)
+  const balEl = sav.querySelector('.bal')
+
+  // 6. End card. (30.4-34)
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s6, `<div class="abs" style="left:0;right:0;top:300px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s6, `<div class="abs" style="left:0;right:0;top:610px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Asset Yield. Live now.</div>`)
+  const endUrl = add(s6, `<div class="abs" style="left:0;right:0;top:710px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/yield</span></div>`)
+  const endCa = add(s6, `<div class="abs" style="left:0;right:0;top:820px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+  const typed = (s, p) => s.slice(0, Math.round(s.length * clamp(p)))
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    show(s1, t < 5.6)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 4.8, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 1.4, 0.9), { stagger: 0.03, out: clamp(spring(t - 4.7, 0.4)) })
+
+    show(s2, t >= 5.2 && t < 12.2)
+    const o2 = clamp(spring(t - 11.4, 0.5))
+    const h2in = spring(t - 5.4, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    const st = spring(t - 5.7, 0.85)
+    mat(stats, st * (1 - o2), { y: 40 * (1 - st) + 20 * o2, s: 0.05, blur: 18 })
+    sv.r.textContent = t >= 6.2 ? (NUM.rate * easeIO(clamp((t - 6.2) / 1.4))).toFixed(2) + '%' : '…'
+    sv.m.textContent = t >= 6.4 ? usd(NUM.spark * easeIO(clamp((t - 6.4) / 1.6))) : '…'
+    sv.p.textContent = t >= 6.6 ? Math.round(NUM.pools * easeIO(clamp((t - 6.6) / 1.4))) : '…'
+    sv.a.textContent = t >= 6.8 ? Math.round(NUM.apr * easeIO(clamp((t - 6.8) / 1.6))) + '%' : '…'
+    const c2 = spring(t - 9.0, 0.9)
+    mat(cap2, c2 * (1 - o2), { y: 16 * (1 - c2), s: 0.02 })
+
+    show(s3, t >= 11.8 && t < 18.8)
+    const o3 = clamp(spring(t - 18.0, 0.5))
+    const h3in = spring(t - 12.0, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const f3 = spring(t - 12.3, 0.85)
+    mat(table, f3 * (1 - o3), { y: 40 * (1 - f3) + 20 * o3, s: 0.05, blur: 18 })
+    tRows.forEach((r, i) => rise(r, t, 12.9 + i * 0.3))
+
+    show(s4, t >= 18.4 && t < 26.2)
+    const o4 = clamp(spring(t - 25.4, 0.5))
+    const h4in = spring(t - 18.6, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    const c4 = spring(t - 18.9, 0.85)
+    mat(comp, c4 * (1 - o4), { y: 40 * (1 - c4) + 20 * o4, s: 0.05, blur: 18 })
+    n1.textContent = t >= 20.2 ? typed('4.2', (t - 20.2) / 0.5) || '0' : '0'
+    dep.textContent = t >= 20.9 ? '4.2000 NVDA · $965.58' : '-'
+    sold.textContent = t >= 21.2 ? 'about 990.02 USDG' : '-'
+    btn.style.background = t >= 23.0 ? 'var(--lime)' : '#fff'
+    btn.textContent = t >= 23.0 ? 'Confirm in your wallet…' : 'Put NVDA to work'
+
+    show(s5, t >= 25.8 && t < 30.8)
+    const o5 = clamp(spring(t - 30.2, 0.5))
+    const h5in = spring(t - 26.0, 0.9)
+    mat(h5, h5in * (1 - o5), { y: 24 * (1 - h5in), s: 0.02 })
+    const p5 = spring(t - 26.3, 0.85)
+    mat(pos, p5 * (1 - o5), { y: 40 * (1 - p5) + 20 * o5, s: 0.05, blur: 18 })
+    const p5b = spring(t - 26.6, 0.85)
+    mat(sav, p5b * (1 - o5), { y: 40 * (1 - p5b) + 20 * o5, s: 0.05, blur: 18 })
+    const earning = t >= 27.6
+    stEl.innerHTML = earning ? `${DOT('#5EE0A0')}<span style="font-size:15px;color:#5EE0A0;font-weight:400">Earning</span>` : `${DOT('#C2EA8A')}<span style="font-size:15px;color:#C2EA8A;font-weight:400">Waiting above the price</span>`
+    nowEl.textContent = (229.9 + 1.4 * easeIO(clamp((t - 27.0) / 0.8))).toFixed(2)
+    feeEl.textContent = usd(earning ? 1.27 * easeIO(clamp((t - 27.6) / 2.4)) : 0, 2)
+    balEl.textContent = usd(1250 + 0.14 * easeIO(clamp((t - 26.8) / 3.6)), 2)
+
+    show(s6, t >= 30.4)
+    const e1p = spring(t - 30.6, 0.7), e2p = spring(t - 30.95, 0.7), e3p = spring(t - 31.2, 0.7), e4p = spring(t - 31.4, 0.7)
+    mat(endLogo, e1p, { y: 30 * (1 - e1p), s: 0.06, blur: 20 })
+    mat(endTag, e2p, { y: 20 * (1 - e2p), s: 0.02 })
+    mat(endUrl, e3p, { y: 20 * (1 - e3p), s: 0.02 })
+    mat(endCa, e4p, { y: 20 * (1 - e4p), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" /><title>CoinGecko application photo</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+html, body { margin: 0; background: #050505; overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #050505; color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.glow { position: absolute; left: 50%; top: 50%; width: 1500px; height: 900px; margin: -450px 0 0 -750px; background: radial-gradient(closest-side, rgba(194,234,138,.14), rgba(194,234,138,0)); }
+.row { position: absolute; left: 0; right: 0; top: 250px; display: flex; align-items: center; justify-content: center; gap: 64px; }
+.vx { display: flex; align-items: center; gap: 26px; }
+.vx span { font-family: 'LT Remark', serif; font-size: 150px; letter-spacing: -0.035em; line-height: 1; }
+.bar { width: 2px; height: 150px; background: rgba(255,255,255,.18); }
+h1 { position: absolute; left: 0; right: 0; top: 560px; margin: 0; text-align: center; font-family: 'LT Remark', serif; font-weight: 400; font-size: 96px; letter-spacing: -0.035em; }
+.st { position: absolute; left: 0; right: 0; top: 720px; text-align: center; }
+.status { display: inline-flex; align-items: center; gap: 14px; padding: 14px 26px; border-radius: 999px; background: rgba(255,232,102,.12); color: #FFE866; font-size: 30px; font-weight: 500; }
+.status i { width: 14px; height: 14px; border-radius: 50%; background: #FFE866; }
+.url { position: absolute; left: 0; right: 0; top: 900px; text-align: center; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 12px; background: #1A1A1A; font-size: 26px; font-weight: 500; }
+.pill b { width: 12px; height: 12px; border-radius: 50%; background: #C2EA8A; }
+#vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+</style></head>
+<body><div id="stage"><div class="grid"></div><div class="glow"></div>
+<div class="row"><div class="vx"><span id="mk" style="width:120px;height:120px;display:inline-flex"></span><span>Verdex</span></div><div class="bar"></div><img src="brand/coingecko-lockup.svg" style="width:640px;height:auto;display:block"></div>
+<h1>Listing application submitted.</h1>
+<div class="st"><span class="status"><i></i>Under review</span><div style="margin-top:22px;font-size:26px;color:rgba(255,255,255,.5)">Request ID <span style="font-family:ui-monospace,Menlo,'DejaVu Sans Mono',monospace;color:rgba(255,255,255,.8)">CL3009260043</span></div></div>
+<div class="url"><span class="pill"><b></b>useverdex.xyz</span></div>
+<div id="vignette"></div></div>
+<script type="module">
+import { MARK_PATH } from '../src/components/logoPath.ts'
+document.getElementById('mk').innerHTML = `<svg viewBox="0 0 100 100" fill="#C2EA8A" style="display:block;width:100%;height:100%"><path d="${MARK_PATH}"/></svg>`
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? im.decode().catch(() => {}) : new Promise((r) => { im.onload = r; im.onerror = r }))))
+window.DURATION = 1
+window.renderAt = () => {}
+window.__ready = true
+</script></body></html>

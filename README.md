@@ -33,6 +33,11 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   contracts already there: every stock pool from the factory with live price, liquidity, volume and
   fee APR, a range and amount composer, and your positions with fees, collect and remove. No Verdex
   contract and no Verdex fee.
+- **Asset Yield.** What sits idle in a wallet on Robinhood Chain, put to work through public
+  contracts only: a tokenized stock goes into a one-sided Uniswap v3 band just above its price (earns
+  the pool fee on every trade that reaches it, stays yours below it, sold only through the top), and
+  USDG goes into Spark Savings USDG, an ERC-4626 vault at the rate Spark pays. Stop or withdraw any
+  time from the same page.
 - **$VERDEX page.** The token, read from the chain: market data, creator fees and sweeps, the dev
   wallet's holding, buys and burns, the bug bounty tiers, all live in the browser with a link to every
   transaction.

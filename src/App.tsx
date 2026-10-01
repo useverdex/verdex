@@ -25,6 +25,7 @@ const OrdersPage = lazy(() => import('./pages/OrdersPage'))
 const AgentPage = lazy(() => import('./pages/AgentPage'))
 const TokenPage = lazy(() => import('./pages/TokenPage'))
 const VerdexPoolsPage = lazy(() => import('./pages/VerdexPoolsPage'))
+const AssetYieldPage = lazy(() => import('./pages/AssetYieldPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
@@ -54,6 +55,7 @@ const TITLES: [string, string][] = [
   ['/rwa-baskets', 'Baskets'],
   ['/rwa-pools', 'Tokenized Pools'],
   ['/pools', 'Verdex Pools'],
+  ['/yield', 'Asset Yield'],
   ['/lend', 'Lend and Borrow'],
   ['/portfolio', 'Portfolio'],
   ['/auto-invest', 'Auto-Invest'],
@@ -102,6 +104,7 @@ export default function App() {
             <Route path="/rwa-baskets/discover" element={<DiscoverPage />} />
             <Route path="/rwa-pools" element={<PoolsPage />} />
             <Route path="/pools" element={<EarlyGate path="/pools"><VerdexPoolsPage /></EarlyGate>} />
+            <Route path="/yield" element={<EarlyGate path="/yield"><AssetYieldPage /></EarlyGate>} />
             <Route path="/lend" element={<LendPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/auto-invest" element={<EarlyGate path="/auto-invest"><AutoInvestPage /></EarlyGate>} />
