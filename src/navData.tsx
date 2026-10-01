@@ -4,7 +4,6 @@ import { BankIcon, BarsIcon, BoltIcon, BookIcon, BriefcaseIcon, BuildingIcon, Ca
 export type NavItem = { label: string; icon: ComponentType<{ size?: number }>; path: string; soon?: boolean; divider?: boolean; action?: 'swap' | 'private' }
 export type NavGroup = { label: string; match: string[]; items: NavItem[]; link?: NavItem }
 
-const soon = (label: string, icon: NavItem['icon'], divider = false): NavItem => ({ label, icon, path: '', soon: true, divider })
 const doc = (label: string, id: string, icon: NavItem['icon']): NavItem => ({ label, icon, path: `/docs#${id}` })
 
 export const NAV_GROUPS: NavGroup[] = [
@@ -25,14 +24,14 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'Baskets',
-    match: ['/rwa-baskets'],
+    match: ['/rwa-baskets', '/vaults', '/strategies', '/launch'],
     items: [
       { label: 'Automated Baskets', icon: RefreshIcon, path: '/rwa-baskets#automated' },
       { label: 'Index Baskets', icon: LayersIcon, path: '/rwa-baskets#baskets' },
       { label: 'Discover all Baskets', icon: SearchIcon, path: '/rwa-baskets/discover' },
       { label: 'Vaults', icon: VaultIcon, path: '/vaults', divider: true },
       { label: 'Strategies', icon: UsersIcon, path: '/strategies' },
-      soon('Basket-Backed Token Launch', RocketIcon),
+      { label: 'Launchpad', icon: RocketIcon, path: '/launch', divider: true },
     ],
   },
   {
@@ -70,6 +69,7 @@ export const NAV_GROUPS: NavGroup[] = [
       doc('Tokenized Pools', 'tokenized-pools', DropIcon),
       doc('Verdex Pools', 'verdex-pools', BoltIcon),
       doc('Asset Yield', 'asset-yield', PercentIcon),
+      doc('Launchpad', 'launchpad', RocketIcon),
       doc('Lend and Borrow', 'lend-and-borrow', HandCoinIcon),
       doc('Fees', 'fees', ReceiptIcon),
       doc('Holding VERDEX', 'holding', CoinIcon),

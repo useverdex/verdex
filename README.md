@@ -38,6 +38,11 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   the pool fee on every trade that reaches it, stays yours below it, sold only through the top), and
   USDG goes into Spark Savings USDG, an ERC-4626 vault at the rate Spark pays. Stop or withdraw any
   time from the same page.
+- **Launchpad.** Launch a token on Robinhood Chain through the Pons V2 contracts that created
+  VERDEX: fixed supply, a bonding curve quoted in ETH, USDG or one of the tokenized stocks the factory
+  accepts, a first buy in the same transaction, graduation into a Uniswap v4 pool with locked
+  liquidity, and a creator fee paid on every trade. A live feed of every launch on the factory and
+  the wallet's own launches. No Verdex contract and no Verdex fee.
 - **$VERDEX page.** The token, read from the chain: market data, creator fees and sweeps, the dev
   wallet's holding, buys and burns, the bug bounty tiers, all live in the browser with a link to every
   transaction.

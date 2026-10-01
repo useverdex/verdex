@@ -25,7 +25,7 @@ export type Holding = {
 
 export type EarlyFeature = { path: string; label: string; opensAt: string }
 // Features in their early-access window: holders at the threshold use them now, everyone else from opensAt (UTC).
-export const EARLY_FEATURES: EarlyFeature[] = []
+export const EARLY_FEATURES: EarlyFeature[] = [{ path: '/launch', label: 'Launchpad', opensAt: '2026-10-01T20:00:00Z' }]
 
 const client = () => createPublicClient({ transport: http(RPC, { retryCount: 3, retryDelay: 1200, timeout: 20_000 }) })
 

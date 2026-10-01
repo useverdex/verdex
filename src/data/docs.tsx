@@ -177,6 +177,21 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'launchpad',
+    title: 'Launchpad',
+    blocks: [
+      { kind: 'p', text: `The Launchpad lets anyone launch a token on Robinhood Chain from ${N}, through the Pons V2 contracts that created VERDEX: the launch factory, its launch-and-buy router and the hook that charges fees in the pool. A launch mints a fixed supply of 1,000,000,000, opens a bonding curve quoted in ETH, USDG or one of the tokenized stocks the factory accepts, and graduates by itself into a Uniswap v4 pool with locked liquidity once the curve has raised its threshold. ${N} adds no contract and takes no fee; the launch fee and the curve fee are Pons's, read from the factory as you look.` },
+      { kind: 'defs', items: [
+        { term: 'What you choose', text: 'A name, a symbol, a logo link and a description, an X link and a website if you have them, the asset the token is priced in, your creator fee up to the factory’s maximum, and your first buy. The first buy lands in the same transaction as the launch, before anyone else can trade, and is exempt from the snipe tax.' },
+        { term: 'The transaction', text: 'One call to the Pons router, after one approval when the quote is an ERC-20. The value sent is the launch fee plus the first buy for an ETH launch, or the launch fee alone otherwise. The page reads the factory’s economics digest just before and pins it into the call, so a change of terms by Pons in between makes the launch revert instead of repricing it.' },
+        { term: 'Snipe tax', text: 'For the first seconds after a launch the curve taxes buys at a rate that starts near 99% and decays to zero, so bots cannot front-run a creator’s own first buy. The creator’s first buy and the addresses they list are exempt.' },
+        { term: 'Graduation', text: 'Each quote asset has a threshold set by Pons. When the curve has raised it, the factory moves the raised quote and the reserved tokens into a Uniswap v4 pool behind the Pons hook and locks the liquidity position. From then on the token trades in the pool.' },
+        { term: 'Creator fee', text: 'Your fee in basis points, charged by Pons on every trade, on the curve and in the pool after graduation, and paid to your wallet in the quote asset. VERDEX runs at 2%; its sweeps are listed on its page with every transaction.' },
+        { term: 'The feed', text: 'The newest launches on the factory, whoever made them, with the quote, the curve’s progress, the age and the creator address, read from the factory’s events and the curve contracts. Most launches are memecoins and most never graduate. The list is what the chain says, not a recommendation.' },
+      ] },
+    ],
+  },
+  {
     id: 'lend-and-borrow',
     title: 'Lend and Borrow',
     blocks: [
