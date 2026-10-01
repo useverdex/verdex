@@ -517,6 +517,42 @@ Every number is read from the Pons factory on Robinhood Chain, the contracts tha
 >
 > You are not going to use Verdex the same way after tonight.
 
+### After the drop (`clip-howto.mp4`, `clip-firstwas.mp4`, 12 s each)
+
+`clip-howto.mp4`, the morning after:
+
+> Sixty seconds, start to finish.
+>
+> Connect. Name it. Price it in ETH, USDG or a tokenized stock. Set your fee. Make your first buy. Sign once. Then it is on the feed, on Pons and in your wallet.
+>
+> useverdex.xyz/launch
+
+`clip-firstwas.mp4`, a day or two later:
+
+> Launch number one on these contracts was ours.
+>
+> VERDEX: 28 September, 2% creator fee, liquidity locked, 6.95 ETH swept in 114 hourly sweeps, 7.29M burned, every transaction listed. Same factory, same router, same hook. We used the Launchpad before it had a page.
+>
+> Yours is next.
+
+### Teaser clips, before 20:00 UTC (`clip-tonight.mp4`, `clip-whatwould.mp4`, 12 s each)
+
+`clip-tonight.mp4`, two to three hours before:
+
+> Tonight. 20:00 UTC.
+>
+> The card is already built. The contracts are already verified. The only thing missing is your name on it.
+>
+> No whitelist, no form, no waitlist. Public from the first minute. useverdex.xyz
+
+`clip-whatwould.mp4`, about an hour before:
+
+> What would you launch? Priced in what?
+>
+> ETH, USDG, or one of 42 tokenized stocks. One transaction. Your fee on every trade after that.
+>
+> 20:00 UTC. Pick your answer before then.
+
 ### Announcement (with the video)
 
 > The Verdex Launchpad is live.

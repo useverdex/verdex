@@ -222,6 +222,72 @@ const I = {
 }
 
 const CLIPS = {
+  // 0a. Teaser: tonight at 20:00 UTC, the composer out of focus.
+  tonight(s) {
+    const l1 = line(s, 'Tonight.', { top: 470, size: 140 })
+    const l2 = line(s, '20:00 UTC.', { top: 470, size: 140, color: 'var(--lime)' })
+    const comp = add(s, `<div class="panel" style="top:230px;width:860px;margin-left:-430px;padding:26px 36px 30px;will-change:filter,opacity,transform"><div class="lab">Launch a token · Robinhood Chain</div>
+      <div style="display:grid;grid-template-columns:1fr 200px;gap:12px;margin-top:16px"><div class="field" style="margin-top:0"><div class="k"><span>Name</span></div><div class="v"><span style="font-size:28px;color:#fff;font-weight:500">Your idea</span></div></div><div class="field" style="margin-top:0"><div class="k"><span>Symbol</span></div><div class="v"><span style="font-size:28px;color:#fff;font-weight:500">????</span></div></div></div>
+      <div class="lab" style="margin-top:20px">Priced in</div><div class="chips"><span class="chip">ETH</span><span class="chip">USDG</span><span class="chip on">NVDA</span><span class="chip">TSLA</span><span class="chip">SPY</span><span class="chip">AAPL</span><span class="chip">All 44</span></div>
+      <div class="lab" style="margin-top:20px">Creator fee, on every trade, forever</div><div class="chips"><span class="chip">1%</span><span class="chip on">2%</span><span class="chip">5%</span><span class="chip">Custom</span></div>
+      <div class="btn pri" style="width:100%;box-sizing:border-box;justify-content:center;margin-top:24px">Launch</div></div>`)
+    const cap = add(s, `<div class="cap" style="top:880px">No whitelist, no form, no waitlist. Public from the first minute.</div>`)
+    const url = add(s, `<div class="cap" style="top:950px"><span class="pill">useverdex.xyz</span></div>`)
+    return (t) => {
+      const reveal = clamp((t - 4.2) / 5.6)
+      show(comp, t > 0.2)
+      comp.style.opacity = clamp(t / 1.2) * (0.55 + 0.45 * reveal)
+      comp.style.filter = `blur(${(26 * (1 - easeIO(reveal))).toFixed(1)}px)`
+      comp.style.transform = `translate3d(0, ${(20 * (1 - easeIO(reveal))).toFixed(1)}px, 0) scale(${(0.97 + 0.03 * easeIO(reveal)).toFixed(3)})`
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.0)
+      capIn(cap, t, 9.0); capIn(url, t, 9.8)
+    }
+  },
+  // 0b. Teaser: what would you launch, priced in what.
+  whatwould(s) {
+    const l1 = line(s, 'What would you launch?', { top: 470, size: 100 })
+    const l2 = line(s, 'Priced in what?', { top: 470, color: 'var(--lime)' })
+    const Q = ['ETH', 'USDG', 'NVDA', 'TSLA', 'SPY', 'AAPL', 'GOOGL', 'META', 'MSFT', 'AMZN', 'COIN', 'MSTR', 'PLTR', 'AMD', 'GME', 'USO', 'SLV', 'QQQ', 'TSM', 'INTC', 'BABA', 'RDDT']
+    const rows = [0, 1, 2].map((r) => add(s, `<div class="abs" style="left:0;top:${330 + r * 110}px;white-space:nowrap;will-change:transform;opacity:0">${Q.concat(Q).map((q) => `<span class="pill" style="font-size:30px;padding:16px 28px;margin-right:18px">${q}</span>`).join('')}</div>`))
+    const cap = add(s, `<div class="cap" style="top:760px">44 quote assets. One transaction. Your fee on every trade after that.</div>`)
+    const cap2 = add(s, `<div class="cap" style="top:830px;color:var(--muted);font-size:26px">Tonight at 20:00 UTC · useverdex.xyz</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.2); runLine(l2, t, 2.5, 4.4)
+      rows.forEach((el, i) => { const p = spring(t - 4.6 - i * 0.25, 0.9); el.style.opacity = clamp(p); const dir = i % 2 ? 1 : -1; const off = (t * (70 + i * 25)) % 2600; el.style.transform = `translate3d(${(dir === -1 ? -off - 200 : -2600 + off - 200).toFixed(1)}px, ${(16 * (1 - p)).toFixed(1)}px, 0)` })
+      capIn(cap, t, 8.4); capIn(cap2, t, 9.4)
+    }
+  },
+  // 0c. After launch: the whole flow, step by step.
+  howto(s) {
+    const l1 = line(s, 'Sixty seconds.', { top: 470 })
+    const l2 = line(s, 'Start to finish.', { top: 470, color: 'var(--lime)' })
+    const ST = [['01', 'Connect', 'any wallet, Robinhood Chain'], ['02', 'Name it', 'name, symbol, a logo link'], ['03', 'Price it', 'ETH, USDG or a tokenized stock'], ['04', 'Set your fee', '1%, 2%, 5% or your own'], ['05', 'First buy', 'lands with the launch, snipe-tax exempt'], ['06', 'Sign once', 'token, curve and buy in one transaction']]
+    const rows = ST.map(([n, k, d], i) => add(s, `<div class="trow" style="top:${262 + i * 78}px;height:66px;width:1000px;margin-left:-500px;gap:18px"><span style="font-family:var(--mono);font-size:18px;color:var(--faint);width:40px">${n}</span><b style="width:220px;font-size:22px">${k}</b><span class="nm">${d}</span><span class="ok" style="color:var(--lime);font-weight:700;font-size:22px;opacity:0">✓</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:780px">Then it is on the feed, on Pons, and in your wallet. Launch fee 0.0005 ETH, to Pons. Verdex fee none.</div>`)
+    const url = add(s, `<div class="cap" style="top:850px"><span class="pill">useverdex.xyz/launch</span></div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      rows.forEach((el, i) => { const p = spring(t - 4.5 - i * 0.42, 0.85); show(el, t > 4.4 + i * 0.42); mat(el, p, { x: -30 * (1 - p), s: 0.03, blur: 12 }); el.querySelector('.ok').style.opacity = t >= 5.1 + i * 0.42 ? 1 : 0 })
+      capIn(cap, t, 8.8); capIn(url, t, 9.6)
+    }
+  },
+  // 0d. After launch: the first launch on these contracts was VERDEX.
+  firstwas(s) {
+    const l1 = line(s, 'Launch number one', { top: 470, size: 100 })
+    const l2 = line(s, 'was ours.', { top: 470, color: 'var(--lime)' })
+    const rec = add(s, `<div class="panel pos" style="top:300px;width:960px;margin-left:-480px;padding:30px 36px 32px"><div class="top"><span style="width:48px;height:48px;display:inline-flex">${MARK()}</span><div><b style="font-size:24px;font-weight:500;display:block">VERDEX <span class="badge" style="margin-left:6px;font-size:15px;padding:4px 9px">ETH</span><span class="dot"></span><span style="font-size:16px;color:#5EE0A0;font-weight:400">Graduated</span></b><span style="font-size:16px;color:var(--muted)">Launched 28 September 2026 · creator fee 2% · liquidity locked</span></div><div class="big2"><b class="eth">0.00 ETH</b><span>creator fees swept so far</span></div></div>
+      <div class="fees" style="gap:28px"><span><b style="color:#fff" class="sw">0</b> hourly sweeps</span><span><b style="color:#fff" class="bn">0</b> VERDEX burned</span><span><b style="color:#fff">1B</b> fixed supply</span><span style="margin-left:auto;color:var(--lime);font-weight:500">every transaction on useverdex.xyz/verdex</span></div></div>`)
+    const eth = rec.querySelector('.eth'), sw = rec.querySelector('.sw'), bn = rec.querySelector('.bn')
+    const cap = add(s, `<div class="cap" style="top:700px">Same factory, same router, same hook. We used the Launchpad before it had a page.</div>`)
+    const cap2 = add(s, `<div class="cap" style="top:770px;color:var(--muted);font-size:26px">Yours is next. useverdex.xyz/launch</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.1); runLine(l2, t, 2.4, 4.2)
+      const c = spring(t - 4.4, 0.9); show(rec, t > 4.3); mat(rec, c, { y: 40 * (1 - c), s: 0.05, blur: 18 })
+      const q = easeIO(clamp((t - 4.9) / 2.2))
+      eth.textContent = `${(6.95 * q).toFixed(2)} ETH`; sw.textContent = Math.round(114 * q); bn.textContent = Math.round(7290319 * q).toLocaleString('en-US')
+      capIn(cap, t, 8.2); capIn(cap2, t, 9.4)
+    }
+  },
   // 1. Priced in a stock: the quote chips and their thresholds.
   priced(s) {
     const l1 = line(s, 'Priced in a stock.', { top: 470 })
