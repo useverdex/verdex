@@ -293,6 +293,68 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Launchpad (`verdex-launch.mp4`, 34 s, post with the video at 20:00 UTC; hype still `photos/hype-launch.png`)
+
+Every number is read from the Pons factory on Robinhood Chain, the contracts that created VERDEX. Say "priced in a stock", never "backed by a basket": the quote asset is one token. Never promise that a launch graduates or that a creator earns anything; most launches go nowhere and the page says so. Pons is named as the contracts, not as a partner.
+
+### Hype (image: `photos/hype-launch.png`)
+
+> 20:00 UTC.
+>
+> Everything we shipped this week was the warm-up. Tonight Verdex stops being a place where you only trade what other people made.
+>
+> The biggest box on the roadmap. Public from the first minute. No whitelist, no form, no waitlist.
+>
+> If you have ever wanted to put something of your own on Robinhood Chain, clear your evening.
+>
+> useverdex.xyz
+
+> One hour.
+>
+> You are not going to use Verdex the same way after tonight.
+
+### Announcement (with the video)
+
+> The Verdex Launchpad is live.
+>
+> Launch a token on Robinhood Chain from Verdex, priced in ETH, USDG or a tokenized stock: NVDA, TSLA, SPY, AAPL and 38 more. Fixed supply, a bonding curve from the first block, a Uniswap v4 pool with locked liquidity when it fills, and a creator fee paid to you on every trade, forever.
+>
+> Same verified contracts that made VERDEX. 6,965 launches on them in the last 24 hours.
+>
+> useverdex.xyz/launch
+
+> Name it. Price it in NVDA. Launch it.
+>
+> One transaction: the token, its curve and your first buy, exempt from the snipe tax that hits the bots. Your creator fee on every trade after that, paid in NVDA.
+>
+> useverdex.xyz/launch
+
+### Thread under the announcement
+
+> 1/ What it is: a front door to the Pons V2 launch factory on Robinhood Chain, the contracts that created VERDEX on 28 September. Verdex adds no contract and takes no fee. The launch fee is Pons's, 0.0005 ETH, read live.
+
+> 2/ Priced in a stock: the factory accepts 44 quote assets today. ETH, USDG and 42 tokenized stocks and ETFs. Buyers pay in that asset, the curve holds it, and your creator fee is paid in it.
+
+> 3/ The curve graduates on its own when it has raised the threshold for its quote: 4.2 ETH, 8,090 USDG, 41.6 NVDA. The raised asset and the reserved tokens go into a Uniswap v4 pool and the liquidity position is locked by the Pons locker. Nobody pulls it, the creator included.
+
+> 4/ Your first buy lands in the same transaction as the launch, before anyone else can trade, and is exempt from a snipe tax that starts at 99% for the first seconds. Bots do not get your launch.
+
+> 5/ What you see is what you sign: the economics digest is read from the factory and pinned into the transaction. If Pons changes the terms between your look and your signature, the launch reverts instead of repricing.
+
+> 6/ Honest part: the factory sees thousands of launches a day and a few dozen graduations. Most are memecoins and most go nowhere. The feed on the page lists them as they are. Launch something you would defend.
+
+> 7/ The feed: every launch on the factory, whoever made it, with its quote, the curve's progress, the age and the creator. Your own launches on the same page. Refreshed every minute from the chain.
+
+### Spanish
+
+> El Launchpad de Verdex ya está en vivo.
+>
+> Lanza un token en Robinhood Chain desde Verdex, cotizado en ETH, USDG o una acción tokenizada: NVDA, TSLA, SPY, AAPL y 38 más. Supply fijo, curva desde el primer bloque, pool de Uniswap v4 con liquidez bloqueada cuando se llena, y una fee de creador pagada en cada trade, para siempre.
+>
+> Los mismos contratos verificados que crearon VERDEX. 6.965 lanzamientos en ellos en las últimas 24 horas.
+>
+> useverdex.xyz/launch
+
 ## Asset Yield (`verdex-yield.mp4`, 34 s, post with the video; hype still `photos/hype-yield.png`)
 
 Everything in these is true on the page today: the Spark rate is read from the vault, the pool figures from the chain and DexScreener. Never promise a yield; the band only earns while the price is inside it, and the stock is sold if the price climbs through the top. Spark and Uniswap are named as what they are, public contracts, not partners.

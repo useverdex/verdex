@@ -53,6 +53,8 @@ The feature lives at `/orders` (`src/pages/OrdersPage.tsx` on top of `src/lib/or
 
 ## Token page film
 
+`launch.html` is a 34-second film for the Launchpad: the name, the stats strip (launches and graduations in 24 hours, the launch fee, the quote assets), the composer typing a token priced in NVDA, the curve filling and graduating, the creator fee accruing next to VERDEX's own sweeps, and the end card at `useverdex.xyz/launch`. Render with `node promo/render.mjs --page promo/launch.html --out promo/verdex-launch.mp4`. The hype still is `photos/hype-launch.png` (`teaser.html?bg=launch&line=Launch.&sub=…`).
+
 `yield.html` is a 34-second film for Asset Yield: the name, the stats strip (Spark rate, Spark deposits, stock pools, the NVDA pool fee APR), the wallet table of what is idle, the stock composer with a band and an amount, the position turning from waiting to earning next to the Spark balance, and the end card at `useverdex.xyz/yield`. Render with `node promo/render.mjs --page promo/yield.html --out promo/verdex-yield.mp4`. The hype still is `photos/hype-yield.png` (`teaser.html?bg=yield&line=Idle%20is%20over.&sub=…`, the title now centred).
 
 `pools.html` is a 34-second film for Verdex Pools: the name, the live stats strip, the pool table rising row by row, the composer typing one amount and getting the other, a position earning its first fees, and the end card at `useverdex.xyz/pools`. Render with `node promo/render.mjs --page promo/pools.html --out promo/verdex-pools.mp4`.
