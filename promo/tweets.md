@@ -293,6 +293,108 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Ninth batch, each with its clip (`clip-priced.mp4`, `clip-onetx.mp4`, `clip-locked.mp4`, `clip-creatorfee.mp4`, `clip-snipe.mp4`, `clip-feed.mp4`, `clip-nofee.mp4`, `clip-pinned.mp4`, `clip-factory.mp4`, `clip-roadmap11.mp4`, 12 s each)
+
+All ten are about the Launchpad; post them over the days after the 20:00 UTC drop, one or two a day. `factory` and `feed` work as the first two the morning after. Never promise a graduation or an income; every clip that mentions the creator fee also mentions that most launches go nowhere, or sits next to one that does.
+
+### 1. `clip-priced.mp4`
+
+> Priced in a stock. Or in ETH. Or in USDG.
+>
+> 44 quote assets accepted by the factory today. Pick one and the curve holds it, buyers pay in it, your creator fee is paid in it. Each has its own graduation threshold: 4.2 ETH, 8,090 USDG, 41.6 NVDA.
+>
+> useverdex.xyz/launch
+
+### 2. `clip-onetx.mp4`
+
+> One transaction. Token, curve, first buy.
+>
+> The same call that created VERDEX on 28 September. Mints the fixed supply, opens the curve, makes your first buy before anyone else can, exempt from the snipe tax. Launch fee 0.0005 ETH, to Pons.
+
+### 3. `clip-locked.mp4`
+
+> The curve fills. The liquidity locks.
+>
+> When a launch has raised its threshold it graduates by itself into a Uniswap v4 pool and the position is locked by the Pons locker. Nobody pulls it, the creator included.
+
+### 4. `clip-creatorfee.mp4`
+
+> Your fee. Every trade. Forever.
+>
+> Paid by the Pons hook, on the curve and in the pool after graduation, in the quote asset. The proof is VERDEX itself: 2% since 28 September, 6.95 ETH, 114 sweeps, every one of them a transaction on useverdex.xyz/verdex.
+
+### 5. `clip-snipe.mp4`
+
+> Bots pay 99%. You pay nothing.
+>
+> A snipe tax on buys starts near 99% the second a token launches and decays to zero over the first seconds. Your first buy and the wallets you list are exempt. Read from the factory, not promised by us.
+
+### 6. `clip-feed.mp4`
+
+> Every launch. Live, as it happens.
+>
+> The feed on useverdex.xyz/launch reads the factory's events and the curve contracts every minute: the quote, the progress, the age, the creator. Whoever made them, wherever they made them. Most will go nowhere, and the page says so.
+
+### 7. `clip-nofee.mp4`
+
+> Verdex takes nothing. Read the receipt.
+>
+> Launch fee: 0.0005 ETH, to Pons. Curve fee: 1%, to Pons. Creator fee: yours. Verdex fee: none. The factory and the router are the ones that created VERDEX; we built the front door and read every number live.
+
+### 8. `clip-pinned.mp4`
+
+> What you see is what you sign.
+>
+> The page reads the factory's economics digest and pins it into your transaction. If Pons changes the terms between your look and your signature, the launch reverts and nothing is spent. It is in the factory's own code.
+
+### 9. `clip-factory.mp4`
+
+> 6,965 launches. Yesterday.
+>
+> That is the Pons factory on Robinhood Chain in 24 hours, with 70 graduations and 44 quote assets. The same factory made VERDEX. Now it has a Verdex front door.
+>
+> useverdex.xyz/launch
+
+### 10. `clip-roadmap11.mp4`
+
+> Eleven of thirteen. Two to go.
+>
+> Token Launch is live as the Launchpad. Left on the roadmap we published on day one: Auto-Invest that runs without you, and private markets. Plus three things that were never on it and shipped anyway.
+
+### Spanish
+
+> Cotizado en una acción. O en ETH. O en USDG. 44 activos aceptados hoy por la fábrica: eliges uno, la curva lo guarda, los compradores pagan en él y tu fee de creador se cobra en él. useverdex.xyz/launch
+
+> 6.965 lanzamientos ayer en la fábrica de Pons, 70 graduaciones, 44 activos. La misma fábrica creó VERDEX. Ahora tiene puerta en Verdex.
+
+## Photo tweets, fifth set (`photos/photo5-*.png`, one image each)
+
+### `photo5-page.png`
+
+> The whole launch, on one card.
+>
+> Name, symbol, the asset it is priced in, your creator fee, your first buy, and exactly what goes where. Nothing in a tooltip.
+>
+> useverdex.xyz/launch
+
+### `photo5-composer.png`
+
+> "Name it. Price it in NVDA."
+>
+> A token quoted in a company instead of a chart. The curve holds NVDA, the pool is NVDA/token, and the creator is paid in NVDA.
+
+### `photo5-curve.png`
+
+> 41.6 NVDA and it graduates by itself.
+>
+> No admin button, no team decision. The factory moves the raised NVDA and the reserved tokens into a Uniswap v4 pool and locks the position.
+
+### `photo5-fees.png`
+
+> The proof that creator fees are real: VERDEX.
+>
+> 2% on every trade since 28 September, 6.95 ETH swept to its creator in 114 hourly sweeps, each one a transaction you can open on useverdex.xyz/verdex. The Launchpad runs on the same hook.
+
 ## Launchpad (`verdex-launch.mp4`, 34 s, post with the video at 20:00 UTC; hype still `photos/hype-launch.png`)
 
 Every number is read from the Pons factory on Robinhood Chain, the contracts that created VERDEX. Say "priced in a stock", never "backed by a basket": the quote asset is one token. Never promise that a launch graduates or that a creator earns anything; most launches go nowhere and the page says so. Pons is named as the contracts, not as a partner.
