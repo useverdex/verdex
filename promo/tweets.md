@@ -293,6 +293,108 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Tenth batch, each with its clip (`clip-automated.mp4`, `clip-venues.mp4`, `clip-backed.mp4`, `clip-strategy.mp4`, `clip-credit.mp4`, `clip-categories.mp4`, `clip-reminders.mp4`, `clip-revoke.mp4`, `clip-docs.mp4`, `clip-offline.mp4`, 12 s each)
+
+The parts of Verdex that were never announced: the three kinds of baskets, the five venues a basket is bought through, the yield shelf, the reminders, the allowances, the docs and the app shell. Figures come from the bundled snapshots (automated-baskets, baskets-list, assets) and are true as of 1 October. Nothing here promises a return; the automated-basket rows show money at work, not what it made.
+
+### 1. `clip-automated.mp4`
+
+> A portfolio that rebalances itself.
+>
+> 32 automated baskets, $5.5M at work, 19,563 portfolios. Bitwise Mag7x, the Magnificent Seven, a Nancy Pelosi tracker. Bought in your own account, rebalanced to target weights on a schedule, add or withdraw any time.
+>
+> useverdex.xyz/rwa-baskets
+
+### 2. `clip-venues.mp4`
+
+> Five ways to buy a basket. The best one wins.
+>
+> Reserve mints it from its assets, two aggregators trade existing basket tokens, CoW Swap and PancakeSwap X have a market maker fill your order. Verdex asks all five and shows you the one that gives you the most. An order that is not filled expires and nothing is spent.
+
+### 3. `clip-backed.mp4`
+
+> Backed one to one. Redeemable any time.
+>
+> An index basket is one ERC-20 backed by the stock tokens inside it at published weights. Mint and redeem are open onchain calls, so it can always be exchanged for what is inside. 18 of them, 90,346 holders, $22.3M.
+
+### 4. `clip-strategy.mp4`
+
+> A basket with no basket token.
+>
+> A strategy basket is a list of stocks and weights. One order buys each stock token to your wallet. You hold NVDA, TSLA, GOOGL, META and AMZN themselves, not a wrapper around them.
+
+### 5. `clip-credit.mp4`
+
+> Private credit. Treasuries. Tokenized.
+>
+> syrupUSDC, sUSDai, syrupUSDT from Maple and USDai. USDY, USDtb and thBILL for Treasuries. Six yield assets on the same shelf as 177 stocks and 35 ETFs, each with its issuer, its chains and its price in one row.
+>
+> useverdex.xyz/assets
+
+### 6. `clip-categories.mp4`
+
+> 226 assets. Five shelves.
+>
+> 177 stocks, 35 ETFs and index funds, 8 commodities, 3 private credit, 3 Treasuries. From 12 issuers across 70 chains, priced live, one order each. The marketplace is the thing everything else sits on.
+
+### 7. `clip-reminders.mp4`
+
+> Auto-Invest taps you on the shoulder.
+>
+> A browser notification when a scheduled buy is due, on your phone or desktop. The schedule lives in your browser, the signature is yours, and nothing is bought until you confirm it. Skip a week with one tap.
+
+### 8. `clip-revoke.mp4`
+
+> One approval per token. Revocable any time.
+>
+> Who gets it: the router named by the quote you sign. How much: unlimited, so a trade is one confirmation. Where it is listed: Docs → Safety, with the addresses. How to revoke: your wallet, or revoke.cash. Verdex never holds an allowance of its own.
+
+### 9. `clip-docs.mp4`
+
+> 27 sections. Every fee. Every risk.
+>
+> Where every number comes from, what leaves your browser and to whom, and what can go wrong, in plain words. The docs are part of the product, not a PDF nobody opens.
+>
+> useverdex.xyz/docs
+
+### 10. `clip-offline.mp4`
+
+> Installs like an app. Caches nothing that matters.
+>
+> Add to Home Screen, no store, no account. The shell, logos and fonts stay on your phone; prices, quotes, balances and wallet traffic are never cached. Opens like an app, reads like a fresh page.
+
+### Spanish
+
+> Una cartera que se rebalancea sola. 32 cestas automáticas, $5,5M trabajando, 19.563 carteras. Comprada en tu propia cuenta, rebalanceada a sus pesos objetivo según calendario, entras y sales cuando quieras.
+
+> Cinco formas de comprar una cesta y gana la mejor: Reserve la acuña, dos agregadores la compran hecha, CoW Swap y PancakeSwap X la llenan con un market maker. Verdex pregunta a las cinco y te enseña la que más te da.
+
+## Photo tweets, sixth set (`photos/photo6-*.png`, one image each)
+
+### `photo6-automated.png`
+
+> The automated baskets page.
+>
+> 32 portfolios run on a schedule, with the money at work and the investors in each. The Mag 7, Base, healthcare, a congressional tracker. Pick one, fund it, forget it.
+
+### `photo6-credit.png`
+
+> The private credit shelf.
+>
+> Maple's syrupUSDC and syrupUSDT, USDai's sUSDai. Three tokens, $2B behind them, listed next to the stocks with the same row, the same issuer tag, the same price feed.
+
+### `photo6-discover.png`
+
+> Discover: every index basket, searchable, with a chain filter.
+>
+> 18 baskets of tokenized stocks, each one a single token you can always redeem for what is inside.
+
+### `photo6-docs.png`
+
+> The docs, in full.
+>
+> 27 sections, every fee named, every risk spelled out, every address that receives an approval. If something on Verdex is not explained here, tell us and it will be.
+
 ## Ninth batch, each with its clip (`clip-priced.mp4`, `clip-onetx.mp4`, `clip-locked.mp4`, `clip-creatorfee.mp4`, `clip-snipe.mp4`, `clip-feed.mp4`, `clip-nofee.mp4`, `clip-pinned.mp4`, `clip-factory.mp4`, `clip-roadmap11.mp4`, 12 s each)
 
 All ten are about the Launchpad; post them over the days after the 20:00 UTC drop, one or two a day. `factory` and `feed` work as the first two the morning after. Never promise a graduation or an income; every clip that mentions the creator fee also mentions that most launches go nowhere, or sits next to one that does.
