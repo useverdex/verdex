@@ -293,6 +293,28 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## CoinGecko listing (`verdex-coingecko-listed.mp4`, 26 s; photo `photos/coingecko-listed.png`)
+
+Approved on 2 October 2026, four days after launch, request CL3009260043. The page reads price and volume from the Pons pool and lists the contract, both explorers, the site, X and GitHub. Market cap shows once the circulating supply is filed. CoinGecko's email asks to tag @coingecko; the first version does, the second does not.
+
+> VERDEX is listed on @coingecko.
+>
+> Four days after launch. Contract, price and volume on Robinhood Chain, all on the page.
+>
+> coingecko.com/en/coins/verdex
+
+> VERDEX is on CoinGecko.
+>
+> Four days after launch. Price, volume and the contract, read from the Pons pool on Robinhood Chain.
+>
+> coingecko.com/en/coins/verdex
+
+The day after, once the supply is filed:
+
+> CoinGecko now shows the circulating supply: 1B minus everything burned, read from the burn address.
+>
+> The number goes down every hour.
+
 ## How Verdex works, the series (`series-01-browser.mp4` to `series-10-simulate.mp4`, 12 s each, one a day)
 
 Ten clips, one per technology under the site, numbered in the corner so people know there is a next one. Name every protocol as what it is, a contract or an API Verdex reads; never as a partner. Post one a day, same hour, and reply to each with the previous one so the series threads itself.

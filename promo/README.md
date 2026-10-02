@@ -63,6 +63,8 @@ The feature lives at `/orders` (`src/pages/OrdersPage.tsx` on top of `src/lib/or
 
 `clips20.html` is the ten-part series "How Verdex works", one 12-second clip per technology under the site (`?clip=browser`, `lifi`, `robinhood`, `uniswap`, `pons`, `spark`, `reserve`, `kamino`, `jupiter`, `simulate`), each numbered in the corner. Render each with `node promo/render.mjs --page "promo/clips20.html?clip=browser" --fps 30 --out promo/series-01-browser.mp4`. `render.mjs` also takes `--w` and `--h` for a different frame size.
 
+`coingecko-listed.html` is the 26-second film for the CoinGecko listing (approved 2 October 2026): the name, the CoinGecko lockup with the approval and request id, what the page shows and where it comes from, the page's numbers counting up, and the end card at `coingecko.com/en/coins/verdex`. Render with `node promo/render.mjs --page promo/coingecko-listed.html --out promo/verdex-coingecko-listed.mp4`. The photo is `coingecko-listed-photo.html`, rendered to `photos/coingecko-listed.png`.
+
 `pools.html` is a 34-second film for Verdex Pools: the name, the live stats strip, the pool table rising row by row, the composer typing one amount and getting the other, a position earning its first fees, and the end card at `useverdex.xyz/pools`. Render with `node promo/render.mjs --page promo/pools.html --out promo/verdex-pools.mp4`.
 
 `holders.html` is a 34-second film for the holder perks: the claim, a quote whose Verdex fee flips to a struck-through zero when the wallet chip lands, the eight surfaces it covers, the early-access gate, the status panel filling in, and the end card at `useverdex.xyz/verdex`. Render with `node promo/render.mjs --page promo/holders.html --out promo/verdex-holders.mp4`.

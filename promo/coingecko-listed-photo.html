@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" /><title>CoinGecko listed photo</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+html, body { margin: 0; background: #050505; overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #050505; color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.glow { position: absolute; left: 50%; top: 50%; width: 1500px; height: 900px; margin: -450px 0 0 -750px; background: radial-gradient(closest-side, rgba(194,234,138,.14), rgba(194,234,138,0)); }
+.row { position: absolute; left: 0; right: 0; top: 200px; display: flex; align-items: center; justify-content: center; gap: 64px; }
+.vx { display: flex; align-items: center; gap: 26px; }
+.vx span { font-family: 'LT Remark', serif; font-size: 150px; letter-spacing: -0.035em; line-height: 1; }
+.bar { width: 2px; height: 150px; background: rgba(255,255,255,.18); }
+h1 { position: absolute; left: 0; right: 0; top: 470px; margin: 0; text-align: center; font-family: 'LT Remark', serif; font-weight: 400; font-size: 96px; letter-spacing: -0.035em; }
+.st { position: absolute; left: 0; right: 0; top: 600px; text-align: center; }
+.status { display: inline-flex; align-items: center; gap: 14px; padding: 14px 26px; border-radius: 999px; background: rgba(194,234,138,.14); color: #C2EA8A; font-size: 30px; font-weight: 500; }
+.card { position: absolute; left: 50%; top: 690px; width: 1120px; margin-left: -560px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 22px; background: #0F0F0F; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.7); overflow: hidden; }
+.card > div { padding: 24px 28px; border-left: 1px solid rgba(255,255,255,.08); }
+.card > div:first-child { border-left: none; }
+.card .l { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.card .v { font-family: "LT Remark", serif; font-size: 46px; letter-spacing: -0.02em; line-height: 1; margin-top: 12px; font-variant-numeric: tabular-nums; }
+.card .v small { font-family: Geist, system-ui, sans-serif; font-size: 20px; color: #F87171; margin-left: 10px; font-weight: 500; }
+.status i { width: 14px; height: 14px; border-radius: 50%; background: #C2EA8A; }
+.url { position: absolute; left: 0; right: 0; top: 900px; text-align: center; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 12px; background: #1A1A1A; font-size: 26px; font-weight: 500; }
+.pill b { width: 12px; height: 12px; border-radius: 50%; background: #C2EA8A; }
+#vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+</style></head>
+<body><div id="stage"><div class="grid"></div><div class="glow"></div>
+<div class="row"><div class="vx"><span id="mk" style="width:120px;height:120px;display:inline-flex"></span><span>Verdex</span></div><div class="bar"></div><img src="brand/coingecko-lockup.svg" style="width:640px;height:auto;display:block"></div>
+<h1>Listed on CoinGecko.</h1>
+<div class="st"><span class="status"><i></i>Approved</span></div>
+<div class="card"><div><div class="l">Price</div><div class="v">$0.00004104<small>-10.6%</small></div></div><div><div class="l">24h volume</div><div class="v">$64,599</div></div><div><div class="l">Fully diluted</div><div class="v">$41,057</div></div><div><div class="l">Chain</div><div class="v" style="font-size:38px;margin-top:18px">Robinhood Chain</div></div></div>
+<div class="url" style="top:905px"><span class="pill"><b></b>coingecko.com/en/coins/verdex</span></div>
+<div id="vignette"></div></div>
+<script type="module">
+import { MARK_PATH } from '../src/components/logoPath.ts'
+document.getElementById('mk').innerHTML = `<svg viewBox="0 0 100 100" fill="#C2EA8A" style="display:block;width:100%;height:100%"><path d="${MARK_PATH}"/></svg>`
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? im.decode().catch(() => {}) : new Promise((r) => { im.onload = r; im.onerror = r }))))
+window.DURATION = 1
+window.renderAt = () => {}
+window.__ready = true
+</script></body></html>
