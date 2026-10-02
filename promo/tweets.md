@@ -357,6 +357,36 @@ The last box on the day-one roadmap, and the first Verdex contract. Say it plain
 >
 > useverdex.xyz/auto-invest/without-you
 
+## Launchpad, priced in any stock (`verdex-launchpair.mp4`, 34 s)
+
+One fact, shown rather than claimed: the Launchpad lets a token be priced in any of the 42 tokenized stocks the Pons factory accepts, plus ETH and USDG. The count and the thresholds are read from the factory, so say "today" when you quote them. Name Pons as the contracts, never as a partner. Do not promise graduations or creator income.
+
+> You can launch a token priced in any stock.
+>
+> NVDA, TSLA, SPY, AAPL, COIN. Forty-two tokenized stocks on Robinhood Chain, read from the factory as you look. Buyers pay in the stock, the curve holds the stock, your creator fee arrives in the stock.
+>
+> useverdex.xyz/launch
+
+Shorter:
+
+> Same token. Any pair.
+>
+> Forty-two stocks to price a launch in, and the threshold follows the pick: 41.6 NVDA, 26 TSLA, 10.9 SPY. Read from the Pons factory, today.
+>
+> useverdex.xyz/launch
+
+Reply, if someone asks what the pair changes:
+
+> Everything downstream. Buyers pay in it along the curve, the curve holds it until graduation, the Uniswap v4 pool is against it with the liquidity locked by Pons, and the creator fee is paid in it on every trade. A stablecoin pair with a stock on the label is a different thing.
+
+Spanish:
+
+> Puedes lanzar un token cotizado en cualquier acción.
+>
+> NVDA, TSLA, SPY, AAPL, COIN. Cuarenta y dos acciones tokenizadas en Robinhood Chain, leídas del factory al momento. Los compradores pagan en la acción, la curva guarda la acción y tu comisión de creador llega en la acción.
+>
+> useverdex.xyz/launch
+
 ## CoinGecko listing (`verdex-coingecko-listed.mp4`, 26 s; photo `photos/coingecko-listed.png`)
 
 Approved on 2 October 2026, four days after launch, request CL3009260043. The page reads price and volume from the Pons pool and lists the contract, both explorers, the site, X and GitHub. Market cap shows once the circulating supply is filed. CoinGecko's email asks to tag @coingecko; the first version does, the second does not.

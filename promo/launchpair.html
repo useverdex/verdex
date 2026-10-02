@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex Launchpad, priced in any stock</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Stats strip */
+.stats { position: absolute; left: 50%; top: 330px; width: 1400px; margin-left: -700px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.stats > div { padding: 30px 34px; border-left: 1px solid rgba(255,255,255,.08); }
+.stats > div:first-child { border-left: none; }
+.stats .l { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.stats .v { font-family: 'LT Remark', serif; font-size: 58px; letter-spacing: -0.02em; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; }
+/* Panels */
+.panel { position: absolute; width: 900px; box-sizing: border-box; padding: 30px 36px 32px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.panel .hd { display: flex; align-items: center; gap: 16px; }
+.panel .hd .ic { width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.panel .hd .ic svg { width: 24px; height: 24px; }
+.panel .hd b { font-size: 24px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.panel .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.panel .big { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 26px; }
+.panel .big b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 60px; letter-spacing: -0.02em; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+.panel .big b.lime { color: var(--lime); }
+.panel .big span { font-size: 16px; color: var(--muted); display: block; margin-top: 8px; }
+.panel .rows { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
+.panel .lab { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 8px; }
+.row { display: flex; align-items: center; gap: 16px; height: 46px; padding: 0 12px; border-radius: 10px; font-size: 18px; will-change: opacity, transform; }
+.row .w { color: var(--faint); width: 150px; flex-shrink: 0; font-size: 16px; }
+.row .t { flex: 1; color: var(--soft); }
+.row .a { font-weight: 500; font-variant-numeric: tabular-nums; }
+.row .a.lime { color: var(--lime); }
+.row .a.red { color: var(--red); }
+/* Bounty tiles */
+.tile { position: absolute; width: 400px; height: 230px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.tile .e { font-family: 'LT Remark', serif; font-size: 52px; letter-spacing: -0.02em; line-height: 1; color: var(--lime); }
+.tile .e.dim { color: var(--muted); font-size: 40px; }
+.tile b { display: block; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.tile span { display: block; font-size: 16px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { padding: 9px 16px; border-radius: 12px; background: var(--chip); font-size: 18px; font-weight: 500; }
+.chip.on { background: #fff; color: #000; }
+.field { padding: 18px 20px; border-radius: 16px; background: #161616; margin-top: 12px; }
+.field .k { display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+.field .v { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 34px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.field .v span { font-size: 16px; color: var(--muted); font-weight: 500; }
+.btn { margin-top: 22px; height: 56px; border-radius: 16px; background: #fff; color: #000; font-size: 20px; font-weight: 500; display: grid; place-items: center; }
+.btn.ghost { background: rgba(255,255,255,.08); color: #fff; }
+.sum { margin-top: 18px; padding: 16px 18px; border-radius: 16px; background: #161616; display: grid; gap: 8px; font-size: 16px; }
+.sum div { display: flex; justify-content: space-between; color: var(--muted); }
+.sum div b { color: #fff; font-weight: 500; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #5EE0A0; margin: 0 6px 2px 14px; }
+.pos .top { display: flex; align-items: center; gap: 16px; }
+.pos .top .big2 { margin-left: auto; text-align: right; }
+.pos .top .big2 b { font-size: 34px; font-weight: 500; display: block; font-variant-numeric: tabular-nums; }
+.pos .top .big2 span { font-size: 15px; color: var(--muted); }
+.pos .fees { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; font-size: 17px; color: var(--muted); }
+.pos .fees b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pos .fees .b { margin-left: auto; padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,.08); color: #fff; font-weight: 500; }
+.pos .fees .b + .b { margin-left: 0; }
+.sched { position: absolute; left: 50%; top: 330px; width: 1000px; margin-left: -500px; display: grid; gap: 12px; }
+.buy { display: flex; align-items: center; gap: 18px; height: 78px; padding: 0 24px; border-radius: 16px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); font-size: 22px; will-change: opacity, transform, filter; }
+.buy .d { width: 190px; color: var(--muted); font-size: 18px; }
+.buy .a { flex: 1; }
+.buy .o { font-weight: 500; font-variant-numeric: tabular-nums; }
+.buy .s { width: 150px; text-align: right; font-size: 16px; color: var(--muted); }
+.buy.done .s { color: var(--lime); }
+.buy.next { border-color: rgba(194,234,138,.45); }
+.stk { position: absolute; width: 168px; height: 84px; box-sizing: border-box; padding: 0 16px; border-radius: 16px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; will-change: transform, opacity, filter; }
+.stk img { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+.stk.on { border-color: var(--lime); background: #151a10; box-shadow: 0 0 0 1px var(--lime), 0 20px 50px rgba(194,234,138,.18); }
+.chip img { width: 22px; height: 22px; border-radius: 50%; vertical-align: -5px; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Launchpad, priced in any stock: the claim, the wall of 42 accepted stocks, the composer re-pricing the same token in one stock after another, what the pairing carries through, the end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 34
+const PUB = '../public'
+const LOGO = (f) => `${PUB}/img/logos/${f}`
+// Every tokenized stock the Pons factory accepted as a quote on 2 October 2026 (approvedPairTokens), with its graduation threshold (pairTokenEconomics) and that threshold in dollars at the day's price.
+const STOCKS = [
+  ['NVDA', 'NVIDIA', '88a0e630.webp', '41.6', 9332],
+  ['TSLA', 'Tesla', 'e8ca24f9.webp', '26', 9859],
+  ['SPY', 'SPDR S&P 500 ETF', 'c025dcd9.webp', '10.9', 8365],
+  ['AAPL', 'Apple', '2a11a6bd.webp', '24.2', 8120],
+  ['GOOGL', 'Alphabet', '4d76db13.webp', '24.2', 8281],
+  ['META', 'Meta Platforms', '0b00cc62.webp', '13.57', 10564],
+  ['MSFT', 'Microsoft', '9e189df1.webp', '16.08', 7944],
+  ['AMZN', 'Amazon', '39c11fed.webp', '29.33', 7640],
+  ['COIN', 'Coinbase', '1efa740a.webp', '52.47', 10428],
+  ['AMD', 'AMD', '0a5c861d.webp', '16.67', 10514],
+  ['PLTR', 'Palantir Technologies', '5c6daea9.webp', '47.07', 8941],
+  ['MSTR', 'MicroStrategy', '48f06241.webp', '79.98', 13061],
+  ['QQQ', 'Invesco QQQ', '8fbe91e2.webp', '11.15', 8266],
+  ['SPCX', 'SpaceX', '5a9801c3.webp', '72.2', 10708],
+  ['CRCL', 'Circle Internet Group', '1b790bc1.webp', '120', 11178],
+  ['INTC', 'Intel', '50ecf869.webp', '102', 12984],
+  ['MU', 'Micron Technology', '21a84899.webp', '9.18', 9961],
+  ['TSM', 'Taiwan Semiconductor Manufacturing', 'ae4207a3.webp', '24.45', 11034],
+  ['GME', 'GameStop', 'b985c044.webp', '369', 9161],
+  ['BABA', 'Alibaba', 'e91d2aff.webp', '91.28', 10114],
+  ['COST', 'Costco', 'fcbae652.webp', '8.47', 7627],
+  ['LLY', 'Eli Lilly', '566c78e0.webp', '8.73', 10330],
+  ['DELL', 'Dell Technologies', '65170b38.webp', '23.82', 12761],
+  ['SHOP', 'Shopify', '1bb14dbf.webp', '70.09', 10147],
+  ['BA', 'Boeing', '5f0d7c62.webp', '49.72', 9807],
+  ['RBLX', 'Roblox', '9ab054ae.webp', '249', 12145],
+  ['RDDT', 'Reddit', '88863599.webp', '42.35', 6395],
+  ['RKLB', 'Rocket Lab', '1f78f0b6.webp', '163', 11878],
+  ['RIVN', 'Rivian Automotive', '152402fa.webp', '644', 9860],
+  ['F', 'Ford Motor', '01d0e095.webp', '711', 8938],
+  ['UPS', 'United Parcel Service', 'c63e3966.webp', '100', 9135],
+  ['LULU', 'lululemon', '6befa8c2.webp', '83.72', 8504],
+  ['MRVL', 'Marvell Technology', '284d0a02.webp', '48.68', 12577],
+  ['SNDK', 'SanDisk', 'fbda9c9b.webp', '6.63', 11745],
+  ['BE', 'Bloom Energy', '59b25746.webp', '42.05', 11204],
+  ['TTWO', 'Take-Two Interactive Software', '2daa5980.webp', '26.64', 5411],
+  ['QUBT', 'Quantum Computing', 'c1ac3d2f.webp', '1295', 11854],
+  ['NU', 'Nu', 'a04e689c.webp', '668', 8930],
+  ['USO', 'United States Oil Fund', 'f34687ee.webp', '71.8', 10821],
+  ['SLV', 'iShares Silver Trust', '29352778.webp', '173', 9994],
+  ['SGOV', 'iShares 0-3 Month Treasury Bond ETF', '4f0c7bb8.webp', '103', 10355],
+  ['EWY', 'iShares MSCI South Korea ETF', 'a0d3ade0.webp', '55.81', 11513]
+]
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const typed = (s, p) => s.slice(0, Math.round(s.length * clamp(p)))
+const usd = (v) => '$' + v.toLocaleString('en-US')
+const CHIP = (txt, logo, on = false) => `<span class="chip${on ? ' on' : ''}">${logo ? `<img src="${LOGO(logo)}" alt="">` : ''}${txt}</span>`
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. The claim. (0-5.6)
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px"><span style="width:120px;height:120px;display:inline-flex;margin-bottom:20px">${MARK()}</span><span class="serif" style="font-size:150px;line-height:1">Priced in</span><span class="serif" style="font-size:150px;line-height:1;color:var(--lime)">any stock.</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:860px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'Launch a token on Robinhood Chain, paired with the stock you choose.')
+
+  // 2. The wall. (5.2-13.4)
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:70px"><h1 class="serif">Forty-two stocks to pair with.</h1><p>Every tokenized stock the Pons factory accepts as a quote, read from the contract as you look. ETH and USDG too.</p></div>`)
+  const COLS = 7, TW = 168, TH = 84, GAP = 12
+  const left0 = (1920 - (COLS * TW + (COLS - 1) * GAP)) / 2
+  const tiles = STOCKS.map(([tk, , logo], i) => add(s2, `<div class="stk" style="left:${left0 + (i % COLS) * (TW + GAP)}px;top:${292 + Math.floor(i / COLS) * (TH + GAP)}px"><img src="${LOGO(logo)}" alt=""><span>${tk}</span></div>`))
+  const cap2 = add(s2, `<div class="cap" style="top:900px">Pick one. Your token is priced in it from the first block.</div>`)
+
+  // 3. The composer. (13-23.8)
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:70px"><h1 class="serif">Same token. Any pair.</h1><p>The stock you pick is what buyers pay in, what the curve holds and what your fee arrives in. The threshold follows it.</p></div>`)
+  const SEQ = ['NVDA', 'TSLA', 'SPY', 'AAPL', 'COIN']
+  const by = Object.fromEntries(STOCKS.map((s) => [s[0], s]))
+  const comp = add(s3, `<div class="panel" style="left:50%;top:252px;margin-left:-430px;width:860px;padding:26px 36px 30px"><div class="hd"><img class="ql" src="${LOGO(by.NVDA[2])}" style="width:50px;height:50px;border-radius:14px" alt=""><div><b>Launch <span class="sym" style="display:inline">&nbsp;</span></b><span>Robinhood Chain · fixed supply of 1,000,000,000 · priced in <span class="qs" style="display:inline">NVDA</span></span></div></div>
+    <div style="display:grid;grid-template-columns:1fr 200px;gap:12px;margin-top:22px"><div class="field" style="margin-top:0"><div class="k"><span>Name</span></div><div class="v"><span class="n1" style="font-size:28px;color:#fff;font-weight:500">&nbsp;</span></div></div><div class="field" style="margin-top:0"><div class="k"><span>Symbol</span></div><div class="v"><span class="n2" style="font-size:28px;color:#fff;font-weight:500">&nbsp;</span></div></div></div>
+    <div class="lab" style="margin-top:20px">Priced in</div><div class="chips">${CHIP('ETH')}${CHIP('USDG')}${SEQ.map((k) => CHIP(k, by[k][2])).join('')}${CHIP('GOOGL', by.GOOGL[2])}${CHIP('All 44')}</div>
+    <div class="field" style="margin-top:20px"><div class="k"><span>Your first buy</span><span>Balance · Max</span></div><div class="v"><span class="n3" style="font-size:30px;color:#fff;font-weight:500">0.5</span><span class="qs">NVDA</span></div></div>
+    <div class="sum"><div>Buyers pay in <b class="qs">NVDA</b></div><div>Graduates at <b class="th">41.6 NVDA · $9,332</b></div><div>Creator fee, 2% of every trade, paid in <b class="qs">NVDA</b></div><div>Verdex fee <b>None</b></div></div>
+    <div class="btn">Launch MOON, priced in <span class="qs">NVDA</span></div></div>`)
+  const n1 = comp.querySelector('.n1'), n2 = comp.querySelector('.n2'), sym = comp.querySelector('.sym'), btn = comp.querySelector('.btn'), ql = comp.querySelector('.ql'), th = comp.querySelector('.th'), qss = [...comp.querySelectorAll('.qs')], chips = [...comp.querySelectorAll('.chips .chip')], sum = comp.querySelector('.sum')
+
+  // 4. All the way through. (23.4-30.8)
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:90px"><h1 class="serif">The stock, all the way through.</h1><p>Not a stablecoin pair with a stock on the label. The pair is the stock, on the curve and in the pool.</p></div>`)
+  const K = [['Buyers pay in the stock', 'along the bonding curve, from the first block'], ['The curve holds the stock', 'not ETH, not a stablecoin, until it graduates'], ['Your creator fee lands in the stock', 'paid by the Pons hook on every trade, forever'], ['It graduates against the stock', 'a Uniswap v4 pool, liquidity locked by Pons']]
+  const rows4 = K.map(([a, b], i) => add(s4, `<div class="row abs" style="left:50%;width:1100px;margin-left:-550px;top:${330 + i * 92}px;height:78px;padding:0 24px;border-radius:16px;background:var(--panel);border:1px solid rgba(255,255,255,.08);font-size:22px"><span class="dot" style="margin:0 6px 0 0"></span><span class="t" style="color:#fff">${a}</span><span class="a" style="color:var(--muted);font-weight:400;font-size:18px">${b}</span></div>`))
+
+  // 5. End card. (30.4-34)
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s5, `<div class="abs" style="left:0;right:0;top:300px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s5, `<div class="abs" style="left:0;right:0;top:610px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Launchpad. Priced in any stock.</div>`)
+  const endUrl = add(s5, `<div class="abs" style="left:0;right:0;top:710px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/launch</span></div>`)
+  const endCa = add(s5, `<div class="abs" style="left:0;right:0;top:820px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    show(s1, t < 5.6)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 4.8, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 1.6, 0.9), { stagger: 0.02, out: clamp(spring(t - 4.7, 0.4)) })
+
+    show(s2, t >= 5.2 && t < 13.4)
+    const o2 = clamp(spring(t - 12.6, 0.5))
+    const h2in = spring(t - 5.4, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    const hop = t >= 9.6 ? Math.min(STOCKS.length - 1, Math.floor((t - 9.6) / 0.075)) : -1
+    tiles.forEach((el, i) => {
+      const p = spring(t - (5.7 + i * 0.055), 0.75)
+      const on = i === hop
+      el.classList.toggle('on', on)
+      mat(el, p * (1 - o2), { y: 30 * (1 - p), s: on ? -0.06 : 0.05, blur: 12 })
+    })
+    const c2 = spring(t - 9.2, 0.9)
+    mat(cap2, c2 * (1 - o2), { y: 16 * (1 - c2), s: 0.02 })
+
+    show(s3, t >= 13 && t < 23.8)
+    const o3 = clamp(spring(t - 23.0, 0.5))
+    const h3in = spring(t - 13.2, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const c3 = spring(t - 13.5, 0.85)
+    mat(comp, c3 * (1 - o3), { y: 40 * (1 - c3) + 20 * o3, s: 0.05, blur: 18 })
+    n1.innerHTML = t >= 14.0 ? typed('Moon Index', (t - 14.0) / 0.7) || '&nbsp;' : '&nbsp;'
+    const symText = t >= 14.8 ? typed('MOON', (t - 14.8) / 0.4) : ''
+    n2.innerHTML = symText || '&nbsp;'
+    sym.innerHTML = symText || '&nbsp;'
+    const step = t >= 15.6 ? Math.min(SEQ.length - 1, Math.floor((t - 15.6) / 1.4)) : 0
+    const cur = by[SEQ[step]]
+    const since = t - (15.6 + step * 1.4)
+    chips.forEach((c, i) => c.classList.toggle('on', t >= 15.6 && i === 2 + step))
+    ql.src = LOGO(cur[2])
+    qss.forEach((el) => (el.textContent = cur[0]))
+    th.textContent = `${cur[3]} ${cur[0]} · ${usd(cur[4])}`
+    const pop = t >= 15.6 ? spring(since, 0.4) : 1
+    sum.style.opacity = 0.35 + 0.65 * pop
+    sum.style.transform = `translate3d(0, ${(4 * (1 - pop)).toFixed(2)}px, 0)`
+    btn.style.background = t >= 22.6 ? 'var(--lime)' : '#fff'
+    if (t >= 22.6) btn.textContent = 'Confirm in your wallet…'
+    else btn.innerHTML = `Launch MOON, priced in ${cur[0]}`
+
+    show(s4, t >= 23.4 && t < 30.8)
+    const o4 = clamp(spring(t - 30.2, 0.5))
+    const h4in = spring(t - 23.6, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    rows4.forEach((el, i) => { const p = spring(t - (24.1 + i * 0.3), 0.85); mat(el, p * (1 - o4), { y: 30 * (1 - p), s: 0.03, blur: 12 }) })
+
+    show(s5, t >= 30.4)
+    const e1p = spring(t - 30.6, 0.7), e2p = spring(t - 30.95, 0.7), e3p = spring(t - 31.2, 0.7), e4p = spring(t - 31.4, 0.7)
+    mat(endLogo, e1p, { y: 30 * (1 - e1p), s: 0.06, blur: 20 })
+    mat(endTag, e2p, { y: 20 * (1 - e2p), s: 0.02 })
+    mat(endUrl, e3p, { y: 20 * (1 - e3p), s: 0.02 })
+    mat(endCa, e4p, { y: 20 * (1 - e4p), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>
