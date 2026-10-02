@@ -74,11 +74,11 @@ export function Chips<T extends string>({ options, value, onChange, counts, logo
   )
 }
 
-export function TableHead({ cols }: { cols: { label: string; align?: 'left' | 'right'; grow?: boolean; hide?: 'xs' | 'sm' }[] }) {
+export function TableHead({ cols }: { cols: { label: string; align?: 'left' | 'right'; grow?: boolean; hide?: 'xs' | 'sm'; w?: number }[] }) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, px: 2.5, py: 1.5, borderBottom: `1px solid ${t.color.border}`, ...t.type.caption, color: t.color.textLabel }}>
       {cols.map((c) => (
-        <Box key={c.label} sx={{ flex: c.grow ? '1 1 0' : '0 0 auto', width: c.grow ? 'auto' : 120, textAlign: c.align ?? 'left', display: c.hide ? { xs: 'none', [c.hide === 'xs' ? 'sm' : 'md']: 'block' } : 'block' }}>
+        <Box key={c.label} sx={{ flex: c.grow ? '1 1 0' : '0 0 auto', width: c.grow ? 'auto' : (c.w ?? 120), textAlign: c.align ?? 'left', display: c.hide ? { xs: 'none', [c.hide === 'xs' ? 'sm' : 'md']: 'block' } : 'block' }}>
           {c.label}
         </Box>
       ))}
@@ -94,9 +94,9 @@ export function Row({ children, onClick, hoverable = true }: { children: ReactNo
   )
 }
 
-export function Cell({ children, align = 'left', grow, hide, sx }: { children: ReactNode; align?: 'left' | 'right'; grow?: boolean; hide?: 'xs' | 'sm'; sx?: Record<string, unknown> }) {
+export function Cell({ children, align = 'left', grow, hide, w, sx }: { children: ReactNode; align?: 'left' | 'right'; grow?: boolean; hide?: 'xs' | 'sm'; w?: number; sx?: Record<string, unknown> }) {
   return (
-    <Box sx={{ flex: grow ? '1 1 0' : '0 0 auto', width: grow ? 'auto' : 120, minWidth: 0, textAlign: align, ...t.type.small, display: hide ? { xs: 'none', [hide === 'xs' ? 'sm' : 'md']: 'block' } : 'block', ...sx }}>{children}</Box>
+    <Box sx={{ flex: grow ? '1 1 0' : '0 0 auto', width: grow ? 'auto' : (w ?? 120), minWidth: 0, textAlign: align, ...t.type.small, display: hide ? { xs: 'none', [hide === 'xs' ? 'sm' : 'md']: 'block' } : 'block', ...sx }}>{children}</Box>
   )
 }
 

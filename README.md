@@ -43,6 +43,12 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   accepts, a first buy in the same transaction, graduation into a Uniswap v4 pool with locked
   liquidity, and a creator fee paid on every trade. A live feed of every launch on the factory and
   the wallet's own launches. No Verdex contract and no Verdex fee.
+- **Private Markets.** The private companies with a token: pre-IPO exposure issued by PreStocks on
+  Solana (Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI), with price,
+  liquidity, volume and holders from Jupiter and the transfer fee, pause switch and supply from each
+  mint on Solana, read every minute. The companies that left (SpaceX listed, xAI's conversion
+  closed), a check for replaced and refunded mints, and a link to trade on Jupiter. No Verdex
+  contract and no Verdex fee.
 - **$VERDEX page.** The token, read from the chain: market data, creator fees and sweeps, the dev
   wallet's holding, buys and burns, the bug bounty tiers, all live in the browser with a link to every
   transaction.

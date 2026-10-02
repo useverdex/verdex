@@ -133,6 +133,22 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'private-markets',
+    title: 'Private Markets',
+    blocks: [
+      { kind: 'p', text: `Private Markets lists the private companies that have a token: pre-IPO exposure issued by PreStocks on Solana, one Token-2022 mint per company, priced where it trades. ${N} reads the price, the liquidity, the day’s volume and the holder count from Jupiter, and the transfer fee, the pause switch and the supply from each mint on Solana, every minute, in the browser. ${N} adds no contract and takes no fee; the trade happens on Jupiter, in your own Solana wallet.` },
+      { kind: 'defs', items: [
+        { term: 'What the token is', text: 'The issuer takes exposure to a private company’s shares through vehicles that hold them and issues a token against it. Holding the token is a claim on that exposure under the issuer’s terms: no shares in your name, no vote, no dividend. The issuer’s terms exclude U.S. persons. If the issuer fails, the token fails with it, whatever the company does.' },
+        { term: 'The price', text: 'The last trade in the mint’s pools on Meteora and Raydium, reached through Jupiter. It is not the company’s last funding round and it moves with every buy and sell. Liquidity is how much sits in those pools; it tells you how far a trade would move the price.' },
+        { term: 'Transfer fee', text: 'Every mint carries a Token-2022 transfer fee, taken on every transfer, the buy included. The issuer can change it with an epoch’s notice; the page shows the fee in force and any scheduled change, read from the mint.' },
+        { term: 'Pause and delegate', text: 'The issuer holds a pause switch that stops every transfer of a mint, and a permanent delegate that can move or burn tokens from any account. Both are part of how it converts and refunds. The page shows whether transfers are open.' },
+        { term: 'How it ends', text: 'When a company lists or is bought, the issuer converts, redeems or refunds the token under its terms. SpaceX listed in June 2026 and its public stock trades tokenized as SPCX in Markets; xAI’s token had a conversion window that closed on 12 September 2026. Both are kept on the page with what is left in their pools.' },
+        { term: 'Replaced and refunded mints', text: `The issuer has retired more than twenty earlier mints, renamed OUTDATED or REFUNDED onchain. They still carry the PreStocks name and still get pasted into swap boxes. Only the mints on the page trade today; the check at the bottom tells you what any other mint is, by ${N}’s list first and by Jupiter’s name for the rest.` },
+        { term: 'Fees', text: `No ${N} fee. You pay the mint’s transfer fee on the buy and on every later transfer, the pool fee, and Jupiter’s own terms.` },
+      ] },
+    ],
+  },
+  {
     id: 'tokenized-pools',
     title: 'Tokenized Pools',
     blocks: [

@@ -9,7 +9,7 @@ const doc = (label: string, id: string, icon: NavItem['icon']): NavItem => ({ la
 export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Markets',
-    match: ['/assets', '/issuers'],
+    match: ['/assets', '/issuers', '/private-markets'],
     items: [
       { label: 'All assets', icon: GridIcon, path: '/assets' },
       ...([
@@ -19,6 +19,7 @@ export const NAV_GROUPS: NavGroup[] = [
         ['Private Credit', DocIcon],
         ['Treasuries', BankIcon],
       ] as const).map(([label, icon]) => ({ label, icon, path: `/assets?category=${encodeURIComponent(label)}` })),
+      { label: 'Private Markets', icon: LockIcon, path: '/private-markets' },
       { label: 'Issuers', icon: BuildingIcon, path: '/issuers', divider: true },
     ],
   },
@@ -70,6 +71,7 @@ export const NAV_GROUPS: NavGroup[] = [
       doc('Verdex Pools', 'verdex-pools', BoltIcon),
       doc('Asset Yield', 'asset-yield', PercentIcon),
       doc('Launchpad', 'launchpad', RocketIcon),
+      doc('Private Markets', 'private-markets', LockIcon),
       doc('Lend and Borrow', 'lend-and-borrow', HandCoinIcon),
       doc('Fees', 'fees', ReceiptIcon),
       doc('Holding VERDEX', 'holding', CoinIcon),
