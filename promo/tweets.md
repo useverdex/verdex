@@ -297,21 +297,21 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 
 Every number comes from Jupiter and from the mint on Solana, read in the browser. PreStocks is the issuer and is named as such, never as a partner. Say "exposure" or "pre-IPO token", never "shares". Never promise a listing, a conversion or a price. The transfer fee is the mint's, not ours, and it changes: say what the page shows.
 
-### Hype (image: `photos/hype-private.png`)
+### Hype (image: `photos/hype-private.png`, says nothing about what it is)
 
-> Anthropic, OpenAI, Anduril, Neuralink.
+The still and the tweet name no feature. The gate on the page opens to holders above the threshold first and to everyone at 10:00 UTC, so the hype is the holding itself. Never say what drops.
+
+> 10:00 UTC.
 >
-> You cannot buy them on an exchange.
+> We are not saying what it is. Holders above the threshold are already looking at it. Everyone else gets a countdown.
 >
-> Today at 10:00 UTC, Verdex shows the companies that trade before they list.
->
-> Priced in real time. Nothing to sign up for.
+> If you are holding, you will not have to wait.
 >
 > useverdex.xyz
 
 > One hour.
 >
-> Seven companies you have only ever read about. One table. 10:00 UTC.
+> Still not saying. The ones who held already know.
 
 ### Launch tweet (post with `verdex-private.mp4` at 10:00 UTC, then pin it)
 
