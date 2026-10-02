@@ -43,6 +43,12 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   accepts, a first buy in the same transaction, graduation into a Uniswap v4 pool with locked
   liquidity, and a creator fee paid on every trade. A live feed of every launch on the factory and
   the wallet's own launches. No Verdex contract and no Verdex fee.
+- **Auto-Invest without you.** The one Verdex contract: `contracts/VerdexAutoInvest.sol` on Robinhood
+  Chain. Approve an exact USDG allowance, set a plan (stock, amount, cadence, number of buys) and an
+  executor runs each buy when due: the contract pulls one buy's worth, swaps it in the stock's Uniswap
+  v3 pool with a price floor read from the pool, sends the stock to the owner and a tip to the executor.
+  It holds nothing between buys; the admin only keeps the executor list. Executor in
+  `scripts/autoinvest-executor.mjs`, run every ten minutes by `.github/workflows/autoinvest-executor.yml`.
 - **Private Markets.** The private companies with a token: pre-IPO exposure issued by PreStocks on
   Solana (Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI), with price,
   liquidity, volume and holders from Jupiter and the transfer fee, pause switch and supply from each

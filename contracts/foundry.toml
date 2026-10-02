@@ -1,0 +1,10 @@
+[profile.default]
+src = "."
+out = "out"
+libs = []
+solc_version = "0.8.28"
+optimizer = true
+optimizer_runs = 1000
+evm_version = "paris"
+
+via_ir = true

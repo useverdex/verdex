@@ -28,6 +28,8 @@ const VerdexPoolsPage = lazy(() => import('./pages/VerdexPoolsPage'))
 const AssetYieldPage = lazy(() => import('./pages/AssetYieldPage'))
 const LaunchPage = lazy(() => import('./pages/LaunchPage'))
 const PrivateMarketsPage = lazy(() => import('./pages/PrivateMarketsPage'))
+const AutoPilotPage = lazy(() => import('./pages/AutoPilotPage'))
+const DeployAutoInvestPage = lazy(() => import('./pages/DeployAutoInvestPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
@@ -62,7 +64,9 @@ const TITLES: [string, string][] = [
   ['/private-markets', 'Private Markets'],
   ['/lend', 'Lend and Borrow'],
   ['/portfolio', 'Portfolio'],
+  ['/auto-invest/without-you', 'Auto-Invest without you'],
   ['/auto-invest', 'Auto-Invest'],
+  ['/deploy/auto-invest', 'Deploy Auto-Invest'],
   ['/vaults', 'Vaults'],
   ['/strategies', 'Strategies'],
   ['/orders', 'Orders'],
@@ -114,6 +118,8 @@ export default function App() {
             <Route path="/lend" element={<LendPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/auto-invest" element={<EarlyGate path="/auto-invest"><AutoInvestPage /></EarlyGate>} />
+            <Route path="/auto-invest/without-you" element={<EarlyGate path="/auto-invest/without-you"><AutoPilotPage /></EarlyGate>} />
+            <Route path="/deploy/auto-invest" element={<DeployAutoInvestPage />} />
             <Route path="/vaults" element={<EarlyGate path="/vaults"><VaultsPage /></EarlyGate>} />
             <Route path="/strategies" element={<EarlyGate path="/strategies"><StrategiesPage /></EarlyGate>} />
             <Route path="/orders" element={<EarlyGate path="/orders"><OrdersPage /></EarlyGate>} />

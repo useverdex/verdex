@@ -1,0 +1,31 @@
+# Runs the due Auto-Invest plans every ten minutes from a wallet the contract allows as executor.
+# Secrets: EXECUTOR_KEY (the executor wallet's private key, holding a little ETH on Robinhood Chain).
+# Variables: AUTOINVEST_ADDRESS (the deployed VerdexAutoInvest contract).
+name: Auto-Invest executor
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+concurrency:
+  group: autoinvest-executor
+  cancel-in-progress: false
+jobs:
+  run:
+    if: ${{ vars.AUTOINVEST_ADDRESS != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/autoinvest-executor.mjs
+            contracts/VerdexAutoInvest.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund viem@2
+      - run: node scripts/autoinvest-executor.mjs
+        env:
+          EXECUTOR_KEY: ${{ secrets.EXECUTOR_KEY }}
+          AUTOINVEST_ADDRESS: ${{ vars.AUTOINVEST_ADDRESS }}

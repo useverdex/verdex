@@ -237,6 +237,22 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'auto-invest-without-you',
+    title: 'Auto-Invest without you',
+    blocks: [
+      { kind: 'p', text: `Auto-Invest without you is a recurring buy of a tokenized stock on Robinhood Chain that runs while your wallet is closed. It is the one ${N} contract: short, open source, verified on the explorer, and unaudited. You approve an exact USDG allowance and create a plan: the stock, the amount per buy, the cadence, how many buys, and the first run. When a buy is due, an executor calls the contract, which pulls one buy's worth from your allowance, swaps it in the stock's USDG pool on Uniswap v3, sends the stock to your wallet and a tip of a few cents to the executor. ${N} takes no fee.` },
+      { kind: 'defs', items: [
+        { term: 'The allowance', text: 'Exact, never unlimited: the buys you asked for plus their tips, or a year of buys for an open-ended plan. It is the most the contract can ever pull. Cut it to zero from the page or from any wallet and every plan stops at once.' },
+        { term: 'The price floor', text: 'Each buy must return at least the pool’s spot price less the plan’s slippage, read from the pool in the same transaction. If the pool is thin or moved, the buy waits for the next run instead of filling badly. The pool must hold at least $25k of liquidity when the plan is made.' },
+        { term: 'Who runs it', text: `An executor on the contract’s list, or you. ${N} runs an executor every ten minutes from a public GitHub Actions workflow with a wallet that holds a little ETH for gas; its address is on the contract. The list exists so that the price floor cannot be gamed by an arbitrary caller; the admin can add or remove executors and nothing else.` },
+        { term: 'Nothing held', text: 'Tokens pass through the contract inside one transaction. Between buys it holds no balance of yours, and no admin can move a plan, change it, pause it or touch your allowance.' },
+        { term: 'Pause, resume, cancel', text: 'From the page, one transaction each. A cancelled plan never runs again. A finished plan has made every buy it was asked for.' },
+        { term: 'Missed buys', text: 'If a buy cannot run (balance or allowance short, pool too far from spot) the plan simply waits. When it runs again the next buy is one interval later; missed buys do not pile up.' },
+        { term: 'Risk', text: `The contract is unaudited. It is about two hundred lines, tested on a fork of Robinhood Chain, with the source and compiled bytecode in the repository. Read it before you trust it with more than you would lose.` },
+      ] },
+    ],
+  },
+  {
     id: 'vaults',
     title: 'Vaults',
     blocks: [
