@@ -293,6 +293,108 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Private Markets (`verdex-private.mp4`, 34 s, post with the video at 10:00 UTC; hype still `photos/hype-private.png`)
+
+Every number comes from Jupiter and from the mint on Solana, read in the browser. PreStocks is the issuer and is named as such, never as a partner. Say "exposure" or "pre-IPO token", never "shares". Never promise a listing, a conversion or a price. The transfer fee is the mint's, not ours, and it changes: say what the page shows.
+
+### Hype (image: `photos/hype-private.png`)
+
+> Anthropic, OpenAI, Anduril, Neuralink.
+>
+> You cannot buy them on an exchange.
+>
+> Today at 10:00 UTC, Verdex shows the companies that trade before they list.
+>
+> Priced in real time. Nothing to sign up for.
+>
+> useverdex.xyz
+
+> One hour.
+>
+> Seven companies you have only ever read about. One table. 10:00 UTC.
+
+### Launch tweet (post with `verdex-private.mp4` at 10:00 UTC, then pin it)
+
+> Private Markets is live.
+>
+> Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI. Pre-IPO tokens on Solana, priced where they trade, read every minute.
+>
+> Price, liquidity, holders and the transfer fee, straight from Jupiter and the mint. One click to trade, in your own wallet.
+>
+> useverdex.xyz/private-markets
+
+### Thread (reply to the launch tweet)
+
+> 1/ What these are.
+>
+> PreStocks, the issuer, takes exposure to a private company's shares and issues one Token-2022 mint on Solana per company. Holding the token is a claim on that exposure under the issuer's terms. Not shares, no vote, no dividend.
+
+> 2/ What the price is.
+>
+> The last trade in the mint's pools on Meteora and Raydium, reached through Jupiter. Not the last funding round. It moves with every buy and sell, and the liquidity column tells you how far your trade would move it.
+
+> 3/ What the mint says.
+>
+> Every mint carries a transfer fee, a pause switch and a permanent delegate held by the issuer. Verdex reads all three from Solana and shows them in the row. Today the fee is 3% on every mint, and two of them have 5% scheduled for the next epoch.
+
+> 4/ How it ends.
+>
+> SpaceX listed in June; its public stock trades tokenized as SPCX in Markets, and what is left of the pre-IPO token is a conversion pool. xAI's conversion window closed on 12 September. Both stay on the page, with what is left in their pools.
+
+> 5/ Check the mint.
+>
+> The issuer has replaced or refunded 22 earlier mints. They keep the PreStocks name onchain and still get pasted into swap boxes. Paste any mint into the page and it tells you whether it is current, replaced, refunded or not the issuer's at all.
+
+> 6/ What Verdex does here.
+>
+> Lists and links. No Verdex contract, no Verdex fee, nothing to connect. Trade opens Jupiter with the current mint selected; your Solana wallet signs there.
+>
+> That was the second-to-last box on the roadmap from day one. Twelve of thirteen.
+
+### After the drop (`clip-fee.mp4`, `clip-mintcheck.mp4`, `clip-gone.mp4`, `clip-thirteen.mp4`, 12 s each)
+
+`clip-fee.mp4`, the afternoon of:
+
+> The fee is not ours.
+>
+> Every pre-IPO mint charges a Token-2022 transfer fee on every transfer, the buy included. The issuer can change it with an epoch's notice. Verdex reads the one in force and the one scheduled, from the mint, every minute.
+>
+> useverdex.xyz/private-markets
+
+`clip-mintcheck.mp4`, the day after:
+
+> 22 PreStocks mints are dead and still have the name.
+>
+> Paste one into Verdex and it says so. Replaced, refunded, or not the issuer's at all.
+>
+> Do it before you buy, not after.
+
+`clip-gone.mp4`, a day or two later:
+
+> Two ways a pre-IPO token ends.
+>
+> SpaceX listed, and its stock trades as SPCX. xAI's conversion closed. Both stay on the page, with what is left in their pools.
+>
+> useverdex.xyz/private-markets
+
+`clip-thirteen.mp4`, when it fits:
+
+> Day one, we posted thirteen boxes.
+>
+> Marketplace. Swap and Bridge. Baskets. Lend and Borrow. Mobile app. Auto-Invest. Vaults. Asset Management. Verdex Pools. Asset Yield. Launchpad. Private Markets.
+>
+> Twelve shipped. The one left is Auto-Invest that runs without you. Next.
+
+### Spanish version of the launch tweet
+
+> Private Markets ya está en Verdex.
+>
+> Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI. Tokens pre-IPO en Solana, con el precio del pool, leídos cada minuto.
+>
+> Precio, liquidez, holders y la comisión del mint, directos de Jupiter y de Solana. Un clic para operar, desde tu propia wallet.
+>
+> useverdex.xyz/private-markets
+
 ## Tenth batch, each with its clip (`clip-automated.mp4`, `clip-venues.mp4`, `clip-backed.mp4`, `clip-strategy.mp4`, `clip-credit.mp4`, `clip-categories.mp4`, `clip-reminders.mp4`, `clip-revoke.mp4`, `clip-docs.mp4`, `clip-offline.mp4`, 12 s each)
 
 The parts of Verdex that were never announced: the three kinds of baskets, the five venues a basket is bought through, the yield shelf, the reminders, the allowances, the docs and the app shell. Figures come from the bundled snapshots (automated-baskets, baskets-list, assets) and are true as of 1 October. Nothing here promises a return; the automated-basket rows show money at work, not what it made.

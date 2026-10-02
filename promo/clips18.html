@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex tweet clips, Private Markets</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.line { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.line .t { font-size: 112px; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 26px; font-weight: 500; will-change: transform, opacity, filter; }
+.pill svg { width: 24px; height: 24px; color: var(--lime); }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+.panel { position: absolute; left: 50%; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.chip { display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background, color; }
+.chip img { width: 20px; height: 20px; border-radius: 50%; }
+.chip.on { background: #fff; color: #000; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); white-space: nowrap; }
+.badge.done { background: rgba(194,234,138,.16); color: var(--lime); }
+/* Wallet tiles */
+.wal { position: absolute; top: 330px; width: 520px; padding: 26px 30px 28px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.65); will-change: transform, opacity, filter, border-color; }
+.wal.hot { border-color: rgba(194,234,138,.45); }
+.wal .hd { display: flex; align-items: center; gap: 14px; }
+.wal .hd i { width: 44px; height: 44px; border-radius: 12px; display: block; }
+.wal .hd b { font-size: 22px; font-weight: 500; display: block; font-family: var(--mono); letter-spacing: 0; }
+.wal .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 2px; }
+.wal .row { display: flex; align-items: center; gap: 14px; margin-top: 22px; height: 60px; padding: 0 16px; border-radius: 12px; background: var(--tile); font-size: 22px; font-weight: 500; will-change: opacity, transform; }
+.wal .row img { width: 30px; height: 30px; border-radius: 50%; }
+.wal .row small { margin-left: auto; font-size: 17px; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.money { position: absolute; display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.1); font-size: 28px; font-weight: 500; white-space: nowrap; box-shadow: 0 20px 60px rgba(0,0,0,.6); will-change: transform, opacity; }
+.money img { width: 32px; height: 32px; border-radius: 50%; }
+.node { position: absolute; left: 50%; top: 372px; width: 380px; margin-left: -190px; padding: 20px 24px; box-sizing: border-box; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; will-change: opacity, transform, filter; }
+.node img { width: 44px; height: 44px; border-radius: 50%; }
+.node b { font-size: 22px; font-weight: 500; display: block; }
+.node span { font-size: 15px; color: var(--muted); display: block; margin-top: 2px; }
+.addr { position: absolute; left: 50%; top: 610px; width: 1040px; margin-left: -520px; display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); font-family: var(--mono); font-size: 22px; will-change: opacity, transform; }
+.addr .k { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); width: 200px; }
+.addr .cur { display: inline-block; width: 2px; height: 26px; background: #fff; vertical-align: -5px; margin-left: 2px; }
+/* Asset tiles */
+.atile { position: absolute; width: 400px; padding: 26px 28px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.atile img { width: 56px; height: 56px; border-radius: 50%; }
+.atile b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.atile span { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; }
+.atile em { display: block; font-style: normal; font-family: 'LT Remark', serif; font-size: 44px; letter-spacing: -0.02em; margin-top: 14px; font-variant-numeric: tabular-nums; }
+.clock { position: absolute; left: 50%; top: 190px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 14px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 28px; font-weight: 500; font-variant-numeric: tabular-nums; will-change: opacity; }
+.clock i { width: 12px; height: 12px; border-radius: 50%; background: var(--lime); }
+/* Table rows */
+.trow { position: absolute; left: 50%; width: 1240px; margin-left: -620px; height: 84px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.trow.on { border-color: rgba(194,234,138,.45); background: #131513; }
+.trow img.l { width: 44px; height: 44px; border-radius: 50%; }
+.trow img.c { width: 22px; height: 22px; border-radius: 50%; }
+.trow b { font-size: 24px; font-weight: 500; width: 190px; letter-spacing: -0.01em; }
+.trow .nm { font-size: 18px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex: 1; }
+.trow .v { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; text-align: right; min-width: 160px; }
+.trow .v.lime { color: var(--lime); }
+.trow .s { font-size: 17px; color: var(--muted); text-align: right; min-width: 150px; font-variant-numeric: tabular-nums; }
+.trow .tag { padding: 4px 9px; border-radius: 6px; background: rgba(255,255,255,.08); font-size: 14px; font-weight: 500; color: var(--soft); }
+.total { position: absolute; left: 50%; width: 1240px; margin-left: -620px; display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; font-size: 24px; color: var(--muted); will-change: opacity, transform; }
+.total b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+/* Leverage card */
+.lev { position: absolute; left: 50%; top: 300px; width: 960px; margin-left: -480px; padding: 30px 36px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lev .hd { display: flex; align-items: center; gap: 16px; }
+.lev .hd img { width: 52px; height: 52px; border-radius: 50%; }
+.lev .hd b { font-size: 26px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.lev .hd span { font-size: 17px; color: var(--muted); display: block; margin-top: 3px; }
+.lev .x { font-family: 'LT Remark', serif; font-size: 72px; letter-spacing: -0.03em; line-height: 1; margin-left: auto; font-variant-numeric: tabular-nums; }
+.lev .bars { margin-top: 26px; display: grid; gap: 14px; }
+.lev .br { display: grid; grid-template-columns: 150px 1fr 170px; align-items: center; gap: 16px; font-size: 19px; }
+.lev .br .bar { height: 16px; border-radius: 8px; background: #1c1c1c; overflow: hidden; }
+.lev .br .bar i { display: block; height: 100%; border-radius: 8px; will-change: width; }
+.lev .br .n { text-align: right; font-variant-numeric: tabular-nums; color: var(--soft); }
+.lev .slider { margin-top: 26px; position: relative; height: 40px; }
+.lev .slider .ln { position: absolute; left: 0; right: 0; top: 19px; height: 3px; background: rgba(255,255,255,.14); }
+.lev .slider .fill { position: absolute; left: 0; top: 19px; height: 3px; background: var(--lime); will-change: width; }
+.lev .slider .kn { position: absolute; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transform: translateX(-50%); box-shadow: 0 4px 14px rgba(0,0,0,.6); will-change: left; }
+.lev .slider .lb { position: absolute; top: 46px; font-size: 15px; color: var(--faint); transform: translateX(-50%); }
+.lev .meta { display: flex; justify-content: space-between; margin-top: 44px; font-size: 18px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lev .meta b { color: #fff; font-weight: 500; }
+/* Route rows */
+.rt { position: absolute; left: 50%; width: 1100px; margin-left: -550px; height: 88px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.rt.on { border-color: rgba(194,234,138,.5); background: #131513; }
+.rt img { width: 40px; height: 40px; border-radius: 50%; }
+.rt img + img { margin-left: -14px; }
+.rt b { font-size: 23px; font-weight: 500; width: 300px; letter-spacing: -0.01em; }
+.rt .t { font-size: 18px; color: var(--muted); flex: 1; }
+.rt .out { font-size: 26px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.rt .out small { font-size: 16px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+/* Terminal */
+.term { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 24px 30px 28px; box-sizing: border-box; border-radius: 20px; background: #0a0a0a; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 23px; line-height: 1.7; color: var(--soft); will-change: transform, opacity, filter; }
+.term .dots { display: flex; gap: 8px; margin-bottom: 14px; }
+.term .dots i { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.term .ln { will-change: opacity; white-space: pre; }
+.term .ln .p { color: var(--lime); }
+.term .ln .d { color: var(--faint); }
+.term .cur { display: inline-block; width: 12px; height: 24px; background: var(--soft); vertical-align: -4px; }
+/* Receipt */
+.rcpt { position: absolute; left: 50%; top: 290px; width: 760px; margin-left: -380px; padding: 30px 36px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.rcpt .hd { display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 500; }
+.rcpt .hd img { width: 34px; height: 34px; border-radius: 50%; }
+.rcpt .hd img + img { margin-left: -12px; }
+.rcpt .it { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; font-size: 22px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.07); will-change: opacity, transform; }
+.rcpt .it span { color: var(--muted); font-size: 17px; margin-left: 10px; }
+.rcpt .it .a { font-variant-numeric: tabular-nums; font-weight: 500; position: relative; }
+.rcpt .it .a i { position: absolute; left: -4px; right: -4px; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.rcpt .it .a em { font-style: normal; color: var(--lime); margin-left: 14px; }
+.rcpt .tot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; font-size: 22px; color: var(--muted); }
+.rcpt .tot b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 56px; color: #fff; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+/* Runner */
+.run { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 30px 38px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 25px; line-height: 1.8; will-change: transform, opacity, filter; }
+.run .hd { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 12px; }
+.run .ln { display: flex; align-items: center; gap: 20px; will-change: opacity, transform; }
+.run .ln .k { color: var(--soft); width: 560px; flex-shrink: 0; }
+.run .ln .v { color: #fff; }
+.run .ln .ok { color: var(--lime); font-weight: 700; width: 34px; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+:root { --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+.field { padding: 18px 22px; border-radius: 16px; background: var(--tile); }
+.field .k { display: flex; justify-content: space-between; font-size: 16px; color: var(--muted); }
+.field .v { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 36px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.field .v span { font-size: 17px; color: var(--muted); font-weight: 500; }
+.pos .top { display: flex; align-items: center; gap: 16px; }
+.pos .big2 { margin-left: auto; text-align: right; }
+.pos .big2 b { font-size: 34px; font-weight: 500; display: block; font-variant-numeric: tabular-nums; }
+.pos .big2 span { font-size: 16px; color: var(--muted); }
+.pos .fees { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; font-size: 19px; color: var(--muted); }
+.pos .fees b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pos .b { padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,.08); color: #fff; font-weight: 500; font-size: 18px; will-change: background, color; }
+.pos .b.first { margin-left: auto; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #5EE0A0; margin: 0 8px 2px 14px; }
+.qrow { display: flex; justify-content: space-between; align-items: center; height: 54px; font-size: 22px; padding: 0 12px; border-radius: 10px; will-change: opacity, transform; }
+.qrow .k { color: var(--muted); }
+.qrow .a { font-weight: 500; font-variant-numeric: tabular-nums; position: relative; }
+.qrow .a s { color: var(--faint); margin-right: 12px; }
+.qrow.fee { background: rgba(194,234,138,.07); }
+.wal2 { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 10px; background: var(--chip); font-size: 18px; color: var(--soft); font-family: var(--mono); will-change: opacity, transform, filter; }
+.wal2 i { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); }
+.bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.08); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--lime); border-radius: 4px; will-change: width; }
+.status { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 999px; background: rgba(255,232,102,.12); color: #FFE866; font-size: 24px; font-weight: 500; }
+.status i { width: 12px; height: 12px; border-radius: 50%; background: #FFE866; }
+.big { font-family: 'LT Remark', serif; font-size: 150px; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
+.axis { position: relative; height: 70px; margin-top: 26px; }
+.axis .ln { position: absolute; left: 0; right: 0; top: 34px; height: 3px; background: rgba(255,255,255,.12); }
+.axis .band { position: absolute; top: 20px; height: 31px; border-radius: 8px; background: rgba(194,234,138,.18); border: 1px solid rgba(194,234,138,.5); will-change: left, width; }
+.axis .now { position: absolute; top: 12px; width: 3px; height: 47px; background: #fff; transform: translateX(-50%); }
+.axis .lb { position: absolute; top: 58px; font-size: 14px; color: var(--faint); transform: translateX(-50%); }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Ten 12-second clips for the tenth tweet batch: the parts of Verdex never announced, from automated baskets to the app shell. ?clip=<name>
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const TOOL = (k) => `${PUB}/logos/tools/${k}.svg`
+const LOGO = { NVDA: L('88a0e630'), SPY: L('c025dcd9'), TSLA: L('e8ca24f9'), GLD: L('8123a79a'), SLV: L('29352778'), USO: L('f34687ee'), PAXG: L('7869a6ce'), XAUT: L('941acb6b'), META: L('0b00cc62'), GOOGL: L('4d76db13'), SPCX: L('5a9801c3'), AMZN: L('39c11fed'), QQQ: L('8fbe91e2'), MSTR: L('48f06241'), IBIT: L('4c80de69'), TLT: L('0ee1c35f') }
+const USDG = `${PUB}/img/tokens/usdg.png`, USDC = `${PUB}/img/tokens/usdc.png`
+const clip = new URLSearchParams(location.search).get('clip') ?? 'fee'
+const DURATION = 12
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const line = (parent, text, { top = 460, size = 112, color = '#fff' } = {}) => {
+  const el = add(parent, `<div class="line" style="top:${top}px"><div class="serif t" style="font-size:${size}px;color:${color}"></div></div>`)
+  return { el, chars: letters(el.querySelector('.t'), text) }
+}
+const runLine = (ln, t, t0, t1, stagger = 0.035) => { show(ln.el, t >= t0 - 0.05 && t < t1 + 0.6); wipe(ln.chars, spring(t - t0, 0.8), { stagger, out: clamp(spring(t - t1, 0.35)) }) }
+const rise = (el, t, t0, { y = 14, r = 0.6 } = {}) => { const p = spring(t - t0, r); show(el, t >= t0 - 0.05); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const capIn = (el, t, t0) => { const q = spring(t - t0, 0.9); show(el, t > t0 - 0.1); mat(el, q, { y: 16 * (1 - q), s: 0.02 }) }
+const pick = (list, idx, t0, t) => list.forEach((c, i) => { const p = spring(t - t0, 0.35, 0.6); const on = i === idx && t >= t0; c.classList.toggle('on', on); c.style.transform = on ? `scale(${(1 + 0.08 * (1 - p)).toFixed(3)})` : 'none' })
+const typed = (el, text, t, t0, cps = 26, cursor = true) => { const n = clamp(Math.floor((t - t0) * cps), 0, text.length); const done = n >= text.length; el.innerHTML = text.slice(0, n) + (cursor && !done && t >= t0 ? '<span class="cur"></span>' : ''); return done }
+const I = {
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+}
+
+const PRE = (slug) => `${PUB}/logos/private/${slug}.png`
+const SOLL = CH(1151111081099710)
+const CLIPS = {
+  // 1. The fee is the mint's: 3% today, 5% scheduled, read from Solana.
+  fee(s) {
+    const l1 = line(s, 'The fee is not ours.', { top: 470 })
+    const l2 = line(s, 'It is the mint\'s. We read it.', { top: 470, size: 96, color: 'var(--lime)' })
+    const R = [['anthropic', 'Anthropic', '3%', '5% from epoch 1048'], ['openai', 'OpenAI', '3%', '5% from epoch 1048'], ['anduril', 'Anduril', '3%', 'no change scheduled'], ['neuralink', 'Neuralink', '3%', 'no change scheduled'], ['polymarket', 'Polymarket', '3%', 'no change scheduled']]
+    const rows = R.map(([sl, n, f, nx], i) => add(s, `<div class="trow" style="top:${270 + i * 90}px;height:78px"><img class="l" src="${PRE(sl)}" alt="" style="width:40px;height:40px"><b style="width:220px">${n}</b><span class="nm">Token-2022 transfer fee, on every transfer, the buy included</span><span class="s" style="min-width:230px">${nx}</span><span class="v ${nx.startsWith('5') ? '' : 'lime'}" style="min-width:90px">${f}</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:780px">Read from each mint on Solana every minute: the fee in force and the one scheduled. No Verdex fee on top.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      rows.forEach((el, i) => { const p = spring(t - 4.5 - i * 0.26, 0.85); show(el, t > 4.4 + i * 0.26); mat(el, p, { y: 30 * (1 - p), s: 0.03, blur: 12 }); el.classList.toggle('on', t >= 7.6 && i < 2) })
+      capIn(cap, t, 8.6)
+    }
+  },
+  // 2. The mint check catches a replaced mint.
+  mintcheck(s) {
+    const l1 = line(s, '22 dead mints.', { top: 470 })
+    const l2 = line(s, 'Same name. Check first.', { top: 470, size: 96, color: 'var(--lime)' })
+    const panel = add(s, `<div class="panel" style="top:300px;width:1000px;margin-left:-500px;padding:30px 36px 32px"><div class="lab">Check a mint before you buy it</div>
+      <div style="display:flex;gap:12px"><div class="addr" style="position:static;width:auto;flex:1;margin:0"><span class="k" style="width:auto;margin-right:14px">Mint</span><span class="tx"></span></div><span class="btn pri go" style="height:64px;border-radius:16px;font-size:20px">Check</span></div>
+      <div class="vd" style="margin-top:18px;padding:20px 22px;border-radius:16px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);display:flex;gap:16px;align-items:flex-start"><span style="color:var(--red);font-size:26px;line-height:1;margin-top:2px">✕</span><div><b style="display:block;font-size:22px;font-weight:500">Replaced OpenAI mint</b><span style="display:block;font-size:17px;color:var(--muted);margin-top:4px;line-height:1.4">The issuer replaced this mint with a newer one and renamed it OUTDATED. It is not the OpenAI that trades today.</span></div></div></div>`)
+    const tx = panel.querySelector('.tx'), go = panel.querySelector('.go'), vd = panel.querySelector('.vd')
+    const cap = add(s, `<div class="cap" style="top:760px">By Verdex's list of replaced and refunded mints first, by Jupiter's name for anything else. Paste before you buy, not after.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      const p = spring(t - 4.5, 0.85); show(panel, t > 4.4); mat(panel, p, { y: 30 * (1 - p), s: 0.03, blur: 12 })
+      typed(tx, 'PreYKD2kJ5xGgoZ644VPfbEN7sW8bWCUREHr5S3ebV9', t, 5.2, 40)
+      go.style.background = t >= 6.5 ? 'var(--lime)' : '#fff'
+      const v = spring(t - 6.7, 0.6); vd.style.opacity = clamp(v); vd.style.transform = `translate3d(0, ${(12 * (1 - v)).toFixed(2)}px, 0)`
+      capIn(cap, t, 8.8)
+    }
+  },
+  // 3. Two ways a pre-IPO token ends.
+  gone(s) {
+    const l1 = line(s, 'Two ways it ends.', { top: 470 })
+    const l2 = line(s, 'Both on the page.', { top: 470, color: 'var(--lime)' })
+    const T = [['spacex', 'SpaceX', 'Listed', 'Listed in June 2026. The public stock trades tokenized as SPCX, in Markets. What is left of the pre-IPO token is a conversion pool.', '$117.4K left · 9,894 holders · fee 1%'], ['xai', 'xAI', 'Conversion closed', 'The issuer closed the conversion window on 12 September 2026. The pool that remains has almost no liquidity.', '$181 left · 1,460 holders · fee 0%']]
+    const tiles = T.map(([sl, n, tag, txt, foot], i) => add(s, `<div class="atile" style="left:50%;top:330px;margin-left:${i === 0 ? -560 : 60}px;width:500px;padding:28px 30px"><div style="display:flex;align-items:center;gap:14px"><img src="${PRE(sl)}" alt="" style="width:48px;height:48px;margin:0"><b style="margin:0;font-size:28px">${n}</b><span class="badge" style="margin-left:auto">${tag}</span></div><span style="margin-top:18px;font-size:18px;line-height:1.45;color:var(--soft)">${txt}</span><span style="margin-top:16px;font-size:16px">${foot}</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:800px">Read from the same feeds as the seven still private. What the chain says, not a recommendation.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      tiles.forEach((el, i) => { const p = spring(t - 4.5 - i * 0.3, 0.85); show(el, t > 4.4 + i * 0.3); mat(el, p, { y: 30 * (1 - p), s: 0.03, blur: 12 }) })
+      capIn(cap, t, 8.4)
+    }
+  },
+  // 4. Twelve of thirteen.
+  thirteen(s) {
+    const l1 = line(s, 'Day one, thirteen boxes.', { top: 470, size: 100 })
+    const l2 = line(s, 'Twelve shipped.', { top: 470, color: 'var(--lime)' })
+    const R = [['Marketplace', 'live'], ['Swap and Bridge', 'live'], ['Baskets', 'live'], ['Lend and Borrow', 'live'], ['Mobile app', 'live'], ['Auto-Invest', 'live'], ['Automated Vaults', 'live'], ['Asset Management', 'live, as Strategies'], ['Verdex Pools', 'live'], ['Asset Yield', 'live'], ['Token Launch', 'live, as the Launchpad'], ['Private markets', 'live, today'], ['Auto-Invest without you', 'next']]
+    const rows = R.map(([n, st], i) => add(s, `<div class="trow" style="top:${150 + i * 58}px;height:50px;width:900px;margin-left:-450px;padding:0 20px"><span class="${st === 'next' ? '' : 'ok'}" style="width:26px;height:26px;border-radius:50%;display:inline-grid;place-items:center;background:${st === 'next' ? 'rgba(255,255,255,.08)' : 'rgba(194,234,138,.16)'};color:var(--lime)"><span style="width:14px;height:14px;display:inline-block">${st === 'next' ? '' : I.check}</span></span><b style="width:340px;font-size:20px">${n}</b><span class="nm" style="font-size:16px">${st}</span></div>`))
+    const cap = add(s, `<div class="cap" style="top:940px;font-size:28px">The one left is Auto-Invest that runs without you. Next.</div>`)
+    return (t) => {
+      runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2)
+      rows.forEach((el, i) => { const p = spring(t - 4.4 - i * 0.16, 0.8); show(el, t > 4.3 + i * 0.16); mat(el, p, { y: 20 * (1 - p), s: 0.02, blur: 10 }); el.classList.toggle('on', t >= 7.4 && i === 11) })
+      capIn(cap, t, 8.8)
+    }
+  },
+}
+
+add(stage, `<div class="grid"></div>`)
+const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+const scene = add(stage, `<div class="scene"></div>`)
+const draw = CLIPS[clip](scene)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+const fade = add(stage, `<div id="fade"></div>`)
+window.renderAt = async (t) => {
+  glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+  await draw(t)
+  fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

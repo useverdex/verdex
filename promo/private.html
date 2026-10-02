@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex Private Markets film</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --green: #5EE0A0; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+.stats { position: absolute; left: 50%; top: 330px; width: 1400px; margin-left: -700px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.stats > div { padding: 30px 34px; border-left: 1px solid rgba(255,255,255,.08); }
+.stats > div:first-child { border-left: none; }
+.stats .sl { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.stats .sv { font-family: 'LT Remark', serif; font-size: 58px; letter-spacing: -0.02em; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; }
+.panel { position: absolute; box-sizing: border-box; padding: 30px 36px 32px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.hd { display: flex; align-items: center; gap: 16px; }
+.hd .ic { width: 54px; height: 54px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; flex-shrink: 0; position: relative; }
+.hd .ic img { width: 34px; height: 34px; border-radius: 50%; }
+.hd b { font-size: 24px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.thead { display: flex; align-items: center; gap: 16px; padding: 0 16px 14px; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.4); border-bottom: 1px solid rgba(255,255,255,.08); }
+.trow { display: flex; align-items: center; gap: 16px; height: 78px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.06); font-size: 20px; will-change: opacity, transform, filter; }
+.trow:last-child { border-bottom: none; }
+.trow .lg { width: 48px; height: 48px; border-radius: 13px; background: rgba(255,255,255,.06); display: grid; place-items: center; flex-shrink: 0; position: relative; }
+.trow .lg img { width: 30px; height: 30px; border-radius: 50%; }
+.sol { position: absolute; right: -4px; bottom: -4px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--panel); background: var(--panel); }
+.sol img { width: 16px !important; height: 16px !important; border-radius: 50% !important; }
+.c-name { flex: 1; min-width: 0; }
+.c-name b { display: block; font-weight: 500; font-size: 21px; letter-spacing: -0.01em; }
+.c-name span { display: block; font-size: 15px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c { text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.c.price { width: 150px; font-weight: 500; }
+.c.chg { width: 110px; font-weight: 500; }
+.c.liq { width: 130px; color: var(--soft); }
+.c.hold { width: 120px; color: var(--soft); }
+.c.fee { width: 130px; }
+.up { color: var(--green); } .dn { color: var(--red); }
+.facts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 24px; }
+.fact { padding: 18px 20px; border-radius: 16px; background: #161616; }
+.fact .k { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.fact .v { font-size: 30px; font-weight: 500; margin-top: 8px; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.fact .s { font-size: 15px; color: var(--muted); margin-top: 4px; }
+.mint { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 16px 20px; border-radius: 14px; background: #161616; font-size: 19px; }
+.mint .k { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.mint .a { font-family: var(--mono); color: #fff; }
+.btns { display: flex; gap: 12px; margin-top: 22px; }
+.btn { height: 54px; padding: 0 24px; border-radius: 14px; background: rgba(255,255,255,.08); color: #fff; font-size: 19px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+.btn.pri { background: #fff; color: #000; }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+.input { margin-top: 24px; display: flex; gap: 12px; }
+.input .box { flex: 1; height: 64px; border-radius: 16px; background: #161616; display: flex; align-items: center; padding: 0 22px; font-family: var(--mono); font-size: 22px; color: #fff; }
+.input .box .ph { color: var(--faint); }
+.input .go { width: 150px; height: 64px; border-radius: 16px; background: #fff; color: #000; display: grid; place-items: center; font-size: 20px; font-weight: 500; }
+.verdict { margin-top: 18px; padding: 20px 22px; border-radius: 16px; display: flex; gap: 16px; align-items: flex-start; will-change: opacity, transform, filter; }
+.verdict.bad { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.3); }
+.verdict.ok { background: rgba(194,234,138,.1); border: 1px solid rgba(194,234,138,.3); }
+.verdict b { display: block; font-size: 22px; font-weight: 500; }
+.verdict span { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+.cursor { display: inline-block; width: 2px; height: 26px; background: #fff; margin-left: 2px; vertical-align: middle; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Private Markets film: the name, the stats strip, the table of seven companies, the Anthropic panel with everything the mint says, the mint check catching a replaced mint, the end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 34
+const PUB = '../public'
+const LOGO = (slug) => `${PUB}/logos/private/${slug}.png`
+const SOL = `${PUB}/logos/chains/1151111081099710.svg`
+const NUM = { companies: 7, liquidity: 3.2, volume: 4.7, holders: 143865 }
+const ROWS = [
+  ['anthropic', 'Anthropic', 'ANTHROPIC', 1181.27, 9.4, '$1.3M', '57,828', '3% → 5%'],
+  ['openai', 'OpenAI', 'OPENAI', 1529.72, -8.2, '$867.9K', '50,646', '3% → 5%'],
+  ['anduril', 'Anduril', 'ANDURIL', 163.76, 3.0, '$442.5K', '12,049', '3%'],
+  ['neuralink', 'Neuralink', 'NEURALINK', 401.05, 7.0, '$198.8K', '8,130', '3%'],
+  ['kalshi', 'Kalshi', 'KALSHI', 853.24, -3.7, '$76.4K', '4,649', '3%'],
+  ['polymarket', 'Polymarket', 'POLYMARKET', 151.31, 3.6, '$174.0K', '9,648', '3%'],
+  ['figureai', 'Figure AI', 'FIGUREAI', 167.82, -6.0, '$92.6K', '929', '3%'],
+]
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 2) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const pct = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`
+const typed = (s, p) => s.slice(0, Math.round(s.length * clamp(p)))
+const ICON = (slug, size = 54) => `<span class="ic" style="width:${size}px;height:${size}px"><img src="${LOGO(slug)}" alt="" style="width:${Math.round(size * 0.63)}px;height:${Math.round(size * 0.63)}px"><span class="sol"><img src="${SOL}" alt=""></span></span>`
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. The name. (0-5.6)
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;align-items:center;justify-content:center;gap:34px"><span style="width:120px;height:120px;display:inline-flex;margin-top:10px">${MARK()}</span><span class="serif" style="font-size:180px">Private Markets</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:750px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'The companies you cannot buy on an exchange.')
+
+  // 2. Stats. (5.2-12.2)
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:120px"><h1 class="serif">Seven companies. One table.</h1><p>Pre-IPO tokens issued by PreStocks on Solana, read from Jupiter and from the mint, every minute.</p></div>`)
+  const stats = add(s2, `<div class="stats">${[['Private companies', 'sa'], ['Liquidity', 'sb'], ['24h volume', 'sc'], ['Holders', 'sd']].map(([l, k]) => `<div><div class="sl">${l}</div><div class="sv ${k}">…</div></div>`).join('')}</div>`)
+  const sv = { c: stats.querySelector('.sv.sa'), l: stats.querySelector('.sv.sb'), v: stats.querySelector('.sv.sc'), h: stats.querySelector('.sv.sd') }
+  const cap2 = add(s2, `<div class="cap" style="top:640px">Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI.</div>`)
+
+  // 3. The table. (11.8-20.4)
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:70px"><h1 class="serif">Priced where they trade.</h1><p>The last trade in the pools, the day's move, the liquidity, the holders and the transfer fee. Row by row.</p></div>`)
+  const table = add(s3, `<div class="panel" style="left:50%;top:272px;margin-left:-640px;width:1280px;padding:22px 20px 10px"><div class="thead"><span style="flex:1">Company</span><span class="c price">Price</span><span class="c chg">24h</span><span class="c liq">Liquidity</span><span class="c hold">Holders</span><span class="c fee">Fee</span></div></div>`)
+  const rows = ROWS.map(([slug, name, sym, price, chg, liq, hold, fee]) => add(table, `<div class="trow"><span class="lg"><img src="${LOGO(slug)}" alt=""><span class="sol"><img src="${SOL}" alt=""></span></span><span class="c-name"><b>${name}</b><span>${sym}</span></span><span class="c price"></span><span class="c chg ${chg >= 0 ? 'up' : 'dn'}">${pct(chg)}</span><span class="c liq">${liq}</span><span class="c hold">${hold}</span><span class="c fee" style="${fee.includes('→') ? 'color:#fff' : 'color:var(--soft)'}">${fee}</span></div>`))
+  const prices = rows.map((r) => r.querySelector('.c.price'))
+
+  // 4. The panel. (20-27.2)
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:70px"><h1 class="serif">Everything the mint says.</h1><p>Fee, pause switch, supply, holders, the mint address and the links. Trade opens Jupiter, in your own wallet.</p></div>`)
+  const panel = add(s4, `<div class="panel" style="left:50%;top:280px;margin-left:-520px;width:1040px;padding:28px 36px 30px"><div class="hd">${ICON('anthropic')}<div><b>Anthropic</b><span>ANTHROPIC · AI research company behind the Claude models</span></div><div style="margin-left:auto;text-align:right"><b class="px" style="font-size:44px;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">$1,181.27</b><span style="white-space:nowrap"><span class="up" style="display:inline;font-weight:500;color:var(--green)">+9.4%</span> · 24h</span></div></div>
+    <div class="facts">${[['Market cap', '$8.7M', ''], ['Liquidity', '$1.3M', 'Meteora, via Jupiter'], ['Holders', '57,828', '7,746 traded today'], ['Transfer fee', '3%', '5% from epoch 1048, set by the issuer'], ['Transfers', 'Open', 'the issuer holds the pause switch'], ['Supply', '7,382', 'tokens, on Solana']].map(([k, v, s]) => `<div class="fact"><div class="k">${k}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`).join('')}</div>
+    <div class="mint"><span class="k">Mint</span><span class="a">Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw</span></div>
+    <div class="btns"><span class="btn pri trade">Trade on Jupiter ↗</span><span class="btn">Solscan ↗</span><span class="btn">DexScreener ↗</span><span class="btn">Issuer page ↗</span></div></div>`)
+  const trade = panel.querySelector('.trade')
+  const facts = [...panel.querySelectorAll('.fact')]
+
+  // 5. The mint check. (26.8-30.8)
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const h5 = add(s5, `<div class="head" style="top:90px"><h1 class="serif">Check the mint first.</h1><p>22 replaced or refunded mints still carry the PreStocks name. Paste one and the page tells you.</p></div>`)
+  const check = add(s5, `<div class="panel" style="left:50%;top:340px;margin-left:-480px;width:960px;padding:30px 36px 32px"><div class="hd"><span class="ic" style="color:var(--lime)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="width:26px;height:26px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span><div><b>Check a mint before you buy it</b><span>By Verdex's list first, by Jupiter's name for the rest</span></div></div>
+    <div class="input"><div class="box"><span class="tx"></span><span class="cursor"></span></div><div class="go">Check</div></div>
+    <div class="verdict bad"><span style="color:var(--red);font-size:26px;line-height:1;margin-top:2px">✕</span><div><b>Replaced OpenAI mint</b><span>The issuer replaced this mint with a newer one and renamed it OUTDATED. It is not the OpenAI that trades today.</span></div></div></div>`)
+  const tx = check.querySelector('.tx'), cursor = check.querySelector('.cursor'), verdict = check.querySelector('.verdict'), go = check.querySelector('.go')
+
+  // 6. End card. (30.4-34)
+  const s6 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s6, `<div class="abs" style="left:0;right:0;top:300px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s6, `<div class="abs" style="left:0;right:0;top:610px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Private Markets. Live now.</div>`)
+  const endUrl = add(s6, `<div class="abs" style="left:0;right:0;top:710px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/private-markets</span></div>`)
+  const endCa = add(s6, `<div class="abs" style="left:0;right:0;top:820px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    show(s1, t < 5.6)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 4.8, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 1.4, 0.9), { stagger: 0.025, out: clamp(spring(t - 4.7, 0.4)) })
+
+    show(s2, t >= 5.2 && t < 12.2)
+    const o2 = clamp(spring(t - 11.4, 0.5))
+    const h2in = spring(t - 5.4, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    const stp = spring(t - 5.7, 0.85)
+    mat(stats, stp * (1 - o2), { y: 40 * (1 - stp) + 20 * o2, s: 0.05, blur: 18 })
+    sv.c.textContent = t >= 6.2 ? Math.round(NUM.companies * easeIO(clamp((t - 6.2) / 1.0))) : '…'
+    sv.l.textContent = t >= 6.4 ? `$${(NUM.liquidity * easeIO(clamp((t - 6.4) / 1.4))).toFixed(1)}M` : '…'
+    sv.v.textContent = t >= 6.6 ? `$${(NUM.volume * easeIO(clamp((t - 6.6) / 1.4))).toFixed(1)}M` : '…'
+    sv.h.textContent = t >= 6.8 ? Math.round(NUM.holders * easeIO(clamp((t - 6.8) / 1.6))).toLocaleString('en-US') : '…'
+    const c2 = spring(t - 9.0, 0.9)
+    mat(cap2, c2 * (1 - o2), { y: 16 * (1 - c2), s: 0.02 })
+
+    show(s3, t >= 11.8 && t < 20.4)
+    const o3 = clamp(spring(t - 19.6, 0.5))
+    const h3in = spring(t - 12.0, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const c3 = spring(t - 12.3, 0.85)
+    mat(table, c3 * (1 - o3), { y: 40 * (1 - c3) + 20 * o3, s: 0.05, blur: 18 })
+    rows.forEach((r, i) => {
+      const p = spring(t - (13.0 + i * 0.28), 0.7)
+      r.style.opacity = clamp(p); r.style.transform = `translate3d(0, ${(16 * (1 - p)).toFixed(2)}px, 0)`; r.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * 8).toFixed(2)}px)`
+      prices[i].textContent = usd(ROWS[i][3] * easeIO(clamp((t - (13.3 + i * 0.28)) / 1.2)))
+    })
+
+    show(s4, t >= 20 && t < 27.2)
+    const o4 = clamp(spring(t - 26.4, 0.5))
+    const h4in = spring(t - 20.2, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    const c4 = spring(t - 20.5, 0.85)
+    mat(panel, c4 * (1 - o4), { y: 40 * (1 - c4) + 20 * o4, s: 0.05, blur: 18 })
+    facts.forEach((f, i) => { const p = spring(t - (21.2 + i * 0.18), 0.7); f.style.opacity = clamp(p); f.style.transform = `translate3d(0, ${(12 * (1 - p)).toFixed(2)}px, 0)` })
+    const hot = t >= 24.6
+    trade.style.background = hot ? 'var(--lime)' : '#fff'
+    trade.textContent = hot ? 'Opening Jupiter, in your wallet…' : 'Trade on Jupiter ↗'
+
+    show(s5, t >= 26.8 && t < 30.8)
+    const o5 = clamp(spring(t - 30.2, 0.5))
+    const h5in = spring(t - 27.0, 0.9)
+    mat(h5, h5in * (1 - o5), { y: 24 * (1 - h5in), s: 0.02 })
+    const p5 = spring(t - 27.3, 0.85)
+    mat(check, p5 * (1 - o5), { y: 40 * (1 - p5) + 20 * o5, s: 0.05, blur: 18 })
+    const typedTx = t >= 27.8 ? typed('PreYKD2kJ5xGgoZ644VPfbEN7sW8bWCUREHr5S3ebV9', (t - 27.8) / 1.1) : ''
+    tx.textContent = typedTx
+    cursor.style.opacity = t < 29.1 && Math.floor(t * 3) % 2 === 0 ? 1 : 0
+    go.style.background = t >= 29.1 ? 'var(--lime)' : '#fff'
+    const vp = spring(t - 29.3, 0.6)
+    mat(verdict, vp, { y: 12 * (1 - vp), s: 0.02 })
+
+    show(s6, t >= 30.4)
+    const e1p = spring(t - 30.6, 0.7), e2p = spring(t - 30.95, 0.7), e3p = spring(t - 31.2, 0.7), e4p = spring(t - 31.4, 0.7)
+    mat(endLogo, e1p, { y: 30 * (1 - e1p), s: 0.06, blur: 20 })
+    mat(endTag, e2p, { y: 20 * (1 - e2p), s: 0.02 })
+    mat(endUrl, e3p, { y: 20 * (1 - e3p), s: 0.02 })
+    mat(endCa, e4p, { y: 20 * (1 - e4p), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>
