@@ -293,6 +293,70 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## Auto-Invest without you (`verdex-autopilot.mp4`, 34 s, post with the video when the gate opens; hype still `photos/hype-autopilot.png`)
+
+The last box on the day-one roadmap, and the first Verdex contract. Say it plainly: unaudited, two hundred lines, holds nothing, takes no fee, the admin only keeps the executor list. Never promise a fill price or a return; the floor is the pool's spot less the slippage the owner set. Never call it "set and forget" without the caveat that it stops when the balance or the allowance runs out.
+
+### Hype (image: `photos/hype-autopilot.png`, names no feature)
+
+> Tomorrow, 18:00 UTC.
+>
+> Something that keeps working after you close the tab.
+>
+> Holders above the threshold see it first. Everyone else gets the countdown.
+>
+> useverdex.xyz
+
+> One hour.
+>
+> The last box on the roadmap we posted on day one. Thirteen of thirteen.
+
+### Launch tweet (post with the video, then pin it)
+
+> Auto-Invest without you is live.
+>
+> A recurring buy of a tokenized stock on Robinhood Chain that runs while your wallet is closed. Approve a USDG allowance once, set the plan, close the tab. Every buy lands in your wallet.
+>
+> The first Verdex contract. Two hundred lines, holds nothing, takes no fee.
+>
+> useverdex.xyz/auto-invest/without-you
+
+### Thread (reply to the launch tweet)
+
+> 1/ What you set.
+>
+> The stock, the amount per buy, how often, how many buys, and when the first one runs. The page shows the exact USDG allowance it will ask for: the buys plus a five-cent tip each. Never unlimited.
+
+> 2/ What runs it.
+>
+> When a buy is due, an executor calls the contract. It pulls one buy's worth from your allowance, swaps it in the stock's USDG pool on Uniswap v3, sends the stock to your wallet and the tip to the executor. Verdex runs an executor every ten minutes. You can run your own plan too.
+
+> 3/ The floor.
+>
+> Every buy must return at least the pool's spot price less your slippage, read from the pool in the same transaction. A thin or moved pool makes the buy wait, not fill badly.
+
+> 4/ What the contract cannot do.
+>
+> Hold your tokens between buys. Pull more than the allowance. Change, pause or cancel a plan that is not yours. The admin keeps the executor list and nothing else.
+
+> 5/ What it is not.
+>
+> Audited. It is short enough to read in ten minutes, tested on a fork of the chain, with the source and bytecode in the repository. Read it before you trust it with more than you would lose.
+
+> 6/ Thirteen of thirteen.
+>
+> Marketplace, Swap and Bridge, Baskets, Lend and Borrow, Mobile app, Auto-Invest, Vaults, Asset Management, Verdex Pools, Asset Yield, Launchpad, Private Markets, and now Auto-Invest without you. The roadmap we posted on day one is done. The next one is yours to choose.
+
+### Spanish version of the launch tweet
+
+> Auto-Invest sin ti ya está en Verdex.
+>
+> Una compra recurrente de una acción tokenizada en Robinhood Chain que se ejecuta con la wallet cerrada. Apruebas un allowance de USDG una vez, fijas el plan y cierras la pestaña. Cada compra llega a tu wallet.
+>
+> El primer contrato de Verdex. Doscientas líneas, no custodia nada, sin comisión.
+>
+> useverdex.xyz/auto-invest/without-you
+
 ## CoinGecko listing (`verdex-coingecko-listed.mp4`, 26 s; photo `photos/coingecko-listed.png`)
 
 Approved on 2 October 2026, four days after launch, request CL3009260043. The page reads price and volume from the Pons pool and lists the contract, both explorers, the site, X and GitHub. Market cap shows once the circulating supply is filed. CoinGecko's email asks to tag @coingecko; the first version does, the second does not.
