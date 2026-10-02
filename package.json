@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc -b --noEmit",
-    "build:preview": "VITE_BASE=./ VITE_HASH_ROUTER=1 VITE_LOGO_PACK=1 vite build --outDir dist-preview && node scripts/pack-logos.mjs dist-preview"
+    "build:preview": "VITE_BASE=./ VITE_HASH_ROUTER=1 VITE_LOGO_PACK=1 vite build --outDir dist-preview && node scripts/pack-logos.mjs dist-preview",
+    "start": "node server.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.129.0",

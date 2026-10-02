@@ -6,13 +6,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { encodeFunctionData, erc20Abi, formatUnits, isAddress, parseAbi, parseUnits, type Address } from 'viem'
 import artifact from '../../contracts/VerdexAutoInvest.json'
+import { AUTOINVEST_ADDRESS as BUILT_IN } from '../../scripts/autoinvest-address.mjs'
 import { ROBINHOOD } from './api'
 import type { Asset } from './api'
 import { waitForTx } from './lifi'
 import { DEEP_POOL_USD } from './yield'
 import { MULTICALL3, USDG, client, ensureChain, sendTx, stockTokens, type Pool, type StockToken, type TxCtx } from './pools'
 
-export const AUTOINVEST_ADDRESS = String(import.meta.env.VITE_AUTOINVEST_ADDRESS ?? '').trim()
+// The deployed contract: built into the site once it lands, with an env override for previews.
+export const AUTOINVEST_ADDRESS = (String(import.meta.env.VITE_AUTOINVEST_ADDRESS ?? '').trim() || BUILT_IN).trim()
 export const DEPLOYED = isAddress(AUTOINVEST_ADDRESS)
 export const CONTRACT = (DEPLOYED ? AUTOINVEST_ADDRESS : '0x0000000000000000000000000000000000000000') as Address
 export const abi = parseAbi([

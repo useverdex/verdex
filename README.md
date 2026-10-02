@@ -47,8 +47,10 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   Chain. Approve an exact USDG allowance, set a plan (stock, amount, cadence, number of buys) and an
   executor runs each buy when due: the contract pulls one buy's worth, swaps it in the stock's Uniswap
   v3 pool with a price floor read from the pool, sends the stock to the owner and a tip to the executor.
-  It holds nothing between buys; the admin only keeps the executor list. Executor in
-  `scripts/autoinvest-executor.mjs`, run every ten minutes by `.github/workflows/autoinvest-executor.yml`.
+  It holds nothing between buys; the admin only keeps the executor list. The executor
+  (`scripts/executor-lib.mjs`) runs every ten minutes inside `server.mjs`, the Node process that
+  serves the built site on Railway, from a gas-only wallet whose key lives outside the public
+  repository; `scripts/autoinvest-executor.mjs` runs one pass from a shell or a cron.
 - **Private Markets.** The private companies with a token: pre-IPO exposure issued by PreStocks on
   Solana (Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI), with price,
   liquidity, volume and holders from Jupiter and the transfer fee, pause switch and supply from each

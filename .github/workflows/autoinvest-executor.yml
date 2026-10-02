@@ -1,10 +1,10 @@
-# Runs the due Auto-Invest plans every ten minutes from a wallet the contract allows as executor.
-# Secrets: EXECUTOR_KEY (the executor wallet's private key, holding a little ETH on Robinhood Chain).
-# Variables: AUTOINVEST_ADDRESS (the deployed VerdexAutoInvest contract).
+# Optional backup executor. The site's own server (server.mjs) runs the executor every ten minutes;
+# this workflow does the same from GitHub if the repository variable AUTOINVEST_ADDRESS and the
+# secret EXECUTOR_KEY are set. With them unset it never runs.
 name: Auto-Invest executor
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 concurrency:
   group: autoinvest-executor

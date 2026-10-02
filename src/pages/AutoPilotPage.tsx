@@ -314,7 +314,7 @@ export default function AutoPilotPage() {
         <Typography component="h2" sx={{ ...t.type.h3, color: t.color.text }}>How it works</Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0,1fr))' }, gap: 2.5, mt: 4 }}>
           <Step n={1} icon={<LockIcon size={20} />} title="Approve a budget" text="You approve the contract to spend an exact amount of USDG: the buys you asked for, plus the tips. Never unlimited. The allowance is the most it can ever pull, and you can cut it to zero at any time from here or from any wallet." />
-          <Step n={2} icon={<CalendarIcon size={20} />} title="A buy comes due" text={`An executor, ${BRAND.name}'s or you, calls the contract. It pulls one buy's worth, swaps it in the stock's USDG pool on Uniswap v3, sends the stock to your wallet and the tip to the executor. If the pool's price is more than your floor away from spot, the buy waits.`} />
+          <Step n={2} icon={<CalendarIcon size={20} />} title="A buy comes due" text={`${BRAND.name}'s executor, which runs every ten minutes from the server that serves this site, or you, calls the contract. It pulls one buy's worth, swaps it in the stock's USDG pool on Uniswap v3, sends the stock to your wallet and the tip to the executor. If the pool's price is more than your floor away from spot, the buy waits.`} />
           <Step n={3} icon={<ShieldIcon size={20} />} title="Nothing sits in the contract" text="Tokens pass through inside one transaction. Between buys the contract holds nothing of yours, and no admin can move a plan, change it or touch your allowance. The code is open and verified on the explorer." />
         </Box>
       </Box>
