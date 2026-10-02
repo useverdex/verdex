@@ -5,7 +5,7 @@ import http from 'node:http'
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs'
 import { extname, join, normalize, resolve } from 'node:path'
 import { gzipSync } from 'node:zlib'
-import { runOnce, executorBalance } from './scripts/executor-lib.mjs'
+import { runOnce, executorBalance, refuelIfNeeded } from './scripts/executor-lib.mjs'
 import { AUTOINVEST_ADDRESS as BUILT_IN } from './scripts/autoinvest-address.mjs'
 
 const ROOT = resolve('dist')
@@ -56,6 +56,7 @@ if (key && address) {
     try {
       const r = await runOnce({ rpc: process.env.RPC, address, key, log: (m) => console.log(`[executor] ${m}`) })
       if (r.due) console.log(`[executor] plans ${r.count} · due ${r.due} · sent ${r.sent} · skipped ${r.skipped}`)
+      await refuelIfNeeded({ rpc: process.env.RPC, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => console.log(`[executor] refuel failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`))
     } catch (e) {
       console.log(`[executor] pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`)
     } finally { running = false }

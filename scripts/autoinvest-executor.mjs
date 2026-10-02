@@ -3,7 +3,7 @@
 //   AUTOINVEST_ADDRESS  the VerdexAutoInvest contract (or the address built into the site)
 //   RPC                 optional, defaults to the Robinhood Chain RPC
 import { readFileSync, existsSync } from 'node:fs'
-import { runOnce, executorBalance } from './executor-lib.mjs'
+import { runOnce, executorBalance, refuelIfNeeded } from './executor-lib.mjs'
 import { AUTOINVEST_ADDRESS as BUILT_IN } from './autoinvest-address.mjs'
 
 const key = process.env.EXECUTOR_KEY ?? (existsSync('executor.key') ? readFileSync('executor.key', 'utf8').trim() : '')
@@ -13,3 +13,5 @@ const bal = await executorBalance({ rpc: process.env.RPC, key })
 console.log(`executor ${bal.address} · ${bal.eth.toFixed(6)} ETH · contract ${address} · ${new Date().toISOString()}`)
 const r = await runOnce({ rpc: process.env.RPC, address, key })
 console.log(`plans ${r.count} · due ${r.due} · sent ${r.sent} · skipped ${r.skipped}`)
+const f = await refuelIfNeeded({ rpc: process.env.RPC, key, force: process.argv.includes('--refuel') })
+if (!f.refueled) console.log(`refuel: not needed (${f.eth.toFixed(6)} ETH, ${f.usdg.toFixed(2)} USDG)`)

@@ -1,6 +1,6 @@
 // The Auto-Invest executor: one pass over every plan on the contract, running the ones that are due.
 // Used by scripts/autoinvest-executor.mjs (one-off) and by server.mjs (every ten minutes).
-import { createPublicClient, createWalletClient, http, formatUnits, parseAbi } from 'viem'
+import { createPublicClient, createWalletClient, http, formatUnits, parseAbi, encodeFunctionData, erc20Abi } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 
 export const DEFAULT_RPC = 'https://rpc.mainnet.chain.robinhood.com/'
@@ -47,4 +47,39 @@ export async function executorBalance({ rpc = DEFAULT_RPC, key }) {
   const account = privateKeyToAccount(key)
   const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc) })
   return { address: account.address, eth: Number(formatUnits(await pub.getBalance({ address: account.address }), 18)) }
+}
+
+// ---- refuel: the tips arrive in USDG, the gas is paid in ETH. When the ETH runs low, the executor sells its
+// USDG for ETH through LI.FI on Robinhood Chain, so one small top-up at the start is the only ETH it ever needs.
+const USDG = '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168'
+const LIFI = 'https://li.quest/v1'
+export const REFUEL_BELOW_ETH = 0.00015
+export const REFUEL_MIN_USDG = 1
+
+export async function refuelIfNeeded({ rpc = DEFAULT_RPC, key, log = console.log, force = false }) {
+  const account = privateKeyToAccount(key)
+  const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
+  const wallet = createWalletClient({ account, chain: chain(rpc), transport: http(rpc) })
+  const eth = Number(formatUnits(await pub.getBalance({ address: account.address }), 18))
+  const usdgRaw = await pub.readContract({ address: USDG, abi: erc20Abi, functionName: 'balanceOf', args: [account.address] })
+  const usdg = Number(formatUnits(usdgRaw, 6))
+  if (!force && (eth >= REFUEL_BELOW_ETH || usdg < REFUEL_MIN_USDG)) return { refueled: false, eth, usdg }
+  if (usdg < REFUEL_MIN_USDG) return { refueled: false, eth, usdg, reason: 'not enough USDG' }
+  const q = new URLSearchParams({ fromChain: '4663', toChain: '4663', fromToken: USDG, toToken: '0x0000000000000000000000000000000000000000', fromAmount: usdgRaw.toString(), fromAddress: account.address, integrator: 'verdex', slippage: '0.01' })
+  const r = await fetch(`${LIFI}/quote?${q}`, { headers: process.env.LIFI_API_KEY ? { 'x-lifi-api-key': process.env.LIFI_API_KEY } : {} })
+  if (!r.ok) throw new Error(`lifi quote ${r.status}`)
+  const quote = await r.json()
+  const spender = quote.estimate?.approvalAddress
+  const tx = quote.transactionRequest
+  if (!spender || !tx) throw new Error('lifi quote without a transaction')
+  const allowance = await pub.readContract({ address: USDG, abi: erc20Abi, functionName: 'allowance', args: [account.address, spender] })
+  if (allowance < usdgRaw) {
+    const h = await wallet.sendTransaction({ to: USDG, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [spender, usdgRaw] }) })
+    await pub.waitForTransactionReceipt({ hash: h, timeout: 120_000 })
+  }
+  const hash = await wallet.sendTransaction({ to: tx.to, data: tx.data, value: BigInt(tx.value ?? 0), gas: tx.gasLimit ? BigInt(tx.gasLimit) : undefined })
+  const rc = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
+  const after = Number(formatUnits(await pub.getBalance({ address: account.address }), 18))
+  log(`refuel: ${rc.status} ${hash} sold ${usdg.toFixed(2)} USDG via ${quote.tool}, ETH ${eth.toFixed(6)} → ${after.toFixed(6)}`)
+  return { refueled: rc.status === 'success', eth: after, usdg: 0, hash }
 }
