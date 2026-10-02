@@ -299,7 +299,7 @@ The last box on the day-one roadmap, and the first Verdex contract. Say it plain
 
 ### Hype (image: `photos/hype-autopilot.png`, names no feature)
 
-> Tomorrow, 18:00 UTC.
+> Tonight, 20:00 UTC.
 >
 > Something that keeps working after you close the tab.
 >
