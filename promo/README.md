@@ -61,6 +61,8 @@ The feature lives at `/orders` (`src/pages/OrdersPage.tsx` on top of `src/lib/or
 
 `clips18.html` holds four 12-second clips for the days after the Private Markets drop (`?clip=fee`, `mintcheck`, `gone`, `thirteen`): the transfer fee read from each mint with the scheduled change, the mint check catching a replaced OpenAI mint, the two companies that left (SpaceX listed, xAI's conversion closed), and the roadmap at twelve of thirteen. Render each with `node promo/render.mjs --page "promo/clips18.html?clip=fee" --fps 30 --out promo/clip-fee.mp4`.
 
+`clips20.html` is the ten-part series "How Verdex works", one 12-second clip per technology under the site (`?clip=browser`, `lifi`, `robinhood`, `uniswap`, `pons`, `spark`, `reserve`, `kamino`, `jupiter`, `simulate`), each numbered in the corner. Render each with `node promo/render.mjs --page "promo/clips20.html?clip=browser" --fps 30 --out promo/series-01-browser.mp4`. `render.mjs` also takes `--w` and `--h` for a different frame size.
+
 `pools.html` is a 34-second film for Verdex Pools: the name, the live stats strip, the pool table rising row by row, the composer typing one amount and getting the other, a position earning its first fees, and the end card at `useverdex.xyz/pools`. Render with `node promo/render.mjs --page promo/pools.html --out promo/verdex-pools.mp4`.
 
 `holders.html` is a 34-second film for the holder perks: the claim, a quote whose Verdex fee flips to a struck-through zero when the wallet chip lands, the eight surfaces it covers, the early-access gate, the status panel filling in, and the end card at `useverdex.xyz/verdex`. Render with `node promo/render.mjs --page promo/holders.html --out promo/verdex-holders.mp4`.

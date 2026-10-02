@@ -1,5 +1,5 @@
 // Renders a promo timeline page frame by frame and encodes it to MP4.
-// Usage: node promo/render.mjs [--page promo/index.html] [--still t1,t2,...] [--fps 60] [--workers 4] [--out file.mp4]
+// Usage: node promo/render.mjs [--page promo/index.html] [--still t1,t2,...] [--fps 60] [--workers 4] [--out file.mp4] [--w 1920 --h 1080]
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs'
 import { spawn } from 'node:child_process'
 import http from 'node:http'
@@ -24,7 +24,7 @@ const port = server.address().port
 const launch = () => chromium.launch({ executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox', '--force-color-profile=srgb'] })
 async function openStage() {
   const browser = await launch()
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } })
+  const page = await browser.newPage({ viewport: { width: Number(args.w ?? 1920), height: Number(args.h ?? 1080) } })
   await page.goto(`http://localhost:${port}/${pagePath}`)
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 })
   return { browser, page }

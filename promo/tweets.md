@@ -293,6 +293,90 @@ Recorded on the real site with a mock wallet. Regenerate with `node promo/howto.
 >
 > github.com/useverdex/verdex
 
+## How Verdex works, the series (`series-01-browser.mp4` to `series-10-simulate.mp4`, 12 s each, one a day)
+
+Ten clips, one per technology under the site, numbered in the corner so people know there is a next one. Name every protocol as what it is, a contract or an API Verdex reads; never as a partner. Post one a day, same hour, and reply to each with the previous one so the series threads itself.
+
+`series-01-browser.mp4`:
+
+> How Verdex works, 1 of 10: no server.
+>
+> There is no backend. Your browser talks to Robinhood Chain, to LI.FI and to Jupiter directly, and keeps nothing. No account, no cookies, no list of wallets.
+>
+> The code it runs is the code on GitHub, commit by commit.
+
+`series-02-lifi.mp4`:
+
+> How Verdex works, 2 of 10: one quote.
+>
+> Every swap and bridge asks LI.FI once. LI.FI asks Across, Relay, Stargate, 1inch, KyberSwap and the rest, and the best route wins.
+>
+> The Verdex fee rides on the route: 0.25%, or 0% when the wallet holds VERDEX.
+
+`series-03-robinhood.mp4`:
+
+> How Verdex works, 3 of 10: Robinhood Chain.
+>
+> Chain 4663, a tenth of a second per block, USDG as the dollar, and the tokenized stocks: NVDA, TSLA, SPY, AAPL, GOOGL and more.
+>
+> VERDEX, Verdex Pools, Asset Yield, Orders and the Launchpad all run here.
+
+`series-04-uniswap.mp4`:
+
+> How Verdex works, 4 of 10: Uniswap v3 and v4.
+>
+> The stock pools are v3, and Verdex Pools and Asset Yield mint positions through the public position manager. The VERDEX pool is v4, behind the Pons hook.
+>
+> Same pools the Uniswap app shows. Open there, close here, or the other way round.
+
+`series-05-pons.mp4`:
+
+> How Verdex works, 5 of 10: Pons V2.
+>
+> The factory that made VERDEX. Launch fee 0.0005 ETH, 1% curve fee, graduation at 4.2 ETH into a locked v4 pool, half of every creator fee bought back and burned.
+>
+> The Launchpad is a front door to the same factory. Verdex adds nothing on top.
+
+`series-06-spark.mp4`:
+
+> How Verdex works, 6 of 10: Spark Savings USDG.
+>
+> An ERC-4626 vault. You hold spUSDG, worth more USDG every second at the rate Spark sets, 3.50% today. Cap 500M. Out any time, no fee.
+>
+> Verdex reads the rate and the cap. Nothing more.
+
+`series-07-reserve.mp4`:
+
+> How Verdex works, 7 of 10: Reserve.
+>
+> A basket is a token backed by the assets it names. Mint and redeem are open calls. Automated baskets rebalance to their weights on a schedule. Base, BNB Chain, Ethereum.
+>
+> Every basket page carries the issuer's own description and risk list.
+
+`series-08-kamino.mp4`:
+
+> How Verdex works, 8 of 10: Kamino.
+>
+> Lend and Borrow reads three Kamino markets on Solana: xStocks, STRCx, Sentora xStocks. Supply, borrow or multiply a tokenized stock in one transaction each.
+>
+> The position is yours, on Kamino, from your own Solana wallet.
+
+`series-09-jupiter.mp4`:
+
+> How Verdex works, 9 of 10: Jupiter and Token-2022.
+>
+> Private Markets reads price, liquidity and holders from Jupiter, and the transfer fee, the pause switch and the supply from the mint itself through a Solana RPC.
+>
+> Seven companies, one request a minute, no key, no server.
+
+`series-10-simulate.mp4`:
+
+> How Verdex works, 10 of 10: simulated before you sign.
+>
+> Every transaction runs as an eth_call against the chain before the button turns on. Multicall3 reads 130 pools in one request. Any wallet connects through EIP-6963, no SDK.
+>
+> If the simulation fails, you never see the button. That is the whole site.
+
 ## Private Markets (`verdex-private.mp4`, 34 s, post with the video at 10:00 UTC; hype still `photos/hype-private.png`)
 
 Every number comes from Jupiter and from the mint on Solana, read in the browser. PreStocks is the issuer and is named as such, never as a partner. Say "exposure" or "pre-IPO token", never "shares". Never promise a listing, a conversion or a price. The transfer fee is the mint's, not ours, and it changes: say what the page shows.

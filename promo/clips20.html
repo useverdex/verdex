@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex clips: how Verdex works, the series</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.line { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.line .t { font-size: 112px; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 26px; font-weight: 500; will-change: transform, opacity, filter; }
+.pill svg { width: 24px; height: 24px; color: var(--lime); }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+.panel { position: absolute; left: 50%; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lab { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.chip { display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--chip); color: rgba(255,255,255,.8); font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background, color; }
+.chip img { width: 20px; height: 20px; border-radius: 50%; }
+.chip.on { background: #fff; color: #000; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.02em; will-change: transform, background; }
+.btn.pri { background: #fff; color: #000; }
+.badge { margin-left: auto; padding: 7px 13px; border-radius: 6px; background: rgba(255,255,255,.1); font-size: 18px; font-weight: 500; color: var(--soft); white-space: nowrap; }
+.badge.done { background: rgba(194,234,138,.16); color: var(--lime); }
+/* Wallet tiles */
+.wal { position: absolute; top: 330px; width: 520px; padding: 26px 30px 28px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 40px 100px rgba(0,0,0,.65); will-change: transform, opacity, filter, border-color; }
+.wal.hot { border-color: rgba(194,234,138,.45); }
+.wal .hd { display: flex; align-items: center; gap: 14px; }
+.wal .hd i { width: 44px; height: 44px; border-radius: 12px; display: block; }
+.wal .hd b { font-size: 22px; font-weight: 500; display: block; font-family: var(--mono); letter-spacing: 0; }
+.wal .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 2px; }
+.wal .row { display: flex; align-items: center; gap: 14px; margin-top: 22px; height: 60px; padding: 0 16px; border-radius: 12px; background: var(--tile); font-size: 22px; font-weight: 500; will-change: opacity, transform; }
+.wal .row img { width: 30px; height: 30px; border-radius: 50%; }
+.wal .row small { margin-left: auto; font-size: 17px; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.money { position: absolute; display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.1); font-size: 28px; font-weight: 500; white-space: nowrap; box-shadow: 0 20px 60px rgba(0,0,0,.6); will-change: transform, opacity; }
+.money img { width: 32px; height: 32px; border-radius: 50%; }
+.node { position: absolute; left: 50%; top: 372px; width: 380px; margin-left: -190px; padding: 20px 24px; box-sizing: border-box; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; will-change: opacity, transform, filter; }
+.node img { width: 44px; height: 44px; border-radius: 50%; }
+.node b { font-size: 22px; font-weight: 500; display: block; }
+.node span { font-size: 15px; color: var(--muted); display: block; margin-top: 2px; }
+.addr { position: absolute; left: 50%; top: 610px; width: 1040px; margin-left: -520px; display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 22px; box-sizing: border-box; border-radius: 14px; background: var(--tile); border: 1px solid rgba(255,255,255,.08); font-family: var(--mono); font-size: 22px; will-change: opacity, transform; }
+.addr .k { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); width: 200px; }
+.addr .cur { display: inline-block; width: 2px; height: 26px; background: #fff; vertical-align: -5px; margin-left: 2px; }
+/* Asset tiles */
+.atile { position: absolute; width: 400px; padding: 26px 28px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.atile img { width: 56px; height: 56px; border-radius: 50%; }
+.atile b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.atile span { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; }
+.atile em { display: block; font-style: normal; font-family: 'LT Remark', serif; font-size: 44px; letter-spacing: -0.02em; margin-top: 14px; font-variant-numeric: tabular-nums; }
+.clock { position: absolute; left: 50%; top: 190px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 14px; padding: 12px 22px; border-radius: 14px; background: var(--chip); font-size: 28px; font-weight: 500; font-variant-numeric: tabular-nums; will-change: opacity; }
+.clock i { width: 12px; height: 12px; border-radius: 50%; background: var(--lime); }
+/* Table rows */
+.trow { position: absolute; left: 50%; width: 1240px; margin-left: -620px; height: 84px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.trow.on { border-color: rgba(194,234,138,.45); background: #131513; }
+.trow img.l { width: 44px; height: 44px; border-radius: 50%; }
+.trow img.c { width: 22px; height: 22px; border-radius: 50%; }
+.trow b { font-size: 24px; font-weight: 500; width: 190px; letter-spacing: -0.01em; }
+.trow .nm { font-size: 18px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex: 1; }
+.trow .v { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; text-align: right; min-width: 160px; }
+.trow .v.lime { color: var(--lime); }
+.trow .s { font-size: 17px; color: var(--muted); text-align: right; min-width: 150px; font-variant-numeric: tabular-nums; }
+.trow .tag { padding: 4px 9px; border-radius: 6px; background: rgba(255,255,255,.08); font-size: 14px; font-weight: 500; color: var(--soft); }
+.total { position: absolute; left: 50%; width: 1240px; margin-left: -620px; display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; font-size: 24px; color: var(--muted); will-change: opacity, transform; }
+.total b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+/* Leverage card */
+.lev { position: absolute; left: 50%; top: 300px; width: 960px; margin-left: -480px; padding: 30px 36px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.lev .hd { display: flex; align-items: center; gap: 16px; }
+.lev .hd img { width: 52px; height: 52px; border-radius: 50%; }
+.lev .hd b { font-size: 26px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.lev .hd span { font-size: 17px; color: var(--muted); display: block; margin-top: 3px; }
+.lev .x { font-family: 'LT Remark', serif; font-size: 72px; letter-spacing: -0.03em; line-height: 1; margin-left: auto; font-variant-numeric: tabular-nums; }
+.lev .bars { margin-top: 26px; display: grid; gap: 14px; }
+.lev .br { display: grid; grid-template-columns: 150px 1fr 170px; align-items: center; gap: 16px; font-size: 19px; }
+.lev .br .bar { height: 16px; border-radius: 8px; background: #1c1c1c; overflow: hidden; }
+.lev .br .bar i { display: block; height: 100%; border-radius: 8px; will-change: width; }
+.lev .br .n { text-align: right; font-variant-numeric: tabular-nums; color: var(--soft); }
+.lev .slider { margin-top: 26px; position: relative; height: 40px; }
+.lev .slider .ln { position: absolute; left: 0; right: 0; top: 19px; height: 3px; background: rgba(255,255,255,.14); }
+.lev .slider .fill { position: absolute; left: 0; top: 19px; height: 3px; background: var(--lime); will-change: width; }
+.lev .slider .kn { position: absolute; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transform: translateX(-50%); box-shadow: 0 4px 14px rgba(0,0,0,.6); will-change: left; }
+.lev .slider .lb { position: absolute; top: 46px; font-size: 15px; color: var(--faint); transform: translateX(-50%); }
+.lev .meta { display: flex; justify-content: space-between; margin-top: 44px; font-size: 18px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lev .meta b { color: #fff; font-weight: 500; }
+/* Route rows */
+.rt { position: absolute; left: 50%; width: 1100px; margin-left: -550px; height: 88px; display: flex; align-items: center; gap: 18px; padding: 0 24px; box-sizing: border-box; border-radius: 16px; background: #111; border: 1px solid rgba(255,255,255,.06); will-change: transform, opacity, filter, border-color; }
+.rt.on { border-color: rgba(194,234,138,.5); background: #131513; }
+.rt img { width: 40px; height: 40px; border-radius: 50%; }
+.rt img + img { margin-left: -14px; }
+.rt b { font-size: 23px; font-weight: 500; width: 300px; letter-spacing: -0.01em; }
+.rt .t { font-size: 18px; color: var(--muted); flex: 1; }
+.rt .out { font-size: 26px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.rt .out small { font-size: 16px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+/* Terminal */
+.term { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 24px 30px 28px; box-sizing: border-box; border-radius: 20px; background: #0a0a0a; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 23px; line-height: 1.7; color: var(--soft); will-change: transform, opacity, filter; }
+.term .dots { display: flex; gap: 8px; margin-bottom: 14px; }
+.term .dots i { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.term .ln { will-change: opacity; white-space: pre; }
+.term .ln .p { color: var(--lime); }
+.term .ln .d { color: var(--faint); }
+.term .cur { display: inline-block; width: 12px; height: 24px; background: var(--soft); vertical-align: -4px; }
+/* Receipt */
+.rcpt { position: absolute; left: 50%; top: 290px; width: 760px; margin-left: -380px; padding: 30px 36px 32px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.rcpt .hd { display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 500; }
+.rcpt .hd img { width: 34px; height: 34px; border-radius: 50%; }
+.rcpt .hd img + img { margin-left: -12px; }
+.rcpt .it { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; font-size: 22px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.07); will-change: opacity, transform; }
+.rcpt .it span { color: var(--muted); font-size: 17px; margin-left: 10px; }
+.rcpt .it .a { font-variant-numeric: tabular-nums; font-weight: 500; position: relative; }
+.rcpt .it .a i { position: absolute; left: -4px; right: -4px; top: 50%; height: 3px; width: 0; background: rgba(255,255,255,.6); }
+.rcpt .it .a em { font-style: normal; color: var(--lime); margin-left: 14px; }
+.rcpt .tot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; font-size: 22px; color: var(--muted); }
+.rcpt .tot b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 56px; color: #fff; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+/* Runner */
+.run { position: absolute; left: 50%; top: 300px; width: 1100px; margin-left: -550px; padding: 30px 38px 34px; box-sizing: border-box; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); font-family: var(--mono); font-size: 25px; line-height: 1.8; will-change: transform, opacity, filter; }
+.run .hd { font-family: Geist, system-ui, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 12px; }
+.run .ln { display: flex; align-items: center; gap: 20px; will-change: opacity, transform; }
+.run .ln .k { color: var(--soft); width: 560px; flex-shrink: 0; }
+.run .ln .v { color: #fff; }
+.run .ln .ok { color: var(--lime); font-weight: 700; width: 34px; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+:root { --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+.field { padding: 18px 22px; border-radius: 16px; background: var(--tile); }
+.field .k { display: flex; justify-content: space-between; font-size: 16px; color: var(--muted); }
+.field .v { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 36px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.field .v span { font-size: 17px; color: var(--muted); font-weight: 500; }
+.pos .top { display: flex; align-items: center; gap: 16px; }
+.pos .big2 { margin-left: auto; text-align: right; }
+.pos .big2 b { font-size: 34px; font-weight: 500; display: block; font-variant-numeric: tabular-nums; }
+.pos .big2 span { font-size: 16px; color: var(--muted); }
+.pos .fees { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; font-size: 19px; color: var(--muted); }
+.pos .fees b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pos .b { padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,.08); color: #fff; font-weight: 500; font-size: 18px; will-change: background, color; }
+.pos .b.first { margin-left: auto; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #5EE0A0; margin: 0 8px 2px 14px; }
+.qrow { display: flex; justify-content: space-between; align-items: center; height: 54px; font-size: 22px; padding: 0 12px; border-radius: 10px; will-change: opacity, transform; }
+.qrow .k { color: var(--muted); }
+.qrow .a { font-weight: 500; font-variant-numeric: tabular-nums; position: relative; }
+.qrow .a s { color: var(--faint); margin-right: 12px; }
+.qrow.fee { background: rgba(194,234,138,.07); }
+.wal2 { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 10px; background: var(--chip); font-size: 18px; color: var(--soft); font-family: var(--mono); will-change: opacity, transform, filter; }
+.wal2 i { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); }
+.bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.08); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--lime); border-radius: 4px; will-change: width; }
+.status { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 999px; background: rgba(255,232,102,.12); color: #FFE866; font-size: 24px; font-weight: 500; }
+.status i { width: 12px; height: 12px; border-radius: 50%; background: #FFE866; }
+.big { font-family: 'LT Remark', serif; font-size: 150px; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
+.axis { position: relative; height: 70px; margin-top: 26px; }
+.axis .ln { position: absolute; left: 0; right: 0; top: 34px; height: 3px; background: rgba(255,255,255,.12); }
+.axis .band { position: absolute; top: 20px; height: 31px; border-radius: 8px; background: rgba(194,234,138,.18); border: 1px solid rgba(194,234,138,.5); will-change: left, width; }
+.axis .now { position: absolute; top: 12px; width: 3px; height: 47px; background: #fff; transform: translateX(-50%); }
+.axis .lb { position: absolute; top: 58px; font-size: 14px; color: var(--faint); transform: translateX(-50%); }
+.ep { position: absolute; left: 80px; top: 80px; display: inline-flex; align-items: center; gap: 14px; padding: 12px 20px; border-radius: 12px; background: var(--chip); font-size: 22px; font-weight: 500; color: var(--soft); will-change: opacity, transform; }
+.ep b { color: #fff; font-weight: 500; }
+.ep i { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); }
+.tile { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; background: rgba(255,255,255,.08); font-size: 15px; font-weight: 600; color: var(--lime); flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Ten 12-second clips for the tenth tweet batch: the parts of Verdex never announced, from automated baskets to the app shell. ?clip=<name>
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const CH = (id) => `${PUB}/logos/chains/${id}.svg`
+const TOOL = (k) => `${PUB}/logos/tools/${k}.svg`
+const LOGO = { NVDA: L('88a0e630'), SPY: L('c025dcd9'), TSLA: L('e8ca24f9'), GLD: L('8123a79a'), SLV: L('29352778'), USO: L('f34687ee'), PAXG: L('7869a6ce'), XAUT: L('941acb6b'), META: L('0b00cc62'), GOOGL: L('4d76db13'), SPCX: L('5a9801c3'), AMZN: L('39c11fed'), QQQ: L('8fbe91e2'), MSTR: L('48f06241'), IBIT: L('4c80de69'), TLT: L('0ee1c35f') }
+const USDG = `${PUB}/img/tokens/usdg.png`, USDC = `${PUB}/img/tokens/usdc.png`
+const clip = new URLSearchParams(location.search).get('clip') ?? 'browser'
+const DURATION = 12
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, p) => a + (b - a) * p
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const usd = (v, d = 0) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const line = (parent, text, { top = 460, size = 112, color = '#fff' } = {}) => {
+  const el = add(parent, `<div class="line" style="top:${top}px"><div class="serif t" style="font-size:${size}px;color:${color}"></div></div>`)
+  return { el, chars: letters(el.querySelector('.t'), text) }
+}
+const runLine = (ln, t, t0, t1, stagger = 0.035) => { show(ln.el, t >= t0 - 0.05 && t < t1 + 0.6); wipe(ln.chars, spring(t - t0, 0.8), { stagger, out: clamp(spring(t - t1, 0.35)) }) }
+const rise = (el, t, t0, { y = 14, r = 0.6 } = {}) => { const p = spring(t - t0, r); show(el, t >= t0 - 0.05); el.style.opacity = clamp(p * 1.4); el.style.transform = `translate3d(0, ${((1 - p) * y).toFixed(2)}px, 0)` }
+const capIn = (el, t, t0) => { const q = spring(t - t0, 0.9); show(el, t > t0 - 0.1); mat(el, q, { y: 16 * (1 - q), s: 0.02 }) }
+const pick = (list, idx, t0, t) => list.forEach((c, i) => { const p = spring(t - t0, 0.35, 0.6); const on = i === idx && t >= t0; c.classList.toggle('on', on); c.style.transform = on ? `scale(${(1 + 0.08 * (1 - p)).toFixed(3)})` : 'none' })
+const typed = (el, text, t, t0, cps = 26, cursor = true) => { const n = clamp(Math.floor((t - t0) * cps), 0, text.length); const done = n >= text.length; el.innerHTML = text.slice(0, n) + (cursor && !done && t >= t0 ? '<span class="cur"></span>' : ''); return done }
+const I = {
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+}
+
+const RH = CH(4663), SOLC = CH(1151111081099710), BASE = CH(8453), BNB = CH(56), ETHC = CH(1)
+const ISS = (n) => `${PUB}/logos/issuers/${n}`
+const TOTAL = 10
+const ep = (s, n) => { const el = add(s, `<div class="ep"><i></i><b>How Verdex works</b><span>${n} of ${TOTAL}</span></div>`); return (t) => { const p = spring(t - 0.15, 0.8); el.style.opacity = clamp(p); el.style.transform = `translate3d(0, ${(10 * (1 - p)).toFixed(2)}px, 0)` } }
+const facts = (s, R, top = 300, step = 98) => R.map(([ic, n, d, out], i) => add(s, `<div class="rt" style="top:${top + i * step}px">${ic}<b>${n}</b><span class="t">${d}</span>${out ? `<span class="out" style="font-size:22px;color:var(--lime)">${out}</span>` : ''}</div>`))
+const runFacts = (rows, t, t0 = 4.5, st = 0.26) => rows.forEach((el, i) => { const p = spring(t - t0 - i * st, 0.85); show(el, t > t0 - 0.1 + i * st); mat(el, p, { y: 30 * (1 - p), s: 0.03, blur: 12 }) })
+const IMG = (src) => `<img src="${src}" alt="">`
+const TL = (txt) => `<span class="tile">${txt}</span>`
+
+const CLIPS = {
+  // 1. No backend.
+  browser(s) {
+    const e = ep(s, 1)
+    const l1 = line(s, 'No server. No database.', { top: 470, size: 100 })
+    const l2 = line(s, 'Your browser does the work.', { top: 470, size: 96, color: 'var(--lime)' })
+    const rows = facts(s, [[IMG(RH), 'Robinhood Chain RPC', 'prices, pools, positions and fees, read straight from the chain', 'live'], [TL('LI'), 'LI.FI API', 'one quote for every swap and bridge, across 50+ chains', 'live'], [IMG(SOLC), 'Jupiter and a Solana RPC', 'Private Markets, read from the pools and the mint', 'every minute'], [TL('0'), 'Nothing stored', 'no account, no cookies, no list of wallets anywhere', 'ever']])
+    const cap = add(s, `<div class="cap" style="top:790px">Open source. The code that runs in your browser is the code on GitHub, commit by commit.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 2. LI.FI.
+  lifi(s) {
+    const e = ep(s, 2)
+    const l1 = line(s, 'One quote.', { top: 470 })
+    const l2 = line(s, 'Fifty chains, every bridge.', { top: 470, size: 96, color: 'var(--lime)' })
+    const rows = facts(s, [[IMG(TOOL('across')), 'Across', 'bridge · Robinhood Chain, Base, Arbitrum, Ethereum and more', 'asked'], [IMG(TOOL('relaydepository')), 'Relay', 'bridge and swap · the fastest route on most pairs', 'asked'], [IMG(TOOL('stargateV2')), 'Stargate', 'bridge · stablecoins across chains', 'asked'], [IMG(TOOL('1inch')), '1inch', 'swap · aggregates the DEXs on each chain', 'asked'], [IMG(TOOL('kyberswap')), 'KyberSwap', 'swap · aggregates the DEXs on each chain', 'asked']], 280, 92)
+    const outs = rows.map((r) => r.querySelector('.out'))
+    const cap = add(s, `<div class="cap" style="top:800px">Every one is asked. The best route wins. The Verdex fee rides on it: 0.25%, or 0% when the wallet holds VERDEX.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t, 4.5, 0.22); rows.forEach((r, i) => { const win = t >= 7.6 && i === 1; r.classList.toggle('on', win); outs[i].textContent = win ? 'best route' : 'asked'; outs[i].style.color = win ? 'var(--lime)' : 'var(--muted)' }); capIn(cap, t, 9.2) }
+  },
+  // 3. Robinhood Chain.
+  robinhood(s) {
+    const e = ep(s, 3)
+    const l1 = line(s, 'Robinhood Chain.', { top: 470 })
+    const l2 = line(s, 'Where the stocks live.', { top: 470, color: 'var(--lime)' })
+    const rows = facts(s, [[IMG(RH), 'Chain 4663', 'a tenth of a second per block', '0.1 s'], [IMG(LOGO.NVDA), 'Tokenized stocks', 'NVDA, TSLA, SPY, AAPL, GOOGL, META, MSFT, AMZN and more', ''], [IMG(USDG), 'USDG', 'the dollar on the chain', ''], [TL('RH'), 'robin.etherscan.io', 'every transaction Verdex makes, linked', '']])
+    const cap = add(s, `<div class="cap" style="top:790px">VERDEX, Verdex Pools, Asset Yield, Orders and the Launchpad all run here.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 4. Uniswap v3 and v4.
+  uniswap(s) {
+    const e = ep(s, 4)
+    const l1 = line(s, 'Uniswap v3 and v4.', { top: 470 })
+    const l2 = line(s, 'The pools under everything.', { top: 470, size: 96, color: 'var(--lime)' })
+    const rows = facts(s, [[TL('v3'), 'The stock pools', 'Verdex Pools and Asset Yield mint positions through the public position manager', ''], [TL('v4'), 'The VERDEX pool', 'behind the Pons hook that charges the creator fee on every trade', ''], [TL('%'), 'Fee APR', 'one day of the pool fee at today’s volume, times 365, over the liquidity', '']], 310, 104)
+    const cap = add(s, `<div class="cap" style="top:790px">The same pools the Uniswap app shows. Open there, close here, or the other way round.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 5. Pons V2.
+  pons(s) {
+    const e = ep(s, 5)
+    const l1 = line(s, 'Pons V2.', { top: 470 })
+    const l2 = line(s, 'The factory behind VERDEX.', { top: 470, size: 96, color: 'var(--lime)' })
+    const rows = facts(s, [[TL('P'), 'Launch fee', 'paid to the factory, once', '0.0005 ETH'], [TL('P'), 'Curve fee', 'on every trade on the bonding curve', '1%'], [TL('P'), 'Graduation', 'the curve moves into a Uniswap v4 pool, liquidity locked', '4.2 ETH'], [TL('P'), 'Buyback and burn', 'of every VERDEX creator fee, by the hook', '50%']])
+    const cap = add(s, `<div class="cap" style="top:790px">Verified contracts on Robinhood Chain, read live. The Launchpad is a front door to the same factory.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 6. Spark Savings.
+  spark(s) {
+    const e = ep(s, 6)
+    const l1 = line(s, 'Spark Savings USDG.', { top: 470, size: 100 })
+    const l2 = line(s, 'Cash that earns by the second.', { top: 470, size: 92, color: 'var(--lime)' })
+    const rows = facts(s, [[TL('4626'), 'ERC-4626 vault', 'you hold spUSDG, worth more USDG every second', ''], [IMG(USDG), 'Rate', 'read from the vault, compounded per second', '3.50% APY'], [TL('cap'), 'Deposit cap', 'set by Spark, checked before you sign', '500M USDG'], [TL('out'), 'Exit', 'withdraw any share, any time, no lock, no fee', 'any time']])
+    const cap = add(s, `<div class="cap" style="top:790px">The rate is Spark’s and moves when Spark moves it. Verdex reads it, nothing more.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 7. Reserve.
+  reserve(s) {
+    const e = ep(s, 7)
+    const l1 = line(s, 'Reserve.', { top: 470 })
+    const l2 = line(s, 'Baskets backed one to one.', { top: 470, size: 96, color: 'var(--lime)' })
+    const rows = facts(s, [[IMG(ISS('reserve.png')), 'Index baskets', 'a token backed by the assets it names; mint and redeem are open calls', ''], [IMG(ISS('reserve.png')), 'Automated baskets', 'rebalanced to their target weights on a schedule', ''], [IMG(BASE) + IMG(BNB) + IMG(ETHC), 'Chains', 'Base, BNB Chain and Ethereum, read from the Reserve contracts', '']], 310, 104)
+    const cap = add(s, `<div class="cap" style="top:790px">Every basket page carries the issuer’s own description and risk list. Bought from your own wallet.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 8. Kamino.
+  kamino(s) {
+    const e = ep(s, 8)
+    const l1 = line(s, 'Kamino.', { top: 470 })
+    const l2 = line(s, 'Lend and borrow on Solana.', { top: 470, size: 96, color: 'var(--lime)' })
+    const rows = facts(s, [[IMG(`${PUB}/img/kamino.svg`), 'Markets', 'xStocks Market, STRCx Market, Sentora xStocks Market', ''], [IMG(SOLC), 'Supply, Borrow, Multiply', 'one transaction each, from your own Solana wallet', ''], [TL('%'), 'Rates', 'move with how much of each token is borrowed', 'live']], 310, 104)
+    const cap = add(s, `<div class="cap" style="top:790px">Verdex reads the markets and the rates. The position is yours, on Kamino.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 9. Jupiter and Token-2022.
+  jupiter(s) {
+    const e = ep(s, 9)
+    const l1 = line(s, 'Jupiter and Token-2022.', { top: 470, size: 100 })
+    const l2 = line(s, 'Private Markets, read from the mint.', { top: 470, size: 90, color: 'var(--lime)' })
+    const rows = facts(s, [[IMG(TOOL('jupiter')), 'Jupiter', 'price, liquidity, volume and holders for every current mint', ''], [IMG(SOLC), 'Solana RPC', 'transfer fee, pause switch and supply, from the mint itself', ''], [TL('22'), 'Token-2022', 'the mint standard with the fee and the switches built in', '']], 310, 104)
+    const cap = add(s, `<div class="cap" style="top:790px">Seven companies, one request a minute, no key and no server. The trade happens on Jupiter.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+  // 10. Simulated before you sign.
+  simulate(s) {
+    const e = ep(s, 10)
+    const l1 = line(s, 'Simulated before you sign.', { top: 470, size: 96 })
+    const l2 = line(s, 'The trade runs before your wallet opens.', { top: 470, size: 84, color: 'var(--lime)' })
+    const rows = facts(s, [[TL('call'), 'eth_call with state overrides', 'the exact transaction, run against the chain, before you see the button', ''], [TL('x130'), 'Multicall3', '130 pools in one request', ''], [TL('6963'), 'EIP-6963', 'any wallet announces itself; no SDK, no list', ''], [TL('✓'), 'Nothing hidden', 'amounts, minimums and deadlines are the ones your wallet shows', '']])
+    const cap = add(s, `<div class="cap" style="top:790px">If the simulation fails, the button never turns on.</div>`)
+    return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
+  },
+}
+
+add(stage, `<div class="grid"></div>`)
+const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.12),rgba(194,234,138,0));pointer-events:none"></div>`)
+const scene = add(stage, `<div class="scene"></div>`)
+const draw = CLIPS[clip](scene)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(stage, `<div id="vignette"></div>`)
+const fade = add(stage, `<div id="fade"></div>`)
+window.renderAt = async (t) => {
+  glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+  await draw(t)
+  fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+}
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+await window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>
