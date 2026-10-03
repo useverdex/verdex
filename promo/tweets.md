@@ -431,6 +431,98 @@ Spanish:
 >
 > useverdex.xyz
 
+## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
+
+Eleven clips, one per box, in the order we will build them, numbered in the corner. Every caption ends in "Coming": nothing in this series is live, and no clip carries a date. Post one a day after the article, or two on the days a box ships. Reply to each with the previous one so the series threads itself.
+
+`phase2-01-index.mp4`:
+
+> Phase 2, 1 of 11: Verdex Index.
+>
+> A basket becomes a token. Deposit USDG, the contract buys the seven and mints your shares. Hold it, send it, pool it, redeem it for the stocks whenever you want. It holds nothing else.
+>
+> The first ETF on Robinhood Chain with no issuer. Coming.
+
+`phase2-02-fees.mp4`:
+
+> Phase 2, 2 of 11: every protocol fee buys VERDEX.
+>
+> One public treasury. Half of it buys VERDEX and burns it. The other half buys VERDEX and pays it back every week to the wallets that paid the fees. Part of it deepens the pool.
+>
+> No inflation, no team allocation. Coming.
+
+`phase2-03-lend.mp4`:
+
+> Phase 2, 3 of 11: Verdex Lend.
+>
+> Deposit NVDA and earn. Borrow USDG against your stocks without selling them. Isolated pairs, hard caps first.
+>
+> The first money market for tokenized stocks on Robinhood Chain. Coming.
+
+`phase2-04-leverage.mp4`:
+
+> Phase 2, 4 of 11: Leverage.
+>
+> Two times, long or short, on tokenized stocks, around the clock. Built on Lend, opened with open-interest caps.
+>
+> Coming after Lend.
+
+`phase2-05-base.mp4`:
+
+> Phase 2, 5 of 11: Verdex on Base.
+>
+> Coinbase's tokenized stocks, in their own pools, with the same contracts and the same site. VERDEX stays on Robinhood Chain, and what Verdex earns on Base comes home to buy it.
+>
+> Coming.
+
+`phase2-06-solana.mp4`:
+
+> Phase 2, 6 of 11: Verdex on Solana.
+>
+> Jupiter's DCA rejects Token-2022, and every tokenized stock on Solana is Token-2022. So Auto-Invest without you becomes a program: a delegate allowance, a swap, your wallet, nothing held. Then the Index.
+>
+> Coming after Base.
+
+`phase2-07-orders.mp4`:
+
+> Phase 2, 7 of 11: Orders without you.
+>
+> Set the level, close the tab. Limit and stop orders filled by a contract when the pool crosses the level, with a floor read onchain at fill time and an allowance it cannot exceed.
+>
+> Coming.
+
+`phase2-08-vaults.mp4`:
+
+> Phase 2, 8 of 11: Vaults without you.
+>
+> Targets, a threshold, a date. When the drift passes the line, a contract rebalances in one transaction, each leg with its floor. It holds nothing between runs.
+>
+> Coming.
+
+`phase2-09-agent.mp4`:
+
+> Phase 2, 9 of 11: Agent without you.
+>
+> A budget and rules, set onchain. The agent works 24/7 inside them through the Auto-Invest and Orders contracts. It can act; it cannot take.
+>
+> Coming.
+
+`phase2-10-numbers.mp4`:
+
+> Phase 2, 10 of 11: Verdex in numbers.
+>
+> Index TVL, volume through Verdex, fees bought, burned and paid back, plans and fills. Read from the chain by your browser, with a link to every transaction.
+>
+> Small and growing beats big and unverifiable. Coming.
+
+`phase2-11-vote.mp4`:
+
+> Phase 2, 11 of 11: Holders vote.
+>
+> Your VERDEX balance is your vote, read onchain, nothing to register. Every two weeks, holders rank what ships next.
+>
+> The next one is yours to choose. Coming.
+
 ## Launchpad, priced in any stock (`verdex-launchpair.mp4`, 34 s)
 
 One fact, shown rather than claimed: the Launchpad lets a token be priced in any of the 42 tokenized stocks the Pons factory accepts, plus ETH and USDG. The count and the thresholds are read from the factory, so say "today" when you quote them. Name Pons as the contracts, never as a partner. Do not promise graduations or creator income.
