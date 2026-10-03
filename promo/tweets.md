@@ -449,7 +449,7 @@ Ten clips, one per technology under the site, numbered in the corner so people k
 
 > How Verdex works, 5 of 10: Pons V2.
 >
-> The factory that made VERDEX. Launch fee 0.0005 ETH, 1% curve fee, graduation at 4.2 ETH into a locked v4 pool, half of every creator fee bought back and burned.
+> The factory that made VERDEX. Launch fee 0.0005 ETH, 1% curve fee, graduation at 4.2 ETH into a locked v4 pool, a 2% creator tax paid in full to the creator wallet on every sweep.
 >
 > The Launchpad is a front door to the same factory. Verdex adds nothing on top.
 

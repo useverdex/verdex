@@ -277,7 +277,7 @@ const CLIPS = {
     const e = ep(s, 5)
     const l1 = line(s, 'Pons V2.', { top: 470 })
     const l2 = line(s, 'The factory behind VERDEX.', { top: 470, size: 96, color: 'var(--lime)' })
-    const rows = facts(s, [[TL('P'), 'Launch fee', 'paid to the factory, once', '0.0005 ETH'], [TL('P'), 'Curve fee', 'on every trade on the bonding curve', '1%'], [TL('P'), 'Graduation', 'the curve moves into a Uniswap v4 pool, liquidity locked', '4.2 ETH'], [TL('P'), 'Buyback and burn', 'of every VERDEX creator fee, by the hook', '50%']])
+    const rows = facts(s, [[TL('P'), 'Launch fee', 'paid to the factory, once', '0.0005 ETH'], [TL('P'), 'Curve fee', 'on every trade on the bonding curve', '1%'], [TL('P'), 'Graduation', 'the curve moves into a Uniswap v4 pool, liquidity locked', '4.2 ETH'], [TL('P'), 'Creator tax', 'paid in full to the creator wallet on every sweep', '2%']])
     const cap = add(s, `<div class="cap" style="top:790px">Verified contracts on Robinhood Chain, read live. The Launchpad is a front door to the same factory.</div>`)
     return (t) => { e(t); runLine(l1, t, 0.3, 2.0); runLine(l2, t, 2.3, 4.2); runFacts(rows, t); capIn(cap, t, 9.2) }
   },
