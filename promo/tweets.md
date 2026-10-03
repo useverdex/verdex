@@ -431,6 +431,64 @@ Spanish:
 >
 > useverdex.xyz
 
+## Verdex Index (`verdex-index.mp4`, 34 s, post with the video when the gate opens; hype still `photos/hype-index.png`)
+
+Box 1 of phase 2 and the second Verdex contract family. Say it plainly: unaudited, capped, the index holds the stocks and nothing else, the creator's only lever is the cap. Never promise a return. Weights are units at today's prices, not a managed allocation.
+
+### Hype (image: `photos/hype-index.png`)
+
+> Box 1 of 11.
+>
+> Holders first. Everyone else at 20:00 UTC.
+>
+> useverdex.xyz
+
+### Launch tweet (post with the video, then pin it)
+
+> Verdex Index is live.
+>
+> A basket becomes a token. Four indexes of tokenized stocks on Robinhood Chain, one ERC-20 each: Magnificent Seven, AI Infrastructure, Semis, Frontier. Buy with USDG in one transaction, sell the same way, or redeem for the stocks whenever you want.
+>
+> The contract holds the stocks behind the shares and nothing else.
+>
+> useverdex.xyz/index
+
+### Thread (reply to the launch tweet)
+
+> 1/ What a share is.
+>
+> A fixed number of units of every stock in the index, set when it was created and never changed. Equal value per stock on day one, one share worth one USDG. The weights you see are those units at today's prices. Nothing rebalances, nobody manages.
+
+> 2/ What a buy does.
+>
+> You send USDG to the router. It buys exactly the units in each stock's Uniswap v3 pool, issues your shares, and refunds the USDG it did not need. One transaction. Every leg carries a floor; a thin pool makes the whole thing revert, not fill badly.
+
+> 3/ What a sell does.
+>
+> The reverse: the router redeems the stocks and sells each one in its pool. Or skip the pools entirely and redeem in kind: burn the shares, get the stocks, no fee.
+
+> 4/ What the contract cannot do.
+>
+> Send your stocks anywhere but back to a redeemer. There is no such function. The creator's only lever is a cap on the share supply, and every index starts capped while the code is new.
+
+> 5/ What it is not.
+>
+> Audited. Two contracts, open source, verified on the explorer, tested on a fork of Robinhood Chain. Read them before you trust them with more than you would lose.
+
+> 6/ Phase 2, box 1 of 11. Checked.
+>
+> Next: every protocol fee buys VERDEX.
+
+### Spanish version of the launch tweet
+
+> Verdex Index ya está en vivo.
+>
+> Una cesta se convierte en un token. Cuatro índices de acciones tokenizadas en Robinhood Chain, un ERC-20 cada uno: Magnificent Seven, AI Infrastructure, Semis, Frontier. Compra con USDG en una transacción, vende igual, o canjéalo por las acciones cuando quieras.
+>
+> El contrato guarda las acciones que respaldan las participaciones y nada más.
+>
+> useverdex.xyz/index
+
 ## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
 
 Eleven clips, one per box, in the order we will build them, numbered in the corner. Every caption ends in "Coming": nothing in this series is live, and no clip carries a date. Post one a day after the article, or two on the days a box ships. Reply to each with the previous one so the series threads itself.
