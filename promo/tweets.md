@@ -495,6 +495,70 @@ An hour before:
 >
 > useverdex.xyz/index
 
+## Fees buy VERDEX (`verdex-treasury.mp4`, 34 s, post with the video when the treasury is deployed; hype still `photos/hype-treasury.png`)
+
+Box 2 of phase 2. Say it plainly: protocol fees, not the VERDEX creator tax (that one goes to the creator wallet, as on every Pons token). Today the only fee that flows in is the Index fee; the aggregator's swap fee moves over when the integrator wallet is changed. Unaudited. Never call the payout a yield, a dividend or income; it is fees paid back, pro rata, to the wallets that paid them. Never promise a burn rate or a price.
+
+### Hype (image: `photos/hype-treasury.png`, a couple of hours before)
+
+> Box 2 of 11.
+>
+> Every protocol fee buys VERDEX. Half burned, half back to the people who paid it. One contract, no way out.
+>
+> useverdex.xyz
+
+An hour before:
+
+> One hour. Box 2 of 11.
+>
+> From tonight, a fee paid to Verdex is a VERDEX buy.
+
+### Launch tweet (post with the video, then pin it)
+
+> Every protocol fee buys VERDEX.
+>
+> The treasury is live. Every fee the protocol earns lands in one public contract, and the only thing that contract can do with a balance is buy VERDEX. Half of every buy is burned in the same transaction. The other half goes back, every week, to the wallets that paid the fees.
+>
+> No function sends funds anywhere else. Not to the owner, not to the executor.
+>
+> useverdex.xyz/treasury
+
+### Thread (reply to the launch tweet)
+
+> 1/ What flows in.
+>
+> The 0.25% fee on Index buys and sells, today. Every new contract points its fee at the treasury as it ships. The treasury never touches the VERDEX creator tax; that stays on the token, as on every Pons launch.
+
+> 2/ What a sweep is.
+>
+> Every six hours the executor asks the aggregator for a route from the treasury's USDG into VERDEX and hands it to the contract. The contract swaps, measures the VERDEX that arrived, burns half to 0x…dEaD and books the other half for the payout. One transaction, listed on the page.
+
+> 3/ How it knows the price.
+>
+> It reads it itself. USDG to ETH from the Uniswap v3 pool, ETH to VERDEX from the Uniswap v4 pool, in the same transaction, and sets a floor a few percent under spot. A route that comes in under the floor reverts. Nobody can feed it a bad route.
+
+> 4/ Who gets paid back.
+>
+> Every wallet that paid a fee since the last payout, pro rata to what it paid, read from the router's own events. Holding VERDEX already waives the Index fee onchain, so the payout goes to the wallets that did not.
+
+> 5/ What the contract cannot do.
+>
+> Send funds to the owner. Send funds to the executor. Pay more than it holds for the payout. Take a route under its floor. There is no withdraw function; the owner keeps four settings and nothing else. Open source, verified, unaudited.
+
+> 6/ Phase 2, box 2 of 11. Checked.
+>
+> Next: Verdex Lend.
+
+### Spanish version of the launch tweet
+
+> Cada comisión del protocolo compra VERDEX.
+>
+> La tesorería ya está en vivo. Cada comisión que gana el protocolo cae en un contrato público, y lo único que ese contrato puede hacer con un saldo es comprar VERDEX. La mitad de cada compra se quema en la misma transacción. La otra mitad vuelve, cada semana, a las wallets que pagaron las comisiones.
+>
+> Ninguna función envía fondos a otro sitio. Ni al owner, ni al ejecutor.
+>
+> useverdex.xyz/treasury
+
 ## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
 
 Eleven clips, one per box, in the order we will build them, numbered in the corner. Every caption ends in "Coming": nothing in this series is live, and no clip carries a date. Post one a day after the article, or two on the days a box ships. Reply to each with the previous one so the series threads itself.
