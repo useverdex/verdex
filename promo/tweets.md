@@ -359,31 +359,75 @@ The last box on the day-one roadmap, and the first Verdex contract. Say it plain
 
 ## The roadmap is done (photo `photos/hype-roadmap-done.png`)
 
-The thirteen boxes from day one are all shipped. The tweet says three things and nothing else: it is done, we stay, and the next word comes in a few hours. "Undervalued" is our opinion, said as one; no price target, no promise.
+The thirteen boxes from day one are all shipped. Written in the dev's own voice, close and plain: it is done, we are not leaving, we believe this is deeply undervalued and we are going to change that, much bigger updates and much more work until it is undeniable, thank you, big news in a few hours. "Undervalued" is our opinion; no price target.
 
-> The roadmap we posted on day one is done. Thirteen of thirteen, in under a week.
+> The roadmap is done, but we're not leaving.
 >
-> We're not going anywhere. We think Verdex is one of the most undervalued projects on Robinhood Chain, and the only honest answer to that is work: more than ever, until it's undeniable.
+> We truly believe our project is deeply undervalued.
 >
-> What comes next, in a few hours. Stay tuned.
+> Stay tuned, because we're going to bring much bigger updates and much more work, so it's undeniable that the price doesn't reflect the value of our project.
 >
-> useverdex.xyz
-
-Shorter:
-
-> Thirteen of thirteen. The roadmap is done. We're not.
->
-> We think this is badly undervalued, and the answer is more work than ever, until it's undeniable. What comes next, in a few hours.
+> Thank you for the support. Big news coming in the next few hours.
 >
 > useverdex.xyz
 
 Spanish:
 
-> El roadmap que publicamos el primer día está terminado. Trece de trece, en menos de una semana.
+> El roadmap está terminado, pero no nos vamos.
 >
-> No nos vamos a ninguna parte. Creemos que Verdex es de los proyectos más infravalorados de Robinhood Chain, y la única respuesta honesta a eso es trabajo: más que nunca, hasta que sea innegable.
+> Creemos de verdad que nuestro proyecto está muy infravalorado.
 >
-> Lo que viene, en unas horas. Atentos.
+> Atentos, porque vamos a traer actualizaciones mucho más grandes y mucho más trabajo, para que sea innegable que el precio no refleja el valor de nuestro proyecto.
+>
+> Gracias por el apoyo. Noticias grandes en las próximas horas.
+>
+> useverdex.xyz
+
+## Phase 2 (photo `photos/hype-phase2.png`)
+
+The announcement promised by the roadmap tweet. Ten boxes, every one a contract or a mechanism, no dates except the first. Lend and Leverage are named with their condition (audited and capped) so nobody reads them as next week. "Fees buy VERDEX" is the protocol's fees, not the creator fee of the token.
+
+> Phase 1 was the product. Phase 2 is the protocol.
+>
+> Ten boxes, and this time they're contracts, not pages:
+>
+> Verdex Index: ETFs of tokenized stocks as a single token.
+> Fees buy VERDEX: half burned, half paid back to the people who use Verdex.
+> Agent without you: AI that trades inside limits you set onchain.
+> Verdex on Base.
+> Orders and Vaults that run without you.
+> Verdex Lend and Leverage, audited and capped before they open.
+> Holders vote the order. Every number live on the site.
+>
+> The first one ships this week.
+>
+> useverdex.xyz
+
+Shorter:
+
+> Phase 1 was the product. Phase 2 is the protocol.
+>
+> ETFs of tokenized stocks as one token. Every fee buying VERDEX. An agent that trades inside onchain limits. Verdex on Base. Orders and vaults that run without you. Then lending and leverage, audited first.
+>
+> The first one ships this week.
+>
+> useverdex.xyz
+
+Spanish:
+
+> La fase 1 fue el producto. La fase 2 es el protocolo.
+>
+> Diez casillas, y esta vez son contratos, no páginas:
+>
+> Verdex Index: ETFs de acciones tokenizadas en un solo token.
+> Las comisiones compran VERDEX: mitad quemado, mitad devuelto a quien usa Verdex.
+> Agente sin ti: IA que opera dentro de límites fijados en cadena.
+> Verdex en Base.
+> Órdenes y vaults que corren sin ti.
+> Verdex Lend y apalancamiento, auditados y con tope antes de abrir.
+> Los holders votan el orden. Cada número en vivo en la web.
+>
+> La primera sale esta semana.
 >
 > useverdex.xyz
 

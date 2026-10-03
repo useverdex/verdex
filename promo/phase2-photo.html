@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex, phase 2</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 12px; background: var(--chip); font-size: 26px; font-weight: 500; vertical-align: middle; }
+.tile { position: absolute; width: 300px; height: 64px; box-sizing: border-box; padding: 0 16px; border-radius: 14px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 12px; font-size: 19px; font-weight: 500; letter-spacing: -0.01em; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.tile .ok { width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; background: rgba(194,234,138,.16); color: var(--lime); flex-shrink: 0; }
+.tile .ok svg { width: 14px; height: 14px; }
+.tile span.n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Still for the phase 2 announcement: the two lines, ten empty boxes, the first ships this week. Static; renderAt is a no-op.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = `<svg viewBox="0 0 100 100" fill="#C2EA8A" style="display:block;width:100%;height:100%"><path d="${MARK_PATH}"/></svg>`
+const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>`
+const ITEMS = ['Verdex Index', 'Fees buy VERDEX', 'Agent without you', 'Verdex on Base', 'Orders without you', 'Vaults without you', 'Verdex Lend', 'Leverage', 'Holders vote', 'Verdex in numbers']
+const stage = document.getElementById('stage')
+const add = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); const el = d.firstElementChild; stage.appendChild(el); return el }
+add(`<div class="grid"></div>`)
+add(`<div class="abs" style="left:50%;top:40%;width:1500px;height:900px;margin:-450px 0 0 -750px;background:radial-gradient(closest-side,rgba(194,234,138,.14),rgba(194,234,138,0));pointer-events:none"></div>`)
+add(`<div class="abs" style="left:0;right:0;top:96px;display:flex;justify-content:center"><span style="width:76px;height:76px;display:inline-flex">${MARK}</span></div>`)
+add(`<div class="abs serif" style="left:0;right:0;top:196px;text-align:center;font-size:136px;text-shadow:0 30px 80px rgba(0,0,0,.9)">Phase 1 was the product.</div>`)
+add(`<div class="abs serif" style="left:0;right:0;top:350px;text-align:center;font-size:150px;color:var(--lime);text-shadow:0 30px 80px rgba(0,0,0,.9)">Phase 2 is the protocol.</div>`)
+const COLS = 5, TW = 300, TH = 64, GAP = 12
+const left0 = (1920 - (COLS * TW + (COLS - 1) * GAP)) / 2
+ITEMS.forEach((n, i) => {
+  const row = Math.floor(i / COLS), col = i % COLS
+  const inRow = row < 2 ? COLS : ITEMS.length - 2 * COLS
+  const rowLeft = row < 2 ? left0 : (1920 - (inRow * TW + (inRow - 1) * GAP)) / 2
+  add(`<div class="tile" style="left:${rowLeft + col * (TW + GAP)}px;top:${580 + row * (TH + GAP)}px"><span class="ok" style="background:rgba(255,255,255,.06);color:transparent">${CHECK}</span><span class="n">${n}</span></div>`)
+})
+add(`<div class="abs" style="left:0;right:0;top:850px;text-align:center;font-size:34px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Ten boxes. Contracts, not pages. The first one ships this week.</div>`)
+add(`<div class="abs" style="left:0;right:0;top:930px;text-align:center"><span class="pill"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+const g = document.createElement('canvas'); g.width = 480; g.height = 270
+const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+gx.putImageData(id, 0, 0)
+add(`<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+add(`<div id="vignette"></div>`)
+await document.fonts.ready
+window.DURATION = 1
+window.renderAt = () => {}
+window.__ready = true
+</script>
+</body>
+</html>
