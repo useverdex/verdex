@@ -70,8 +70,8 @@ export async function readCreator(): Promise<Address> {
 }
 
 export type Sweep = { block: number; eth: number; tx: `0x${string}`; at?: number }
-export type Move = { block: number; verdex: number; tx: `0x${string}`; at?: number }
-export type Treasury = { creator: Address; sweeps: Sweep[]; totalEth: number; pendingEth: number; pendingVerdex: number; holdingVerdex: number; buys: Move[]; burns: Move[]; burnedByDev: number; burnedTotal: number }
+export type Move = { block: number; verdex: number; tx: `0x${string}`; at?: number; to?: Address }
+export type Treasury = { creator: Address; sweeps: Sweep[]; totalEth: number; pendingEth: number; pendingVerdex: number; holdingVerdex: number; buys: Move[]; burns: Move[]; outs: Move[]; burnedByDev: number; soldVerdex: number; burnedTotal: number }
 async function chunkedLogs<T>(fn: (from: bigint, to: bigint) => Promise<T[]>, latest: bigint) {
   let out: T[] = []
   for (let from = LAUNCH_BLOCK; from <= latest; from += WINDOW) {
@@ -84,10 +84,10 @@ export async function readTreasury(): Promise<Treasury> {
   const c = client()
   const creator = await readCreator()
   const latest = await c.getBlockNumber()
-  const [credits, transfers, burnsRaw, pendingEth, pendingVerdex, holding, dead] = await Promise.all([
+  const [credits, transfers, fromDev, pendingEth, pendingVerdex, holding, dead] = await Promise.all([
     chunkedLogs((fromBlock, toBlock) => c.getLogs({ address: CONTRACTS.escrow, event: CREDITED, args: { account: creator }, fromBlock, toBlock }), latest),
     chunkedLogs((fromBlock, toBlock) => c.getLogs({ address: CONTRACTS.token, event: TRANSFER, args: { to: creator }, fromBlock, toBlock }), latest),
-    chunkedLogs((fromBlock, toBlock) => c.getLogs({ address: CONTRACTS.token, event: TRANSFER, args: { from: creator, to: DEAD }, fromBlock, toBlock }), latest),
+    chunkedLogs((fromBlock, toBlock) => c.getLogs({ address: CONTRACTS.token, event: TRANSFER, args: { from: creator }, fromBlock, toBlock }), latest),
     c.readContract({ address: CONTRACTS.hook, abi, functionName: 'pendingCreatorTax', args: [CONTRACTS.poolId, ZERO] }).catch(() => 0n),
     c.readContract({ address: CONTRACTS.hook, abi, functionName: 'pendingCreatorTax', args: [CONTRACTS.poolId, CONTRACTS.token] }).catch(() => 0n),
     c.readContract({ address: CONTRACTS.token, abi, functionName: 'balanceOf', args: [creator] }),
@@ -96,9 +96,11 @@ export async function readTreasury(): Promise<Treasury> {
   const sweeps: Sweep[] = credits.map((l) => ({ block: Number(l.blockNumber), eth: Number(formatEther(l.args.amount!)), tx: l.transactionHash }))
   const toMove = (l: { blockNumber: bigint; args: { value?: bigint }; transactionHash: `0x${string}` }): Move => ({ block: Number(l.blockNumber), verdex: Number(formatUnits(l.args.value ?? 0n, 18)), tx: l.transactionHash })
   const buys = transfers.map(toMove)
-  const burns = burnsRaw.map(toMove)
+  // Everything that left the wallet: to the burn address, or anywhere else (a sale, listed as plainly as a burn).
+  const burns = fromDev.filter((l) => (l.args.to ?? '').toLowerCase() === DEAD.toLowerCase()).map(toMove)
+  const outs = fromDev.filter((l) => (l.args.to ?? '').toLowerCase() !== DEAD.toLowerCase()).map((l) => ({ ...toMove(l), to: l.args.to as Address }))
   // Timestamps for the most recent rows only; the rest are shown by block.
-  const want: { block: number; at?: number }[] = [...sweeps.slice(-6), ...buys.slice(-6), ...burns.slice(-6)]
+  const want: { block: number; at?: number }[] = [...sweeps.slice(-6), ...buys.slice(-6), ...burns.slice(-6), ...outs.slice(-6)]
   const blocks = new Map<number, number>()
   for (const row of want) {
     if (blocks.has(row.block)) continue
@@ -106,7 +108,7 @@ export async function readTreasury(): Promise<Treasury> {
     if (b) blocks.set(row.block, Number(b.timestamp) * 1000)
   }
   for (const row of want) row.at = blocks.get(row.block)
-  return { creator, sweeps, totalEth: sweeps.reduce((s, x) => s + x.eth, 0), pendingEth: Number(formatEther(pendingEth)), pendingVerdex: Number(formatUnits(pendingVerdex, 18)), holdingVerdex: Number(formatUnits(holding, 18)), buys, burns, burnedByDev: burns.reduce((s, x) => s + x.verdex, 0), burnedTotal: Number(formatUnits(dead, 18)) }
+  return { creator, sweeps, totalEth: sweeps.reduce((s, x) => s + x.eth, 0), pendingEth: Number(formatEther(pendingEth)), pendingVerdex: Number(formatUnits(pendingVerdex, 18)), holdingVerdex: Number(formatUnits(holding, 18)), buys, burns, outs, burnedByDev: burns.reduce((s, x) => s + x.verdex, 0), soldVerdex: outs.reduce((s, x) => s + x.verdex, 0), burnedTotal: Number(formatUnits(dead, 18)) }
 }
 
 export function useMarket() {

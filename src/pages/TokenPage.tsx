@@ -117,7 +117,7 @@ export default function TokenPage() {
   const price = m?.price ?? 0
   const lastSweeps = useMemo(() => [...(tr?.sweeps ?? [])].reverse().slice(0, 6), [tr])
   const moves = useMemo(() => {
-    const rows: { kind: 'buy' | 'burn'; row: Move }[] = [...(tr?.buys ?? []).map((row) => ({ kind: 'buy' as const, row })), ...(tr?.burns ?? []).map((row) => ({ kind: 'burn' as const, row }))]
+    const rows: { kind: 'buy' | 'burn' | 'out'; row: Move }[] = [...(tr?.buys ?? []).map((row) => ({ kind: 'buy' as const, row })), ...(tr?.burns ?? []).map((row) => ({ kind: 'burn' as const, row })), ...(tr?.outs ?? []).map((row) => ({ kind: 'out' as const, row }))]
     return rows.sort((a, b) => b.row.block - a.row.block).slice(0, 8)
   }, [tr])
   const holdingPct = tr ? (tr.holdingVerdex / SUPPLY) * 100 : 0
@@ -202,7 +202,7 @@ export default function TokenPage() {
             <Box sx={{ minWidth: 0 }}>
               <Typography sx={{ fontSize: 16, fontWeight: 500 }}>Dev wallet</Typography>
               <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>
-                The creator wallet from the launch record{tr ? <>: <Box component="a" href={explorerAddress(tr.creator)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.textSoft }}>{short(tr.creator)}</Box></> : ''}. It has never sold: what it bought went to the burn address or is still there.
+                The creator wallet from the launch record{tr ? <>: <Box component="a" href={explorerAddress(tr.creator)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.textSoft }}>{short(tr.creator)}</Box></> : ''}. What it bought went to the burn address, is still here, or was sold{tr && tr.soldVerdex > 0 ? <>: {fmtM(tr.soldVerdex)} VERDEX moved out and sold on 30 September 2026</> : ''}. All of it is listed below with the transaction.
               </Typography>
             </Box>
           </Box>
@@ -215,9 +215,9 @@ export default function TokenPage() {
                 <Big value={tr ? `${fmtM(tr.burnedTotal)}` : '…'} sub={tr ? `VERDEX burned, ${burnedPct.toFixed(2)}% of supply, ${fmtM(tr.burnedByDev)} of it by the dev` : ''} />
               </Box>
               <Box sx={{ mt: 2.5, pt: 2, borderTop: `1px solid ${t.color.border}` }}>
-                <Label>Dev buys and burns</Label>
+                <Label>Dev buys, burns and sales</Label>
                 {moves.map(({ kind, row }) => (
-                  <TxRow key={row.tx} when={fmtWhen(row.at, row.block)} what={kind === 'buy' ? 'Bought from the pool' : 'Sent to the burn address'} amount={`${kind === 'burn' ? '−' : '+'}${fmtM(row.verdex)}`} tx={row.tx} accent={kind === 'buy'} />
+                  <TxRow key={row.tx} when={fmtWhen(row.at, row.block)} what={kind === 'buy' ? 'Bought from the pool' : kind === 'burn' ? 'Sent to the burn address' : 'Moved out and sold'} amount={`${kind === 'buy' ? '+' : '−'}${fmtM(row.verdex)}`} tx={row.tx} accent={kind === 'buy'} />
                 ))}
               </Box>
             </>
@@ -232,7 +232,7 @@ export default function TokenPage() {
           </Box>
           <Box sx={{ flex: 1, minWidth: 260 }}>
             <Typography sx={{ fontSize: 16, fontWeight: 500 }}>Buyback: {BUYBACK.sharePct}% of creator fees buy VERDEX {BUYBACK.cadence}</Typography>
-            <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.5 }}>Executed from the dev wallet through {BRAND.name} itself, so every buy appears in the list above with its transaction. What is bought is held or burned, never sold.</Typography>
+            <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.5 }}>Executed from the dev wallet through {BRAND.name} itself, so every buy appears in the list above with its transaction. What is bought is held or burned, and listed either way.</Typography>
           </Box>
         </Panel>
       )}
@@ -278,7 +278,7 @@ export default function TokenPage() {
         {[
           ['Where does this data come from?', `Prices, market cap, liquidity and volume from DexScreener's public API. Fees from the credit events of the launchpad's fee escrow and the pending-fee views of its hook. The dev wallet from the launch record on that hook, and its balance, buys and burns from the token contract. All of it is read by your browser; there is no ${BRAND.name} server in between.`],
           ['What is the fee on a swap?', `${FEE.totalPct}% of the ETH side of every swap, set at launch and locked: a ${FEE.creatorTaxPct}% creator tax plus a ${FEE.hookFeePct}% pool fee. ${FEE.creatorSharePct}% of the total reaches the creator wallet, swept roughly every hour by the launchpad's operator; ${FEE.protocolSharePct}% goes to the launchpad. There is no separate ${BRAND.name} fee on VERDEX trades.`],
-          ['What does the dev do with the fees?', 'Build. The site, the films and the agent are paid from them, and part of them has gone back into the token: every VERDEX the dev wallet bought is listed above, and so is every VERDEX it sent to the burn address. The wallet has never sold.'],
+          ['What does the dev do with the fees?', 'Build. The site, the films and the agent are paid from them, and part of them has gone back into the token: every VERDEX the dev wallet bought is listed above, and so is every VERDEX it sent to the burn address. The wallet has sold once, 2.5M VERDEX on 30 September 2026, listed above with its transaction; any future sale will appear there the same way.'],
           ['Is there a team allocation or a lock?', 'No. The whole supply was minted to the bonding curve at launch; the creator bought on the curve like everyone else, and the pool that the curve graduated into has its liquidity locked permanently by the launchpad.'],
           ['Why does the Verdex fee disappear for holders?', `Because it is the one perk that needs no contract: the site reads the wallet's VERDEX balance onchain before each quote and drops its ${(VERDEX_FEE * 100).toFixed(2)}% fee when the balance is above zero. The fee is collected by the route on the token you send and appears as its own line in the quote; holders see it struck through.`],
           ['How does early access work?', `Each new feature ships with a public date. Until then its page reads the connected wallet's VERDEX balance and opens for wallets holding at least ${EARLY_ACCESS_BPS / 100}% of the live total supply, ${fmtM(SUPPLY * EARLY_ACCESS_BPS / 10_000)} VERDEX today. Everyone else sees the date and how much would open it now. Nothing is registered anywhere; selling below the line closes it again.`],

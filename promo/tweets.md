@@ -1365,6 +1365,10 @@ The application is pending. Every line says applied or under review, never liste
 > If a number on it ever disagrees with the chain, the chain is right and we want the bug report. There is a bounty for that now.
 
 > Dev wallet, in public: bought, burned, never sold.
+
+Retired on 3 October 2026: on 30 September the dev wallet moved 2.5M VERDEX to a second wallet of the dev's, which sold them for 0.07 ETH two minutes later. The token page now lists that transfer as "Moved out and sold" next to the buys and burns, and nothing we post says "never sold" again. The honest line is:
+
+> Dev wallet, in public: every buy, every burn and the one sale, each with its transaction.
 >
 > Not a tweet you have to trust. A page you can check. useverdex.xyz/verdex
 
