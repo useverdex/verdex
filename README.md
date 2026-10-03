@@ -51,6 +51,10 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   (`scripts/executor-lib.mjs`) runs every ten minutes inside `server.mjs`, the Node process that
   serves the built site on Railway, from a gas-only wallet whose key lives outside the public
   repository; `scripts/autoinvest-executor.mjs` runs one pass from a shell or a cron.
+- **Verdex Index.** Baskets of tokenized stocks as one ERC-20 each: `contracts/VerdexIndex.sol` (the index and its
+  factory) and `contracts/VerdexIndexRouter.sol` (USDG in, shares out, in one transaction through the stocks' Uniswap
+  v3 pools, with a per-leg price floor and a fee waived for VERDEX holders). Fixed units per share, redeem in kind
+  any time, a supply cap as the creator's only lever. Deployed from `/deploy/index`.
 - **Private Markets.** The private companies with a token: pre-IPO exposure issued by PreStocks on
   Solana (Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI), with price,
   liquidity, volume and holders from Jupiter and the transfer fee, pause switch and supply from each

@@ -25,9 +25,10 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'Baskets',
-    match: ['/rwa-baskets', '/vaults', '/strategies', '/launch'],
+    match: ['/index', '/rwa-baskets', '/vaults', '/strategies', '/launch'],
     items: [
-      { label: 'Automated Baskets', icon: RefreshIcon, path: '/rwa-baskets#automated' },
+      { label: 'Verdex Index', icon: PieIcon, path: '/index' },
+      { label: 'Automated Baskets', icon: RefreshIcon, path: '/rwa-baskets#automated', divider: true },
       { label: 'Index Baskets', icon: LayersIcon, path: '/rwa-baskets#baskets' },
       { label: 'Discover all Baskets', icon: SearchIcon, path: '/rwa-baskets/discover' },
       { label: 'Vaults', icon: VaultIcon, path: '/vaults', divider: true },
@@ -74,6 +75,7 @@ export const NAV_GROUPS: NavGroup[] = [
       doc('Launchpad', 'launchpad', RocketIcon),
       doc('Private Markets', 'private-markets', LockIcon),
       doc('Auto-Invest without you', 'auto-invest-without-you', RefreshIcon),
+      doc('Verdex Index', 'verdex-index', PieIcon),
       doc('Lend and Borrow', 'lend-and-borrow', HandCoinIcon),
       doc('Fees', 'fees', ReceiptIcon),
       doc('Holding VERDEX', 'holding', CoinIcon),

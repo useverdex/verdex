@@ -253,6 +253,21 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'verdex-index',
+    title: 'Verdex Index',
+    blocks: [
+      { kind: 'p', text: `A Verdex Index is a basket of tokenized stocks as one ERC-20 on Robinhood Chain. Each share is backed by a fixed number of units of every stock in it, set when the index is created and never changed, held by the index contract (contracts/VerdexIndex.sol). Buying an index with USDG goes through the router (contracts/VerdexIndexRouter.sol), which buys exactly those units in each stock's Uniswap v3 pool, issues the shares and refunds the USDG it did not need, all in one transaction. Selling does the same in reverse. Redeeming hands you the stocks themselves, with no pool and no fee. The contracts are open source, verified on the explorer, and unaudited.` },
+      { kind: 'defs', items: [
+        { term: 'Units, not weights', text: 'The weights shown are the units at today’s prices. Nothing rebalances and nobody manages the basket. An index created with equal value per stock drifts as prices move, like a buy-and-hold basket would.' },
+        { term: 'The price floor', text: 'Every leg of a buy or sell carries a limit the page sets from the pools’ spot prices, one percent by default. A thin or moved pool makes the whole transaction revert instead of filling one leg badly.' },
+        { term: 'The fee', text: `${N} charges 0.25% of the USDG side of a buy or sell through the router, paid to the treasury address on the router. Wallets holding any VERDEX pay nothing, checked onchain in the same transaction. Redeeming in kind is free for everyone.` },
+        { term: 'The cap', text: 'Each index has a cap on its share supply, set by whoever created it. It is the only lever the creator has: there is no function in the index contract that moves the stocks anywhere but back to a redeemer. Caps start small while the contracts are new.' },
+        { term: 'Who can create one', text: `Anyone can create an index on the factory with their own name, stocks and units. The page lists the ones ${N} created at launch; the explorer lists them all.` },
+        { term: 'Risk', text: `The contracts are unaudited. The index holds the stocks behind the shares, so a bug there is a loss of those stocks. The source and compiled bytecode are in the repository, tested on a fork of Robinhood Chain. Read them before you trust them with more than you would lose.` },
+      ] },
+    ],
+  },
+  {
     id: 'vaults',
     title: 'Vaults',
     blocks: [
