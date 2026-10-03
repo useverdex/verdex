@@ -357,6 +357,36 @@ The last box on the day-one roadmap, and the first Verdex contract. Say it plain
 >
 > useverdex.xyz/auto-invest/without-you
 
+## The roadmap is done (photo `photos/hype-roadmap-done.png`)
+
+The thirteen boxes from day one are all shipped. The tweet says three things and nothing else: it is done, we stay, and the next word comes in a few hours. "Undervalued" is our opinion, said as one; no price target, no promise.
+
+> The roadmap we posted on day one is done. Thirteen of thirteen, in under a week.
+>
+> We're not going anywhere. We think Verdex is one of the most undervalued projects on Robinhood Chain, and the only honest answer to that is work: more than ever, until it's undeniable.
+>
+> What comes next, in a few hours. Stay tuned.
+>
+> useverdex.xyz
+
+Shorter:
+
+> Thirteen of thirteen. The roadmap is done. We're not.
+>
+> We think this is badly undervalued, and the answer is more work than ever, until it's undeniable. What comes next, in a few hours.
+>
+> useverdex.xyz
+
+Spanish:
+
+> El roadmap que publicamos el primer día está terminado. Trece de trece, en menos de una semana.
+>
+> No nos vamos a ninguna parte. Creemos que Verdex es de los proyectos más infravalorados de Robinhood Chain, y la única respuesta honesta a eso es trabajo: más que nunca, hasta que sea innegable.
+>
+> Lo que viene, en unas horas. Atentos.
+>
+> useverdex.xyz
+
 ## Launchpad, priced in any stock (`verdex-launchpair.mp4`, 34 s)
 
 One fact, shown rather than claimed: the Launchpad lets a token be priced in any of the 42 tokenized stocks the Pons factory accepts, plus ETH and USDG. The count and the thresholds are read from the factory, so say "today" when you quote them. Name Pons as the contracts, never as a partner. Do not promise graduations or creator income.
