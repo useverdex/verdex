@@ -5,7 +5,9 @@ import http from 'node:http'
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs'
 import { extname, join, normalize, resolve } from 'node:path'
 import { gzipSync } from 'node:zlib'
-import { runOnce, executorBalance, refuelIfNeeded } from './scripts/executor-lib.mjs'
+import { runOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
+import { TREASURY_ADDRESS } from './scripts/treasury-address.mjs'
+import { INDEX_ROUTER_ADDRESS } from './scripts/index-addresses.mjs'
 import { AUTOINVEST_ADDRESS as BUILT_IN } from './scripts/autoinvest-address.mjs'
 
 const ROOT = resolve('dist')
@@ -66,4 +68,29 @@ if (key && address) {
   setInterval(tick, EVERY)
 } else {
   console.log('[executor] off: no key or contract address')
+}
+
+// ---- treasury: sweep fees into VERDEX every six hours, pay the kept half back once a week ----
+const treasury = process.env.TREASURY_ADDRESS || TREASURY_ADDRESS
+const router = process.env.INDEX_ROUTER_ADDRESS || INDEX_ROUTER_ADDRESS
+if (key && treasury) {
+  const tlog = (m) => console.log(`[treasury] ${m}`)
+  let busy = false
+  const sweepTick = async () => {
+    if (busy) return
+    busy = true
+    try { const r = await treasurySweep({ rpc: process.env.RPC, key, treasury, log: tlog }); if (r.swept.length === 0) tlog('nothing to sweep') } catch (e) { tlog(`sweep failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`) } finally { busy = false }
+  }
+  const payTick = async () => {
+    if (busy) return
+    busy = true
+    try { const r = await treasuryDistribute({ rpc: process.env.RPC, key, treasury, routers: router ? [router] : [], log: tlog }); if (!r.paid && r.reason) tlog(`payout: ${r.reason}`) } catch (e) { tlog(`payout failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`) } finally { busy = false }
+  }
+  tlog(`${treasury} · sweep every 6 h · payout weekly`)
+  setTimeout(sweepTick, 60_000)
+  setInterval(sweepTick, Number(process.env.TREASURY_SWEEP_EVERY_MS ?? 6 * 3600 * 1000))
+  setTimeout(payTick, 120_000)
+  setInterval(payTick, Number(process.env.TREASURY_PAY_CHECK_EVERY_MS ?? 3600 * 1000))
+} else {
+  console.log('[treasury] off: no key or treasury address')
 }

@@ -55,6 +55,10 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   factory) and `contracts/VerdexIndexRouter.sol` (USDG in, shares out, in one transaction through the stocks' Uniswap
   v3 pools, with a per-leg price floor and a fee waived for VERDEX holders). Fixed units per share, redeem in kind
   any time, a supply cap as the creator's only lever. Deployed from `/deploy/index`.
+- **Fees buy VERDEX.** `contracts/VerdexTreasury.sol`: where every protocol fee lands. The executor sweeps its USDG
+  and ETH into VERDEX through an allowlisted router, the contract checks the result against a floor it reads from
+  the pools, burns half and keeps half for the weekly payout to the wallets that paid the fees. No function sends
+  funds anywhere else. Deployed from `/deploy/treasury`; the server runs the sweeps and payouts.
 - **Private Markets.** The private companies with a token: pre-IPO exposure issued by PreStocks on
   Solana (Anthropic, OpenAI, Anduril, Neuralink, Kalshi, Polymarket, Figure AI), with price,
   liquidity, volume and holders from Jupiter and the transfer fee, pause switch and supply from each

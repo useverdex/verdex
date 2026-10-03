@@ -268,6 +268,20 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'fees-buy-verdex',
+    title: 'Fees buy VERDEX',
+    blocks: [
+      { kind: 'p', text: `Every fee the ${N} protocol earns lands in one public contract, the treasury (contracts/VerdexTreasury.sol), and the only thing that contract can do with a balance is buy VERDEX. An executor sweeps its USDG and ETH into VERDEX through a route from the aggregator; the contract checks the VERDEX it gets against a floor it reads itself from the pools (USDG to ETH on Uniswap v3, ETH to VERDEX on Uniswap v4) less a slippage band, and reverts if the route came in under it. Half of every sweep goes to the burn address. The other half waits in the contract for the weekly payout to the wallets that paid the fees, pro rata to what they paid. No function sends funds anywhere else: not to the owner, not to the executor.` },
+      { kind: 'defs', items: [
+        { term: 'What flows in', text: `Today, the ${N} fee on Index buys and sells through the router. Each new contract points its fee at the treasury as it ships. The 0.25% swap fee collected by the aggregator still goes to the fee wallet until the integrator wallet is moved to the treasury.` },
+        { term: 'The sweep', text: 'Runs every six hours from the server that serves this site, when the treasury holds at least a few USDG or a little ETH. The route is built by the aggregator for the treasury itself; the contract swaps, measures the VERDEX that arrived, and refuses anything under its floor. Every sweep is a transaction listed on the page.' },
+        { term: 'The payout', text: 'Once a week, the kept VERDEX goes to the wallets that paid fees since the last payout, in proportion to the fees they paid, read from the fee events of the routers. The page shows the running list and your share before it is paid. The executor computes the split; the contract only pays from the bucket and never more than it holds.' },
+        { term: 'The split and the band', text: 'The burn share (50%) and the slippage band (8%) are set by the owner, both capped in the contract. The owner also keeps the executor list and the router list. That is all the owner can do.' },
+        { term: 'Risk', text: `The contract is unaudited and holds fees between sweeps and VERDEX between payouts. The source and bytecode are in the repository, tested on a fork of Robinhood Chain.` },
+      ] },
+    ],
+  },
+  {
     id: 'vaults',
     title: 'Vaults',
     blocks: [
