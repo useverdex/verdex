@@ -29,7 +29,7 @@ export const EARLY_FEATURES: EarlyFeature[] = [
   { path: '/launch', label: 'Launchpad', opensAt: '2026-10-01T20:00:00Z' },
   { path: '/private-markets', label: 'Private Markets', opensAt: '2026-10-02T10:00:00Z' },
   { path: '/auto-invest/without-you', label: 'Auto-Invest without you', opensAt: '2026-10-02T20:00:00Z' },
-  { path: '/index', label: 'Verdex Index', opensAt: '2026-10-05T20:00:00Z' },
+  { path: '/index', label: 'Verdex Index', opensAt: '2026-10-04T07:00:00Z' },
 ]
 
 const client = () => createPublicClient({ transport: http(RPC, { retryCount: 3, retryDelay: 1200, timeout: 20_000 }) })

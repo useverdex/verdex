@@ -435,13 +435,19 @@ Spanish:
 
 Box 1 of phase 2 and the second Verdex contract family. Say it plainly: unaudited, capped, the index holds the stocks and nothing else, the creator's only lever is the cap. Never promise a return. Weights are units at today's prices, not a managed allocation.
 
-### Hype (image: `photos/hype-index.png`)
+### Hype (image: `photos/hype-index.png`, post the evening before)
 
 > Box 1 of 11.
 >
-> Holders first. Everyone else at 20:00 UTC.
+> Tomorrow, 07:00 UTC. Holders first, everyone else at the hour.
 >
 > useverdex.xyz
+
+An hour before:
+
+> One hour. Box 1 of 11 opens at 07:00 UTC.
+>
+> Holders are already inside.
 
 ### Launch tweet (post with the video, then pin it)
 
