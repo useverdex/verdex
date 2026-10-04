@@ -573,6 +573,16 @@ An hour before:
 
 Boxes 5 and 6 of phase 2, announced together. Tagging @base and @solana is a decision made by the owner; the copy still never claims a partnership, an integration agreement or an endorsement: Verdex deploys there, that is all. Coinbase's stocks, xStocks, Aerodrome and Jupiter are named as the tokens, pools and routers they are. No dates. VERDEX stays on Robinhood Chain and that is said in every version.
 
+### Hype, seventy-five minutes before (image: `photos/hype-two-names.png`)
+
+> 18:00 UTC.
+>
+> Two boxes shipped last night. Today we say where Verdex goes next. Two names, and you know both of them.
+>
+> Not a new token. Not a new chain for VERDEX. More people for the same one.
+>
+> useverdex.xyz
+
 ### Main tweet (post with `verdex-base.mp4`)
 
 > Verdex is going multichain.
@@ -614,6 +624,56 @@ Boxes 5 and 6 of phase 2, announced together. Tagging @base and @solana is a dec
 > VERDEX se queda en Robinhood Chain. Una pool, un supply. Lo que Verdex gana en cada cadena lo compra en casa.
 >
 > useverdex.xyz
+
+## Verdex Lend (post when the contract is live; hype still `photos/hype-lend.png`)
+
+Box 3 of phase 2. Say it plainly: unaudited, capped, isolated markets, the price comes from the pools. Never call the supply rate a yield you promise; it is what borrowers pay, and it is 0% when nobody borrows. Never say "safe". Liquidation is the borrower's risk and the tweet says so.
+
+### Launch tweet (post with the hype still or the film)
+
+> Verdex Lend is live.
+>
+> Borrow against your stocks. Lock NVDA, TSLA, AAPL, MSFT, GOOGL, AMZN or META on Robinhood Chain and borrow USDG against it without selling. Or supply USDG and earn what borrowers pay.
+>
+> One market per stock, isolated. Hard caps while it is new. The contract can send your stock to nobody but you, or to a liquidator if you fall under the line.
+>
+> useverdex.xyz/lend/verdex
+
+### Thread (reply to the launch tweet)
+
+> 1/ What a market is.
+>
+> One stock, USDG, and nothing else. Its own loan-to-value (50%), its own liquidation line (65%), its own caps on what can be supplied, borrowed and locked. A problem in one stock stays in that stock.
+
+> 2/ How it knows the price.
+>
+> From the stock's Uniswap v3 USDG pool, read inside the transaction: the lower of spot and a 30-minute average when you borrow, the higher when a loan is checked for liquidation. One manipulated block cannot open a loan it should not, or close one it should not.
+
+> 3/ What the interest is.
+>
+> A base rate plus a slope that rises with how much of the pool is lent out, accrued by the second. Suppliers get 90% of it. The other 10% goes to the treasury, where it buys VERDEX. Fees buy VERDEX, box 2, already feeding on box 3.
+
+> 4/ What a liquidation is.
+>
+> If your debt crosses 65% of your collateral's value, anyone can repay part of it and take collateral worth that plus a 5% bonus. The page shows your health and the price at which it happens. Keep it above 1. That risk is yours, and it is the whole point of the caps.
+
+> 5/ What the contract cannot do.
+>
+> Move funds to the owner: there is no such function. Lend more than the cap. Let one market touch another. Use a single block's price. The owner keeps caps and parameters and nothing else. Open source, verified, unaudited, tested on a fork of Robinhood Chain.
+
+> 6/ Phase 2, box 3 of 11. Checked.
+>
+> Next: Leverage.
+
+### Spanish version of the launch tweet
+
+> Verdex Lend ya está en vivo.
+>
+> Pide prestado contra tus acciones. Bloquea NVDA, TSLA, AAPL, MSFT, GOOGL, AMZN o META en Robinhood Chain y pide USDG prestado sin venderlas. O aporta USDG y gana lo que pagan los prestatarios.
+>
+> Un mercado por acción, aislado. Límites duros mientras es nuevo. El contrato no puede enviar tu acción a nadie más que a ti, o a un liquidador si caes por debajo de la línea.
+>
+> useverdex.xyz/lend/verdex
 
 ## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
 

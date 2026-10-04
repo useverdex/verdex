@@ -45,6 +45,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Lend and Borrow',
     match: ['/lend'],
     items: [
+      { label: 'Verdex Lend', icon: HandCoinIcon, path: '/lend/verdex' },
       { label: 'Lend and Borrow', icon: HandCoinIcon, path: '/lend' },
       { label: 'Multiply', icon: TrendIcon, path: '/lend?tab=multiply' },
     ],
@@ -78,6 +79,7 @@ export const NAV_GROUPS: NavGroup[] = [
       doc('Auto-Invest without you', 'auto-invest-without-you', RefreshIcon),
       doc('Verdex Index', 'verdex-index', PieIcon),
       doc('Fees buy VERDEX', 'fees-buy-verdex', ReceiptIcon),
+      doc('Verdex Lend', 'verdex-lend', HandCoinIcon),
       doc('Lend and Borrow', 'lend-and-borrow', HandCoinIcon),
       doc('Fees', 'fees', ReceiptIcon),
       doc('Holding VERDEX', 'holding', CoinIcon),

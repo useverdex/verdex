@@ -282,6 +282,20 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'verdex-lend',
+    title: 'Verdex Lend',
+    blocks: [
+      { kind: 'p', text: `${N} Lend (contracts/VerdexLend.sol) is a set of isolated money markets for tokenized stocks on Robinhood Chain. Each market pairs one stock with USDG. Suppliers deposit USDG and earn the interest borrowers pay; borrowers lock the stock and draw USDG against it without selling. Markets are isolated: one stock, its own loan-to-value, its own caps, nothing spills over. The contract holds the stocks and the USDG and can send them only to the people they belong to, or to a liquidator against a loan that fell under its threshold. There is no function that moves funds to the owner.` },
+      { kind: 'defs', items: [
+        { term: 'The price', text: 'Read from the stock\'s Uniswap v3 USDG pool inside the transaction: the lower of spot and a 30-minute time-weighted average when you borrow or take collateral out, the higher of the two when a loan is checked for liquidation. A single manipulated block cannot open a loan it should not or close one it should not.' },
+        { term: 'Interest', text: 'Accrues by the second at a rate that rises with how much of the supplied USDG is lent out: a base rate plus a slope at full use. Ten percent of the interest is kept as a reserve and sent to the treasury, where it buys VERDEX. The rest goes to the suppliers.' },
+        { term: 'Liquidation', text: 'When debt exceeds the liquidation threshold of the collateral value, anyone can repay part of the debt and receive collateral worth that amount plus the bonus, at the liquidation price. Keep the health above 1 by repaying or adding collateral.' },
+        { term: 'Caps', text: `Every market opens with hard caps on what can be supplied, borrowed and locked, raised by the owner as the market proves itself. The owner keeps caps, loan-to-value, thresholds, rates and the time-weighted window, and can pause new activity in a market; withdrawing, repaying and taking collateral out always work.` },
+        { term: 'Risk', text: `The contract is unaudited. Tokenized stocks are priced by their pools, not by the exchange they track; a thin pool can move. A borrower who ignores the health line loses collateral to liquidators. The source and bytecode are in the repository, tested on a fork of Robinhood Chain.` },
+      ] },
+    ],
+  },
+  {
     id: 'vaults',
     title: 'Vaults',
     blocks: [
