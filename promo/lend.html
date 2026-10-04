@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex Lend film</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Stats strip */
+.stats { position: absolute; left: 50%; top: 330px; width: 1400px; margin-left: -700px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.stats > div { padding: 30px 34px; border-left: 1px solid rgba(255,255,255,.08); }
+.stats > div:first-child { border-left: none; }
+.stats .l { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.stats .v { font-family: 'LT Remark', serif; font-size: 58px; letter-spacing: -0.02em; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; }
+/* Panels */
+.panel { position: absolute; width: 900px; box-sizing: border-box; padding: 30px 36px 32px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.panel .hd { display: flex; align-items: center; gap: 16px; }
+.panel .hd .ic { width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.panel .hd .ic svg { width: 24px; height: 24px; }
+.panel .hd b { font-size: 24px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.panel .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.panel .big { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 26px; }
+.panel .big b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 60px; letter-spacing: -0.02em; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+.panel .big b.lime { color: var(--lime); }
+.panel .big span { font-size: 16px; color: var(--muted); display: block; margin-top: 8px; }
+.panel .rows { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
+.panel .lab { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 8px; }
+.row { display: flex; align-items: center; gap: 16px; height: 46px; padding: 0 12px; border-radius: 10px; font-size: 18px; will-change: opacity, transform; }
+.row .w { color: var(--faint); width: 150px; flex-shrink: 0; font-size: 16px; }
+.row .t { flex: 1; color: var(--soft); }
+.row .a { font-weight: 500; font-variant-numeric: tabular-nums; }
+.row .a.lime { color: var(--lime); }
+.row .a.red { color: var(--red); }
+/* Bounty tiles */
+.tile { position: absolute; width: 400px; height: 230px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.tile .e { font-family: 'LT Remark', serif; font-size: 52px; letter-spacing: -0.02em; line-height: 1; color: var(--lime); }
+.tile .e.dim { color: var(--muted); font-size: 40px; }
+.tile b { display: block; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.tile span { display: block; font-size: 16px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { padding: 9px 16px; border-radius: 12px; background: var(--chip); font-size: 18px; font-weight: 500; }
+.chip.on { background: #fff; color: #000; }
+.field { padding: 18px 20px; border-radius: 16px; background: #161616; margin-top: 12px; }
+.field .k { display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+.field .v { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 34px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.field .v span { font-size: 16px; color: var(--muted); font-weight: 500; }
+.btn { margin-top: 22px; height: 56px; border-radius: 16px; background: #fff; color: #000; font-size: 20px; font-weight: 500; display: grid; place-items: center; }
+.btn.ghost { background: rgba(255,255,255,.08); color: #fff; }
+.sum { margin-top: 18px; padding: 16px 18px; border-radius: 16px; background: #161616; display: grid; gap: 8px; font-size: 16px; }
+.sum div { display: flex; justify-content: space-between; color: var(--muted); }
+.sum div b { color: #fff; font-weight: 500; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #5EE0A0; margin: 0 6px 2px 14px; }
+.pos .top { display: flex; align-items: center; gap: 16px; }
+.pos .top .big2 { margin-left: auto; text-align: right; }
+.pos .top .big2 b { font-size: 34px; font-weight: 500; display: block; font-variant-numeric: tabular-nums; }
+.pos .top .big2 span { font-size: 15px; color: var(--muted); }
+.pos .fees { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; font-size: 17px; color: var(--muted); }
+.pos .fees b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pos .fees .b { margin-left: auto; padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,.08); color: #fff; font-weight: 500; }
+.pos .fees .b + .b { margin-left: 0; }
+.sched { position: absolute; left: 50%; top: 330px; width: 1000px; margin-left: -500px; display: grid; gap: 12px; }
+.buy { display: flex; align-items: center; gap: 18px; height: 78px; padding: 0 24px; border-radius: 16px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); font-size: 22px; will-change: opacity, transform, filter; }
+.buy .d { width: 190px; color: var(--muted); font-size: 18px; }
+.buy .a { flex: 1; }
+.buy .o { font-weight: 500; font-variant-numeric: tabular-nums; }
+.buy .s { width: 150px; text-align: right; font-size: 16px; color: var(--muted); }
+.buy.done .s { color: var(--lime); }
+.buy.next { border-color: rgba(194,234,138,.45); }
+.flow { position: absolute; left: 50%; top: 330px; width: 1500px; margin-left: -750px; display: flex; align-items: center; justify-content: center; gap: 0; }
+.nd { width: 300px; box-sizing: border-box; padding: 24px 26px; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.nd b { display: block; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+.nd span { display: block; font-size: 15px; color: var(--muted); margin-top: 6px; line-height: 1.35; }
+.nd em { display: block; font-style: normal; font-family: "LT Remark", serif; font-size: 44px; letter-spacing: -0.02em; margin-top: 14px; font-variant-numeric: tabular-nums; color: var(--lime); }
+.arr { width: 60px; display: grid; place-items: center; color: var(--muted); font-size: 34px; will-change: opacity; }
+.leg { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-radius: 10px; background: #161616; font-size: 16px; margin-top: 8px; will-change: opacity, transform; }
+.leg .a { flex: 1; color: var(--soft); }
+.leg .s { color: var(--muted); font-variant-numeric: tabular-nums; }
+.leg.done .s { color: var(--lime); }
+.mk { position: absolute; left: 50%; top: 300px; width: 1000px; margin-left: -500px; box-sizing: border-box; padding: 30px 36px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.mk .top { display: flex; align-items: center; gap: 18px; }
+.mk .top img { width: 56px; height: 56px; border-radius: 50%; }
+.mk .top b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+.mk .top span { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; }
+.mk .apr { margin-left: auto; text-align: right; }
+.mk .apr b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 54px; color: var(--lime); letter-spacing: -0.02em; line-height: 1; }
+.mk .apr span { font-size: 15px; color: var(--muted); display: block; margin-top: 6px; }
+.mk .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 40px; margin-top: 28px; font-size: 20px; }
+.mk .grid2 div { display: flex; justify-content: space-between; }
+.mk .grid2 div span:first-child { color: var(--muted); }
+.mk .grid2 div span:last-child { font-weight: 500; font-variant-numeric: tabular-nums; }
+.mk .bar { height: 6px; border-radius: 3px; background: var(--chip); overflow: hidden; margin-top: 10px; }
+.mk .bar i { display: block; height: 100%; background: var(--lime); width: 0; }
+.rt { position: absolute; left: 50%; width: 1180px; margin-left: -590px; display: flex; align-items: center; gap: 22px; height: 86px; padding: 0 26px; box-sizing: border-box; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); will-change: transform, opacity, filter; }
+.rt img, .rt svg { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
+.rt b { font-size: 24px; font-weight: 500; letter-spacing: -0.02em; width: 330px; flex-shrink: 0; }
+.rt .t { flex: 1; font-size: 19px; color: var(--muted); }
+.rt .out { font-size: 20px; color: var(--lime); font-weight: 500; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Verdex Lend: the name, the NVDA market card, one position built step by step (lock, borrow, health, the liquidation line), what the contract cannot do, the end card. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 34
+const PUB = '../public'
+const L = (h) => `${PUB}/img/logos/${h}.webp`
+const USDG = `${PUB}/img/tokens/usdg.png`
+
+function spring(t, response = 0.5, damping = 1) {
+  if (t <= 0) return 0
+  const w = (2 * Math.PI) / response
+  if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t)
+  const wd = w * Math.sqrt(1 - damping * damping)
+  return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t))
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2)
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, x = 0, s = 0.04, blur = 14 } = {}) => {
+  el.style.opacity = clamp(p)
+  el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${1 - s * (1 - p)})`
+}
+const letters = (el, text) => { el.innerHTML = ''; return [...text].map((c) => add(el, `<span class="ch${c === ' ' ? ' sp' : ''}">${c === ' ' ? '' : c}</span>`)) }
+function wipe(chars, p, { stagger = 0.045, blur = 12, dx = 18, out = 0 } = {}) {
+  const n = chars.length
+  chars.forEach((c, i) => {
+    const q = clamp((p * (1 + stagger * n) - i * stagger)) * (1 - out)
+    c.style.opacity = q
+    c.style.filter = q >= 0.999 ? 'none' : `blur(${((1 - q) * blur).toFixed(2)}px)`
+    c.style.transform = `translate3d(${((1 - q) * dx).toFixed(2)}px, 0, 0)`
+  })
+}
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+const num = (v, d = 0) => v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+
+  // 1. The name. (0-5.6)
+  const s1 = add(stage, `<div class="scene"></div>`)
+  const nameEl = add(s1, `<div class="abs" style="left:0;right:0;top:0;height:1080px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px"><span style="width:120px;height:120px;display:inline-flex;margin-bottom:20px">${MARK()}</span><span class="serif" style="font-size:150px;line-height:1">Borrow against</span><span class="serif" style="font-size:150px;line-height:1;color:var(--lime)">your stocks.</span></div>`)
+  const tagEl = add(s1, `<div class="abs" style="left:0;right:0;top:860px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)"><div></div></div>`)
+  const tagChars = letters(tagEl.firstElementChild, 'The first money market for tokenized stocks.')
+
+  // 2. The market. (5.2-13.4)
+  const s2 = add(stage, `<div class="scene"></div>`)
+  const h2 = add(s2, `<div class="head" style="top:80px"><h1 class="serif">One stock. One market. Isolated.</h1><p>Supply USDG and earn what borrowers pay. Lock the stock and borrow USDG against it without selling. Nothing spills over to another stock.</p></div>`)
+  const mk = add(s2, `<div class="mk"><div class="top"><img src="${L('88a0e630')}" alt=""><div><b>NVDA</b><span>NVIDIA · $235.01 · loan-to-value 50% · liquidation at 65%</span></div><div class="apr"><b class="sapr">0.00%</b><span>supply APR</span></div></div>
+    <div class="grid2"><div><span>Supplied</span><span class="sup">$0 of $25,000</span></div><div><span>Collateral</span><span class="col">0 of 212 NVDA</span></div><div><span>Borrowed</span><span class="bor">$0</span></div><div><span>Borrow APR</span><span class="bapr">2.00%</span></div></div>
+    <div class="bar"><i class="b1"></i></div></div>`)
+  const sapr = mk.querySelector('.sapr'), sup = mk.querySelector('.sup'), col = mk.querySelector('.col'), bor = mk.querySelector('.bor'), bapr = mk.querySelector('.bapr'), b1 = mk.querySelector('.b1')
+  const cap2 = add(s2, `<div class="cap" style="top:720px">Hard caps on what can be supplied, borrowed and locked. Raised as the market proves itself.</div>`)
+
+  // 3. A position. (13-23.4)
+  const s3 = add(stage, `<div class="scene"></div>`)
+  const h3 = add(s3, `<div class="head" style="top:70px"><h1 class="serif">Lock one NVDA. Borrow fifty.</h1><p>The price is read from the stock's Uniswap v3 pool inside the transaction: the lower of spot and a 30-minute average to borrow, the higher to liquidate.</p></div>`)
+  const pos = add(s3, `<div class="panel" style="left:50%;top:280px;margin-left:-520px;width:1040px;padding:26px 32px 26px"><div class="hd"><div class="ic">${MARK()}</div><div><b>Your position in the NVDA market</b><span>Verdex Lend · read from the contract · numbers from the fork test</span></div></div>
+    <div class="leg" style="margin-top:22px"><img src="${L('88a0e630')}" style="width:24px;height:24px;border-radius:50%" alt=""><span class="a">Lock <b>1 NVDA</b> as collateral, worth <b class="cv">$235.01</b> at the borrow price</span><span class="s l1">waiting</span></div>
+    <div class="leg"><img src="${USDG}" style="width:24px;height:24px;border-radius:50%" alt=""><span class="a">Borrow <b class="bw">$0</b> USDG, up to $117.49 at 50% loan-to-value</span><span class="s l2">waiting</span></div>
+    <div class="leg"><span class="a">Health: collateral × 65% ÷ debt = <b class="hl">…</b></span><span class="s l3">waiting</span></div>
+    <div class="leg"><span class="a">Liquidation if NVDA trades below <b class="lp">…</b></span><span class="s l4">waiting</span></div>
+    <div class="leg" style="background:rgba(194,234,138,.08)"><span class="a" style="color:#fff">Interest: <b class="ir">2.49%</b> a year, by the second · repay any part, any time · the stock comes back</span><span class="s l5">waiting</span></div></div>`)
+  const cv = pos.querySelector('.cv'), bw = pos.querySelector('.bw'), hl = pos.querySelector('.hl'), lp = pos.querySelector('.lp'), legs = [...pos.querySelectorAll('.leg')]
+  const cap3 = add(s3, `<div class="cap" style="top:860px">Fall under the line and anyone can repay part of your debt for collateral worth it plus 5%. That risk is yours. The page shows it before you sign.</div>`)
+
+  // 4. What it cannot do. (23-30.8)
+  const s4 = add(stage, `<div class="scene"></div>`)
+  const h4 = add(s4, `<div class="head" style="top:90px"><h1 class="serif">What the contract cannot do.</h1><p>Open source, verified, unaudited. The owner keeps caps and parameters and nothing else.</p></div>`)
+  const K = [['Move funds to the owner', 'there is no such function'], ['Send your stock anywhere but back to you', 'or to a liquidator, against your debt, under the line'], ['Lend more than the cap', 'or let one market touch another'], ['Use a single block\'s price', 'spot and a 30-minute average, the one that protects the lender']]
+  const rows4 = K.map(([a, b], i) => add(s4, `<div class="row abs" style="left:50%;width:1100px;margin-left:-550px;top:${330 + i * 92}px;height:78px;padding:0 24px;border-radius:16px;background:var(--panel);border:1px solid rgba(255,255,255,.08);font-size:22px"><span class="dot" style="margin:0 6px 0 0;background:var(--red)"></span><span class="t" style="color:#fff">${a}</span><span class="a" style="color:var(--muted);font-weight:400;font-size:18px">${b}</span></div>`))
+
+  // 5. End card. (30.4-34)
+  const s5 = add(stage, `<div class="scene"></div>`)
+  const endLogo = add(s5, `<div class="abs" style="left:0;right:0;top:300px;display:flex;justify-content:center;align-items:center;gap:36px"><span style="width:160px;height:160px;display:inline-flex;margin-top:16px">${MARK()}</span><span class="serif" style="font-size:240px">Verdex</span></div>`)
+  const endTag = add(s5, `<div class="abs" style="left:0;right:0;top:610px;text-align:center;font-size:40px;font-weight:500;letter-spacing:-0.015em;color:var(--soft)">Verdex Lend. Live now.</div>`)
+  const endUrl = add(s5, `<div class="abs" style="left:0;right:0;top:710px;text-align:center"><span class="pill" style="font-size:30px;padding:14px 26px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz/lend/verdex</span></div>`)
+  const endCa = add(s5, `<div class="abs" style="left:0;right:0;top:820px;text-align:center"><span class="pill" style="font-size:24px;padding:12px 22px;gap:14px"><span style="color:var(--lime);font-weight:600;letter-spacing:.08em;font-size:18px">CA</span><span style="font-family:var(--mono)">0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43</span></span></div>`)
+
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+
+    show(s1, t < 5.6)
+    const pn = spring(t - 0.3, 0.7)
+    mat(nameEl, pn * (1 - clamp(spring(t - 4.8, 0.45))), { y: 40 * (1 - pn), s: 0.08, blur: 22 })
+    wipe(tagChars, spring(t - 1.6, 0.9), { stagger: 0.035, out: clamp(spring(t - 4.7, 0.4)) })
+
+    show(s2, t >= 5.2 && t < 13.4)
+    const o2 = clamp(spring(t - 12.6, 0.5))
+    const h2in = spring(t - 5.4, 0.9)
+    mat(h2, h2in * (1 - o2), { y: 24 * (1 - h2in), s: 0.02 })
+    const c2 = spring(t - 5.8, 0.85)
+    mat(mk, c2 * (1 - o2), { y: 40 * (1 - c2), s: 0.05, blur: 18 })
+    const fill = easeIO(clamp((t - 7.0) / 2.0))
+    sup.textContent = `$${num(2010 * fill)} of $25,000`; b1.style.width = `${(2010 / 25000) * 100 * fill}%`
+    col.textContent = `${(1 * fill).toFixed(fill < 1 ? 2 : 0)} of 212 NVDA`
+    bor.textContent = `$${num(50 * fill)}`; bapr.textContent = `${(2 + 0.49 * fill).toFixed(2)}%`; sapr.textContent = `${(0.05 * fill).toFixed(2)}%`
+    const cp2 = spring(t - 9.6, 0.9)
+    mat(cap2, cp2 * (1 - o2), { y: 16 * (1 - cp2), s: 0.02 })
+
+    show(s3, t >= 13 && t < 23.4)
+    const o3 = clamp(spring(t - 22.6, 0.5))
+    const h3in = spring(t - 13.2, 0.9)
+    mat(h3, h3in * (1 - o3), { y: 24 * (1 - h3in), s: 0.02 })
+    const c3 = spring(t - 13.5, 0.85)
+    mat(pos, c3 * (1 - o3), { y: 40 * (1 - c3) + 20 * o3, s: 0.05, blur: 18 })
+    legs[0].classList.toggle('done', t >= 15.0); legs[0].querySelector('.s').textContent = t >= 15.0 ? '✓ locked' : 'waiting'
+    const bwv = Math.round(50 * easeIO(clamp((t - 15.6) / 1.2)))
+    bw.textContent = `$${bwv}`
+    legs[1].classList.toggle('done', t >= 16.8); legs[1].querySelector('.s').textContent = t >= 16.8 ? '✓ $50 in your wallet' : t >= 15.6 ? 'borrowing…' : 'waiting'
+    hl.textContent = t >= 17.6 ? '3.05' : '…'
+    legs[2].classList.toggle('done', t >= 17.6); legs[2].querySelector('.s').textContent = t >= 17.6 ? '✓ above 1' : 'waiting'
+    lp.textContent = t >= 18.4 ? '$76.92' : '…'
+    legs[3].classList.toggle('done', t >= 18.4); legs[3].querySelector('.s').textContent = t >= 18.4 ? 'read' : 'waiting'
+    legs[4].classList.toggle('done', t >= 19.2); legs[4].querySelector('.s').textContent = t >= 19.2 ? '✓ accruing' : 'waiting'
+    const cp3 = spring(t - 20.2, 0.9)
+    mat(cap3, cp3 * (1 - o3), { y: 16 * (1 - cp3), s: 0.02 })
+
+    show(s4, t >= 23 && t < 30.8)
+    const o4 = clamp(spring(t - 30.2, 0.5))
+    const h4in = spring(t - 23.2, 0.9)
+    mat(h4, h4in * (1 - o4), { y: 24 * (1 - h4in), s: 0.02 })
+    rows4.forEach((el, i) => { const p = spring(t - (23.7 + i * 0.3), 0.85); mat(el, p * (1 - o4), { y: 30 * (1 - p), s: 0.03, blur: 12 }) })
+
+    show(s5, t >= 30.4)
+    const e1p = spring(t - 30.6, 0.7), e2p = spring(t - 30.95, 0.7), e3p = spring(t - 31.2, 0.7), e4p = spring(t - 31.4, 0.7)
+    mat(endLogo, e1p, { y: 30 * (1 - e1p), s: 0.06, blur: 20 })
+    mat(endTag, e2p, { y: 20 * (1 - e2p), s: 0.02 })
+    mat(endUrl, e3p, { y: 20 * (1 - e3p), s: 0.02 })
+    mat(endCa, e4p, { y: 20 * (1 - e4p), s: 0.02 })
+
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+
+build()
+await document.fonts.ready
+await Promise.all([...document.images].map((im) => (im.complete ? 0 : new Promise((r) => { im.onload = im.onerror = r }))))
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>
