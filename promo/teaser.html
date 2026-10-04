@@ -47,6 +47,8 @@ const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" st
 const q = new URLSearchParams(location.search)
 const line = q.get('line') ?? 'One more.'
 const sub = q.get('sub') ?? 'In 5 hours.'
+const tag = q.get('tag')
+const accent = q.get('accent') === '1'
 const bg = q.get('bg') ?? 'orders'
 const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
 const stage = document.getElementById('stage')
@@ -86,7 +88,7 @@ if (bg !== 'audit' && bg !== 'yield' && bg !== 'launch' && bg !== 'private' && b
   <div class="row"><div class="lab">Amount</div><div class="chips"><span class="chip">$50</span><span class="chip">$100</span><span class="chip">$250</span><span class="chip on">$500</span><span class="chip">$1000</span></div></div>
   <span class="btn">Place order</span>
 </div>`)
-add(stage, `<div class="fg"><div class="mk"><span style="width:70px;height:70px;display:inline-flex">${MARK()}</span></div><h1 class="serif">${line}</h1><p>${sub}</p><span class="pill" style="margin-top:22px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+add(stage, `<div class="fg"><div class="mk"><span style="width:70px;height:70px;display:inline-flex">${MARK()}</span></div>${tag ? `<span class="pill" style="margin-bottom:26px;color:var(--lime);letter-spacing:.08em;text-transform:uppercase;font-size:22px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime);box-shadow:0 0 18px var(--lime)"></span>${tag}</span>` : ''}<h1 class="serif"${accent ? ' style="color:var(--lime)"' : ''}>${line}</h1><p>${sub}</p><span class="pill" style="margin-top:22px"><span style="width:14px;height:14px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
 const g = document.createElement('canvas'); g.width = 480; g.height = 270
 const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
 for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }

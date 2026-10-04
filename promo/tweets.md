@@ -513,6 +513,16 @@ An hour before:
 >
 > From tonight, a fee paid to Verdex is a VERDEX buy.
 
+### Alert, thirty minutes before (image: `photos/hype-second-drop.png`, the night both boxes shipped)
+
+> 30 MINUTES.
+>
+> Box 1 shipped two hours ago. We are not going to bed. At 01:00 UTC the second drop of the night goes live, and from that moment every fee Verdex earns does something it has never done before.
+>
+> Set an alarm. Two boxes in one night, nine to go.
+>
+> useverdex.xyz
+
 ### Launch tweet (post with the video, then pin it)
 
 > Every protocol fee buys VERDEX.
@@ -558,6 +568,52 @@ An hour before:
 > Ninguna función envía fondos a otro sitio. Ni al owner, ni al ejecutor.
 >
 > useverdex.xyz/treasury
+
+## Verdex on Base and Verdex on Solana (`verdex-base.mp4` and `verdex-solana.mp4`, 28 s each)
+
+Boxes 5 and 6 of phase 2, announced together. Tagging @base and @solana is a decision made by the owner; the copy still never claims a partnership, an integration agreement or an endorsement: Verdex deploys there, that is all. Coinbase's stocks, xStocks, Aerodrome and Jupiter are named as the tokens, pools and routers they are. No dates. VERDEX stays on Robinhood Chain and that is said in every version.
+
+### Main tweet (post with `verdex-base.mp4`)
+
+> Verdex is going multichain.
+>
+> The same contracts, deployed where tokenized stocks already trade. @base first: Coinbase's NVDAc, TSLAc, AAPLc and the rest, in their own pools. @solana after: xStocks, which no DCA there will take.
+>
+> Auto-Invest without you, the Index, Orders. One site, a chain selector.
+>
+> VERDEX stays on Robinhood Chain. One pool, one supply. What Verdex earns on every chain buys it at home.
+>
+> useverdex.xyz
+
+### Reply (post with `verdex-solana.mp4`)
+
+> Solana, specifically.
+>
+> Every tokenized stock there is Token-2022, and the DCA tools people use reject them. A $100-a-week plan into NVDAx does not exist today. That gap is the first thing Verdex ships on @solana: a program that holds nothing, a delegate allowance, a swap, your wallet.
+>
+> Then the Index: baskets of xStocks as one token.
+
+### Short version, if one tweet has to carry both videos
+
+> Same contracts. More chains.
+>
+> Verdex is coming to @base and @solana: Auto-Invest without you, the Index and Orders, pointed at the stocks that already trade there.
+>
+> VERDEX stays on Robinhood Chain. Every chain pays into it.
+>
+> useverdex.xyz
+
+### Spanish version of the main tweet
+
+> Verdex se hace multichain.
+>
+> Los mismos contratos, desplegados donde ya se negocian las acciones tokenizadas. @base primero: NVDAc, TSLAc, AAPLc y el resto de Coinbase, en sus propias pools. @solana después: xStocks, que ningún DCA de allí acepta.
+>
+> Auto-Invest sin ti, el Index, Orders. Un sitio, un selector de cadena.
+>
+> VERDEX se queda en Robinhood Chain. Una pool, un supply. Lo que Verdex gana en cada cadena lo compra en casa.
+>
+> useverdex.xyz
 
 ## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
 
