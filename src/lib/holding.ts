@@ -31,7 +31,7 @@ export const EARLY_FEATURES: EarlyFeature[] = [
   { path: '/auto-invest/without-you', label: 'Auto-Invest without you', opensAt: '2026-10-02T20:00:00Z' },
   { path: '/index', label: 'Verdex Index', opensAt: '2026-10-03T19:00:00Z' },
   { path: '/lend/verdex', label: 'Verdex Lend', opensAt: '2026-10-04T18:00:00Z' },
-  { path: '/leverage', label: 'Leverage', opensAt: '2026-10-05T18:00:00Z' },
+  { path: '/leverage', label: 'Leverage', opensAt: '2026-10-05T01:00:00Z' },
 ]
 
 const client = () => createPublicClient({ transport: http(RPC, { retryCount: 3, retryDelay: 1200, timeout: 20_000 }) })

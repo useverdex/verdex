@@ -683,7 +683,7 @@ Box 4 of phase 2. Say it plainly: unaudited, capped, up to 1.9x long and 2x shor
 
 > Box 4 of 11.
 >
-> Two times. Long or short. Tonight, HH:MM UTC. Holders first.
+> Two times. Long or short. Tonight, 01:00 UTC. Holders first.
 >
 > useverdex.xyz
 
