@@ -2,11 +2,13 @@
 pragma solidity 0.8.28;
 
 // Verdex Lend: isolated money markets for tokenized stocks on Robinhood Chain.
-// Each market pairs one stock (collateral) with USDG (the loan asset). Suppliers deposit USDG and
-// earn the interest borrowers pay; borrowers lock the stock and draw USDG against it. Markets are
-// isolated: one stock, its own loan-to-value, its own caps; nothing spills over. Prices come from
-// the stock's Uniswap v3 USDG pool: the lower of spot and a time-weighted average for borrowing,
-// the higher of the two for liquidation, so a single manipulated block cannot open or close a loan.
+// Each market pairs one collateral token with one loan asset: a stock against USDG (borrow dollars
+// against your shares) or USDG against a stock (borrow shares, which is what a short needs). Suppliers
+// deposit the loan asset and earn the interest borrowers pay; borrowers lock the collateral and draw
+// the loan asset against it. Markets are isolated: one pair, its own loan-to-value, its own caps;
+// nothing spills over. Prices come from the pair's Uniswap v3 pool: the lower collateral value of spot
+// and a time-weighted average for borrowing, the higher for liquidation, so a single manipulated block
+// cannot open or close a loan.
 // The owner keeps caps and parameters and nothing else: there is no function that moves funds to
 // the owner. A share of the interest (reserveBps) is kept for the treasury, where it buys VERDEX.
 
@@ -25,8 +27,9 @@ interface IUniswapV3Pool {
 
 contract VerdexLend {
     struct Market {
-        address collateral;      // the stock token
-        address pool;            // Uniswap v3 pool of collateral/USDG
+        address collateral;      // what the borrower locks
+        address loan;            // what is lent and borrowed
+        address pool;            // Uniswap v3 pool of collateral/loan
         bool collateralIsToken0; // token ordering in the pool
         bool enabled;
         uint16 ltvBps;           // max debt / collateral value when borrowing
@@ -36,22 +39,21 @@ contract VerdexLend {
         uint64 rateBaseBps;      // borrow APR at zero utilisation, bps
         uint64 rateSlopeBps;     // added APR at full utilisation, bps
         uint64 lastAccrual;
-        uint256 supplyCap;       // USDG
-        uint256 borrowCap;       // USDG
+        uint256 supplyCap;       // loan asset
+        uint256 borrowCap;       // loan asset
         uint256 collateralCap;   // collateral units
         uint256 totalSupplyAssets;
         uint256 totalSupplyShares;
         uint256 totalBorrowAssets;
         uint256 totalBorrowShares;
         uint256 totalCollateral;
-        uint256 reserves;        // USDG kept for the treasury
+        uint256 reserves;        // loan asset kept for the treasury
     }
 
     uint256 private constant YEAR = 365 days;
     uint256 private constant BPS = 10_000;
     uint256 private constant Q96 = 2 ** 96;
 
-    IERC20 public immutable usdg;
     address public owner;
     address public treasury;
     uint16 public reserveBps = 1000; // 10% of interest
@@ -63,7 +65,7 @@ contract VerdexLend {
 
     uint256 private _lock;
 
-    event MarketCreated(uint256 indexed id, address indexed collateral, address indexed pool);
+    event MarketCreated(uint256 indexed id, address indexed collateral, address indexed loan, address pool);
     event Supplied(uint256 indexed id, address indexed who, address indexed to, uint256 assets, uint256 shares);
     event Withdrawn(uint256 indexed id, address indexed who, address indexed to, uint256 assets, uint256 shares);
     event CollateralAdded(uint256 indexed id, address indexed who, address indexed to, uint256 amount);
@@ -92,9 +94,8 @@ contract VerdexLend {
     modifier onlyOwner() { if (msg.sender != owner) revert NotOwner(); _; }
     modifier nonReentrant() { if (_lock == 1) revert Reentrancy(); _lock = 1; _; _lock = 0; }
 
-    constructor(address usdg_, address treasury_) {
-        if (usdg_ == address(0) || treasury_ == address(0)) revert BadArgs();
-        usdg = IERC20(usdg_);
+    constructor(address treasury_) {
+        if (treasury_ == address(0)) revert BadArgs();
         treasury = treasury_;
         owner = msg.sender;
         emit OwnershipTransferred(address(0), msg.sender);
@@ -105,13 +106,15 @@ contract VerdexLend {
     function marketCount() external view returns (uint256) { return _markets.length; }
     function market(uint256 id) external view returns (Market memory) { return _markets[id]; }
 
-    /// Collateral value in USDG for `amount` units at the price used for `forBorrow` (lower of spot/twap) or liquidation (higher).
+    /// Collateral value in the loan asset for `amount` units: the lower of spot and the time-weighted
+    /// value when borrowing (`forBorrow`), the higher of the two when checking a liquidation.
     function collateralValue(uint256 id, uint256 amount, bool forBorrow) public view returns (uint256) {
         Market storage m = _markets[id];
         (uint160 spot, uint160 twap) = _prices(m);
-        uint160 p = forBorrow ? (twap < spot ? twap : spot) : (twap > spot ? twap : spot);
-        if (twap == 0) p = spot;
-        return _value(amount, p, m.collateralIsToken0);
+        uint256 a = _value(amount, spot, m.collateralIsToken0);
+        if (twap == 0) return a;
+        uint256 b = _value(amount, twap, m.collateralIsToken0);
+        return forBorrow ? (a < b ? a : b) : (a > b ? a : b);
     }
 
     function debtOf(uint256 id, address who) public view returns (uint256) {
@@ -138,7 +141,7 @@ contract VerdexLend {
         supplyAprBps = borrowAprBps * utilisationBps / BPS * (BPS - reserveBps) / BPS;
     }
 
-    /// Max USDG `who` could still borrow in market `id` at the borrow price.
+    /// Max loan asset `who` could still borrow in market `id` at the borrow price.
     function borrowable(uint256 id, address who) external view returns (uint256) {
         Market storage m = _markets[id];
         uint256 limit = collateralValue(id, collateralOf[id][who], true) * m.ltvBps / BPS;
@@ -171,7 +174,7 @@ contract VerdexLend {
         m.totalSupplyAssets += assets;
         m.totalSupplyShares += shares;
         supplyShares[id][to] += shares;
-        _pull(usdg, msg.sender, assets);
+        _pull(IERC20(m.loan), msg.sender, assets);
         emit Supplied(id, msg.sender, to, assets, shares);
     }
 
@@ -184,7 +187,7 @@ contract VerdexLend {
         supplyShares[id][msg.sender] -= shares;
         m.totalSupplyShares -= shares;
         m.totalSupplyAssets -= assets;
-        _push(usdg, to, assets);
+        _push(IERC20(m.loan), to, assets);
         emit Withdrawn(id, msg.sender, to, assets, shares);
     }
 
@@ -222,11 +225,11 @@ contract VerdexLend {
         m.totalBorrowShares += shares;
         borrowShares[id][msg.sender] += shares;
         if (!_healthyForBorrow(id, m, msg.sender)) revert Unhealthy();
-        _push(usdg, to, assets);
+        _push(IERC20(m.loan), to, assets);
         emit Borrowed(id, msg.sender, to, assets, shares);
     }
 
-    /// Repay up to `assets` USDG of `onBehalf`'s debt. Pass type(uint256).max to repay everything.
+    /// Repay up to `assets` of `onBehalf`'s debt in the loan asset. Pass type(uint256).max to repay everything.
     function repay(uint256 id, uint256 assets, address onBehalf) external nonReentrant returns (uint256 repaid, uint256 shares) {
         Market storage m = _markets[id];
         _accrue(id, m);
@@ -239,7 +242,7 @@ contract VerdexLend {
         borrowShares[id][onBehalf] = owed - shares;
         m.totalBorrowShares -= shares;
         m.totalBorrowAssets = repaid >= m.totalBorrowAssets ? 0 : m.totalBorrowAssets - repaid;
-        _pull(usdg, msg.sender, repaid);
+        _pull(IERC20(m.loan), msg.sender, repaid);
         emit Repaid(id, msg.sender, onBehalf, repaid, shares);
     }
 
@@ -265,7 +268,7 @@ contract VerdexLend {
         m.totalBorrowAssets = repaid >= m.totalBorrowAssets ? 0 : m.totalBorrowAssets - repaid;
         collateralOf[id][borrower] = coll - seized;
         m.totalCollateral -= seized;
-        _pull(usdg, msg.sender, repaid);
+        _pull(IERC20(m.loan), msg.sender, repaid);
         _push(IERC20(m.collateral), msg.sender, seized);
         emit Liquidated(id, msg.sender, borrower, repaid, seized);
     }
@@ -277,7 +280,7 @@ contract VerdexLend {
         amount = m.reserves;
         if (amount == 0) return 0;
         m.reserves = 0;
-        _push(usdg, treasury, amount);
+        _push(IERC20(m.loan), treasury, amount);
         emit Skimmed(id, amount);
     }
 
@@ -285,21 +288,21 @@ contract VerdexLend {
 
     // ---- owner ----
 
-    function createMarket(address collateral, address pool, uint16 ltvBps, uint16 liqThresholdBps, uint16 liqBonusBps, uint32 twapWindow, uint64 rateBaseBps, uint64 rateSlopeBps, uint256 supplyCap, uint256 borrowCap, uint256 collateralCap) external onlyOwner returns (uint256 id) {
-        if (collateral == address(0) || pool == address(0)) revert BadArgs();
+    function createMarket(address collateral, address loan, address pool, uint16 ltvBps, uint16 liqThresholdBps, uint16 liqBonusBps, uint32 twapWindow, uint64 rateBaseBps, uint64 rateSlopeBps, uint256 supplyCap, uint256 borrowCap, uint256 collateralCap) external onlyOwner returns (uint256 id) {
+        if (collateral == address(0) || loan == address(0) || pool == address(0) || collateral == loan) revert BadArgs();
         address t0 = IUniswapV3Pool(pool).token0();
         address t1 = IUniswapV3Pool(pool).token1();
-        bool c0 = t0 == collateral && t1 == address(usdg);
-        if (!c0 && !(t1 == collateral && t0 == address(usdg))) revert BadMarket();
+        bool c0 = t0 == collateral && t1 == loan;
+        if (!c0 && !(t1 == collateral && t0 == loan)) revert BadMarket();
         _checkParams(ltvBps, liqThresholdBps, liqBonusBps);
         id = _markets.length;
         _markets.push();
         Market storage m = _markets[id];
-        m.collateral = collateral; m.pool = pool; m.collateralIsToken0 = c0; m.enabled = true;
+        m.collateral = collateral; m.loan = loan; m.pool = pool; m.collateralIsToken0 = c0; m.enabled = true;
         m.ltvBps = ltvBps; m.liqThresholdBps = liqThresholdBps; m.liqBonusBps = liqBonusBps; m.twapWindow = twapWindow;
         m.rateBaseBps = rateBaseBps; m.rateSlopeBps = rateSlopeBps; m.lastAccrual = uint64(block.timestamp);
         m.supplyCap = supplyCap; m.borrowCap = borrowCap; m.collateralCap = collateralCap;
-        emit MarketCreated(id, collateral, pool);
+        emit MarketCreated(id, collateral, loan, pool);
         emit ParamsSet(id, ltvBps, liqThresholdBps, liqBonusBps, twapWindow, rateBaseBps, rateSlopeBps);
         emit CapsSet(id, supplyCap, borrowCap, collateralCap);
     }
@@ -379,7 +382,7 @@ contract VerdexLend {
         } catch { twap = 0; }
     }
 
-    /// USDG value of `amount` collateral units at sqrtPriceX96 `p`.
+    /// Loan-asset value of `amount` collateral units at sqrtPriceX96 `p` (token1 per token0).
     function _value(uint256 amount, uint160 p, bool collateralIsToken0) private pure returns (uint256) {
         if (amount == 0 || p == 0) return 0;
         if (collateralIsToken0) {

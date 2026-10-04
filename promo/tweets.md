@@ -675,6 +675,64 @@ Box 3 of phase 2. Say it plainly: unaudited, capped, isolated markets, the price
 >
 > useverdex.xyz/lend/verdex
 
+## Leverage (`verdex-leverage.mp4`, 34 s, post with the video when the contracts are live; hype still `photos/hype-leverage.png`)
+
+Box 4 of phase 2. Say it plainly: unaudited, capped, up to 1.9x long and 2x short, liquidation is the user's risk and the page shows the line before they sign. Never call it "safe", never promise a return. The shorts exist because Lend now has markets that lend the stock itself; say that, it is the interesting part.
+
+### Hype (image: `photos/hype-leverage.png`, two hours before)
+
+> Box 4 of 11.
+>
+> Two times. Long or short. Tonight, HH:MM UTC. Holders first.
+>
+> useverdex.xyz
+
+### Launch tweet (post with the video, then pin it)
+
+> Leverage is live.
+>
+> Two times, long or short, on tokenized stocks, onchain, around the clock. A long buys NVDA with your margin plus USDG borrowed from Verdex Lend and locks it, in one swap. A short borrows the NVDA itself from Lend, sells it, and locks the USDG next to your margin. One transaction each way.
+>
+> Every position is its own Lend position in an account that is yours. Capped while it is new.
+>
+> useverdex.xyz/leverage
+
+### Thread (reply to the launch tweet)
+
+> 1/ What changed in Lend to make this possible.
+>
+> Lend now has two markets per stock: one lends USDG against the stock, one lends the stock against USDG. Deposit NVDA, earn what the shorts pay to borrow it. That second market is what a short needs, and nobody else on Robinhood Chain has it.
+
+> 2/ How a long works.
+>
+> $100 of margin, 1.9x: the account borrows $90 from Lend inside the swap, buys $190 of NVDA from the pool, and the NVDA becomes the collateral for the $90. Health 1.37 at open, liquidation if NVDA falls about a quarter. Close any time: sell, repay, the rest comes back.
+
+> 3/ How a short works.
+>
+> $100 of margin, 2x: lock it, borrow $200 of NVDA from Lend, sell it in the pool, lock the $200 it fetched next to your margin. Health 1.20 at open, liquidation if NVDA rises about a fifth. Close: buy it back, repay, your margin and what is left come back.
+
+> 4/ Why nothing is pooled.
+>
+> Each wallet gets its own account contract. Each position is one Lend position with its own health and its own liquidation line. A liquidation touches one position, in one account, and nothing else.
+
+> 5/ What the contract cannot do.
+>
+> Hold a position itself. Pool your margin with anyone. Move funds to the owner. Open past the cap. Open source, verified, unaudited, tested on a fork of Robinhood Chain. Leverage multiplies a move both ways; the page shows the line before you sign.
+
+> 6/ Phase 2, box 4 of 11. Checked.
+>
+> Next: Verdex on Base.
+
+### Spanish version of the launch tweet
+
+> Leverage ya está en vivo.
+>
+> Dos veces, largo o corto, sobre acciones tokenizadas, onchain, a cualquier hora. Un largo compra NVDA con tu margen más USDG prestado de Verdex Lend y lo bloquea, en un solo swap. Un corto pide prestada la propia NVDA a Lend, la vende y bloquea el USDG junto a tu margen. Una transacción en cada sentido.
+>
+> Cada posición es su propia posición en Lend, en una cuenta que es tuya. Con límites mientras es nuevo.
+>
+> useverdex.xyz/leverage
+
 ## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
 
 Eleven clips, one per box, in the order we will build them, numbered in the corner. Every caption ends in "Coming": nothing in this series is live, and no clip carries a date. Post one a day after the article, or two on the days a box ships. Reply to each with the previous one so the series threads itself.

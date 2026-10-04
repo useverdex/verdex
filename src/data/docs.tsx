@@ -296,6 +296,20 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'leverage',
+    title: 'Leverage',
+    blocks: [
+      { kind: 'p', text: `${N} Leverage (contracts/VerdexLeverage.sol) opens two-times long and short positions on tokenized stocks, built on ${N} Lend. A long: your USDG margin plus USDG borrowed from Lend buy the stock in its Uniswap v3 pool, in one transaction, and the stock is locked in Lend as the collateral for that loan. A short: your margin is locked in a Lend market that lends the stock itself; the stock is borrowed, sold in the pool, and the USDG it fetched is locked next to your margin. Each wallet gets its own account contract, so each position is its own Lend position: its own health, its own liquidation, nothing shared. The hub holds nothing and no function moves funds to the owner.` },
+      { kind: 'defs', items: [
+        { term: 'Leverage', text: 'Up to 1.9x long and 2x short. A long at exactly 2x cannot pass the 50% loan-to-value check once the pool fee is paid, so the page stops at 1.9x. Shorts use markets with a 70% loan-to-value and an 80% liquidation line, because the collateral is USDG.' },
+        { term: 'Closing', text: 'A long sells all the stock, repays the loan and returns the rest in USDG. A short buys the stock back, repays it and returns your margin and what is left. Both are one swap. Add margin at any time: a long repays part of its loan, a short adds USDG collateral.' },
+        { term: 'Liquidation', text: 'Happens in Lend, by anyone, at the market\'s liquidation line, with its bonus. The page shows your health and the price at which it happens. A liquidated position is settled from the page so the wallet can open again.' },
+        { term: 'Fee and caps', text: `${N} charges 0.25% of the exposure when a position opens, paid to the treasury where it buys VERDEX, waived for wallets holding VERDEX. Open interest is capped per market and raised as the markets prove themselves.` },
+        { term: 'Risk', text: 'Unaudited. Leverage multiplies a move both ways; a 1.9x long is liquidated after a fall of roughly a quarter, a 2x short after a rise of roughly a fifth, interest included. The prices are the pools\' prices. Read the contract before you trust it with more than you would lose.' },
+      ] },
+    ],
+  },
+  {
     id: 'vaults',
     title: 'Vaults',
     blocks: [

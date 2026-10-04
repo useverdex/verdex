@@ -9,9 +9,9 @@ import { BRAND, t, z } from '../theme/tokens'
 import { Bt, Lt, Vg } from '../theme/styles'
 import { ROBINHOOD, fmtCompact, fmtUsd, useAssets, useChains } from '../lib/api'
 import { describeError, explorerTx, type ChainX } from '../lib/lifi'
-import { PHASE_LABEL, USDG, usePools, type Phase } from '../lib/pools'
+import { PHASE_LABEL, usePools, type Phase } from '../lib/pools'
 import { explorerAddress } from '../lib/autopilot'
-import { DEPLOYED, LEND, MAX, addCollateral, borrowUsdg, fmtHealth, fmtUnits, fmtUsdg, removeCollateral, repayUsdg, supplyUsdg, useLendWallet, useMarkets, withdrawUsdg, type Market, type Position } from '../lib/lend'
+import { DEPLOYED, LEND, MAX, addCollateral, borrowLoan, fmtAmt, fmtHealth, removeCollateral, repayLoan, supplyLoan, tokenState, useLendWallet, useMarkets, withdrawLoan, type Market, type Position, type TokenState } from '../lib/lend'
 import { resolveImg } from '../lib/img'
 import { useWallet } from '../components/wallet/WalletProvider'
 import { CheckIcon, ExternalIcon, HandCoinIcon, LayersIcon, LockIcon, ShieldIcon, WalletIcon } from '../components/icons'
@@ -20,12 +20,12 @@ import { Page, PageHero, Panel, Stats } from './common'
 
 type Mode = 'supply' | 'withdraw' | 'collateral' | 'borrow' | 'repay' | 'remove'
 const MODES: { key: Mode; label: string; group: 'lend' | 'borrow' }[] = [
-  { key: 'supply', label: 'Supply USDG', group: 'lend' },
+  { key: 'supply', label: 'Supply', group: 'lend' },
   { key: 'withdraw', label: 'Withdraw', group: 'lend' },
-  { key: 'collateral', label: 'Add stock', group: 'borrow' },
-  { key: 'borrow', label: 'Borrow USDG', group: 'borrow' },
+  { key: 'collateral', label: 'Add collateral', group: 'borrow' },
+  { key: 'borrow', label: 'Borrow', group: 'borrow' },
   { key: 'repay', label: 'Repay', group: 'borrow' },
-  { key: 'remove', label: 'Take stock out', group: 'borrow' },
+  { key: 'remove', label: 'Take collateral out', group: 'borrow' },
 ]
 const USD_AMOUNTS = [25, 100, 250, 1000]
 type Ctx = ReturnType<typeof useWallet>
@@ -66,48 +66,50 @@ function Step({ n, icon, title, text }: { n: number; icon: React.ReactNode; titl
 }
 
 function MarketCard({ m, pos, selected, onPick }: { m: Market; pos: Position; selected: boolean; onPick: (mode: Mode) => void }) {
-  const dec = m.stock?.decimals ?? 18
+  const cd = m.collateralDecimals, ld = m.loanDecimals
   const supplyUse = m.supplyCap > 0n ? Number((m.totalSupplyAssets * 10_000n) / m.supplyCap) / 100 : 0
   const collUse = m.collateralCap > 0n ? Number((m.totalCollateral * 10_000n) / m.collateralCap) / 100 : 0
-  const collUsd = (Number(pos.collateral) / 10 ** dec) * m.priceUsd
+  const usd = (v: bigint, dec: number, sym: string) => (sym === 'USDG' ? Number(formatUnits(v, 6)) : (Number(formatUnits(v, dec)) * m.priceUsd))
+  const L = (v: bigint, d?: number) => fmtAmt(v, ld, m.loanSymbol, d)
+  const C = (v: bigint, d?: number) => fmtAmt(v, cd, m.collateralSymbol, d)
   return (
     <Panel sx={{ p: 2.5, borderColor: selected ? 'rgba(194,234,138,.45)' : undefined }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <Avatar src={resolveImg(m.stock?.logo)} sx={{ width: 36, height: 36, background: z.surface2, fontSize: 12 }}>{(m.stock?.ticker ?? '?')[0]}</Avatar>
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography sx={{ fontSize: 16, fontWeight: 500 }}>{m.stock?.ticker ?? 'Stock'} <Box component="span" sx={{ color: t.color.textMuted, fontWeight: 400, fontSize: 13 }}>{m.stock?.name ?? m.collateral.slice(0, 10)}</Box></Typography>
-          <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>{fmtUsd(m.priceUsd)} · loan-to-value {m.ltvBps / 100}% · liquidation at {m.liqThresholdBps / 100}%{!m.enabled ? ' · paused' : ''}</Typography>
+          <Typography sx={{ fontSize: 16, fontWeight: 500 }}>{m.kind === 'long' ? `Borrow USDG against ${m.stock?.ticker ?? 'the stock'}` : `Borrow ${m.stock?.ticker ?? 'the stock'} against USDG`}</Typography>
+          <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>{m.stock?.ticker ?? 'Stock'} {fmtUsd(m.priceUsd)} · loan-to-value {m.ltvBps / 100}% · liquidation at {m.liqThresholdBps / 100}%{!m.enabled ? ' · paused' : ''}</Typography>
         </Box>
         <Box sx={{ textAlign: 'right' }}>
           <Typography sx={{ fontSize: 18, fontWeight: 500, color: t.color.mark, fontVariantNumeric: 'tabular-nums' }}>{pct(m.supplyApr)}</Typography>
-          <Typography sx={{ fontSize: 11, color: t.color.textMuted }}>supply APR</Typography>
+          <Typography sx={{ fontSize: 11, color: t.color.textMuted }}>supply APR, in {m.loanSymbol}</Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5, mt: 2, fontSize: 13 }}>
         <Box>
-          <Row k="Supplied" v={`${fmtUsdg(m.totalSupplyAssets, 0)} of ${fmtUsdg(m.supplyCap, 0)}`} />
+          <Row k={`${m.loanSymbol} supplied`} v={`${L(m.totalSupplyAssets, m.loanSymbol === 'USDG' ? 0 : 2)} of ${L(m.supplyCap, 0)}`} />
           <Box sx={{ height: 4, borderRadius: 2, background: t.color.chip, mt: 0.75, overflow: 'hidden' }}><Box sx={{ width: `${Math.min(100, supplyUse)}%`, height: '100%', background: t.color.mark }} /></Box>
         </Box>
         <Box>
-          <Row k="Collateral" v={`${fmtUnits(m.totalCollateral, dec, 2)} of ${fmtUnits(m.collateralCap, dec, 0)}`} />
+          <Row k={`${m.collateralSymbol} locked`} v={`${C(m.totalCollateral, m.collateralSymbol === 'USDG' ? 0 : 2)} of ${C(m.collateralCap, 0)}`} />
           <Box sx={{ height: 4, borderRadius: 2, background: t.color.chip, mt: 0.75, overflow: 'hidden' }}><Box sx={{ width: `${Math.min(100, collUse)}%`, height: '100%', background: t.color.mark }} /></Box>
         </Box>
-        <Row k="Borrowed" v={fmtUsdg(m.totalBorrowAssets, 0)} />
+        <Row k="Borrowed" v={L(m.totalBorrowAssets, m.loanSymbol === 'USDG' ? 0 : 3)} />
         <Row k="Borrow APR" v={pct(m.borrowApr)} />
         <Row k="In use" v={pct(m.utilisation)} />
-        <Row k="Available" v={fmtUsdg(m.available, 0)} />
+        <Row k="Available" v={L(m.available, m.loanSymbol === 'USDG' ? 0 : 3)} />
       </Box>
       {(pos.supplied > 0n || pos.collateral > 0n || pos.debt > 0n) && (
         <Box sx={{ mt: 2, pt: 1.5, borderTop: `1px solid ${t.color.border}`, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-          <Row k="You supplied" v={fmtUsdg(pos.supplied)} accent={pos.supplied > 0n} />
-          <Row k="Your collateral" v={`${fmtUnits(pos.collateral, dec)} (${fmtUsd(collUsd, 0)})`} accent={pos.collateral > 0n} />
-          <Row k="Your debt" v={fmtUsdg(pos.debt)} strong={pos.debt > 0n} />
+          <Row k="You supplied" v={`${L(pos.supplied)} (${fmtUsd(usd(pos.supplied, ld, m.loanSymbol), 0)})`} accent={pos.supplied > 0n} />
+          <Row k="Your collateral" v={`${C(pos.collateral)} (${fmtUsd(usd(pos.collateral, cd, m.collateralSymbol), 0)})`} accent={pos.collateral > 0n} />
+          <Row k="Your debt" v={`${L(pos.debt)} (${fmtUsd(usd(pos.debt, ld, m.loanSymbol), 0)})`} strong={pos.debt > 0n} />
           <Row k="Health" v={fmtHealth(pos.health)} accent={pos.debt > 0n && Number(pos.health) >= 12_000} />
         </Box>
       )}
       <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
-        <Button onClick={() => onPick('supply')} sx={{ ...Bt, height: 34, fontSize: 13, px: 1.75 }}>Supply</Button>
-        <Button onClick={() => onPick(pos.collateral > 0n ? 'borrow' : 'collateral')} sx={{ ...Lt, backdropFilter: 'none', height: 34, fontSize: 13, px: 1.75 }}>Borrow</Button>
+        <Button onClick={() => onPick('supply')} sx={{ ...Bt, height: 34, fontSize: 13, px: 1.75 }}>Supply {m.loanSymbol}</Button>
+        <Button onClick={() => onPick(pos.collateral > 0n ? 'borrow' : 'collateral')} sx={{ ...Lt, backdropFilter: 'none', height: 34, fontSize: 13, px: 1.75 }}>Borrow {m.loanSymbol}</Button>
         {pos.debt > 0n && <Button onClick={() => onPick('repay')} sx={{ ...Lt, backdropFilter: 'none', height: 34, fontSize: 13, px: 1.75 }}>Repay</Button>}
         {pos.supplied > 0n && <Button onClick={() => onPick('withdraw')} sx={{ ...Lt, backdropFilter: 'none', height: 34, fontSize: 13, px: 1.75 }}>Withdraw</Button>}
       </Box>
@@ -115,41 +117,47 @@ function MarketCard({ m, pos, selected, onPick }: { m: Market; pos: Position; se
   )
 }
 
-function Composer({ markets, market, mode, setMarket, setMode, wallet, chain, usdg, usdgAllowance, stock, pos, onDone }: { markets: Market[]; market: Market | undefined; mode: Mode; setMarket: (m: Market) => void; setMode: (m: Mode) => void; wallet: Ctx; chain: ChainX | undefined; usdg: bigint; usdgAllowance: bigint; stock: { balance: bigint; allowance: bigint }; pos: Position; onDone: () => void }) {
+function Composer({ markets, market, mode, setMarket, setMode, wallet, chain, loanTk, collTk, pos, onDone }: { markets: Market[]; market: Market | undefined; mode: Mode; setMarket: (m: Market) => void; setMode: (m: Mode) => void; wallet: Ctx; chain: ChainX | undefined; loanTk: TokenState; collTk: TokenState; pos: Position; onDone: () => void }) {
   const [amount, setAmount] = useState('100')
   const [tx, setTx] = useState<Tx>({ phase: 'idle' })
-  const dec = market?.stock?.decimals ?? 18
-  const isUsd = mode === 'supply' || mode === 'withdraw' || mode === 'borrow' || mode === 'repay'
+  const ld = market?.loanDecimals ?? 6, cd = market?.collateralDecimals ?? 18
+  const isLoan = mode === 'supply' || mode === 'withdraw' || mode === 'borrow' || mode === 'repay'
+  const dec = isLoan ? ld : cd
+  const sym = isLoan ? market?.loanSymbol ?? 'USDG' : market?.collateralSymbol ?? 'stock'
   const n = Number(amount) > 0 ? Number(amount) : 0
-  const raw = useMemo(() => { try { return isUsd ? parseUnits(n.toFixed(6), USDG.decimals) : parseUnits(n.toFixed(Math.min(dec, 8)), dec) } catch { return 0n } }, [n, isUsd, dec])
+  const raw = useMemo(() => { try { return parseUnits(n.toFixed(Math.min(dec, 8)), dec) } catch { return 0n } }, [n, dec])
   const busy = tx.phase !== 'idle' && tx.phase !== 'done' && tx.phase !== 'failed'
   const repayAll = mode === 'repay' && raw >= pos.debt
   const withdrawShares = market && pos.supplied > 0n ? (raw >= pos.supplied ? pos.supplyShares : (raw * pos.supplyShares) / pos.supplied) : 0n
-  const limit: bigint = mode === 'supply' ? usdg : mode === 'withdraw' ? pos.supplied : mode === 'collateral' ? stock.balance : mode === 'borrow' ? pos.borrowable : mode === 'repay' ? (pos.debt < usdg ? pos.debt : usdg) : pos.collateral
+  const limit: bigint = mode === 'supply' ? loanTk.balance : mode === 'withdraw' ? pos.supplied : mode === 'collateral' ? collTk.balance : mode === 'borrow' ? pos.borrowable : mode === 'repay' ? (pos.debt < loanTk.balance ? pos.debt : loanTk.balance) : pos.collateral
   const over = raw > limit
   const capRoom = market ? (mode === 'supply' ? market.supplyCap - market.totalSupplyAssets : mode === 'collateral' ? market.collateralCap - market.totalCollateral : mode === 'borrow' ? market.borrowCap - market.totalBorrowAssets : MAX) : 0n
   const overCap = capRoom !== MAX && raw > capRoom
   const ready = !!wallet.account && !!market && market.enabled && raw > 0n && !over && !overCap && !busy
   const after = useMemo(() => {
     if (!market) return undefined
-    const unit = market.priceUsd
+    const px = market.priceUsd
+    const toUsd = (v: bigint, d: number, s: string) => (s === 'USDG' ? Number(formatUnits(v, 6)) : Number(formatUnits(v, d)) * px)
     const coll = mode === 'collateral' ? pos.collateral + raw : mode === 'remove' ? pos.collateral - raw : pos.collateral
     const debt = mode === 'borrow' ? pos.debt + raw : mode === 'repay' ? (repayAll ? 0n : pos.debt - raw) : pos.debt
-    const collUsd = (Number(coll) / 10 ** dec) * unit
-    const debtUsd = Number(debt) / 1e6
-    return { collUsd, debtUsd, health: debtUsd > 0 ? (collUsd * market.liqThresholdBps) / 10_000 / debtUsd : Infinity, liqPrice: Number(coll) > 0 && debtUsd > 0 ? debtUsd / ((Number(coll) / 10 ** dec) * (market.liqThresholdBps / 10_000)) : 0 }
-  }, [market, mode, pos, raw, repayAll, dec])
-  const setMax = () => setAmount(isUsd ? formatUnits(limit, USDG.decimals) : formatUnits(limit, dec))
+    const collUsd = toUsd(coll, cd, market.collateralSymbol), debtUsd = toUsd(debt, ld, market.loanSymbol)
+    const health = debtUsd > 0 ? (collUsd * market.liqThresholdBps) / 10_000 / debtUsd : Infinity
+    // the stock price at which the position reaches the line
+    let liqPrice = 0
+    if (debtUsd > 0 && coll > 0n) liqPrice = market.kind === 'long' ? debtUsd / (Number(formatUnits(coll, cd)) * (market.liqThresholdBps / 10_000)) : (collUsd * (market.liqThresholdBps / 10_000)) / Number(formatUnits(debt, ld))
+    return { collUsd, debtUsd, health, liqPrice }
+  }, [market, mode, pos, raw, repayAll, cd, ld])
+  const setMax = () => setAmount(formatUnits(limit, dec))
   const go = async () => {
     if (!wallet.walletClient || !wallet.account || !market) return
     setTx({ phase: 'switching' })
     try {
       const ctx = txCtx(wallet, chain, (p) => setTx((x) => ({ ...x, phase: p })))
-      const hash = mode === 'supply' ? await supplyUsdg(ctx, market, raw, usdgAllowance)
-        : mode === 'withdraw' ? await withdrawUsdg(ctx, market, withdrawShares)
-        : mode === 'collateral' ? await addCollateral(ctx, market, raw, stock.allowance)
-        : mode === 'borrow' ? await borrowUsdg(ctx, market, raw)
-        : mode === 'repay' ? await repayUsdg(ctx, market, raw, repayAll, usdgAllowance)
+      const hash = mode === 'supply' ? await supplyLoan(ctx, market, raw, loanTk.allowance)
+        : mode === 'withdraw' ? await withdrawLoan(ctx, market, withdrawShares)
+        : mode === 'collateral' ? await addCollateral(ctx, market, raw, collTk.allowance)
+        : mode === 'borrow' ? await borrowLoan(ctx, market, raw)
+        : mode === 'repay' ? await repayLoan(ctx, market, raw, repayAll, loanTk.allowance)
         : await removeCollateral(ctx, market, raw)
       setTx({ phase: 'done', hash })
       onDone()
@@ -157,36 +165,37 @@ function Composer({ markets, market, mode, setMarket, setMode, wallet, chain, us
       setTx({ phase: 'failed', error: describeError(e) })
     }
   }
-  const verb = MODES.find((x) => x.key === mode)?.label ?? 'Go'
+  const verb = `${MODES.find((x) => x.key === mode)?.label ?? 'Go'} ${sym}`
+  const fmtLim = (v: bigint) => fmtAmt(v, dec, sym)
   return (
     <Panel sx={{ p: { xs: 2.5, md: 3 } }}>
-      <Label>Lend</Label>
+      <Label>Market</Label>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2.5 }}>
+        {markets.map((x) => <Choice key={x.id.toString()} on={x.id === market?.id} onClick={() => { setMarket(x); setTx({ phase: 'idle' }) }} disabled={!x.enabled}>{x.kind === 'long' ? `${x.stock?.ticker ?? `#${x.id}`} → USDG` : `USDG → ${x.stock?.ticker ?? `#${x.id}`}`}</Choice>)}
+      </Box>
+      <Label>Lend {market?.loanSymbol ?? ''}</Label>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
         {MODES.filter((x) => x.group === 'lend').map((x) => <Choice key={x.key} on={mode === x.key} onClick={() => { setMode(x.key); setTx({ phase: 'idle' }) }}>{x.label}</Choice>)}
       </Box>
-      <Label>Borrow</Label>
+      <Label>Borrow {market?.loanSymbol ?? ''} against {market?.collateralSymbol ?? ''}</Label>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2.5 }}>
         {MODES.filter((x) => x.group === 'borrow').map((x) => <Choice key={x.key} on={mode === x.key} onClick={() => { setMode(x.key); setTx({ phase: 'idle' }) }}>{x.label}</Choice>)}
       </Box>
-      <Label>Market</Label>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2.5 }}>
-        {markets.map((x) => <Choice key={x.id.toString()} on={x.id === market?.id} onClick={() => { setMarket(x); setTx({ phase: 'idle' }) }} disabled={!x.enabled}>{x.stock?.ticker ?? `#${x.id}`}</Choice>)}
-      </Box>
-      <Label>{isUsd ? 'Amount, in USDG' : `Amount, in ${market?.stock?.ticker ?? 'stock'}`}</Label>
-      {isUsd && mode !== 'withdraw' && mode !== 'repay' && <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>{USD_AMOUNTS.map((a) => <Choice key={a} on={Number(amount) === a} onClick={() => setAmount(String(a))}>${a}</Choice>)}</Box>}
-      {(mode === 'withdraw' || mode === 'repay' || mode === 'remove' || mode === 'collateral') && limit > 0n && <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>{[25, 50, 100].map((p) => <Choice key={p} on={false} onClick={() => setAmount(isUsd ? formatUnits((limit * BigInt(p)) / 100n, USDG.decimals) : formatUnits((limit * BigInt(p)) / 100n, dec))}>{p}%</Choice>)}</Box>}
+      <Label>Amount, in {sym}</Label>
+      {sym === 'USDG' && mode !== 'withdraw' && mode !== 'repay' && <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>{USD_AMOUNTS.map((a) => <Choice key={a} on={Number(amount) === a} onClick={() => setAmount(String(a))}>${a}</Choice>)}</Box>}
+      {(sym !== 'USDG' || mode === 'withdraw' || mode === 'repay') && limit > 0n && <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>{[25, 50, 100].map((p) => <Choice key={p} on={false} onClick={() => setAmount(formatUnits((limit * BigInt(p)) / 100n, dec))}>{p}%</Choice>)}</Box>}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, height: 44, px: 1.5, borderRadius: t.radius.input, background: t.color.hover }}>
-        {isUsd && <Typography sx={{ fontSize: 15, color: t.color.textMuted }}>$</Typography>}
+        {sym === 'USDG' && <Typography sx={{ fontSize: 15, color: t.color.textMuted }}>$</Typography>}
         <InputBase value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))} inputProps={{ inputMode: 'decimal', 'aria-label': 'Amount' }} sx={{ flex: 1, fontSize: 15, fontWeight: 500 }} />
         <Box component="button" type="button" onClick={setMax} sx={{ all: 'unset', cursor: 'pointer', fontSize: 12, fontWeight: 500, color: t.color.mark }}>Max</Box>
       </Box>
       <Typography sx={{ fontSize: 12, color: over || overCap ? t.color.red : t.color.textMuted, mt: 0.75 }}>
-        {mode === 'supply' && `Wallet: ${fmtUsdg(usdg)} USDG${overCap ? ' · over the market cap' : ''}`}
-        {mode === 'withdraw' && `Supplied: ${fmtUsdg(pos.supplied)}${market && pos.supplied > market.available ? ` · ${fmtUsdg(market.available)} not lent out` : ''}`}
-        {mode === 'collateral' && `Wallet: ${fmtUnits(stock.balance, dec)} ${market?.stock?.ticker ?? ''}${overCap ? ' · over the collateral cap' : ''}`}
-        {mode === 'borrow' && `You can borrow up to ${fmtUsdg(pos.borrowable)}${overCap ? ' · over the borrow cap' : ''}`}
-        {mode === 'repay' && `Debt: ${fmtUsdg(pos.debt)} · wallet ${fmtUsdg(usdg)}`}
-        {mode === 'remove' && `Locked: ${fmtUnits(pos.collateral, dec)} ${market?.stock?.ticker ?? ''}`}
+        {mode === 'supply' && `Wallet: ${fmtLim(loanTk.balance)}${overCap ? ' · over the market cap' : ''}`}
+        {mode === 'withdraw' && `Supplied: ${fmtLim(pos.supplied)}${market && pos.supplied > market.available ? ` · ${fmtLim(market.available)} not lent out` : ''}`}
+        {mode === 'collateral' && `Wallet: ${fmtLim(collTk.balance)}${overCap ? ' · over the collateral cap' : ''}`}
+        {mode === 'borrow' && `You can borrow up to ${fmtLim(pos.borrowable)}${overCap ? ' · over the borrow cap' : ''}`}
+        {mode === 'repay' && `Debt: ${fmtLim(pos.debt)} · wallet ${fmtLim(loanTk.balance)}`}
+        {mode === 'remove' && `Locked: ${fmtLim(pos.collateral)}`}
       </Typography>
       {market && (
         <Box sx={{ mt: 2, p: 1.75, borderRadius: t.radius.panel, background: t.color.raised, display: 'grid', gap: 0.75 }}>
@@ -200,7 +209,7 @@ function Composer({ markets, market, mode, setMarket, setMode, wallet, chain, us
             <Row k="Collateral after" v={fmtUsd(after.collUsd, 0)} />
             <Row k="Debt after" v={fmtUsd(after.debtUsd)} strong />
             <Row k="Health after" v={after.health === Infinity ? '∞' : after.health.toFixed(2)} accent={after.health >= 1.2} />
-            {after.liqPrice > 0 && <Row k={`Liquidation if ${market.stock?.ticker ?? 'the stock'} is below`} v={fmtUsd(after.liqPrice)} />}
+            {after.liqPrice > 0 && <Row k={`Liquidation if ${market.stock?.ticker ?? 'the stock'} is ${market.kind === 'long' ? 'below' : 'above'}`} v={fmtUsd(after.liqPrice)} />}
             <Row k="Borrow APR" v={pct(market.borrowApr)} />
           </>}
         </Box>
@@ -210,7 +219,7 @@ function Composer({ markets, market, mode, setMarket, setMode, wallet, chain, us
       </Button>
       {tx.phase === 'failed' && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1 }}>{tx.error}</Typography>}
       {tx.phase === 'done' && tx.hash && chain && <Typography sx={{ fontSize: 12, color: t.color.mark, mt: 1 }}>Done. <Box component="a" href={explorerTx(chain, ROBINHOOD, tx.hash)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>Transaction</Box></Typography>}
-      <Typography sx={{ fontSize: 11, color: t.color.textLabel, mt: 1.5, lineHeight: 1.5 }}>Unaudited. Prices are read from the stock's Uniswap v3 USDG pool, the lower of spot and a 30-minute average to borrow, the higher to liquidate. A loan under its threshold can be liquidated by anyone, with a {market ? market.liqBonusBps / 100 : 5}% bonus taken from your collateral.</Typography>
+      <Typography sx={{ fontSize: 11, color: t.color.textLabel, mt: 1.5, lineHeight: 1.5 }}>Unaudited. Prices are read from the stock's Uniswap v3 USDG pool, the lower collateral value of spot and a 30-minute average to borrow, the higher to liquidate. A loan under its threshold can be liquidated by anyone, with a {market ? market.liqBonusBps / 100 : 5}% bonus taken from your collateral.</Typography>
     </Panel>
   )
 }
@@ -231,13 +240,14 @@ export default function VerdexLendPage() {
   const market = markets.data?.find((x) => x.id.toString() === picked) ?? markets.data?.find((x) => x.enabled) ?? markets.data?.[0]
   useEffect(() => { if (!picked && market) setPicked(market.id.toString()) }, [picked, market])
   const list = markets.data ?? []
-  const supplied = list.reduce((s, x) => s + Number(x.totalSupplyAssets) / 1e6, 0)
-  const borrowed = list.reduce((s, x) => s + Number(x.totalBorrowAssets) / 1e6, 0)
-  const collateralUsd = list.reduce((s, x) => s + (Number(x.totalCollateral) / 10 ** (x.stock?.decimals ?? 18)) * x.priceUsd, 0)
+  const usdOf = (m: Market, v: bigint, dec: number, sym: string) => (sym === 'USDG' ? Number(formatUnits(v, 6)) : Number(formatUnits(v, dec)) * m.priceUsd)
+  const supplied = list.reduce((s, x) => s + usdOf(x, x.totalSupplyAssets, x.loanDecimals, x.loanSymbol), 0)
+  const borrowed = list.reduce((s, x) => s + usdOf(x, x.totalBorrowAssets, x.loanDecimals, x.loanSymbol), 0)
+  const collateralUsd = list.reduce((s, x) => s + usdOf(x, x.totalCollateral, x.collateralDecimals, x.collateralSymbol), 0)
   const posOf = (m: Market) => w.data?.positions[m.id.toString()] ?? EMPTY
-  const mine = list.reduce((s, x) => { const p = posOf(x); return s + Number(p.supplied) / 1e6 + (Number(p.collateral) / 10 ** (x.stock?.decimals ?? 18)) * x.priceUsd - Number(p.debt) / 1e6 }, 0)
+  const mine = list.reduce((s, x) => { const p = posOf(x); return s + usdOf(x, p.supplied, x.loanDecimals, x.loanSymbol) + usdOf(x, p.collateral, x.collateralDecimals, x.collateralSymbol) - usdOf(x, p.debt, x.loanDecimals, x.loanSymbol) }, 0)
   const pick = (m: Market, md: Mode) => { setPicked(m.id.toString()); setMode(md); document.getElementById('lend-composer')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }
-  const stockOf = (m: Market | undefined) => (m ? w.data?.stocks[m.collateral.toLowerCase()] : undefined) ?? { balance: 0n, allowance: 0n }
+  const longs = list.filter((x) => x.kind === 'long'), shorts = list.filter((x) => x.kind === 'short')
 
   return (
     <Page>
@@ -245,7 +255,7 @@ export default function VerdexLendPage() {
         label="Verdex Lend"
         badges={<Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>{DEPLOYED ? 'Live' : 'Contract not deployed'}</Box>}
         title={<>Borrow against<br />your stocks.</>}
-        lead={`The first money market for tokenized stocks on Robinhood Chain. Supply USDG and earn what borrowers pay. Lock NVDA, TSLA or any listed stock and borrow USDG against it without selling. One market per stock, isolated: its own loan-to-value, its own caps, nothing spills over. The contract holds the stocks and the USDG and can send them to nobody but the people they belong to.`}
+        lead={`The first money market for tokenized stocks on Robinhood Chain. Supply USDG and earn what borrowers pay, or lock NVDA, TSLA or any listed stock and borrow USDG against it without selling. Or lend the stock itself and earn what the shorts pay to borrow it. One market per pair, isolated: its own loan-to-value, its own caps, nothing spills over. The contract holds the stocks and the USDG and can send them to nobody but the people they belong to.`}
         action={
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <Button onClick={() => (account ? document.getElementById('lend-composer')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) : openWalletMenu())} sx={{ ...Bt, gap: 1 }}>
@@ -274,21 +284,24 @@ export default function VerdexLendPage() {
         <Box>
           <Typography sx={{ ...t.type.h3, mb: 2 }}>The markets</Typography>
           <Box sx={{ display: 'grid', gap: 2 }}>
-            {list.map((m) => <MarketCard key={m.id.toString()} m={m} pos={posOf(m)} selected={m.id === market?.id} onPick={(md) => pick(m, md)} />)}
+            {longs.length > 0 && <Typography sx={{ ...t.type.overline, color: t.color.textLabel }}>Borrow USDG against a stock</Typography>}
+            {longs.map((m) => <MarketCard key={m.id.toString()} m={m} pos={posOf(m)} selected={m.id === market?.id} onPick={(md) => pick(m, md)} />)}
+            {shorts.length > 0 && <Typography sx={{ ...t.type.overline, color: t.color.textLabel, mt: 2 }}>Lend a stock, or borrow it against USDG</Typography>}
+            {shorts.map((m) => <MarketCard key={m.id.toString()} m={m} pos={posOf(m)} selected={m.id === market?.id} onPick={(md) => pick(m, md)} />)}
             {DEPLOYED && markets.data && list.length === 0 && <Panel sx={{ p: 3 }}><Typography sx={{ fontSize: 14, color: t.color.textMuted }}>No market yet.</Typography></Panel>}
             {DEPLOYED && !markets.data && !markets.isError && <Panel sx={{ p: 3 }}><Typography sx={{ fontSize: 14, color: t.color.textMuted }}>Reading the markets and the pools behind them…</Typography></Panel>}
             {markets.isError && <Panel sx={{ p: 3 }}><Typography sx={{ fontSize: 14, color: t.color.textMuted }}>The chain is rate-limiting reads right now. Reload in a minute.</Typography></Panel>}
           </Box>
         </Box>
         <Box id="lend-composer" sx={{ position: { md: 'sticky' }, top: { md: 96 } }}>
-          <Composer markets={list} market={market} mode={mode} setMarket={(m) => setPicked(m.id.toString())} setMode={setMode} wallet={wallet} chain={chain} usdg={w.data?.usdg ?? 0n} usdgAllowance={w.data?.usdgAllowance ?? 0n} stock={stockOf(market)} pos={market ? posOf(market) : EMPTY} onDone={refresh} />
+          <Composer markets={list} market={market} mode={mode} setMarket={(m) => setPicked(m.id.toString())} setMode={setMode} wallet={wallet} chain={chain} loanTk={market ? tokenState(w.data, market.loan) : { balance: 0n, allowance: 0n }} collTk={market ? tokenState(w.data, market.collateral) : { balance: 0n, allowance: 0n }} pos={market ? posOf(market) : EMPTY} onDone={refresh} />
         </Box>
       </Box>
 
       <Box sx={{ mt: { xs: 8, md: 12 } }}>
         <Typography sx={{ ...t.type.h3, mb: 3 }}>How it works</Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(4, 1fr)' }, gap: 2 }}>
-          <Step n={1} icon={<WalletIcon size={16} />} title="Supply USDG" text="Your USDG joins the market's pool and earns the interest borrowers pay, minus a 10% share kept for the treasury, where it buys VERDEX. Withdraw whenever the USDG is not lent out." />
+          <Step n={1} icon={<WalletIcon size={16} />} title="Supply USDG, or a stock" text="What you supply joins the market's pool and earns the interest borrowers pay, minus a 10% share kept for the treasury, where it buys VERDEX. Withdraw whenever it is not lent out. Stock markets are what the shorts borrow from." />
           <Step n={2} icon={<LockIcon size={16} />} title="Lock a stock" text="Add NVDA or any listed stock as collateral. It stays yours, in the contract, and comes back when you take it out. Nothing is sold." />
           <Step n={3} icon={<HandCoinIcon size={16} />} title="Borrow USDG" text="Up to the loan-to-value of your collateral at the pool price, the lower of spot and a 30-minute average. Interest accrues by the second; repay any part, any time." />
           <Step n={4} icon={<ShieldIcon size={16} />} title="Stay above the line" text="If debt crosses the liquidation threshold of the collateral value, anyone can repay part of it and take collateral worth that plus a 5% bonus. Keep the health above 1." />

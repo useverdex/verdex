@@ -55,10 +55,15 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   factory) and `contracts/VerdexIndexRouter.sol` (USDG in, shares out, in one transaction through the stocks' Uniswap
   v3 pools, with a per-leg price floor and a fee waived for VERDEX holders). Fixed units per share, redeem in kind
   any time, a supply cap as the creator's only lever. Deployed from `/deploy/index`.
-- **Verdex Lend.** `contracts/VerdexLend.sol`: isolated money markets for tokenized stocks, one stock against USDG each.
-  Supply USDG and earn the interest; lock a stock and borrow USDG against it. Prices from the stock's Uniswap v3 pool
-  (lower of spot and a 30-minute average to borrow, higher to liquidate), hard caps, a 10% reserve of interest to the
-  treasury. No function moves funds to the owner. Deployed from `/deploy/lend`; the page is `/lend/verdex`.
+- **Verdex Lend.** `contracts/VerdexLend.sol`: isolated money markets for tokenized stocks. Long markets lend USDG against
+  a stock; short markets lend the stock against USDG. Supply and earn the interest; lock collateral and borrow. Prices from
+  the pair's Uniswap v3 pool (lower collateral value of spot and a 30-minute average to borrow, higher to liquidate), hard
+  caps, a 10% reserve of interest to the treasury. No function moves funds to the owner. Deployed from `/deploy/lend`;
+  the page is `/lend/verdex`.
+- **Leverage.** `contracts/VerdexLeverage.sol`: two-times long and short on top of Lend. A long buys the stock with margin
+  plus borrowed USDG in one swap and locks it; a short locks margin, borrows the stock and sells it in the same swap.
+  Each wallet gets its own account contract, so each position is its own Lend position. Open interest capped per market.
+  Deployed from `/deploy/leverage`; the page is `/leverage`.
 - **Fees buy VERDEX.** `contracts/VerdexTreasury.sol`: where every protocol fee lands. The executor sweeps its USDG
   and ETH into VERDEX through an allowlisted router, the contract checks the result against a floor it reads from
   the pools, burns half and keeps half for the weekly payout to the wallets that paid the fees. No function sends
