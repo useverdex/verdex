@@ -137,13 +137,13 @@ const C = CHAIN === 'base' ? {
   rows: [[MARK(), 'VX7, the Magnificent Seven', "Coinbase's seven as one token, bought in one transaction", 'live'], [`<img src="${PUB}/logos/issuers/coinbase.png" alt="">`, 'Frontier and AI Infrastructure', 'SpaceX, Strategy, Palantir, Tesla; the chip and the clouds', 'live'], [`<img src="${CH(8453)}" alt="">`, 'USDC in, shares out', 'every leg filled in its Aerodrome pool, with a price floor', 'one tx'], [`<img src="${CH(4663)}" alt="">`, 'A chain selector', 'same site, same wallet; VERDEX stays on Robinhood Chain', 'one site']],
   end: 'Verdex on Base. Live.',
 } : {
-  name: 'Solana', logo: CH(1151111081099710), tag: 'The DCA nobody offers.',
-  h2: 'Every tokenized stock on Solana is Token-2022.', p2: 'xStocks are already in our Markets and Private Markets. The DCA tools people use there do not take them.',
-  cards: [['NVDAx', 'NVIDIA · xStocks', 'Token-2022', 'Jupiter DCA: <span style="color:var(--red)">not supported</span>', L('88a0e630')], ['TSLAx', 'Tesla · xStocks', 'Token-2022', 'Jupiter DCA: <span style="color:var(--red)">not supported</span>', L('e8ca24f9')], ['AAPLx', 'Apple · xStocks', 'Token-2022', 'Verdex: <b>every week, without you</b>', L('2a11a6bd')]],
-  cap2: 'That gap is the first thing Verdex ships on Solana.',
-  h3: 'Another language. The same rule.', p3: 'A program, not a contract. It holds nothing: a delegate allowance, a swap, your wallet.',
-  rows: [[`<img src="${PUB}/logos/issuers/xstocks.png" alt="">`, 'Auto-Invest, as a program', 'a delegate allowance, a swap, your wallet, nothing held', 'first'], [MARK(), 'Then the Index', 'baskets of xStocks as one token', 'after'], [`<img src="${PUB}/logos/tools/jupiter.svg" alt="">`, 'Routes from Jupiter', 'the swap itself, already how our Markets quote', 'routes'], [`<img src="${CH(1151111081099710)}" alt="">`, 'After Base', 'another language and another scale of work; it is on the list', 'on the list']],
-  end: 'Verdex on Solana. Coming after Base.',
+  name: 'Solana', logo: CH(1151111081099710), tag: 'The same baskets. Nothing held.',
+  h2: 'Where xStocks trade.', p2: "Backed's tokenized shares live in Solana's pools. Verdex buys a basket of them leg by leg through Jupiter, and your wallet signs every leg in one prompt.",
+  cards: [['NVDAx', 'NVIDIA · xStocks', '$235.65', '<b>$4.6M</b> of liquidity · Jupiter', L('88a0e630')], ['AAPLx', 'Apple · xStocks', '$332.34', '<b>$527K</b> of liquidity · Jupiter', L('2a11a6bd')], ['TSLAx', 'Tesla · xStocks', '$373.06', '<b>$1.5M</b> of liquidity · Jupiter', L('e8ca24f9')]],
+  cap2: 'Liquidity read from Jupiter on 5 October 2026. It moves; the page reads it live.',
+  h3: 'No program. No custody.', p3: 'Verdex deploys nothing on Solana for this. Every transaction is a Jupiter swap built in your browser and sent from your wallet; the stocks go from the pool straight to you.',
+  rows: [[MARK(), 'VX7, Frontier, AI, SPY+QQQ', 'baskets of xStocks, equal weight, USDC in', 'live'], [`<img src="${PUB}/logos/tools/jupiter.svg" alt="">`, 'Routes from Jupiter', 'the best pool for every leg, a price floor on each', 'routes'], [`<img src="${PUB}/logos/issuers/xstocks.png" alt="">`, 'The stocks themselves', 'NVDAx, TSLAx and the rest land in your wallet; sell any share the same way', 'yours'], [`<img src="${CH(1151111081099710)}" alt="">`, 'One prompt', 'seven stocks, seven transactions, one signature', 'one sig']],
+  end: 'Verdex on Solana. Live.',
 }
 
 function spring(t, response = 0.5, damping = 1) {

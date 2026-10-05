@@ -859,6 +859,24 @@ Shorter:
 >
 > useverdex.xyz/index?chain=base
 
+## Verdex on Solana, hype (image: `photos/hype-solana.png`, a few hours before; render with `promo/teaser.html?bg=solana&tag=Box 6 of 11&line=Solana. Tonight.&sub=01:00 CEST · 23:00 UTC · Holders first&accent=1`)
+
+The page is gated until 23:00 UTC; VERDEX holders get in early, like every drop. No token on Solana; the tweet is about the product.
+
+> Box 6 of 11.
+>
+> Solana. Tonight, 23:00 UTC. The same baskets, made of xStocks, bought with USDC through Jupiter. Seven stocks, one signature. Nothing held by anyone but you.
+>
+> Holders first.
+>
+> useverdex.xyz
+
+Shorter:
+
+> Tonight, 23:00 UTC: Solana. Box 6 of 11. Holders first.
+>
+> useverdex.xyz
+
 ## Verdex on Solana is live (`verdex-solana.mp4`, post once /solana is deployed)
 
 Box 6 of 11. Honest about what it is: baskets of xStocks through Jupiter, no Verdex program, no index token on Solana. Names @solana, Jupiter and xStocks as what they are; no partnership.

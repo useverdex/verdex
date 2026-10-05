@@ -141,7 +141,7 @@ export default function App() {
             <Route path="/index" element={<EarlyGate path="/index"><IndexPage /></EarlyGate>} />
             <Route path="/deploy/index" element={<DeployIndexPage />} />
             <Route path="/deploy/index/:chainKey" element={<DeployIndexPage />} />
-            <Route path="/solana" element={<SolanaPage />} />
+            <Route path="/solana" element={<EarlyGate path="/solana"><SolanaPage /></EarlyGate>} />
             <Route path="/lend/verdex" element={<EarlyGate path="/lend/verdex"><VerdexLendPage /></EarlyGate>} />
             <Route path="/deploy/lend" element={<DeployLendPage />} />
             <Route path="/leverage" element={<EarlyGate path="/leverage"><LeveragePage /></EarlyGate>} />
