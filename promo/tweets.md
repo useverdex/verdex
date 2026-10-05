@@ -851,7 +851,7 @@ Box 6 of 11. Honest about what it is: baskets of xStocks through Jupiter, no Ver
 
 > Verdex is live on @solana.
 >
-> Box 6 of 11. The same baskets, made of xStocks: the Magnificent Seven, AI Infrastructure, Semis, Frontier, and SPY+QQQ. Pay in USDC; the page finds the best route into every stock through Jupiter and your wallet signs all the legs in one prompt.
+> Box 6 of 11. The same baskets, made of xStocks: the Magnificent Seven, AI Infrastructure, Frontier, and SPY+QQQ. Pay in USDC; the page finds the best route into every stock through Jupiter and your wallet signs all the legs in one prompt.
 >
 > No Verdex program on Solana. Nothing held, nothing to trust but the chain: the stocks go from the pool straight to your wallet, and you sell any share of them the same way.
 >

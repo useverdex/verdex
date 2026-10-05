@@ -23,6 +23,7 @@ interface IUniswapV3Pool {
     function token1() external view returns (address);
     function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16, uint16, uint16, uint8, bool);
     function observe(uint32[] calldata secondsAgos) external view returns (int56[] memory tickCumulatives, uint160[] memory);
+    function observations(uint256 index) external view returns (uint32 blockTimestamp, int56 tickCumulative, uint160 secondsPerLiquidityCumulativeX128, bool initialized);
 }
 
 contract VerdexLend {
@@ -53,6 +54,7 @@ contract VerdexLend {
     uint256 private constant YEAR = 365 days;
     uint256 private constant BPS = 10_000;
     uint256 private constant Q96 = 2 ** 96;
+    uint16 public constant MIN_CARDINALITY = 1800; // observations a pool must keep before it can price a market
 
     address public owner;
     address public treasury;
@@ -62,6 +64,8 @@ contract VerdexLend {
     mapping(uint256 => mapping(address => uint256)) public supplyShares;
     mapping(uint256 => mapping(address => uint256)) public borrowShares;
     mapping(uint256 => mapping(address => uint256)) public collateralOf;
+    /// Where a market's reserves go when skimmed: the treasury, or another sink for loan assets the treasury cannot use.
+    mapping(uint256 => address) public skimTo;
 
     uint256 private _lock;
 
@@ -75,6 +79,8 @@ contract VerdexLend {
     event Liquidated(uint256 indexed id, address indexed liquidator, address indexed borrower, uint256 repaid, uint256 seized);
     event Accrued(uint256 indexed id, uint256 interest, uint256 reserve);
     event Skimmed(uint256 indexed id, uint256 amount);
+    event BadDebt(uint256 indexed id, address indexed borrower, uint256 written_off);
+    event SkimToSet(uint256 indexed id, address to);
     event CapsSet(uint256 indexed id, uint256 supplyCap, uint256 borrowCap, uint256 collateralCap);
     event ParamsSet(uint256 indexed id, uint16 ltvBps, uint16 liqThresholdBps, uint16 liqBonusBps, uint32 twapWindow, uint64 rateBaseBps, uint64 rateSlopeBps);
     event OwnershipTransferred(address indexed from, address indexed to);
@@ -90,6 +96,7 @@ contract VerdexLend {
     error Unhealthy();
     error Healthy();
     error ZeroShares();
+    error NoOracle();
 
     modifier onlyOwner() { if (msg.sender != owner) revert NotOwner(); _; }
     modifier nonReentrant() { if (_lock == 1) revert Reentrancy(); _lock = 1; _; _lock = 0; }
@@ -112,9 +119,23 @@ contract VerdexLend {
         Market storage m = _markets[id];
         (uint160 spot, uint160 twap) = _prices(m);
         uint256 a = _value(amount, spot, m.collateralIsToken0);
-        if (twap == 0) return a;
+        if (twap == 0) return a; // twapWindow == 0: spot only, by the owner's explicit choice
         uint256 b = _value(amount, twap, m.collateralIsToken0);
         return forBorrow ? (a < b ? a : b) : (a > b ? a : b);
+    }
+
+    /// The price one collateral unit is handed over at in a liquidation: the lower of spot and the time-weighted
+    /// price, but never more than the bonus below the time-weighted one, so a one-block dump cannot seize more
+    /// than about twice the bonus and a lagging average cannot make liquidation unprofitable.
+    function seizePrice(uint256 id) public view returns (uint256) {
+        Market storage m = _markets[id];
+        (uint160 spot, uint160 twap) = _prices(m);
+        uint256 a = _value(1e18, spot, m.collateralIsToken0);
+        if (twap == 0) return a;
+        uint256 b = _value(1e18, twap, m.collateralIsToken0);
+        uint256 floor_ = b * (BPS - m.liqBonusBps) / BPS;
+        uint256 v = a < b ? a : b;
+        return v < floor_ ? floor_ : v;
     }
 
     function debtOf(uint256 id, address who) public view returns (uint256) {
@@ -137,6 +158,7 @@ contract VerdexLend {
     function rates(uint256 id) external view returns (uint256 borrowAprBps, uint256 supplyAprBps, uint256 utilisationBps) {
         Market storage m = _markets[id];
         utilisationBps = m.totalSupplyAssets == 0 ? 0 : m.totalBorrowAssets * BPS / m.totalSupplyAssets;
+        if (utilisationBps > BPS) utilisationBps = BPS;
         borrowAprBps = uint256(m.rateBaseBps) + uint256(m.rateSlopeBps) * utilisationBps / BPS;
         supplyAprBps = borrowAprBps * utilisationBps / BPS * (BPS - reserveBps) / BPS;
     }
@@ -183,7 +205,7 @@ contract VerdexLend {
         _accrue(id, m);
         if (shares == 0 || shares > supplyShares[id][msg.sender]) revert Insufficient();
         assets = shares * m.totalSupplyAssets / m.totalSupplyShares;
-        if (assets > m.totalSupplyAssets - m.totalBorrowAssets) revert Insufficient(); // lent out
+        if (assets > _available(m)) revert Insufficient(); // lent out
         supplyShares[id][msg.sender] -= shares;
         m.totalSupplyShares -= shares;
         m.totalSupplyAssets -= assets;
@@ -193,8 +215,10 @@ contract VerdexLend {
 
     // ---- borrow side ----
 
+    /// Allowed while a market is disabled too, so a borrower can always defend a position.
     function addCollateral(uint256 id, uint256 amount, address to) external nonReentrant {
-        Market storage m = _enabled(id);
+        if (id >= _markets.length) revert BadMarket();
+        Market storage m = _markets[id];
         if (amount == 0) revert BadArgs();
         if (m.totalCollateral + amount > m.collateralCap) revert CapReached();
         collateralOf[id][to] += amount;
@@ -219,7 +243,7 @@ contract VerdexLend {
         _accrue(id, m);
         if (assets == 0) revert BadArgs();
         if (m.totalBorrowAssets + assets > m.borrowCap) revert CapReached();
-        if (assets > m.totalSupplyAssets - m.totalBorrowAssets) revert Insufficient();
+        if (assets > _available(m)) revert Insufficient();
         shares = m.totalBorrowShares == 0 ? assets : _mulDivUp(assets, m.totalBorrowShares, m.totalBorrowAssets);
         m.totalBorrowAssets += assets;
         m.totalBorrowShares += shares;
@@ -258,8 +282,8 @@ contract VerdexLend {
         if (value * m.liqThresholdBps / BPS >= debt) revert Healthy();
         repaid = assets >= debt ? debt : assets;
         if (repaid == 0) revert BadArgs();
-        // collateral worth repaid * (1 + bonus) at the liquidation price; capped at what the borrower has
-        uint256 unitValue = collateralValue(id, 10 ** 18, false);
+        // collateral worth repaid * (1 + bonus) at the seize price; capped at what the borrower has
+        uint256 unitValue = seizePrice(id);
         seized = unitValue == 0 ? coll : repaid * (BPS + m.liqBonusBps) / BPS * 1e18 / unitValue;
         if (seized > coll) seized = coll;
         uint256 shares = repaid == debt ? owed : repaid * m.totalBorrowShares / m.totalBorrowAssets;
@@ -268,19 +292,36 @@ contract VerdexLend {
         m.totalBorrowAssets = repaid >= m.totalBorrowAssets ? 0 : m.totalBorrowAssets - repaid;
         collateralOf[id][borrower] = coll - seized;
         m.totalCollateral -= seized;
+        // No collateral left and debt remains: write it off against the reserves first, then the suppliers,
+        // instead of leaving phantom assets that the last supplier could never withdraw.
+        if (seized == coll && borrowShares[id][borrower] != 0) {
+            uint256 remShares = borrowShares[id][borrower];
+            uint256 rem = _mulDivUp(remShares, m.totalBorrowAssets, m.totalBorrowShares);
+            if (rem > m.totalBorrowAssets) rem = m.totalBorrowAssets;
+            borrowShares[id][borrower] = 0;
+            m.totalBorrowShares -= remShares;
+            m.totalBorrowAssets -= rem;
+            uint256 fromReserves = rem < m.reserves ? rem : m.reserves;
+            m.reserves -= fromReserves;
+            uint256 fromSupply = rem - fromReserves;
+            m.totalSupplyAssets = fromSupply >= m.totalSupplyAssets ? 0 : m.totalSupplyAssets - fromSupply;
+            emit BadDebt(id, borrower, rem);
+        }
         _pull(IERC20(m.loan), msg.sender, repaid);
         _push(IERC20(m.collateral), msg.sender, seized);
         emit Liquidated(id, msg.sender, borrower, repaid, seized);
     }
 
-    /// Anyone: send the reserve share of interest to the treasury, where it buys VERDEX.
+    /// Anyone: send the reserve share of interest to the market's sink (the treasury, where it buys VERDEX, for
+    /// USDG markets; another address the owner names for stock-loan markets the treasury cannot swap).
     function skim(uint256 id) external nonReentrant returns (uint256 amount) {
         Market storage m = _markets[id];
         _accrue(id, m);
         amount = m.reserves;
         if (amount == 0) return 0;
         m.reserves = 0;
-        _push(IERC20(m.loan), treasury, amount);
+        address to = skimTo[id] == address(0) ? treasury : skimTo[id];
+        _push(IERC20(m.loan), to, amount);
         emit Skimmed(id, amount);
     }
 
@@ -295,9 +336,14 @@ contract VerdexLend {
         bool c0 = t0 == collateral && t1 == loan;
         if (!c0 && !(t1 == collateral && t0 == loan)) revert BadMarket();
         _checkParams(ltvBps, liqThresholdBps, liqBonusBps);
+        if (twapWindow != 0) {
+            (,,, uint16 cardinality,,,) = IUniswapV3Pool(pool).slot0();
+            if (cardinality < MIN_CARDINALITY) revert BadMarket(); // the pool must keep enough history for the window
+        }
         id = _markets.length;
         _markets.push();
         Market storage m = _markets[id];
+        skimTo[id] = treasury;
         m.collateral = collateral; m.loan = loan; m.pool = pool; m.collateralIsToken0 = c0; m.enabled = true;
         m.ltvBps = ltvBps; m.liqThresholdBps = liqThresholdBps; m.liqBonusBps = liqBonusBps; m.twapWindow = twapWindow;
         m.rateBaseBps = rateBaseBps; m.rateSlopeBps = rateSlopeBps; m.lastAccrual = uint64(block.timestamp);
@@ -323,6 +369,8 @@ contract VerdexLend {
     }
 
     function setEnabled(uint256 id, bool on) external onlyOwner { _markets[id].enabled = on; }
+    /// Where market `id`'s reserves (the protocol's share of interest, never user funds) are skimmed to.
+    function setSkimTo(uint256 id, address to) external onlyOwner { if (to == address(0) || id >= _markets.length) revert BadArgs(); skimTo[id] = to; emit SkimToSet(id, to); }
     function setReserveBps(uint16 bps) external onlyOwner { if (bps > 5000) revert BadArgs(); reserveBps = bps; }
     function setTreasury(address t) external onlyOwner { if (t == address(0)) revert BadArgs(); treasury = t; emit TreasurySet(t); }
     function transferOwnership(address to) external onlyOwner { if (to == address(0)) revert BadArgs(); emit OwnershipTransferred(owner, to); owner = to; }
@@ -345,6 +393,7 @@ contract VerdexLend {
         uint256 dt = block.timestamp - m.lastAccrual;
         if (dt == 0 || borrowAssets == 0 || supplyAssets == 0) return (borrowAssets, supplyAssets, 0);
         uint256 util = borrowAssets * BPS / supplyAssets;
+        if (util > BPS) util = BPS;
         uint256 apr = uint256(m.rateBaseBps) + uint256(m.rateSlopeBps) * util / BPS;
         uint256 interest = borrowAssets * apr * dt / (BPS * YEAR);
         reserve = interest * reserveBps / BPS;
@@ -369,17 +418,33 @@ contract VerdexLend {
         return collateralValue(id, collateralOf[id][who], true) * m.ltvBps / BPS >= debt;
     }
 
+    /// Spot and time-weighted sqrt prices. The average is over `twapWindow`; if the pool's history is shorter
+    /// (it was just created, or someone is writing an observation every block to push the window out) the
+    /// longest window the pool still has is used, as long as it is at least half the configured one. Shorter
+    /// than that, pricing refuses rather than fall back to the manipulable spot.
     function _prices(Market storage m) private view returns (uint160 spot, uint160 twap) {
-        (spot,,,,,,) = IUniswapV3Pool(m.pool).slot0();
+        uint16 index; uint16 cardinality;
+        (spot,, index, cardinality,,,) = IUniswapV3Pool(m.pool).slot0();
         if (m.twapWindow == 0) return (spot, 0);
+        uint32 window = m.twapWindow;
+        (uint32 oldest,,, bool initialized) = IUniswapV3Pool(m.pool).observations((uint256(index) + 1) % cardinality);
+        if (!initialized) (oldest,,,) = IUniswapV3Pool(m.pool).observations(0);
+        uint256 age = block.timestamp - oldest;
+        if (age < window) {
+            if (age < window / 2) revert NoOracle();
+            window = uint32(age);
+        }
         uint32[] memory ago = new uint32[](2);
-        ago[0] = m.twapWindow; ago[1] = 0;
-        try IUniswapV3Pool(m.pool).observe(ago) returns (int56[] memory cum, uint160[] memory) {
-            int56 delta = cum[1] - cum[0];
-            int24 tick = int24(delta / int56(uint56(m.twapWindow)));
-            if (delta < 0 && (delta % int56(uint56(m.twapWindow)) != 0)) tick--;
-            twap = _sqrtAtTick(tick);
-        } catch { twap = 0; }
+        ago[0] = window; ago[1] = 0;
+        (int56[] memory cum,) = IUniswapV3Pool(m.pool).observe(ago);
+        int56 delta = cum[1] - cum[0];
+        int24 tick = int24(delta / int56(uint56(window)));
+        if (delta < 0 && (delta % int56(uint56(window)) != 0)) tick--;
+        twap = _sqrtAtTick(tick);
+    }
+
+    function _available(Market storage m) private view returns (uint256) {
+        return m.totalSupplyAssets > m.totalBorrowAssets ? m.totalSupplyAssets - m.totalBorrowAssets : 0;
     }
 
     /// Loan-asset value of `amount` collateral units at sqrtPriceX96 `p` (token1 per token0).

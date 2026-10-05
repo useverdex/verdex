@@ -50,6 +50,7 @@ contract VerdexIndex {
 
     event Issued(address indexed by, address indexed to, uint256 shares);
     event Redeemed(address indexed by, address indexed to, uint256 shares);
+    event RedeemedForfeiting(address indexed by, address indexed to, uint256 shares, address skipped);
     event MaxSupplySet(uint256 maxSupply);
     event OwnershipTransferred(address indexed from, address indexed to);
 
@@ -129,6 +130,22 @@ contract VerdexIndex {
         uint256[] memory amounts = amountsOut(shares);
         for (uint256 i = 0; i < amounts.length; i++) if (amounts[i] != 0) _tokens[i].safeTransfer(to, amounts[i]);
         emit Redeemed(msg.sender, to, shares);
+    }
+
+    /// @notice Like `redeem`, but leaves the units of `skipped` in the contract. For when one component's
+    /// issuer has frozen or paused its token: the other stocks come out, the frozen one stays behind for the
+    /// remaining holders, and the index is never bricked by a single transfer that reverts.
+    function redeemForfeiting(uint256 shares, address to, address skipped) external nonReentrant {
+        if (shares == 0) revert ZeroShares();
+        _burn(msg.sender, shares);
+        uint256[] memory amounts = amountsOut(shares);
+        bool found;
+        for (uint256 i = 0; i < amounts.length; i++) {
+            if (address(_tokens[i]) == skipped) { found = true; continue; }
+            if (amounts[i] != 0) _tokens[i].safeTransfer(to, amounts[i]);
+        }
+        if (!found) revert Insufficient();
+        emit RedeemedForfeiting(msg.sender, to, shares, skipped);
     }
 
     // ----- Owner: the cap only -----

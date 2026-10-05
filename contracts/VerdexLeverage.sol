@@ -84,9 +84,9 @@ contract LeverageAccount {
             IVerdexLend(lend).addCollateral(id, got, address(this));
             IVerdexLend(lend).borrow(id, param, address(this));
         } else if (kind == CLOSE_LONG) {
-            // got the loan asset: repay everything, take the stock out, pay the pool with it
+            // got the loan asset: repay everything (unless margin already did), take the stock out, pay the pool with it
             _approve(tokenOut, lend, got);
-            IVerdexLend(lend).repay(id, type(uint256).max, address(this));
+            if (IVerdexLend(lend).debtOf(id, address(this)) != 0) IVerdexLend(lend).repay(id, type(uint256).max, address(this));
             IVerdexLend(lend).removeCollateral(id, IVerdexLend(lend).collateralOf(id, address(this)), address(this));
         } else if (kind == OPEN_SHORT) {
             // got the loan asset (USDG) for the stock sold: lock it next to the margin, borrow the stock, pay the pool with it
@@ -96,7 +96,7 @@ contract LeverageAccount {
         } else if (kind == CLOSE_SHORT) {
             // got the stock: repay the stock debt, take the USDG out, pay the pool with it
             _approve(tokenOut, lend, got);
-            IVerdexLend(lend).repay(id, type(uint256).max, address(this));
+            if (IVerdexLend(lend).debtOf(id, address(this)) != 0) IVerdexLend(lend).repay(id, type(uint256).max, address(this));
             IVerdexLend(lend).removeCollateral(id, IVerdexLend(lend).collateralOf(id, address(this)), address(this));
         } else revert Failed();
         if (!IERC20(tokenIn).transfer(msg.sender, owed)) revert Failed();
@@ -271,7 +271,7 @@ contract VerdexLeverage {
         Position storage p = positions[msg.sender][id];
         if (a == address(0) || p.side == 0) revert NoPosition();
         _pull(usdg, msg.sender, a, amount);
-        if (p.side == LONG) LeverageAccount(a).repay(address(lend), id, usdg, amount);
+        if (p.side == LONG) { uint256 d = lend.debtOf(id, a); if (amount > d) amount = d; if (amount == 0) revert BadArgs(); LeverageAccount(a).repay(address(lend), id, usdg, amount); }
         else LeverageAccount(a).lock(address(lend), id, usdg, amount);
         LeverageAccount(a).sweep(usdg, msg.sender);
         p.margin += amount;

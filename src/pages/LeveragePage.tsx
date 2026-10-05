@@ -231,7 +231,12 @@ export default function LeveragePage() {
     setBusyId(key); setErr(undefined)
     try {
       const ctx = txCtx(wallet, chain, () => {})
-      if (what === 'close') { if (s === 'long') await closeLong(ctx, p, 0n); else await closeShort(ctx, p, 0n) }
+      if (what === 'close') {
+        // Floor on the USDG that comes back: today's equity less 3%, so a moved pool reverts instead of filling badly.
+        const eq = pos(s === 'long' ? p.long.id : p.short?.id)
+        const minOut = eq && eq.side !== 0 ? BigInt(Math.max(0, Math.floor(valueOf(p, eq).equity * 0.97 * 1e6))) : 0n
+        if (s === 'long') await closeLong(ctx, p, minOut); else await closeShort(ctx, p, minOut)
+      }
       else if (what === 'settle') await settle(ctx, id)
       else {
         const amount = window.prompt(`USDG to add to the ${s} ${p.stock.ticker} position`, '25')

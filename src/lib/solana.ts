@@ -29,11 +29,11 @@ export const feeWallet = (): PublicKey | undefined => { try { return FEE_WALLET 
 
 export type SolStock = { mint: string; symbol: string; ticker: string; name: string; decimals: number; logo?: string }
 export type Basket = { symbol: string; name: string; blurb: string; tickers: string[] }
+// Only stocks with a deep enough market on Solana today (the chips beyond NVDA and RDDT are thin or unpriced there).
 export const BASKETS: Basket[] = [
   { name: 'Verdex Magnificent Seven', symbol: 'VX7', tickers: ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA'], blurb: 'The seven, equal weight.' },
-  { name: 'Verdex AI Infrastructure', symbol: 'VXAI', tickers: ['NVDA', 'MU', 'AMD', 'TSM', 'INTC', 'MSFT', 'GOOGL', 'AMZN'], blurb: 'The chips, the memory, the foundry and the clouds that rent them.' },
-  { name: 'Verdex Semis', symbol: 'VXSEMI', tickers: ['NVDA', 'MU', 'AMD', 'TSM', 'INTC'], blurb: 'The chip stack and nothing else.' },
-  { name: 'Verdex Frontier', symbol: 'VXFRONT', tickers: ['SPCX', 'CRCL', 'MSTR', 'PLTR', 'RDDT'], blurb: 'SpaceX, Circle, Strategy, Palantir, Reddit.' },
+  { name: 'Verdex AI Infrastructure', symbol: 'VXAI', tickers: ['NVDA', 'MSFT', 'GOOGL', 'AMZN', 'META'], blurb: 'The chip and the clouds that rent it.' },
+  { name: 'Verdex Frontier', symbol: 'VXFRONT', tickers: ['SPCX', 'CRCL', 'MSTR', 'PLTR'], blurb: 'SpaceX, Circle, Strategy, Palantir.' },
   { name: 'Verdex Index Funds', symbol: 'VXETF', tickers: ['SPY', 'QQQ'], blurb: 'The S&P 500 and the Nasdaq 100, half each.' },
 ]
 // The xStocks on Solana, from the asset list the site already has.

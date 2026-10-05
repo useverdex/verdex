@@ -49,8 +49,8 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   v3 pool with a price floor read from the pool, sends the stock to the owner and a tip to the executor.
   It holds nothing between buys; the admin only keeps the executor list. The executor
   (`scripts/executor-lib.mjs`) runs every ten minutes inside `server.mjs`, the Node process that
-  serves the built site on Railway, from a gas-only wallet whose key lives outside the public
-  repository; `scripts/autoinvest-executor.mjs` runs one pass from a shell or a cron.
+  serves the built site on Railway, from a gas-only wallet whose key is read from the `EXECUTOR_KEY`
+  environment variable (or `executor.key`, which never leaves the private repository); `scripts/autoinvest-executor.mjs` runs one pass from a shell or a cron.
 - **Verdex Index.** Baskets of tokenized stocks as one ERC-20 each: `contracts/VerdexIndex.sol` (the index and its
   factory) and `contracts/VerdexIndexRouter.sol` (USDG in, shares out, in one transaction through the stocks' Uniswap
   v3 pools, with a per-leg price floor and a fee waived for VERDEX holders). Fixed units per share, redeem in kind
@@ -67,12 +67,15 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   signs them all in one prompt (`src/lib/sol/wallet.ts`: Phantom, Solflare, Backpack, Wallet Standard) and the page
   sends them in order, polling for confirmation. The stocks land in the wallet as themselves. Tested with
   `simulateTransaction` against mainnet for a funded wallet, and end to end on the page with a mock wallet.
-- **Verdex Lend.** `contracts/VerdexLend.sol`: isolated money markets for tokenized stocks. Long markets lend USDG against
+- **Verdex Lend.** `contracts/VerdexLend.sol` (v3): isolated money markets for tokenized stocks. Long markets lend USDG against
   a stock; short markets lend the stock against USDG. Supply and earn the interest; lock collateral and borrow. Prices from
   the pair's Uniswap v3 pool (lower collateral value of spot and a 30-minute average to borrow, higher to liquidate), hard
-  caps, a 10% reserve of interest to the treasury. No function moves funds to the owner. Deployed from `/deploy/lend`;
-  the page is `/lend/verdex`.
-- **Leverage.** `contracts/VerdexLeverage.sol`: two-times long and short on top of Lend. A long buys the stock with margin
+  caps, a 10% reserve of interest to the treasury. No function moves funds to the owner. Pricing never falls back to
+  spot: if the pool's history is shorter than the window, the longest window it has is used down to half, and below
+  that pricing refuses. Liquidations hand collateral over at the lower of spot and the average, floored at the
+  average less the bonus; a position that runs out of collateral has its remaining debt written off against the
+  reserves, then the suppliers. Deployed from `/deploy/lend`; the page is `/lend/verdex`. See `docs/audit-2026-10-05.md`.
+- **Leverage.** `contracts/VerdexLeverage.sol` (v2): up to 1.9x long and 2x short on top of Lend. A long buys the stock with margin
   plus borrowed USDG in one swap and locks it; a short locks margin, borrows the stock and sells it in the same swap.
   Each wallet gets its own account contract, so each position is its own Lend position. Open interest capped per market.
   Deployed from `/deploy/leverage`; the page is `/leverage`.

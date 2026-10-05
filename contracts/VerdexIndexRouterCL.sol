@@ -78,6 +78,7 @@ contract VerdexIndexRouterCL {
 
     constructor(IUniswapV3Factory factory_, address usdg_, address verdex_, address treasury_, uint16 feeBps_) {
         if (feeBps_ > MAX_FEE_BPS) revert FeeTooHigh();
+        if (address(factory_) == address(0) || usdg_ == address(0) || treasury_ == address(0)) revert BadArgs();
         factory = factory_;
         usdg = usdg_;
         verdex = verdex_;
