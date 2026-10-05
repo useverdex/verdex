@@ -47,6 +47,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Verdex Lend', icon: HandCoinIcon, path: '/lend/verdex' },
       { label: 'Leverage', icon: TrendIcon, path: '/leverage' },
+      { label: 'Verdex on Solana', icon: PieIcon, path: '/solana' },
       { label: 'Lend and Borrow', icon: HandCoinIcon, path: '/lend' },
       { label: 'Multiply', icon: TrendIcon, path: '/lend?tab=multiply' },
     ],

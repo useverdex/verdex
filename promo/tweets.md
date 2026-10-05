@@ -733,6 +733,144 @@ Box 4 of phase 2. Say it plainly: unaudited, capped, up to 1.9x long and 2x shor
 >
 > useverdex.xyz/leverage
 
+## The night after Leverage (one video each, spaced an hour or two apart)
+
+Four boxes in 36 hours, then the multichain announcement, then the two things nobody has noticed yet. Every video already exists except the scoreboard clip. No dates, no partnership claims, VERDEX stays on Robinhood Chain.
+
+### 1. Scoreboard (`clip-fourofeleven.mp4`, 12 s)
+
+> Four of eleven. Checked.
+>
+> Index. Fees buy VERDEX. Lend. Leverage. Thirty-six hours, four contract families, every one verified and live on Robinhood Chain.
+>
+> Seven to go. We are not slowing down.
+>
+> useverdex.xyz
+
+### 2. Multichain (`verdex-base.mp4`, then `verdex-solana.mp4` as the reply)
+
+> Verdex is going multichain.
+>
+> The same contracts, deployed where tokenized stocks already trade. @base first: Coinbase's NVDAc, TSLAc, AAPLc and the rest, in their own pools. @solana after: xStocks, which no DCA there will take.
+>
+> Auto-Invest without you, the Index, Orders. One site, a chain selector.
+>
+> VERDEX stays on Robinhood Chain. One pool, one supply. What Verdex earns on every chain buys it at home.
+>
+> useverdex.xyz
+
+Reply, with `verdex-solana.mp4`:
+
+> Solana, specifically.
+>
+> Every tokenized stock there is Token-2022, and the DCA tools people use reject them. A $100-a-week plan into NVDAx does not exist today. That gap is the first thing Verdex ships on @solana: a program that holds nothing, a delegate allowance, a swap, your wallet.
+>
+> Then the Index: baskets of xStocks as one token.
+
+### 3. Lend your stock (`verdex-lend.mp4`)
+
+> The quiet half of Verdex Lend.
+>
+> Every stock now has a second market: deposit NVDA, TSLA, AAPL, MSFT, GOOGL, AMZN or META and earn what the shorts pay to borrow it. Interest in the stock itself, by the second, while it sits there.
+>
+> Nobody else on Robinhood Chain lends the stock. That is why the shorts exist.
+>
+> useverdex.xyz/lend/verdex
+
+### 4. Holders pay nothing (`clip-holderfee.mp4`)
+
+> One line in four contracts.
+>
+> Hold any VERDEX and the Index fee is 0%. The Leverage fee is 0%. Checked onchain in the same transaction, no list, no sign-up. Everyone else's fee goes to the treasury and buys VERDEX.
+>
+> The token is the discount card for the protocol it funds.
+>
+> useverdex.xyz/token
+
+### 5. Every fee buys VERDEX, in numbers (`verdex-treasury.mp4`)
+
+> Where the fees from the last 36 hours go.
+>
+> Index fee, Leverage fee, 10% of every Lend interest payment: one contract, and the only thing it can do with a balance is buy VERDEX. Half burned on the spot. Half paid back to the wallets that paid the fees.
+>
+> Every sweep is a transaction on the page.
+>
+> useverdex.xyz/treasury
+
+## Tomorrow on Base and Solana (`clip-tomorrow-chains.mp4`, 12 s)
+
+A date, for once, because the owner chose it. Still no partnership claim: Verdex deploys there, that is all. VERDEX stays on Robinhood Chain and the tweet says so.
+
+> Tomorrow, Verdex ships on @base and @solana.
+>
+> Boxes 5 and 6 of 11. The same contracts, deployed where tokenized stocks already trade: Coinbase's stocks on Base, xStocks on Solana. One site, a chain selector.
+>
+> VERDEX stays on Robinhood Chain. One pool, one supply. What Verdex earns on every chain buys it at home.
+>
+> useverdex.xyz
+
+Shorter:
+
+> Tomorrow: @base and @solana.
+>
+> Boxes 5 and 6. Same contracts, more people. VERDEX stays home.
+>
+> useverdex.xyz
+
+## Verdex on Base is live (`verdex-base.mp4`, post once the Base contracts are deployed and the addresses are in the build)
+
+Box 5 of 11. Names chains, DEXes and issuers as what they are; no partnership. Fill in the factory and router addresses before posting.
+
+> Verdex is live on @base.
+>
+> Box 5 of 11. The Verdex Index contracts, deployed on Base: VX7, the Magnificent Seven, made of Coinbase's tokenized stocks, bought in one transaction with USDC through Aerodrome's pools. Plus Frontier and AI Infrastructure.
+>
+> Same code as Robinhood Chain. One share, a fixed number of units of every stock, held by a contract that can only give them back to you. Redeem in kind any time. Capped at 25,000 shares each while it is new. Unaudited, open source, verified.
+>
+> VERDEX stays on Robinhood Chain. The 0.25% fee on Base buys it there.
+>
+> useverdex.xyz/#/index?chain=base
+
+Reply:
+
+> How it works on Base: pick the chain at the top of the Index page, your wallet switches to Base, you pay in USDC. The router buys exactly the units in each stock's pool, mints your shares and refunds what it did not need. Sell, or redeem for the stocks themselves.
+>
+> Factory 0x… · Router 0x… on basescan.
+
+Shorter:
+
+> Live on @base. Box 5 of 11.
+>
+> The Magnificent Seven as one token, made of Coinbase's stocks, bought with USDC in one transaction. Redeem for the stocks whenever you want.
+>
+> useverdex.xyz/#/index?chain=base
+
+## Verdex on Solana is live (`verdex-solana.mp4`, post once /solana is deployed)
+
+Box 6 of 11. Honest about what it is: baskets of xStocks through Jupiter, no Verdex program, no index token on Solana. Names @solana, Jupiter and xStocks as what they are; no partnership.
+
+> Verdex is live on @solana.
+>
+> Box 6 of 11. The same baskets, made of xStocks: the Magnificent Seven, AI Infrastructure, Semis, Frontier, and SPY+QQQ. Pay in USDC; the page finds the best route into every stock through Jupiter and your wallet signs all the legs in one prompt.
+>
+> No Verdex program on Solana. Nothing held, nothing to trust but the chain: the stocks go from the pool straight to your wallet, and you sell any share of them the same way.
+>
+> VERDEX stays on Robinhood Chain.
+>
+> useverdex.xyz/#/solana
+
+Reply:
+
+> Why no index token on Solana yet: a token that holds the stocks needs a program, and a program needs an audit before it holds anyone's money. Until then the basket is the stocks themselves in your wallet, which is also the version with nothing to hack. Phantom, Solflare, Backpack.
+
+Shorter:
+
+> Live on @solana. Box 6 of 11.
+>
+> Seven stocks, seven legs, one signature. USDC in, xStocks in your wallet. No program, no custody.
+>
+> useverdex.xyz/#/solana
+
 ## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
 
 Eleven clips, one per box, in the order we will build them, numbered in the corner. Every caption ends in "Coming": nothing in this series is live, and no clip carries a date. Post one a day after the article, or two on the days a box ships. Reply to each with the previous one so the series threads itself.

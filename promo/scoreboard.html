@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verdex, four of eleven clip</title>
+<style>
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-400.woff2) format('woff2'); font-weight: 400; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: Geist; src: url(../src/fonts/Geist-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'LT Remark'; src: url(../src/fonts/LT-Remark-400.woff2) format('woff2'); font-weight: 400; }
+:root { --bg: #050505; --lime: #C2EA8A; --chip: #1A1A1A; --tile: #171717; --panel: #0F0F0F; --soft: rgba(255,255,255,.72); --muted: rgba(255,255,255,.45); --faint: rgba(255,255,255,.3); --red: #F87171; --mono: ui-monospace, Menlo, 'DejaVu Sans Mono', monospace; }
+html, body { margin: 0; background: var(--bg); overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: #fff; font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; }
+.serif { font-family: 'LT Remark', serif; font-weight: 400; letter-spacing: -0.035em; line-height: .98; }
+.ch { display: inline-block; will-change: transform, opacity, filter; }
+.ch.sp { width: .28em; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 96px 96px; background-position: center; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; background: var(--chip); font-size: 24px; font-weight: 500; vertical-align: middle; }
+.tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,.1); color: var(--soft); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.head { position: absolute; left: 0; right: 0; text-align: center; will-change: transform, opacity, filter; }
+.head h1 { margin: 0; font-size: 92px; }
+.head p { margin: 14px 0 0; font-size: 30px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); }
+/* Stats strip */
+.stats { position: absolute; left: 50%; top: 330px; width: 1400px; margin-left: -700px; display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); overflow: hidden; will-change: transform, opacity, filter; }
+.stats > div { padding: 30px 34px; border-left: 1px solid rgba(255,255,255,.08); }
+.stats > div:first-child { border-left: none; }
+.stats .l { font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.stats .v { font-family: 'LT Remark', serif; font-size: 58px; letter-spacing: -0.02em; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; }
+/* Panels */
+.panel { position: absolute; width: 900px; box-sizing: border-box; padding: 30px 36px 32px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.panel .hd { display: flex; align-items: center; gap: 16px; }
+.panel .hd .ic { width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,.06); display: grid; place-items: center; color: var(--lime); flex-shrink: 0; }
+.panel .hd .ic svg { width: 24px; height: 24px; }
+.panel .hd b { font-size: 24px; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.panel .hd span { font-size: 16px; color: var(--muted); display: block; margin-top: 3px; }
+.panel .big { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 26px; }
+.panel .big b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 60px; letter-spacing: -0.02em; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+.panel .big b.lime { color: var(--lime); }
+.panel .big span { font-size: 16px; color: var(--muted); display: block; margin-top: 8px; }
+.panel .rows { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
+.panel .lab { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 8px; }
+.row { display: flex; align-items: center; gap: 16px; height: 46px; padding: 0 12px; border-radius: 10px; font-size: 18px; will-change: opacity, transform; }
+.row .w { color: var(--faint); width: 150px; flex-shrink: 0; font-size: 16px; }
+.row .t { flex: 1; color: var(--soft); }
+.row .a { font-weight: 500; font-variant-numeric: tabular-nums; }
+.row .a.lime { color: var(--lime); }
+.row .a.red { color: var(--red); }
+/* Bounty tiles */
+.tile { position: absolute; width: 400px; height: 230px; padding: 26px 28px; box-sizing: border-box; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.tile .e { font-family: 'LT Remark', serif; font-size: 52px; letter-spacing: -0.02em; line-height: 1; color: var(--lime); }
+.tile .e.dim { color: var(--muted); font-size: 40px; }
+.tile b { display: block; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 18px; }
+.tile span { display: block; font-size: 16px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+.cap { position: absolute; left: 0; right: 0; text-align: center; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; color: var(--soft); will-change: opacity, transform, filter; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.6) 100%); }
+#fade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { padding: 9px 16px; border-radius: 12px; background: var(--chip); font-size: 18px; font-weight: 500; }
+.chip.on { background: #fff; color: #000; }
+.field { padding: 18px 20px; border-radius: 16px; background: #161616; margin-top: 12px; }
+.field .k { display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+.field .v { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: 34px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.field .v span { font-size: 16px; color: var(--muted); font-weight: 500; }
+.btn { margin-top: 22px; height: 56px; border-radius: 16px; background: #fff; color: #000; font-size: 20px; font-weight: 500; display: grid; place-items: center; }
+.btn.ghost { background: rgba(255,255,255,.08); color: #fff; }
+.sum { margin-top: 18px; padding: 16px 18px; border-radius: 16px; background: #161616; display: grid; gap: 8px; font-size: 16px; }
+.sum div { display: flex; justify-content: space-between; color: var(--muted); }
+.sum div b { color: #fff; font-weight: 500; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #5EE0A0; margin: 0 6px 2px 14px; }
+.pos .top { display: flex; align-items: center; gap: 16px; }
+.pos .top .big2 { margin-left: auto; text-align: right; }
+.pos .top .big2 b { font-size: 34px; font-weight: 500; display: block; font-variant-numeric: tabular-nums; }
+.pos .top .big2 span { font-size: 15px; color: var(--muted); }
+.pos .fees { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 14px; font-size: 17px; color: var(--muted); }
+.pos .fees b { color: var(--lime); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pos .fees .b { margin-left: auto; padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,.08); color: #fff; font-weight: 500; }
+.pos .fees .b + .b { margin-left: 0; }
+.sched { position: absolute; left: 50%; top: 330px; width: 1000px; margin-left: -500px; display: grid; gap: 12px; }
+.buy { display: flex; align-items: center; gap: 18px; height: 78px; padding: 0 24px; border-radius: 16px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); font-size: 22px; will-change: opacity, transform, filter; }
+.buy .d { width: 190px; color: var(--muted); font-size: 18px; }
+.buy .a { flex: 1; }
+.buy .o { font-weight: 500; font-variant-numeric: tabular-nums; }
+.buy .s { width: 150px; text-align: right; font-size: 16px; color: var(--muted); }
+.buy.done .s { color: var(--lime); }
+.buy.next { border-color: rgba(194,234,138,.45); }
+.flow { position: absolute; left: 50%; top: 330px; width: 1500px; margin-left: -750px; display: flex; align-items: center; justify-content: center; gap: 0; }
+.nd { width: 300px; box-sizing: border-box; padding: 24px 26px; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.6); will-change: transform, opacity, filter; }
+.nd b { display: block; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+.nd span { display: block; font-size: 15px; color: var(--muted); margin-top: 6px; line-height: 1.35; }
+.nd em { display: block; font-style: normal; font-family: "LT Remark", serif; font-size: 44px; letter-spacing: -0.02em; margin-top: 14px; font-variant-numeric: tabular-nums; color: var(--lime); }
+.arr { width: 60px; display: grid; place-items: center; color: var(--muted); font-size: 34px; will-change: opacity; }
+.leg { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-radius: 10px; background: #161616; font-size: 16px; margin-top: 8px; will-change: opacity, transform; }
+.leg .a { flex: 1; color: var(--soft); }
+.leg .s { color: var(--muted); font-variant-numeric: tabular-nums; }
+.leg.done .s { color: var(--lime); }
+.mk { position: absolute; left: 50%; top: 300px; width: 1000px; margin-left: -500px; box-sizing: border-box; padding: 30px 36px; border-radius: 22px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 50px 120px rgba(0,0,0,.7); will-change: transform, opacity, filter; }
+.mk .top { display: flex; align-items: center; gap: 18px; }
+.mk .top img { width: 56px; height: 56px; border-radius: 50%; }
+.mk .top b { display: block; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+.mk .top span { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; }
+.mk .apr { margin-left: auto; text-align: right; }
+.mk .apr b { font-family: 'LT Remark', serif; font-weight: 400; font-size: 54px; color: var(--lime); letter-spacing: -0.02em; line-height: 1; }
+.mk .apr span { font-size: 15px; color: var(--muted); display: block; margin-top: 6px; }
+.mk .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 40px; margin-top: 28px; font-size: 20px; }
+.mk .grid2 div { display: flex; justify-content: space-between; }
+.mk .grid2 div span:first-child { color: var(--muted); }
+.mk .grid2 div span:last-child { font-weight: 500; font-variant-numeric: tabular-nums; }
+.mk .bar { height: 6px; border-radius: 3px; background: var(--chip); overflow: hidden; margin-top: 10px; }
+.mk .bar i { display: block; height: 100%; background: var(--lime); width: 0; }
+.rt { position: absolute; left: 50%; width: 1180px; margin-left: -590px; display: flex; align-items: center; gap: 22px; height: 86px; padding: 0 26px; box-sizing: border-box; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); will-change: transform, opacity, filter; }
+.rt img, .rt svg { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
+.rt b { font-size: 24px; font-weight: 500; letter-spacing: -0.02em; width: 330px; flex-shrink: 0; }
+.rt .t { flex: 1; font-size: 19px; color: var(--muted); }
+.rt .out { font-size: 20px; color: var(--lime); font-weight: 500; }
+.board { position: absolute; left: 50%; top: 300px; width: 1300px; margin-left: -650px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.bx { box-sizing: border-box; height: 118px; padding: 18px 20px; border-radius: 18px; background: var(--panel); border: 1px solid rgba(255,255,255,.08); display: flex; flex-direction: column; justify-content: space-between; will-change: transform, opacity, filter; }
+.bx .n { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+.bx .t { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+.bx.on { border-color: rgba(194,234,138,.5); background: rgba(194,234,138,.08); }
+.bx.on .n { color: var(--lime); }
+.bx.on .t::after { content: ' ✓'; color: var(--lime); }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// Four of eleven: the phase 2 board with the first four boxes checked, in 36 hours. 12 seconds. renderAt(t) paints second t.
+import { MARK_PATH } from '../src/components/logoPath.ts'
+const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
+const DURATION = 12
+function spring(t, response = 0.5, damping = 1) { if (t <= 0) return 0; const w = (2 * Math.PI) / response; if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t); const wd = w * Math.sqrt(1 - damping * damping); return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t)) }
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
+const stage = document.getElementById('stage')
+const add = (parent, html) => { const el = $(html); parent.appendChild(el); return el }
+const mat = (el, p, { y = 0, s = 0.04, blur = 14 } = {}) => { el.style.opacity = clamp(p); el.style.filter = p >= 0.999 ? 'none' : `blur(${((1 - clamp(p)) * blur).toFixed(2)}px)`; el.style.transform = `translate3d(0, ${y}px, 0) scale(${1 - s * (1 - p)})` }
+const show = (el, on) => { el.style.display = on ? '' : 'none' }
+function build() {
+  add(stage, `<div class="grid"></div>`)
+  const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
+  const ep = add(stage, `<div class="ep" style="position:absolute;left:80px;top:80px;display:inline-flex;align-items:center;gap:14px;padding:12px 20px;border-radius:12px;background:var(--chip);font-size:22px;font-weight:500;color:var(--soft)"><i style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></i><b style="color:#fff">Phase 2</b><span>36 hours in</span></div>`)
+  const h = add(stage, `<div class="head" style="top:130px"><h1 class="serif">Four of eleven. Checked.</h1><p>Index, Fees buy VERDEX, Lend, Leverage. Shipped, verified, live. Seven to go.</p></div>`)
+  const B = ['Verdex Index', 'Fees buy VERDEX', 'Verdex Lend', 'Leverage', 'Verdex on Base', 'Verdex on Solana', 'Orders without you', 'Vaults without you', 'Agent without you', 'Verdex in numbers', 'Holders vote']
+  const board = add(stage, `<div class="board"></div>`)
+  const boxes = B.map((t, i) => add(board, `<div class="bx"><span class="n">Box ${i + 1}</span><span class="t">${t}</span></div>`))
+  const cap = add(stage, `<div class="cap" style="top:700px">Next: Verdex on Base.</div>`)
+  const end = add(stage, `<div class="abs" style="left:0;right:0;top:790px;text-align:center"><span class="pill" style="font-size:26px;padding:12px 22px"><span style="width:12px;height:12px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
+  const g = document.createElement('canvas'); g.width = 480; g.height = 270
+  const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
+  for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255 }
+  gx.putImageData(id, 0, 0)
+  add(stage, `<img id="grain" src="${g.toDataURL()}" style="width:100%;height:100%;image-rendering:pixelated">`)
+  add(stage, `<div id="vignette"></div>`)
+  const fade = add(stage, `<div id="fade"></div>`)
+  window.renderAt = (t) => {
+    glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
+    const pe = spring(t - 0.2, 0.8); ep.style.opacity = clamp(pe); ep.style.transform = `translate3d(0, ${(10 * (1 - pe)).toFixed(2)}px, 0)`
+    const ph = spring(t - 0.4, 0.9); mat(h, ph, { y: 24 * (1 - ph), s: 0.02 })
+    boxes.forEach((el, i) => { const p = spring(t - (1.2 + i * 0.12), 0.8); mat(el, p, { y: 24 * (1 - p), s: 0.04, blur: 12 }); el.classList.toggle('on', i < 4 && t >= 3.6 + i * 0.45) })
+    const pc = spring(t - 6.4, 0.9); mat(cap, pc, { y: 16 * (1 - pc), s: 0.02 })
+    const pu = spring(t - 7.0, 0.9); mat(end, pu, { y: 16 * (1 - pu), s: 0.02 })
+    fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))
+  }
+}
+build()
+await document.fonts.ready
+window.DURATION = DURATION
+window.renderAt(0)
+window.__ready = true
+if (new URLSearchParams(location.search).has('play')) { const t0 = performance.now(); const loop = () => { window.renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() }
+</script>
+</body>
+</html>

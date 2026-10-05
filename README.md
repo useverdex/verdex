@@ -55,6 +55,18 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   factory) and `contracts/VerdexIndexRouter.sol` (USDG in, shares out, in one transaction through the stocks' Uniswap
   v3 pools, with a per-leg price floor and a fee waived for VERDEX holders). Fixed units per share, redeem in kind
   any time, a supply cap as the creator's only lever. Deployed from `/deploy/index`.
+- **Verdex on Base.** The same indexes on Base, made of Coinbase's tokenized stocks (NVDAc, TSLAc and the rest) and
+  quoted in USDC through Aerodrome Slipstream pools: `contracts/VerdexIndexRouterCL.sol` is the router variant that
+  looks pools up by tick spacing. The chain selector on `/index` switches between Robinhood Chain and Base;
+  `src/lib/indexChains.ts` holds each chain's DEX, quote token and deployed addresses. Deployed from
+  `/deploy/index/base`. The Coinbase tokens are executed natively by Base's nodes (their code is `0xef`), so they cannot
+  run on a local fork; the flow was tested against Base's live state with `eth_simulateV1` instead.
+- **Verdex on Solana.** `/solana`: the same baskets made of xStocks (Backed's tokenized shares on Solana), bought and sold
+  with USDC through Jupiter. No Verdex program: `src/lib/sol/tx.ts` asks Jupiter for each leg's route, composes one v0
+  transaction per leg (the 0.25% USDC fee rides on the first one when `VITE_SOLANA_FEE_WALLET` is set), the wallet
+  signs them all in one prompt (`src/lib/sol/wallet.ts`: Phantom, Solflare, Backpack, Wallet Standard) and the page
+  sends them in order, polling for confirmation. The stocks land in the wallet as themselves. Tested with
+  `simulateTransaction` against mainnet for a funded wallet, and end to end on the page with a mock wallet.
 - **Verdex Lend.** `contracts/VerdexLend.sol`: isolated money markets for tokenized stocks. Long markets lend USDG against
   a stock; short markets lend the stock against USDG. Supply and earn the interest; lock collateral and borrow. Prices from
   the pair's Uniswap v3 pool (lower collateral value of spot and a 30-minute average to borrow, higher to liquidate), hard

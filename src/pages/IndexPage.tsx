@@ -7,13 +7,14 @@ import { useQueryClient } from '@tanstack/react-query'
 import { parseUnits } from 'viem'
 import { BRAND, t, z } from '../theme/tokens'
 import { Bt, Lt, Vg } from '../theme/styles'
-import { ROBINHOOD, fmtCompact, fmtUsd, useAssets, useChains } from '../lib/api'
+import { CHAIN_NAME_LOGOS, fmtCompact, fmtUsd, useAssets, useChains } from '../lib/api'
 import { describeError, explorerTx, type ChainX } from '../lib/lifi'
-import { PHASE_LABEL, USDG, usePools, type Phase } from '../lib/pools'
-import { explorerAddress } from '../lib/autopilot'
-import { DEFAULT_SLIPPAGE_BPS, DEPLOYED, FACTORY, ROUTER, buyIndex, fmtShares, fmtUsdg, redeemIndex, sellIndex, sharesFor, useIndexWallet, useIndexes, useQuote, type IndexInfo } from '../lib/indexes'
+import { PHASE_LABEL, usePoolsOn, type Phase } from '../lib/pools'
+import { INDEX_CHAINS, indexChain, type IndexChain } from '../lib/indexChains'
+import { DEFAULT_SLIPPAGE_BPS, buyIndex, fmtShares, fmtUsdg, redeemIndex, sellIndex, sharesFor, useIndexWallet, useIndexes, useQuote, type IndexInfo } from '../lib/indexes'
 import { resolveImg } from '../lib/img'
 import { useWallet } from '../components/wallet/WalletProvider'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { CheckIcon, ExternalIcon, LayersIcon, LockIcon, PieIcon, ShieldIcon, WalletIcon } from '../components/icons'
 import { MarkIcon } from '../components/Logo'
 import { Page, PageHero, Panel, Stats } from './common'
@@ -99,11 +100,11 @@ function IndexCard({ x, shares, selected, onPick, wallet, chain, onChanged }: { 
         <Button disabled={!x.tradable || shares === 0n} onClick={() => onPick('sell')} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75 }}>Sell</Button>
         <Button disabled={shares === 0n || busy} onClick={() => void redeem()} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75 }}>Redeem for the stocks</Button>
         {busy && <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>{PHASE_LABEL[tx.phase]}</Typography>}
-        <Box component="a" href={explorerAddress(x.address)} target="_blank" rel="noopener noreferrer" sx={{ ml: 'auto', display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: t.color.textMuted, textDecoration: 'none' }}>{x.address.slice(0, 6)}…{x.address.slice(-4)} <ExternalIcon size={11} /></Box>
+        <Box component="a" href={`${x.chain.explorer}/address/${x.address}`} target="_blank" rel="noopener noreferrer" sx={{ ml: 'auto', display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: t.color.textMuted, textDecoration: 'none' }}>{x.address.slice(0, 6)}…{x.address.slice(-4)} <ExternalIcon size={11} /></Box>
       </Box>
       {!x.tradable && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1 }}>One of the pools behind this index is too thin to trade through right now. Redeeming in kind still works.</Typography>}
       {tx.phase === 'failed' && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1 }}>{tx.error}</Typography>}
-      {tx.phase === 'done' && tx.hash && chain && <Typography sx={{ fontSize: 12, color: t.color.mark, mt: 1 }}>Redeemed. The stocks are in your wallet. <Box component="a" href={explorerTx(chain, ROBINHOOD, tx.hash)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>Transaction</Box></Typography>}
+      {tx.phase === 'done' && tx.hash && chain && <Typography sx={{ fontSize: 12, color: t.color.mark, mt: 1 }}>Redeemed. The stocks are in your wallet. <Box component="a" href={explorerTx(chain, x.chain.id, tx.hash)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>Transaction</Box></Typography>}
     </Panel>
   )
 }
@@ -111,7 +112,8 @@ function IndexCard({ x, shares, selected, onPick, wallet, chain, onChanged }: { 
 function Composer({ indexes, index, side, setIndex, setSide, wallet, chain, feeBps, holder, usdg, held, onDone }: { indexes: IndexInfo[]; index: IndexInfo | undefined; side: 'buy' | 'sell'; setIndex: (a: IndexInfo) => void; setSide: (s: 'buy' | 'sell') => void; wallet: Ctx; chain: ChainX | undefined; feeBps: number; holder: boolean; usdg: bigint; held: bigint; onDone: () => void }) {
   const [amount, setAmount] = useState('100')
   const [tx, setTx] = useState<Tx>({ phase: 'idle' })
-  const amt = Number(amount) > 0 ? parseUnits(Number(amount).toFixed(6), USDG.decimals) : 0n
+  const q = index?.chain.quote ?? indexes[0].chain.quote
+  const amt = Number(amount) > 0 ? parseUnits(Number(amount).toFixed(6), q.decimals) : 0n
   const shares = useMemo(() => {
     if (!index) return 0n
     if (side === 'buy') return sharesFor(index, amt)
@@ -148,10 +150,10 @@ function Composer({ indexes, index, side, setIndex, setSide, wallet, chain, feeB
         {indexes.map((x) => <Choice key={x.address} on={x.address === index?.address} onClick={() => { setIndex(x); setTx({ phase: 'idle' }) }} disabled={!x.tradable}>{x.symbol}</Choice>)}
       </Box>
       <Box sx={{ mt: 2.5 }}>
-        <Label>{side === 'buy' ? 'Amount, in USDG' : `Shares of ${index?.symbol ?? 'the index'}`}</Label>
+        <Label>{side === 'buy' ? `Amount, in ${q.symbol}` : `Shares of ${index?.symbol ?? 'the index'}`}</Label>
         {side === 'buy' && <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>{AMOUNTS.map((a) => <Choice key={a} on={Number(amount) === a} onClick={() => setAmount(String(a))}>${a}</Choice>)}</Box>}
         {side === 'sell' && held > 0n && <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>{[25, 50, 100].map((p) => <Choice key={p} on={false} onClick={() => setAmount((Number(held) / 1e18 * p / 100).toFixed(6).replace(/\.?0+$/, ''))}>{p}%</Choice>)}</Box>}
-        <InputBase value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))} placeholder="Amount" inputProps={{ 'aria-label': side === 'buy' ? 'USDG to spend' : 'Shares to sell', inputMode: 'decimal' }} sx={{ width: '100%', height: 40, px: 1.5, borderRadius: t.radius.input, background: t.color.hover, fontSize: 14, fontWeight: 500 }} />
+        <InputBase value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))} placeholder="Amount" inputProps={{ 'aria-label': side === 'buy' ? `${q.symbol} to spend` : 'Shares to sell', inputMode: 'decimal' }} sx={{ width: '100%', height: 40, px: 1.5, borderRadius: t.radius.input, background: t.color.hover, fontSize: 14, fontWeight: 500 }} />
       </Box>
       <Box sx={{ mt: 3, p: 2, borderRadius: t.radius.panel, background: t.color.raised, display: 'grid', gap: 1 }}>
         {side === 'buy' ? (
@@ -168,19 +170,19 @@ function Composer({ indexes, index, side, setIndex, setSide, wallet, chain, feeB
           </>
         )}
         <Row k="Price floor" v={`${DEFAULT_SLIPPAGE_BPS / 100}% from spot, on every leg`} />
-        <Row k={`${BRAND.name} fee`} v={holder ? 'None, you hold VERDEX' : `${(feeBps / 100).toFixed(2)}% in USDG`} />
+        <Row k={`${BRAND.name} fee`} v={holder ? 'None, you hold VERDEX' : `${(feeBps / 100).toFixed(2)}% in ${q.symbol}`} />
       </Box>
-      {short && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1.5 }}>Your wallet holds {fmtUsdg(usdg)} USDG; this buy needs up to {fmtUsdg(maxIn)}.</Typography>}
+      {short && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1.5 }}>Your wallet holds {fmtUsdg(usdg)} {q.symbol} on {index?.chain.name}; this buy needs up to {fmtUsdg(maxIn)}.</Typography>}
       {quote.isError && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1.5 }}>Could not read the pools. Try again in a moment.</Typography>}
       <Button onClick={() => (wallet.account ? void go() : wallet.openWalletMenu())} disabled={!!wallet.account && !ready} sx={{ ...Bt, width: '100%', mt: 2.5, height: 44 }}>
-        {!wallet.account ? 'Connect wallet' : busy ? PHASE_LABEL[tx.phase] : side === 'buy' ? `Approve USDG and buy ${index?.symbol ?? ''}` : `Approve and sell ${index?.symbol ?? ''}`}
+        {!wallet.account ? 'Connect wallet' : busy ? PHASE_LABEL[tx.phase] : side === 'buy' ? `Approve ${q.symbol} and buy ${index?.symbol ?? ''}` : `Approve and sell ${index?.symbol ?? ''}`}
       </Button>
       {tx.phase === 'failed' && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1.5 }}>{tx.error}</Typography>}
       {tx.phase === 'done' && tx.hash && chain && (
         <Box sx={{ mt: 2, p: 2, borderRadius: t.radius.panel, background: 'rgba(194,234,138,.10)', border: '1px solid rgba(194,234,138,.3)' }}>
-          <Typography sx={{ fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}><CheckIcon size={16} /> {side === 'buy' ? 'The shares are in your wallet.' : 'Sold. The USDG is in your wallet.'}</Typography>
-          <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.5 }}>{side === 'buy' ? 'One transaction bought every stock behind them and issued the shares. Unspent USDG came back.' : 'One transaction redeemed the stocks and sold each one in its pool.'}</Typography>
-          <Box component="a" href={explorerTx(chain, ROBINHOOD, tx.hash)} target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Transaction <ExternalIcon size={12} /></Box>
+          <Typography sx={{ fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}><CheckIcon size={16} /> {side === 'buy' ? 'The shares are in your wallet.' : `Sold. The ${q.symbol} is in your wallet.`}</Typography>
+          <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.5 }}>{side === 'buy' ? `One transaction bought every stock behind them and issued the shares. Unspent ${q.symbol} came back.` : 'One transaction redeemed the stocks and sold each one in its pool.'}</Typography>
+          <Box component="a" href={explorerTx(chain, index?.chain.id ?? 0, tx.hash)} target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Transaction <ExternalIcon size={12} /></Box>
         </Box>
       )}
     </Panel>
@@ -190,13 +192,18 @@ function Composer({ indexes, index, side, setIndex, setSide, wallet, chain, feeB
 export default function IndexPage() {
   const wallet = useWallet()
   const { account, openWalletMenu } = wallet
+  const navigate = useNavigate()
+  const [params, setParams] = useSearchParams()
+  const ic: IndexChain = indexChain(params.get('chain') ?? undefined)
+  const setChain = (c: IndexChain) => { setParams(c.key === 'robinhood' ? {} : { chain: c.key }, { replace: true }); setPicked(undefined) }
+  const DEPLOYED = ic.deployed
   const { data: chains } = useChains()
-  const chain = chains?.find((c) => c.id === ROBINHOOD) as ChainX | undefined
+  const chain = chains?.find((c) => c.id === ic.id) as ChainX | undefined
   const assets = useAssets()
-  const pools = usePools(assets.data?.assets)
-  const indexes = useIndexes(assets.data?.assets, pools.data)
+  const pools = usePoolsOn(ic, assets.data?.assets)
+  const indexes = useIndexes(ic, assets.data?.assets, pools.data)
   const addresses = useMemo(() => indexes.data?.map((x) => x.address), [indexes.data])
-  const w = useIndexWallet(account?.address, addresses)
+  const w = useIndexWallet(ic, account?.address, addresses)
   const qc = useQueryClient()
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['indexes'] }); void qc.invalidateQueries({ queryKey: ['index-wallet'] }) }
   const [side, setSide] = useState<'buy' | 'sell'>('buy')
@@ -208,6 +215,7 @@ export default function IndexPage() {
   const mine = list.reduce((s, x) => s + (Number(w.data?.shares[x.address.toLowerCase()] ?? 0n) / 1e18) * x.navUsd, 0)
   const holder = (w.data?.verdex ?? 0n) > 0n
   const feeBps = w.data?.feeBps ?? 25
+  const q = ic.quote.symbol
   const pick = (x: IndexInfo, s: 'buy' | 'sell') => { setPicked(x.address); setSide(s); document.getElementById('index-composer')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }
 
   return (
@@ -216,7 +224,7 @@ export default function IndexPage() {
         label="Verdex Index"
         badges={<Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>{DEPLOYED ? 'Live' : 'Contracts not deployed'}</Box>}
         title={<>A basket<br />becomes a token.</>}
-        lead={`An index is one ERC-20 backed by a fixed number of units of each stock behind it, held by a contract on Robinhood Chain. Buy it with USDG and one transaction buys every stock and issues your shares; sell it and the same happens in reverse. Or redeem it for the stocks themselves, any time. The contract holds the stocks and nothing else. No issuer, no manager, no Verdex fee for VERDEX holders.`}
+        lead={`An index is one ERC-20 backed by a fixed number of units of each stock behind it, held by a contract on ${ic.name}. Buy it with ${q} and one transaction buys every stock and issues your shares; sell it and the same happens in reverse. Or redeem it for the stocks themselves, any time. The contract holds the stocks and nothing else. No issuer, no manager${ic.key === 'robinhood' ? ', no Verdex fee for VERDEX holders' : ''}.`}
         action={
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <Button onClick={() => (account ? document.getElementById('index-composer')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) : openWalletMenu())} sx={{ ...Bt, gap: 1 }}>
@@ -229,15 +237,28 @@ export default function IndexPage() {
         }
       />
 
+      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 4 }}>
+        {INDEX_CHAINS.map((c) => (
+          <Choice key={c.key} on={c.key === ic.key} onClick={() => setChain(c)}>
+            <Avatar src={CHAIN_NAME_LOGOS[c.name]} sx={{ width: 16, height: 16, background: 'transparent' }} />
+            {c.name}
+            {!c.deployed && <Box component="span" sx={{ color: c.key === ic.key ? t.color.page : t.color.textMuted, fontWeight: 400, opacity: 0.8 }}>soon</Box>}
+          </Choice>
+        ))}
+        <Choice on={false} onClick={() => navigate('/solana')}>
+          <Avatar src={CHAIN_NAME_LOGOS.Solana} sx={{ width: 16, height: 16, background: 'transparent' }} />
+          Solana
+        </Choice>
+      </Box>
       <Stats items={[{ label: 'Indexes', value: indexes.data ? list.length : DEPLOYED ? '…' : '0' }, { label: 'Held in them', value: indexes.data ? fmtCompact(tvl) : DEPLOYED ? '…' : '$0' }, { label: 'Yours', value: account ? (w.data ? fmtUsd(mine, 0) : '…') : '-' }, { label: `${BRAND.name} fee`, value: holder ? '0%' : `${(feeBps / 100).toFixed(2)}%` }]} />
       <Typography sx={{ fontSize: 13, color: t.color.textLabel, mt: 1.5 }}>
-        Read from the {BRAND.name} Index contracts on Robinhood Chain{DEPLOYED ? <>, factory <Box component="a" href={explorerAddress(FACTORY)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>{FACTORY.slice(0, 6)}…{FACTORY.slice(-4)}</Box> and router <Box component="a" href={explorerAddress(ROUTER)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>{ROUTER.slice(0, 6)}…{ROUTER.slice(-4)}</Box></> : ''}. Prices come from each stock's deepest USDG pool on Uniswap v3, as you look.
+        Read from the {BRAND.name} Index contracts on {ic.name}{DEPLOYED ? <>, factory <Box component="a" href={`${ic.explorer}/address/${ic.factory}`} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>{ic.factory.slice(0, 6)}…{ic.factory.slice(-4)}</Box> and router <Box component="a" href={`${ic.explorer}/address/${ic.router}`} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>{ic.router.slice(0, 6)}…{ic.router.slice(-4)}</Box></> : ''}. Prices come from each stock's deepest {q} pool on {ic.dexName}, as you look.{ic.key === 'base' ? ' The stocks on Base are Coinbase\'s tokenized shares.' : ''}
       </Typography>
 
       {!DEPLOYED && (
         <Panel sx={{ mt: 5, p: { xs: 3, md: 4 } }}>
-          <Typography sx={{ fontSize: 16, fontWeight: 500 }}>The contracts are not on the chain yet.</Typography>
-          <Typography sx={{ fontSize: 14, color: t.color.textMuted, mt: 0.75 }}>The code is in the repository and tested on a fork of Robinhood Chain. The indexes open here the moment it is deployed.</Typography>
+          <Typography sx={{ fontSize: 16, fontWeight: 500 }}>The contracts are not on {ic.name} yet.</Typography>
+          <Typography sx={{ fontSize: 14, color: t.color.textMuted, mt: 0.75 }}>The code is in the repository and tested against {ic.name}'s live state. The indexes open here the moment it is deployed.</Typography>
         </Panel>
       )}
 
@@ -245,7 +266,7 @@ export default function IndexPage() {
         <Box sx={{ minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 2, mb: 2, flexWrap: 'wrap' }}>
             <Typography component="h2" sx={{ ...t.type.h3, color: t.color.text }}>The indexes</Typography>
-            {account && w.data && <Typography sx={{ fontSize: 13, color: t.color.textMuted }}>wallet {fmtUsdg(w.data.usdg)} USDG</Typography>}
+            {account && w.data && <Typography sx={{ fontSize: 13, color: t.color.textMuted }}>wallet {fmtUsdg(w.data.usdg)} {q}</Typography>}
           </Box>
           <Box sx={{ display: 'grid', gap: 1.5 }}>
             {list.map((x) => <IndexCard key={x.address} x={x} shares={w.data?.shares[x.address.toLowerCase()] ?? 0n} selected={x.address === index?.address} onPick={(s) => pick(x, s)} wallet={wallet} chain={chain} onChanged={refresh} />)}
@@ -263,7 +284,7 @@ export default function IndexPage() {
         <Typography component="h2" sx={{ ...t.type.h3, color: t.color.text }}>How it works</Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0,1fr))' }, gap: 2.5, mt: 4 }}>
           <Step n={1} icon={<PieIcon size={20} />} title="Units, not weights" text="Each share is a fixed number of units of every stock, set at creation. The weights you see are those units at today's prices. Nothing rebalances, nothing is managed; the basket is what it says, forever." />
-          <Step n={2} icon={<LayersIcon size={20} />} title="One transaction in, one out" text="Buying sends USDG to the router, which buys exactly the units in each stock's Uniswap v3 pool, issues the shares and refunds what it did not need. Selling redeems the stocks and sells each one. Every leg has a price floor; a thin pool makes the trade revert, not fill badly." />
+          <Step n={2} icon={<LayersIcon size={20} />} title="One transaction in, one out" text={`Buying sends ${q} to the router, which buys exactly the units in each stock's ${ic.dexName} pool, issues the shares and refunds what it did not need. Selling redeems the stocks and sells each one. Every leg has a price floor; a thin pool makes the trade revert, not fill badly.`} />
           <Step n={3} icon={<LockIcon size={20} />} title="Redeem in kind, always" text="Your shares are a claim on the stocks in the contract, and you can take them out whenever you want with no pool, no router and no fee. The index contract holds the stocks behind the shares and nothing else." />
         </Box>
       </Box>
@@ -276,11 +297,11 @@ export default function IndexPage() {
           </Box>
           <Typography component="h2" sx={{ ...t.type.h3, color: t.color.text, mt: 2.5 }}>Capped while it is new.</Typography>
           <Typography sx={{ ...t.type.body, color: t.color.textMuted, mt: 2 }}>
-            Every index starts with a cap on its share supply, so the amount of stock any one contract holds stays small while the code is young. The contracts are open source, verified on the explorer and tested on a fork of Robinhood Chain, and they are unaudited. The index contract has no function that moves your stocks anywhere but back to a redeemer; its only lever is the cap. Read it before you trust it with more than you would lose.
+            Every index starts with a cap on its share supply, so the amount of stock any one contract holds stays small while the code is young. The contracts are open source, verified on the explorer and tested against each chain's live state, and they are unaudited. The index contract has no function that moves your stocks anywhere but back to a redeemer; its only lever is the cap. Read it before you trust it with more than you would lose.
           </Typography>
         </Box>
         <Box sx={{ display: 'grid', gap: 1.5 }}>
-          {[[<ShieldIcon key="a" size={16} />, 'The index holds only the stocks behind the shares. There is no function to send them elsewhere.'], [<WalletIcon key="b" size={16} />, 'The router keeps no balance. USDG in, shares out, in one transaction; what is left over is refunded.'], [<CheckIcon key="c" size={16} />, 'VERDEX holders pay no Verdex fee on buys and sells. Redeeming in kind is free for everyone.']].map(([icon, text], i) => (
+          {[[<ShieldIcon key="a" size={16} />, 'The index holds only the stocks behind the shares. There is no function to send them elsewhere.'], [<WalletIcon key="b" size={16} />, `The router keeps no balance. ${q} in, shares out, in one transaction; what is left over is refunded.`], [<CheckIcon key="c" size={16} />, ic.key === 'robinhood' ? 'VERDEX holders pay no Verdex fee on buys and sells. Redeeming in kind is free for everyone.' : 'The fee on Base is 0.25% and goes to the treasury wallet, which buys VERDEX. Redeeming in kind is free for everyone.']].map(([icon, text], i) => (
             <Box key={i} sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', p: 2, borderRadius: t.radius.panel, background: t.color.raised }}>
               <Box sx={{ color: t.color.mark, mt: 0.25 }}>{icon}</Box>
               <Typography sx={{ fontSize: 14, color: t.color.textSoft }}>{text}</Typography>

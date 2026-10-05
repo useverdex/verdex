@@ -31,6 +31,7 @@ const PrivateMarketsPage = lazy(() => import('./pages/PrivateMarketsPage'))
 const AutoPilotPage = lazy(() => import('./pages/AutoPilotPage'))
 const IndexPage = lazy(() => import('./pages/IndexPage'))
 const DeployIndexPage = lazy(() => import('./pages/DeployIndexPage'))
+const SolanaPage = lazy(() => import('./pages/SolanaPage'))
 const VerdexLendPage = lazy(() => import('./pages/VerdexLendPage'))
 const DeployLendPage = lazy(() => import('./pages/DeployLendPage'))
 const LeveragePage = lazy(() => import('./pages/LeveragePage'))
@@ -81,6 +82,7 @@ const TITLES: [string, string][] = [
   ['/leverage', 'Leverage'],
   ['/deploy/leverage', 'Deploy Leverage'],
   ['/deploy/index', 'Deploy Verdex Index'],
+  ['/solana', 'Verdex on Solana'],
   ['/treasury', 'Fees buy VERDEX'],
   ['/deploy/treasury', 'Deploy Treasury'],
   ['/vaults', 'Vaults'],
@@ -138,6 +140,8 @@ export default function App() {
             <Route path="/deploy/auto-invest" element={<DeployAutoInvestPage />} />
             <Route path="/index" element={<EarlyGate path="/index"><IndexPage /></EarlyGate>} />
             <Route path="/deploy/index" element={<DeployIndexPage />} />
+            <Route path="/deploy/index/:chainKey" element={<DeployIndexPage />} />
+            <Route path="/solana" element={<SolanaPage />} />
             <Route path="/lend/verdex" element={<EarlyGate path="/lend/verdex"><VerdexLendPage /></EarlyGate>} />
             <Route path="/deploy/lend" element={<DeployLendPage />} />
             <Route path="/leverage" element={<EarlyGate path="/leverage"><LeveragePage /></EarlyGate>} />

@@ -7,6 +7,7 @@ import { encodeFunctionData, erc20Abi, formatUnits, maxUint256, parseAbi, type A
 import { ROBINHOOD, type Asset } from './api'
 import { chainMeta, publicClientFor, waitForTx, type ChainX } from './lifi'
 import { readEthUsd } from './token'
+import type { IndexChain } from './indexChains'
 
 export const FACTORY = '0x1f7d7550B1b028f7571E69A784071F0205FD2EfA' as Address
 export const POSITION_MANAGER = '0x73991a25C818Bf1f1128dEAaB1492D45638DE0D3' as Address
@@ -244,7 +245,7 @@ export function usePositions(owner: Address | undefined, pools: Pool[] | undefin
 // Transactions. Each one switches to Robinhood Chain if needed, approves once per token when the
 // allowance is short, then sends one transaction and waits for it.
 export type Phase = 'idle' | 'switching' | 'approving' | 'confirming' | 'pending' | 'done' | 'failed'
-export const PHASE_LABEL: Record<Phase, string> = { idle: '', switching: 'Switch to Robinhood Chain in your wallet…', approving: 'Approve once in your wallet…', confirming: 'Confirm in your wallet…', pending: 'Waiting for the network…', done: 'Done', failed: 'Failed' }
+export const PHASE_LABEL: Record<Phase, string> = { idle: '', switching: 'Switch chains in your wallet…', approving: 'Approve once in your wallet…', confirming: 'Confirm in your wallet…', pending: 'Waiting for the network…', done: 'Done', failed: 'Failed' }
 export type TxCtx = { walletClient: WalletClient; account: { address: Address; chainId: number }; chain: ChainX | undefined; switchChain: (chainId: number, meta?: ReturnType<typeof chainMeta>) => Promise<void>; onPhase: (p: Phase) => void }
 const SLIPPAGE = 0.005
 const deadline = () => BigInt(Math.floor(Date.now() / 1000) + 20 * 60)
@@ -330,3 +331,76 @@ export const fmtFee = (fee: number) => `${(fee / 10_000).toString()}%`
 export const fmtPrice = (n: number) => (n >= 1000 ? n.toLocaleString('en-US', { maximumFractionDigits: 0 }) : n >= 1 ? n.toFixed(2) : n >= 0.01 ? n.toFixed(4) : n.toExponential(2))
 export const fmtQty = (n: number, d = 4) => (n === 0 ? '0' : n < 0.000001 ? '<0.000001' : n >= 1000 ? n.toLocaleString('en-US', { maximumFractionDigits: 0 }) : n >= 1 ? n.toFixed(Math.min(d, 4)) : n.toFixed(6))
 export { formatUnits }
+
+// ----- Other chains (Verdex Index on Base) -----
+// The same discovery for one quote token on a chain from src/lib/indexChains.ts. Slipstream pools are
+// keyed by tick spacing and carry their fee as a separate read.
+const clPoolAbi = parseAbi(['function liquidity() view returns (uint128)', 'function slot0() view returns (uint160 sqrtPriceX96,int24 tick,uint16,uint16,uint16,bool)', 'function fee() view returns (uint24)'])
+const clFactoryAbi = parseAbi(['function getPool(address,address,int24) view returns (address)'])
+export const clientFor = (ic: IndexChain) => publicClientFor({ id: ic.id, key: ic.key, name: ic.name, chainType: 'EVM', logoURI: '', mainnet: true, metamask: { rpcUrls: ic.rpcUrls } })
+export function stockTokensOn(assets: Asset[], chainId: number): StockToken[] {
+  const out: StockToken[] = []
+  const seen = new Set<string>()
+  for (const a of assets)
+    for (const tk of a.tokens) {
+      if (tk.chainId !== chainId || seen.has(lc(tk.address))) continue
+      seen.add(lc(tk.address))
+      out.push({ address: tk.address as Address, symbol: tk.symbol, decimals: tk.decimals, ticker: a.ticker, name: a.name, logo: a.logo })
+    }
+  return out
+}
+export async function discoverPoolsOn(ic: IndexChain, stocks: StockToken[]): Promise<Pool[]> {
+  if (ic.dex === 'uniswap-v3' && ic.id === ROBINHOOD) return (await discoverPools(stocks)).filter((p) => lc(p.quote.address) === lc(ic.quote.address))
+  const c = clientFor(ic)
+  const q: PoolToken = ic.quote
+  const combos = stocks.flatMap((s) => ic.tiers.map((tier) => ({ s, tier })))
+  const found = await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: combos.map(({ s, tier }) => ({ address: ic.dexFactory, abi: clFactoryAbi, functionName: 'getPool' as const, args: [s.address, q.address, tier] as const })) })
+  const cands = combos.map((x, i) => ({ ...x, address: found[i].status === 'success' ? (found[i].result as Address) : undefined })).filter((x): x is typeof x & { address: Address } => !!x.address && x.address !== '0x0000000000000000000000000000000000000000')
+  if (!cands.length) return []
+  const state = await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: cands.flatMap((p) => [{ address: p.address, abi: clPoolAbi, functionName: 'liquidity' as const }, { address: p.address, abi: clPoolAbi, functionName: 'slot0' as const }, { address: p.address, abi: clPoolAbi, functionName: 'fee' as const }]) })
+  const market = await readMarketOn(ic.dexscreener, cands.map((p) => p.address))
+  const pools: Pool[] = []
+  cands.forEach((p, i) => {
+    const liq = state[i * 3], s0 = state[i * 3 + 1], f = state[i * 3 + 2]
+    if (liq.status !== 'success' || s0.status !== 'success') return
+    const liquidity = liq.result as bigint
+    if (liquidity === 0n) return
+    const [sqrtPriceX96, tick] = s0.result as unknown as [bigint, number]
+    const fee = f.status === 'success' ? Number(f.result) : 0
+    const stock: PoolToken = { address: p.s.address, symbol: p.s.symbol, decimals: p.s.decimals }
+    const [token0, token1] = sortTokens(stock, q)
+    const stockIsToken0 = lc(token0.address) === lc(stock.address)
+    const price = stockPrice(sqrtPriceX96, token0, token1, stockIsToken0)
+    const m = market.get(lc(p.address))
+    const priceUsd = m?.priceUsd || price
+    const liquidityUsd = m?.liquidityUsd ?? 0
+    const volume24hUsd = m?.volume24hUsd ?? 0
+    pools.push({ address: p.address, fee, spacing: p.tier, token0, token1, stockIsToken0, ticker: p.s.ticker, name: p.s.name, logo: p.s.logo, quote: q, sqrtPriceX96, tick, liquidity, price, priceUsd, quoteUsd: 1, liquidityUsd, volume24hUsd, feeApr: liquidityUsd > 0 ? ((volume24hUsd * (fee / 1_000_000) * 365) / liquidityUsd) * 100 : 0, txns24h: m?.txns24h ?? 0 })
+  })
+  return pools.sort((a, b) => b.liquidityUsd - a.liquidityUsd)
+}
+async function readMarketOn(chainKey: string, addresses: Address[]): Promise<Map<string, MarketRow>> {
+  const out = new Map<string, MarketRow>()
+  for (let i = 0; i < addresses.length; i += 30) {
+    try {
+      const r = await fetch(`https://api.dexscreener.com/latest/dex/pairs/${chainKey}/` + addresses.slice(i, i + 30).join(','))
+      if (!r.ok) continue
+      const j = (await r.json()) as { pairs?: { pairAddress: string; priceUsd?: string; liquidity?: { usd?: number }; volume?: { h24?: number }; txns?: { h24?: { buys: number; sells: number } } }[] }
+      for (const p of j.pairs ?? []) out.set(lc(p.pairAddress), { priceUsd: Number(p.priceUsd ?? 0), liquidityUsd: p.liquidity?.usd ?? 0, volume24hUsd: p.volume?.h24 ?? 0, txns24h: (p.txns?.h24?.buys ?? 0) + (p.txns?.h24?.sells ?? 0) })
+    } catch {
+      /* onchain figures only */
+    }
+  }
+  return out
+}
+export function usePoolsOn(ic: IndexChain, assets: Asset[] | undefined) {
+  const stocks = assets ? stockTokensOn(assets, ic.id) : []
+  return useQuery({ queryKey: ['verdex-pools-on', ic.key, stocks.length], queryFn: () => discoverPoolsOn(ic, stocks), enabled: stocks.length > 0, staleTime: 60_000, refetchInterval: 60_000, retry: 2 })
+}
+// Switch the wallet to a chain other than Robinhood Chain.
+export async function ensureChainOn(ctx: TxCtx, ic: IndexChain) {
+  if (ctx.account.chainId !== ic.id) {
+    ctx.onPhase('switching')
+    await ctx.switchChain(ic.id, chainMeta(ctx.chain && ctx.chain.id === ic.id ? ctx.chain : ({ id: ic.id, key: ic.key, name: ic.name, chainType: 'EVM', logoURI: '', mainnet: true, metamask: { chainName: ic.name, rpcUrls: ic.rpcUrls, blockExplorerUrls: [ic.explorer], nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 } } } as ChainX)))
+  }
+}
