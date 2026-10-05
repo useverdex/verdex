@@ -817,6 +817,20 @@ Shorter:
 >
 > useverdex.xyz
 
+## Verdex on Base, hype (image: `photos/hype-base.png`, 90 minutes before; render with `promo/teaser.html?bg=base&tag=Box 5 of 11&line=Base. In 90 minutes.&sub=20:30 CEST · 18:30 UTC&accent=1`)
+
+> Box 5 of 11.
+>
+> Base. In 90 minutes. The Magnificent Seven as one token, made of Coinbase's stocks, paid in USDC. 20:30 CEST, 18:30 UTC.
+>
+> useverdex.xyz
+
+Shorter:
+
+> 90 minutes. Base. Box 5 of 11.
+>
+> useverdex.xyz
+
 ## Verdex on Base is live (`verdex-base.mp4`, post once the Base contracts are deployed and the addresses are in the build)
 
 Box 5 of 11. Names chains, DEXes and issuers as what they are; no partnership. Fill in the factory and router addresses before posting.
@@ -829,13 +843,13 @@ Box 5 of 11. Names chains, DEXes and issuers as what they are; no partnership. F
 >
 > VERDEX stays on Robinhood Chain. The 0.25% fee on Base buys it there.
 >
-> useverdex.xyz/#/index?chain=base
+> useverdex.xyz/index?chain=base
 
 Reply:
 
 > How it works on Base: pick the chain at the top of the Index page, your wallet switches to Base, you pay in USDC. The router buys exactly the units in each stock's pool, mints your shares and refunds what it did not need. Sell, or redeem for the stocks themselves.
 >
-> Factory 0x… · Router 0x… on basescan.
+> Factory 0xE9BAd629a6FCC15F3D4C8a3622f169A4ec8D7349 · Router 0x52FDfD6fB5df470dd72109d27544D444D5E47f6E, verified on basescan.
 
 Shorter:
 
@@ -843,7 +857,7 @@ Shorter:
 >
 > The Magnificent Seven as one token, made of Coinbase's stocks, bought with USDC in one transaction. Redeem for the stocks whenever you want.
 >
-> useverdex.xyz/#/index?chain=base
+> useverdex.xyz/index?chain=base
 
 ## Verdex on Solana is live (`verdex-solana.mp4`, post once /solana is deployed)
 
@@ -857,7 +871,7 @@ Box 6 of 11. Honest about what it is: baskets of xStocks through Jupiter, no Ver
 >
 > VERDEX stays on Robinhood Chain.
 >
-> useverdex.xyz/#/solana
+> useverdex.xyz/solana
 
 Reply:
 
@@ -869,7 +883,7 @@ Shorter:
 >
 > Seven stocks, seven legs, one signature. USDC in, xStocks in your wallet. No program, no custody.
 >
-> useverdex.xyz/#/solana
+> useverdex.xyz/solana
 
 ## Phase 2, the series (`phase2-01-index.mp4` to `phase2-11-vote.mp4`, 12 s each)
 

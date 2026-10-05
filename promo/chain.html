@@ -130,12 +130,12 @@ const CH = (id) => `${PUB}/logos/chains/${id}.svg`
 const CHAIN = new URLSearchParams(location.search).get('chain') === 'solana' ? 'solana' : 'base'
 const C = CHAIN === 'base' ? {
   name: 'Base', logo: CH(8453), tag: 'Same contracts. More people.',
-  h2: 'Where tokenized stocks trade today.', p2: "Coinbase's stocks live in their own pools on Base. The same site, the same contracts and the same executor, pointed at them.",
+  h2: 'Where tokenized stocks trade today.', p2: "Coinbase's stocks live in their own pools on Base. The same site and the same index contracts, pointed at them, paid in USDC.",
   cards: [['NVDAc', 'NVIDIA · Coinbase', '$235.22', '<b>$2.0M</b> in the pool · Aerodrome', L('88a0e630')], ['AAPLc', 'Apple · Coinbase', '$333.43', '<b>$2.0M</b> in the pool · Aerodrome', L('2a11a6bd')], ['TSLAc', 'Tesla · Coinbase', '$371.64', '<b>$1.2M</b> in the pool · Aerodrome', L('e8ca24f9')]],
-  cap2: 'Pool sizes read from Base on 4 October 2026. They move; the page reads them live.',
-  h3: 'The same code.', p3: 'Nothing new to trust. The contracts that run on Robinhood Chain, deployed again, with a chain selector on the site.',
-  rows: [[`<img src="${PUB}/logos/issuers/coinbase.png" alt="">`, 'Auto-Invest without you', 'goes first, because it already exists', 'first'], [MARK(), 'Verdex Index', 'born on both chains, baskets of the same stocks', 'both chains'], [`<img src="${CH(8453)}" alt="">`, 'Orders without you', 'limits and stops, filled from the Aerodrome pools', 'next'], [`<img src="${CH(4663)}" alt="">`, 'A chain selector', 'same site, same wallet, same executor', 'one site']],
-  end: 'Verdex on Base. Coming.',
+  cap2: 'Pool sizes read from Base on 5 October 2026. They move; the page reads them live.',
+  h3: 'The same code.', p3: 'Nothing new to trust. The index contracts that run on Robinhood Chain, deployed again on Base, with a chain selector on the site.',
+  rows: [[MARK(), 'VX7, the Magnificent Seven', "Coinbase's seven as one token, bought in one transaction", 'live'], [`<img src="${PUB}/logos/issuers/coinbase.png" alt="">`, 'Frontier and AI Infrastructure', 'SpaceX, Strategy, Palantir, Tesla; the chip and the clouds', 'live'], [`<img src="${CH(8453)}" alt="">`, 'USDC in, shares out', 'every leg filled in its Aerodrome pool, with a price floor', 'one tx'], [`<img src="${CH(4663)}" alt="">`, 'A chain selector', 'same site, same wallet; VERDEX stays on Robinhood Chain', 'one site']],
+  end: 'Verdex on Base. Live.',
 } : {
   name: 'Solana', logo: CH(1151111081099710), tag: 'The DCA nobody offers.',
   h2: 'Every tokenized stock on Solana is Token-2022.', p2: 'xStocks are already in our Markets and Private Markets. The DCA tools people use there do not take them.',
