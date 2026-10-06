@@ -131,6 +131,12 @@ html, body { margin: 0; background: var(--bg); overflow: hidden; }
 import { MARK_PATH } from '../src/components/logoPath.ts'
 const MARK = (fill = '#C2EA8A') => `<svg viewBox="0 0 100 100" fill="${fill}" style="display:block"><path d="${MARK_PATH}"/></svg>`
 const DURATION = 12
+const Q = new URLSearchParams(location.search)
+const N = Number(Q.get('n') ?? 4)
+const WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven']
+const SUB = Q.get('sub') ?? 'Index, Fees buy VERDEX, Lend, Leverage. Shipped, verified, live. Seven to go.'
+const NEXT = Q.get('next') ?? 'Next: Verdex on Base.'
+const TAG = Q.get('tag') ?? '36 hours in'
 function spring(t, response = 0.5, damping = 1) { if (t <= 0) return 0; const w = (2 * Math.PI) / response; if (damping >= 1) return 1 - (1 + w * t) * Math.exp(-w * t); const wd = w * Math.sqrt(1 - damping * damping); return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t)) }
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
 const $ = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild }
@@ -141,12 +147,12 @@ const show = (el, on) => { el.style.display = on ? '' : 'none' }
 function build() {
   add(stage, `<div class="grid"></div>`)
   const glow = add(stage, `<div class="abs" style="left:50%;top:50%;width:1400px;height:900px;margin:-450px 0 0 -700px;background:radial-gradient(closest-side,rgba(194,234,138,.13),rgba(194,234,138,0));pointer-events:none"></div>`)
-  const ep = add(stage, `<div class="ep" style="position:absolute;left:80px;top:80px;display:inline-flex;align-items:center;gap:14px;padding:12px 20px;border-radius:12px;background:var(--chip);font-size:22px;font-weight:500;color:var(--soft)"><i style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></i><b style="color:#fff">Phase 2</b><span>36 hours in</span></div>`)
-  const h = add(stage, `<div class="head" style="top:130px"><h1 class="serif">Four of eleven. Checked.</h1><p>Index, Fees buy VERDEX, Lend, Leverage. Shipped, verified, live. Seven to go.</p></div>`)
+  const ep = add(stage, `<div class="ep" style="position:absolute;left:80px;top:80px;display:inline-flex;align-items:center;gap:14px;padding:12px 20px;border-radius:12px;background:var(--chip);font-size:22px;font-weight:500;color:var(--soft)"><i style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></i><b style="color:#fff">Phase 2</b><span>${TAG}</span></div>`)
+  const h = add(stage, `<div class="head" style="top:130px"><h1 class="serif">${WORDS[N]} of eleven. Checked.</h1><p>${SUB}</p></div>`)
   const B = ['Verdex Index', 'Fees buy VERDEX', 'Verdex Lend', 'Leverage', 'Verdex on Base', 'Verdex on Solana', 'Orders without you', 'Vaults without you', 'Agent without you', 'Verdex in numbers', 'Holders vote']
   const board = add(stage, `<div class="board"></div>`)
   const boxes = B.map((t, i) => add(board, `<div class="bx"><span class="n">Box ${i + 1}</span><span class="t">${t}</span></div>`))
-  const cap = add(stage, `<div class="cap" style="top:700px">Next: Verdex on Base.</div>`)
+  const cap = add(stage, `<div class="cap" style="top:700px">${NEXT}</div>`)
   const end = add(stage, `<div class="abs" style="left:0;right:0;top:790px;text-align:center"><span class="pill" style="font-size:26px;padding:12px 22px"><span style="width:12px;height:12px;border-radius:50%;background:var(--lime)"></span>useverdex.xyz</span></div>`)
   const g = document.createElement('canvas'); g.width = 480; g.height = 270
   const gx = g.getContext('2d'), id = gx.createImageData(480, 270)
@@ -159,7 +165,7 @@ function build() {
     glow.style.opacity = 0.5 + 0.5 * Math.sin(t * 0.8)
     const pe = spring(t - 0.2, 0.8); ep.style.opacity = clamp(pe); ep.style.transform = `translate3d(0, ${(10 * (1 - pe)).toFixed(2)}px, 0)`
     const ph = spring(t - 0.4, 0.9); mat(h, ph, { y: 24 * (1 - ph), s: 0.02 })
-    boxes.forEach((el, i) => { const p = spring(t - (1.2 + i * 0.12), 0.8); mat(el, p, { y: 24 * (1 - p), s: 0.04, blur: 12 }); el.classList.toggle('on', i < 4 && t >= 3.6 + i * 0.45) })
+    boxes.forEach((el, i) => { const p = spring(t - (1.2 + i * 0.12), 0.8); mat(el, p, { y: 24 * (1 - p), s: 0.04, blur: 12 }); el.classList.toggle('on', i < N && t >= 3.6 + i * 0.45) })
     const pc = spring(t - 6.4, 0.9); mat(cap, pc, { y: 16 * (1 - pc), s: 0.02 })
     const pu = spring(t - 7.0, 0.9); mat(end, pu, { y: 16 * (1 - pu), s: 0.02 })
     fade.style.opacity = Math.max(1 - clamp(t / 0.4), clamp((t - (DURATION - 0.4)) / 0.4))

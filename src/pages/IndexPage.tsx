@@ -125,7 +125,7 @@ function Composer({ indexes, index, side, setIndex, setSide, wallet, chain, feeB
   const busy = tx.phase !== 'idle' && tx.phase !== 'done' && tx.phase !== 'failed'
   const maxIn = quote.data ? (quote.data.total * BigInt(10_000 + DEFAULT_SLIPPAGE_BPS + fee)) / 10_000n + 1n : 0n
   const minOut = quote.data ? (quote.data.total * BigInt(10_000 - DEFAULT_SLIPPAGE_BPS - fee)) / 10_000n : 0n
-  const short = side === 'buy' && quote.data ? usdg < maxIn : false
+  const short = !!wallet.account && side === 'buy' && !!quote.data && usdg < maxIn
   const ready = !!wallet.account && !!index && index.tradable && shares > 0n && !!quote.data && !busy && !short
   const go = async () => {
     if (!wallet.walletClient || !wallet.account || !index || !quote.data) return

@@ -33,6 +33,7 @@ export const EARLY_FEATURES: EarlyFeature[] = [
   { path: '/lend/verdex', label: 'Verdex Lend', opensAt: '2026-10-04T18:00:00Z' },
   { path: '/leverage', label: 'Leverage', opensAt: '2026-10-05T01:00:00Z' },
   { path: '/solana', label: 'Verdex on Solana', opensAt: '2026-10-05T23:00:00Z' },
+  { path: '/orders/without-you', label: 'Orders without you', opensAt: '2026-10-06T15:15:00Z' },
 ]
 
 const client = () => createPublicClient({ transport: http(RPC, { retryCount: 3, retryDelay: 1200, timeout: 20_000 }) })

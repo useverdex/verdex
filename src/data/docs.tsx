@@ -253,6 +253,21 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'orders-without-you',
+    title: 'Orders without you',
+    blocks: [
+      { kind: 'p', text: `Orders without you are limit and stop orders that live in a contract on Robinhood Chain (contracts/VerdexOrders.sol) and fill while your wallet is closed. An order names a stock, a side, an amount and a price level; the level is stored as the stock's Uniswap v3 pool's own price. ${N}'s executor, the same one that runs Auto-Invest, checks every open order every ten minutes; when the pool is at or past the level it fills the order: one swap in that pool, the proceeds to your wallet, a few cents of USDG to the executor. You can fill a triggered order yourself at any time. The contract holds nothing between orders and takes no fee.` },
+      { kind: 'defs', items: [
+        { term: 'Four kinds', text: 'Buy below (a limit buy), Stop, sell below (a stop loss), Sell above (a take profit) and Buy above (a breakout). All four are the same contract call with a level and a direction.' },
+        { term: 'The allowance', text: 'You approve exactly what the order may pull: the USDG of a buy plus the tip, or the shares of a sell. Never unlimited. Revoking it ends every order at once. An order whose allowance or balance is short simply waits.' },
+        { term: 'Two prices at fill time', text: 'Your level decides when the order may fill. The pool\'s spot price less 1%, read in the same transaction, decides the least you accept. Both come from the pool itself, so a manipulated pool makes the fill wait rather than fill badly.' },
+        { term: 'Expiry', text: 'An order can be good until you cancel it, or for a day, a week or a month. After that it can no longer fill and shows as expired.' },
+        { term: 'Who fills', text: `Allowed executors and the order’s owner. The executor list is the only thing the contract’s admin can change; no admin can touch an order or move anyone’s tokens.` },
+        { term: 'Risk', text: 'The contract is unaudited. It is about two hundred lines, holds no balance, and the source and compiled bytecode are in the repository, tested on a fork of Robinhood Chain. Read it before you trust it with more than you would lose. Orders on this device (the Orders page) remain available and never leave your browser.' },
+      ] },
+    ],
+  },
+  {
     id: 'verdex-index',
     title: 'Verdex Index',
     blocks: [

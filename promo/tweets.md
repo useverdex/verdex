@@ -859,6 +859,158 @@ Shorter:
 >
 > useverdex.xyz/index?chain=base
 
+## Orders without you (`clip-orderslive.mp4`, 12 s; hype still `photos/hype-orders-without-you.png`)
+
+Box 7 of 11. The Auto-Invest pattern applied to orders: a contract keeps the level, the executor fills it, the floor is read at fill time. Say unaudited, say the allowance is exact, no fee.
+
+### Hype (image, 2h30 before)
+
+> Box 7 of 11.
+>
+> Orders without you. In 2h30: 17:15 CEST, 15:15 UTC. Set the level, close the tab. A limit or a stop that lives in a contract, filled from the pool when the price crosses it, with your floor read onchain at fill time.
+>
+> Holders first.
+>
+> useverdex.xyz
+
+### Launch (post with `clip-orderslive.mp4`, then pin it)
+
+> Orders without you are live.
+>
+> Box 7 of 11. A limit or a stop on a tokenized stock that lives in a contract on Robinhood Chain and fills while your wallet is closed. Buy NVDA below $210, sell TSLA above $400, a stop at $330: you approve an exact allowance and name the level; the executor checks every order every ten minutes and fills it from the stock's own pool with a floor read in the same transaction.
+>
+> Nothing held between orders. No fee. Unaudited, two hundred lines, verified.
+>
+> useverdex.xyz/orders/without-you
+
+Reply:
+
+> How it is different from the Orders page you already had: those lived in your browser and needed your tab open to notice the price and your tap to fill. These live in the contract, under your address, and fill without you. The floor is the pool's spot less 1%, read at fill time, so a manipulated pool makes the fill wait, not fill badly.
+
+Shorter:
+
+> Live: Orders without you. Box 7 of 11.
+>
+> Set the level, close the tab. Filled from the pool while you sleep, with your floor read onchain.
+>
+> useverdex.xyz/orders/without-you
+
+## Base is live, Solana tonight (one video each; `promo/clips22.html`, 12 s, plus the scoreboard)
+
+Ten clips for the hours between the Base launch and the Solana drop, and the morning after. Order and spacing: 1 to 5 before 23:00 UTC, an hour apart; 6 is the Solana launch (its own section above); 7 to 10 after it, spread over the next day. No partnership claims, no token on Solana, VERDEX stays on Robinhood Chain.
+
+### 1. Scoreboard (`clip-fiveofeleven.mp4`)
+
+> Five of eleven. Checked.
+>
+> Index. Fees buy VERDEX. Lend. Leverage. Base. Two days, five boxes, every contract verified. Six to go.
+>
+> Tonight, 23:00 UTC: Solana.
+>
+> useverdex.xyz
+
+### 1b. Base, in one clip (`clip-baselive.mp4`)
+
+> Base. Live.
+>
+> Coinbase's stocks, in their Aerodrome pools, as Verdex baskets: the Magnificent Seven, Frontier, AI Infrastructure. USDC in, shares out, one transaction. Redeem for the stocks any time.
+>
+> Same code as Robinhood Chain. VERDEX stays there, and the 0.25% fee on Base buys it at home.
+>
+> Box 5 of 11, shipped. useverdex.xyz/index?chain=base
+
+### 2. What a buy on Base does (`clip-usdcin.mp4`)
+
+> USDC in. Seven stocks out.
+>
+> One transaction on Base: the router buys exactly the units one VX7 share needs of AAPLc, MSFTc, GOOGLc, AMZNc, NVDAc, METAc and TSLAc in their Aerodrome pools, mints your share, refunds what it did not spend. A floor on every leg; a thin pool reverts the whole thing.
+>
+> The router keeps nothing.
+>
+> useverdex.xyz/index?chain=base
+
+### 3. Redeem in kind (`clip-redeem.mp4`)
+
+> The part nobody else offers.
+>
+> Burn your VX7 and the seven stocks land in your wallet, straight from the index. No pool, no fee, no permission. If one issuer ever freezes one of them, you redeem the other six and the frozen one waits in the contract for you.
+>
+> An index you can take apart.
+>
+> useverdex.xyz/index?chain=base
+
+### 4. One site, three chains (`clip-chains.mp4`)
+
+> One site. Three chains.
+>
+> Robinhood Chain: USDG, Uniswap v3. Base: USDC, Aerodrome, Coinbase's stocks. Solana, tonight: USDC, Jupiter, xStocks. Pick the chain at the top of the page; same wallet, same baskets.
+>
+> One token. VERDEX stays on Robinhood Chain, and every chain feeds it.
+>
+> useverdex.xyz/index
+
+### 5. Ninety minutes (`clip-solanatonight.mp4`, post at 21:30 UTC)
+
+> Ninety minutes.
+>
+> Solana at 23:00 UTC. The same baskets, made of xStocks, paid in USDC through Jupiter. Seven stocks, one signature, nothing held by anyone but you. Holders of VERDEX get in before the clock.
+>
+> Box 6 of 11.
+>
+> useverdex.xyz
+
+### 5b. The real page, recorded (`verdex-base-tour.mp4`, 34 s; `promo/tour-base.mjs` records it on the live site)
+
+> This is the page, not a mockup.
+>
+> Verdex Index on Base: pick the chain, three baskets, a buy quoted from the Aerodrome pools as you look, redeem in kind. Contracts verified on basescan, capped at 25,000 shares each while the code is new.
+>
+> useverdex.xyz/index?chain=base
+
+### 6. Launch: see "Verdex on Solana is live" above (`verdex-solana.mp4`).
+
+### 6b. The real page, recorded (`verdex-solana-tour.mp4`, 30 s; `promo/tour-solana.mjs` records it on the live site)
+
+> This is the page on Solana, not a mockup.
+>
+> Four baskets of xStocks priced by Jupiter as you look, a $250 buy split seven ways, one signature for all the legs, sell any share back into USDC. No Verdex program, nothing held.
+>
+> useverdex.xyz/solana
+
+### 7. One signature (`clip-onesig.mp4`, an hour after launch)
+
+> How a basket works on Solana.
+>
+> The page asks Jupiter for the best route into each of the seven stocks, builds one transaction per leg, and your wallet signs them all in one prompt. The stocks land in your wallet as themselves: NVDAx, TSLAx and the rest. Sell any share of them the same way.
+>
+> useverdex.xyz/solana
+
+### 8. No program, no custody (`clip-nocustody.mp4`)
+
+> There is nothing of ours on Solana to hack.
+>
+> Verdex deploys no program there. Every transaction you sign is a Jupiter swap built in your browser and sent from your wallet; the stocks go from the pool to you. A leg that would move its pool more than 1% is refused before you sign. If a leg fails, the page shows you which landed.
+>
+> useverdex.xyz/solana
+
+### 9. The baskets on Solana (`clip-xstocks.mp4`)
+
+> Four baskets of xStocks, chosen by liquidity.
+>
+> VX7: the seven. AI Infrastructure: NVDAx, MSFTx, GOOGLx, AMZNx, METAx. Frontier: SPCXx, CRCLx, MSTRx, PLTRx. Index Funds: SPYx and QQQx, half each. Only stocks with a deep market on Solana today; the thin ones wait.
+>
+> useverdex.xyz/solana
+
+### 10. Scoreboard, the morning after (`clip-sixofeleven.mp4`)
+
+> Six of eleven. Checked.
+>
+> Three days. Index, Fees buy VERDEX, Lend, Leverage, Base, Solana. Three chains, one token, every contract verified and every page live.
+>
+> Next: Orders without you.
+>
+> useverdex.xyz
+
 ## Verdex on Solana, hype (image: `photos/hype-solana.png`, a few hours before; render with `promo/teaser.html?bg=solana&tag=Box 6 of 11&line=Solana. Tonight.&sub=01:00 CEST · 23:00 UTC · Holders first&accent=1`)
 
 The page is gated until 23:00 UTC; VERDEX holders get in early, like every drop. No token on Solana; the tweet is about the product.

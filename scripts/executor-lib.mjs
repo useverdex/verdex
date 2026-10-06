@@ -43,6 +43,42 @@ export async function runOnce({ rpc = DEFAULT_RPC, address, key, log = console.l
   return { count, due: todo.length, sent, skipped }
 }
 
+// ---- Orders without you: one pass over every order on the VerdexOrders contract, filling the triggered ones.
+const ordersAbi = parseAbi([
+  'function orderCount() view returns (uint256)',
+  'function isDue(uint256 id) view returns (bool)',
+  'function floorOut(uint256 id) view returns (uint256)',
+  'function execute(uint256 id,uint256 minOut) returns (uint256)',
+])
+export async function runOrdersOnce({ rpc = DEFAULT_RPC, address, key, log = console.log }) {
+  const account = privateKeyToAccount(key)
+  const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
+  const wallet = createWalletClient({ account, chain: chain(rpc), transport: http(rpc) })
+  const c = { address, abi: ordersAbi }
+  const count = Number(await pub.readContract({ ...c, functionName: 'orderCount' }))
+  if (!count) return { count, due: 0, sent: 0, skipped: 0 }
+  const ids = Array.from({ length: count }, (_, i) => BigInt(i + 1))
+  const due = await pub.multicall({ multicallAddress: MULTICALL3, contracts: ids.map((id) => ({ ...c, functionName: 'isDue', args: [id] })) })
+  const todo = ids.filter((_, i) => due[i].status === 'success' && due[i].result === true)
+  let sent = 0, skipped = 0
+  for (const id of todo) {
+    try {
+      const floor = await pub.readContract({ ...c, functionName: 'floorOut', args: [id] })
+      const sim = await pub.simulateContract({ ...c, functionName: 'execute', args: [id, floor], account })
+      const hash = await wallet.writeContract(sim.request)
+      const r = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
+      log(`order ${id}: ${r.status} ${hash} out ${sim.result} gas ${r.gasUsed}`)
+      if (r.status === 'success') sent++
+      else skipped++
+    } catch (e) {
+      // Balance or allowance short, or the pool moved past the floor: the order waits for the next pass.
+      skipped++
+      log(`order ${id}: skipped, ${(e.shortMessage ?? e.message ?? String(e)).split('\n')[0].slice(0, 140)}`)
+    }
+  }
+  return { count, due: todo.length, sent, skipped }
+}
+
 export async function executorBalance({ rpc = DEFAULT_RPC, key }) {
   const account = privateKeyToAccount(key)
   const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc) })

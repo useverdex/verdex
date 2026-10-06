@@ -5,10 +5,11 @@ import http from 'node:http'
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs'
 import { extname, join, normalize, resolve } from 'node:path'
 import { gzipSync } from 'node:zlib'
-import { runOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
+import { runOnce, runOrdersOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
 import { TREASURY_ADDRESS } from './scripts/treasury-address.mjs'
 import { INDEX_ROUTER_ADDRESS } from './scripts/index-addresses.mjs'
 import { AUTOINVEST_ADDRESS as BUILT_IN } from './scripts/autoinvest-address.mjs'
+import { ORDERS_ADDRESS as ORDERS_BUILT_IN } from './scripts/orders-address.mjs'
 
 const ROOT = resolve('dist')
 const PORT = Number(process.env.PORT ?? 8080)
@@ -49,6 +50,7 @@ server.listen(PORT, () => console.log(`verdex serving ${ROOT} on :${PORT}`))
 // ---- executor ----
 const key = process.env.EXECUTOR_KEY ?? (existsSync('executor.key') ? readFileSync('executor.key', 'utf8').trim() : '')
 const address = process.env.AUTOINVEST_ADDRESS || BUILT_IN
+const ordersAddress = process.env.ORDERS_ADDRESS || ORDERS_BUILT_IN
 const EVERY = Number(process.env.EXECUTOR_EVERY_MS ?? 10 * 60 * 1000)
 if (key && address) {
   let running = false
@@ -58,6 +60,10 @@ if (key && address) {
     try {
       const r = await runOnce({ rpc: process.env.RPC, address, key, log: (m) => console.log(`[executor] ${m}`) })
       if (r.due) console.log(`[executor] plans ${r.count} · due ${r.due} · sent ${r.sent} · skipped ${r.skipped}`)
+      if (ordersAddress) {
+        const o = await runOrdersOnce({ rpc: process.env.RPC, address: ordersAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] orders pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
+        if (o?.due) console.log(`[executor] orders ${o.count} · due ${o.due} · sent ${o.sent} · skipped ${o.skipped}`)
+      }
       await refuelIfNeeded({ rpc: process.env.RPC, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => console.log(`[executor] refuel failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`))
     } catch (e) {
       console.log(`[executor] pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`)

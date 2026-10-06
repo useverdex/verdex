@@ -61,6 +61,11 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   `src/lib/indexChains.ts` holds each chain's DEX, quote token and deployed addresses. Deployed from
   `/deploy/index/base`. The Coinbase tokens are executed natively by Base's nodes (their code is `0xef`), so they cannot
   run on a local fork; the flow was tested against Base's live state with `eth_simulateV1` instead.
+- **Orders without you.** `contracts/VerdexOrders.sol`: limit and stop orders that fill while the owner is away, the
+  Auto-Invest pattern applied to orders. An order keeps its level as the pool's own sqrtPriceX96; the executor (the
+  same pass as Auto-Invest, in `scripts/executor-lib.mjs`) fills triggered orders from the owner's exact allowance
+  with a spot-less-1% floor read at fill time, the tip in USDG. Four kinds: buy below, stop sell, sell above, buy
+  above; optional expiry. Deployed from `/deploy/orders`; the page is `/orders/without-you`.
 - **Verdex on Solana.** `/solana`: the same baskets made of xStocks (Backed's tokenized shares on Solana), bought and sold
   with USDC through Jupiter. No Verdex program: `src/lib/sol/tx.ts` asks Jupiter for each leg's route, composes one v0
   transaction per leg (the 0.25% USDC fee rides on the first one when `VITE_SOLANA_FEE_WALLET` is set), the wallet
