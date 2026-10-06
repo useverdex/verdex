@@ -899,11 +899,11 @@ Shorter:
 
 Box 8 of 11. The Auto-Invest pattern applied to rebalancing. Unaudited, allowances exact, no fee; say that weights are read from spot prices.
 
-### Hype (image, a couple of hours before; render with `promo/teaser.html?bg=vaults&tag=Box 8 of 11&line=Vaults without you.&sub=17:00 CEST · 15:00 UTC&accent=1`)
+### Hype (image, a few hours before; render with `promo/teaser.html?bg=vaults&tag=Box 8 of 11&line=Vaults without you.&sub=Tonight · 01:00 CEST · 23:00 UTC&accent=1`)
 
 > Box 8 of 11.
 >
-> Vaults without you. Today at 17:00 CEST, 15:00 UTC. Set the weights, set the line, close the tab. When a stock drifts past it, a contract sells the overweight and buys the underweight in one transaction, with a floor on every leg.
+> Vaults without you. Tonight at 01:00 CEST, 23:00 UTC. Set the weights, set the line, close the tab. When a stock drifts past it, a contract sells the overweight and buys the underweight in one transaction, with a floor on every leg.
 >
 > Holders first.
 >
