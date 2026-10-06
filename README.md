@@ -78,6 +78,14 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   inside the limits from the owner's allowance; the contract refuses anything outside them (`check` returns the
   reason). Deployed from `/deploy/agent` or `scripts/deploy-agent.mjs`; the page is `/agent/without-you`, and the
   Agent page drafts mandates into it.
+- **Verdex in numbers.** `/numbers`: Index TVL from the index contracts valued at the pools, volume from the
+  aggregator's record of swaps and bridges made through Verdex plus the Index routers' events, fees from the
+  treasury contract, and every plan, fill, rebalance and trade from the four "without you" contracts, read by the
+  browser with a link to every transaction (`src/lib/numbers.ts`). No analytics, nothing typed in.
+- **Holders vote.** `contracts/VerdexVote.sol`: rounds of ranked votes on what ships next; a holder's VERDEX balance
+  is their weight, read from the token when the page tallies (Borda count), never stored or snapshotted. The admin
+  only opens rounds. Deployed with round 1 from `scripts/deploy-vote.mjs` (candidates in `scripts/vote-round-1.json`)
+  or from `/deploy/vote`; the page is `/vote`.
 - **Verdex on Solana.** `/solana`: the same baskets made of xStocks (Backed's tokenized shares on Solana), bought and sold
   with USDC through Jupiter. No Verdex program: `src/lib/sol/tx.ts` asks Jupiter for each leg's route, composes one v0
   transaction per leg (the 0.25% USDC fee rides on the first one when `VITE_SOLANA_FEE_WALLET` is set), the wallet

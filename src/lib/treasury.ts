@@ -64,7 +64,7 @@ export type Treasury = {
 }
 
 // Logs in windows the public RPC accepts, skipping a window that fails rather than failing the page.
-async function chunked<T>(from: bigint, to: bigint, fn: (a: bigint, b: bigint) => Promise<T[]>): Promise<T[]> {
+export async function chunked<T>(from: bigint, to: bigint, fn: (a: bigint, b: bigint) => Promise<T[]>): Promise<T[]> {
   const WINDOW = 9_000_000n
   let out: T[] = []
   for (let a = from; a <= to; a += WINDOW) {
@@ -74,7 +74,7 @@ async function chunked<T>(from: bigint, to: bigint, fn: (a: bigint, b: bigint) =
   return out
 }
 
-async function withTimes<T extends { block: number; at?: number }>(rows: T[]) {
+export async function withTimes<T extends { block: number; at?: number }>(rows: T[]) {
   const c = client()
   const want = rows.slice(-8)
   const blocks = new Map<number, number>()

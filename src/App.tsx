@@ -38,6 +38,9 @@ const VaultsWithoutYouPage = lazy(() => import('./pages/VaultsWithoutYouPage'))
 const DeployVaultsPage = lazy(() => import('./pages/DeployVaultsPage'))
 const AgentWithoutYouPage = lazy(() => import('./pages/AgentWithoutYouPage'))
 const DeployAgentPage = lazy(() => import('./pages/DeployAgentPage'))
+const NumbersPage = lazy(() => import('./pages/NumbersPage'))
+const VotePage = lazy(() => import('./pages/VotePage'))
+const DeployVotePage = lazy(() => import('./pages/DeployVotePage'))
 const VerdexLendPage = lazy(() => import('./pages/VerdexLendPage'))
 const DeployLendPage = lazy(() => import('./pages/DeployLendPage'))
 const LeveragePage = lazy(() => import('./pages/LeveragePage'))
@@ -95,6 +98,9 @@ const TITLES: [string, string][] = [
   ['/deploy/vaults', 'Deploy Vaults without you'],
   ['/agent/without-you', 'Agent without you'],
   ['/deploy/agent', 'Deploy Agent without you'],
+  ['/numbers', 'Verdex in numbers'],
+  ['/vote', 'Holders vote'],
+  ['/deploy/vote', 'Deploy Holders vote'],
   ['/treasury', 'Fees buy VERDEX'],
   ['/deploy/treasury', 'Deploy Treasury'],
   ['/vaults', 'Vaults'],
@@ -160,6 +166,9 @@ export default function App() {
             <Route path="/deploy/vaults" element={<DeployVaultsPage />} />
             <Route path="/agent/without-you" element={<EarlyGate path="/agent/without-you"><AgentWithoutYouPage /></EarlyGate>} />
             <Route path="/deploy/agent" element={<DeployAgentPage />} />
+            <Route path="/numbers" element={<EarlyGate path="/numbers"><NumbersPage /></EarlyGate>} />
+            <Route path="/vote" element={<EarlyGate path="/vote"><VotePage /></EarlyGate>} />
+            <Route path="/deploy/vote" element={<DeployVotePage />} />
             <Route path="/lend/verdex" element={<EarlyGate path="/lend/verdex"><VerdexLendPage /></EarlyGate>} />
             <Route path="/deploy/lend" element={<DeployLendPage />} />
             <Route path="/leverage" element={<EarlyGate path="/leverage"><LeveragePage /></EarlyGate>} />

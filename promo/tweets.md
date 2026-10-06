@@ -859,6 +859,10 @@ Shorter:
 >
 > useverdex.xyz/index?chain=base
 
+## Boxes 10 and 11, and the two days around them: see `promo/schedule.md`
+
+Every tweet from the Vaults launch (Oct 7, 01:00 CEST) to the Telegram announcement (Oct 9, 01:00 CEST), with its time and clip: hype and launch for Verdex in numbers (`clip-numberssoon.mp4`, `clip-numberslive.mp4`) and Holders vote (`clip-votesoon.mp4`, `clip-votelive.mp4`), the scoreboards (`clip-eightofeleven.mp4`, `clip-tenofeleven.mp4`, `clip-elevenofeleven.mp4`), the undervalued note (`clip-undervalued.mp4`) and the rest. Rendered from `promo/clips22.html` and `promo/scoreboard.html`.
+
 ## Agent without you (`clip-agentlive.mp4`, 12 s; hype still `photos/hype-agent-without-you.png`)
 
 Box 9 of 11. The limits are the contract's, the rule is the executor's; say both. Unaudited, allowances exact, no fee. No claim that the agent predicts anything: it follows a rule you set, inside caps you set.

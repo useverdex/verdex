@@ -297,6 +297,34 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'verdex-in-numbers',
+    title: 'Verdex in numbers',
+    blocks: [
+      { kind: 'p', text: `The Numbers page (/numbers) is what the contracts hold and have done, read from the chain by your browser when you open it, each number with the transactions behind it. Nothing on it is typed in by ${N}: a figure you cannot click through to a transaction or a contract is not on the page.` },
+      { kind: 'defs', items: [
+        { term: 'Index TVL', text: 'The stocks the index contracts hold, on Robinhood Chain and on Base, valued at the pools’ spot prices at the moment you load the page, index by index.' },
+        { term: 'Volume', text: `Two sources. Swaps and bridges made through ${N} come from the aggregator’s public record for the integrator name, the last 89 days, with a link to each transaction. Index buys and sells come from the routers’ own events on both chains.` },
+        { term: 'Fees', text: 'From the treasury contract: VERDEX bought, burned and paid back in all, sweep by sweep and payout by payout, the same figures the Treasury page shows.' },
+        { term: 'Without you', text: 'From the four contracts: how many plans, orders, vaults and mandates exist, and every buy, fill, rebalance and trade the executor or an owner has run, from the contracts’ events over the last four weeks.' },
+        { term: 'What it is not', text: 'Not a dashboard of users, wallets or sessions: the site keeps no analytics. Not a price or a market cap: those are on the token page, from the pool. Small numbers are shown as they are.' },
+      ] },
+    ],
+  },
+  {
+    id: 'holders-vote',
+    title: 'Holders vote',
+    blocks: [
+      { kind: 'p', text: `Holders vote (/vote) is rounds of ranked votes on what ${N} ships next, kept by a contract on Robinhood Chain (contracts/VerdexVote.sol). A round names its candidates and when it closes; any address submits a ranking while it is open and can replace it. Nothing is locked, deposited or snapshotted: the page tallies a round by reading every voter’s ranking from the contract and every voter’s VERDEX balance from the token at that moment.` },
+      { kind: 'defs', items: [
+        { term: 'The count', text: 'Borda: with n candidates, a first place is worth n times the voter’s balance, a second n minus one, and so on; candidates left unranked get nothing from that voter. The page shows each candidate’s share of all points and the balance that put it first.' },
+        { term: 'Weight', text: 'Your VERDEX balance when the round is tallied, never when you voted. Buy more and your vote grows; sell and it shrinks; sell everything and your ranking stays on the chain but weighs nothing.' },
+        { term: 'Rounds', text: 'The admin opens one about every two weeks, with two to twelve candidates and a closing time; it cannot vote, remove a ranking or change a round once opened. Closed rounds keep their rankings onchain, so anyone can re-tally them.' },
+        { term: 'What it decides', text: `The order in which ${N} builds what comes after phase 2. It is a ranking by the holders, read by the people who build; it is not a governance token, a treasury vote or a promise of a date.` },
+        { term: 'Risk', text: 'The contract is unaudited and moves no tokens; the risk is the vote itself being read wrongly, which anyone can check by re-tallying from the contract. A ranking is public under your address.' },
+      ] },
+    ],
+  },
+  {
     id: 'verdex-index',
     title: 'Verdex Index',
     blocks: [
