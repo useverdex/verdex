@@ -268,6 +268,20 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'vaults-without-you',
+    title: 'Vaults without you',
+    blocks: [
+      { kind: 'p', text: `Vaults without you are target weights over tokenized stocks on Robinhood Chain kept by a contract (contracts/VerdexVaults.sol) while your wallet is closed. A vault names the stocks, their target weights, a drift threshold and the least time between runs. ${N}'s executor values your holdings at the stocks' Uniswap v3 pool prices every ten minutes; when any weight is further from its target than the threshold and the interval has passed, it runs the vault: inside one transaction the contract pulls the overweight stocks from your allowances, sells them for USDG in their pools, takes a ten-cent tip, buys the underweight stocks with the proceeds and sends everything to your wallet. It holds nothing between runs and takes no fee.` },
+      { kind: 'defs', items: [
+        { term: 'Allowances', text: 'For each stock you approve the contract for exactly what you hold: the most a rebalance can ever sell of it. When you buy more of a stock, approve it again from the vault card. Revoking the allowances ends the vault for good.' },
+        { term: 'The threshold and the interval', text: 'A rebalance runs only when both hold: some weight is at least the threshold away from its target (2%, 5% or 10%), and the interval since the last run has passed (a day, a week or a month at least). Small vaults rebalance rarely; legs under one USDG are skipped.' },
+        { term: 'Floors', text: 'Every sale and every purchase must return at least the pool’s spot price less 1%, read in the same transaction. A pool that has moved makes the whole run revert, not fill badly. Weights are valued at the same spot prices.' },
+        { term: 'Who runs it', text: 'Allowed executors and the vault’s owner. The executor list is the only thing the admin can change; no admin can touch a vault or move anyone’s tokens.' },
+        { term: 'Risk', text: 'The contract is unaudited. Weights are read from spot prices, so a pool pushed far from its market price for a moment could trigger a run that trades at that price; the floors limit each leg to spot less 1% and the interval limits how often it can happen. The source and compiled bytecode are in the repository, tested on a fork of Robinhood Chain. Vaults on this device (the Vaults page) remain available and never leave your browser.' },
+      ] },
+    ],
+  },
+  {
     id: 'verdex-index',
     title: 'Verdex Index',
     blocks: [

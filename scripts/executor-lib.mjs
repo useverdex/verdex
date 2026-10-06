@@ -79,6 +79,40 @@ export async function runOrdersOnce({ rpc = DEFAULT_RPC, address, key, log = con
   return { count, due: todo.length, sent, skipped }
 }
 
+// ---- Vaults without you: one pass over every vault on the VerdexVaults contract, rebalancing the due ones.
+const vaultsAbi = parseAbi([
+  'function vaultCount() view returns (uint256)',
+  'function isDue(uint256 id) view returns (bool)',
+  'function execute(uint256 id) returns (uint256 soldUsdg,uint256 boughtUsdg)',
+])
+export async function runVaultsOnce({ rpc = DEFAULT_RPC, address, key, log = console.log }) {
+  const account = privateKeyToAccount(key)
+  const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
+  const wallet = createWalletClient({ account, chain: chain(rpc), transport: http(rpc) })
+  const c = { address, abi: vaultsAbi }
+  const count = Number(await pub.readContract({ ...c, functionName: 'vaultCount' }))
+  if (!count) return { count, due: 0, sent: 0, skipped: 0 }
+  const ids = Array.from({ length: count }, (_, i) => BigInt(i + 1))
+  const due = await pub.multicall({ multicallAddress: MULTICALL3, contracts: ids.map((id) => ({ ...c, functionName: 'isDue', args: [id] })) })
+  const todo = ids.filter((_, i) => due[i].status === 'success' && due[i].result === true)
+  let sent = 0, skipped = 0
+  for (const id of todo) {
+    try {
+      const sim = await pub.simulateContract({ ...c, functionName: 'execute', args: [id], account })
+      const hash = await wallet.writeContract(sim.request)
+      const r = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
+      log(`vault ${id}: ${r.status} ${hash} sold ${formatUnits(sim.result[0], 6)} bought ${formatUnits(sim.result[1], 6)} USDG gas ${r.gasUsed}`)
+      if (r.status === 'success') sent++
+      else skipped++
+    } catch (e) {
+      // An allowance short, or a pool past a floor: the vault waits for the next pass.
+      skipped++
+      log(`vault ${id}: skipped, ${(e.shortMessage ?? e.message ?? String(e)).split('\n')[0].slice(0, 140)}`)
+    }
+  }
+  return { count, due: todo.length, sent, skipped }
+}
+
 export async function executorBalance({ rpc = DEFAULT_RPC, key }) {
   const account = privateKeyToAccount(key)
   const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc) })

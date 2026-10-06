@@ -5,11 +5,12 @@ import http from 'node:http'
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs'
 import { extname, join, normalize, resolve } from 'node:path'
 import { gzipSync } from 'node:zlib'
-import { runOnce, runOrdersOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
+import { runOnce, runOrdersOnce, runVaultsOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
 import { TREASURY_ADDRESS } from './scripts/treasury-address.mjs'
 import { INDEX_ROUTER_ADDRESS } from './scripts/index-addresses.mjs'
 import { AUTOINVEST_ADDRESS as BUILT_IN } from './scripts/autoinvest-address.mjs'
 import { ORDERS_ADDRESS as ORDERS_BUILT_IN } from './scripts/orders-address.mjs'
+import { VAULTS_ADDRESS as VAULTS_BUILT_IN } from './scripts/vaults-address.mjs'
 
 const ROOT = resolve('dist')
 const PORT = Number(process.env.PORT ?? 8080)
@@ -51,6 +52,7 @@ server.listen(PORT, () => console.log(`verdex serving ${ROOT} on :${PORT}`))
 const key = process.env.EXECUTOR_KEY ?? (existsSync('executor.key') ? readFileSync('executor.key', 'utf8').trim() : '')
 const address = process.env.AUTOINVEST_ADDRESS || BUILT_IN
 const ordersAddress = process.env.ORDERS_ADDRESS || ORDERS_BUILT_IN
+const vaultsAddress = process.env.VAULTS_ADDRESS || VAULTS_BUILT_IN
 const EVERY = Number(process.env.EXECUTOR_EVERY_MS ?? 10 * 60 * 1000)
 if (key && address) {
   let running = false
@@ -63,6 +65,10 @@ if (key && address) {
       if (ordersAddress) {
         const o = await runOrdersOnce({ rpc: process.env.RPC, address: ordersAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] orders pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
         if (o?.due) console.log(`[executor] orders ${o.count} · due ${o.due} · sent ${o.sent} · skipped ${o.skipped}`)
+      }
+      if (vaultsAddress) {
+        const v = await runVaultsOnce({ rpc: process.env.RPC, address: vaultsAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] vaults pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
+        if (v?.due) console.log(`[executor] vaults ${v.count} · due ${v.due} · sent ${v.sent} · skipped ${v.skipped}`)
       }
       await refuelIfNeeded({ rpc: process.env.RPC, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => console.log(`[executor] refuel failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`))
     } catch (e) {

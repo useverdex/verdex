@@ -34,6 +34,8 @@ const DeployIndexPage = lazy(() => import('./pages/DeployIndexPage'))
 const SolanaPage = lazy(() => import('./pages/SolanaPage'))
 const OrdersWithoutYouPage = lazy(() => import('./pages/OrdersWithoutYouPage'))
 const DeployOrdersPage = lazy(() => import('./pages/DeployOrdersPage'))
+const VaultsWithoutYouPage = lazy(() => import('./pages/VaultsWithoutYouPage'))
+const DeployVaultsPage = lazy(() => import('./pages/DeployVaultsPage'))
 const VerdexLendPage = lazy(() => import('./pages/VerdexLendPage'))
 const DeployLendPage = lazy(() => import('./pages/DeployLendPage'))
 const LeveragePage = lazy(() => import('./pages/LeveragePage'))
@@ -87,6 +89,8 @@ const TITLES: [string, string][] = [
   ['/solana', 'Verdex on Solana'],
   ['/orders/without-you', 'Orders without you'],
   ['/deploy/orders', 'Deploy Orders without you'],
+  ['/vaults/without-you', 'Vaults without you'],
+  ['/deploy/vaults', 'Deploy Vaults without you'],
   ['/treasury', 'Fees buy VERDEX'],
   ['/deploy/treasury', 'Deploy Treasury'],
   ['/vaults', 'Vaults'],
@@ -148,6 +152,8 @@ export default function App() {
             <Route path="/solana" element={<EarlyGate path="/solana"><SolanaPage /></EarlyGate>} />
             <Route path="/orders/without-you" element={<EarlyGate path="/orders/without-you"><OrdersWithoutYouPage /></EarlyGate>} />
             <Route path="/deploy/orders" element={<DeployOrdersPage />} />
+            <Route path="/vaults/without-you" element={<EarlyGate path="/vaults/without-you"><VaultsWithoutYouPage /></EarlyGate>} />
+            <Route path="/deploy/vaults" element={<DeployVaultsPage />} />
             <Route path="/lend/verdex" element={<EarlyGate path="/lend/verdex"><VerdexLendPage /></EarlyGate>} />
             <Route path="/deploy/lend" element={<DeployLendPage />} />
             <Route path="/leverage" element={<EarlyGate path="/leverage"><LeveragePage /></EarlyGate>} />

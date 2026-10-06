@@ -859,6 +859,42 @@ Shorter:
 >
 > useverdex.xyz/index?chain=base
 
+## Vaults without you (`clip-vaultslive.mp4`, 12 s; hype still `photos/hype-vaults-without-you.png`)
+
+Box 8 of 11. The Auto-Invest pattern applied to rebalancing. Unaudited, allowances exact, no fee; say that weights are read from spot prices.
+
+### Hype (image, a couple of hours before; fill in the time)
+
+> Box 8 of 11.
+>
+> Vaults without you. Today at HH:MM CEST, HH:MM UTC. Set the weights, set the line, close the tab. When a stock drifts past it, a contract sells the overweight and buys the underweight in one transaction, with a floor on every leg.
+>
+> Holders first.
+>
+> useverdex.xyz
+
+### Launch (post with `clip-vaultslive.mp4`, then pin it)
+
+> Vaults without you are live.
+>
+> Box 8 of 11. Target weights over tokenized stocks, kept by a contract on Robinhood Chain while your wallet is closed. Magnificent 7 at equal weight, or your own mix: when any weight drifts 2, 5 or 10% past its target, the executor sells the overweight stocks for USDG, buys the underweight ones and sends it all back to you, in one transaction with a floor on every leg.
+>
+> You approve each stock for what you hold, and nothing more. Nothing held between runs. No fee. Unaudited, verified.
+>
+> useverdex.xyz/vaults/without-you
+
+Reply:
+
+> How it differs from the Vaults you already had: those ran in your browser and needed your tap on every trade. These live in the contract: weights, threshold and cadence; the executor that already runs Auto-Invest and Orders checks them every ten minutes. Buy more of a stock, approve it again from the card, and it is part of the vault.
+
+Shorter:
+
+> Live: Vaults without you. Box 8 of 11.
+>
+> Set the weights and the line. It rebalances while you sleep, one transaction, floors on every leg.
+>
+> useverdex.xyz/vaults/without-you
+
 ## Orders without you (`clip-orderslive.mp4`, 12 s; hype still `photos/hype-orders-without-you.png`)
 
 Box 7 of 11. The Auto-Invest pattern applied to orders: a contract keeps the level, the executor fills it, the floor is read at fill time. Say unaudited, say the allowance is exact, no fee.
@@ -867,7 +903,7 @@ Box 7 of 11. The Auto-Invest pattern applied to orders: a contract keeps the lev
 
 > Box 7 of 11.
 >
-> Orders without you. In 2h30: 17:15 CEST, 15:15 UTC. Set the level, close the tab. A limit or a stop that lives in a contract, filled from the pool when the price crosses it, with your floor read onchain at fill time.
+> Orders without you. At 17:00 CEST, 15:00 UTC. Set the level, close the tab. A limit or a stop that lives in a contract, filled from the pool when the price crosses it, with your floor read onchain at fill time.
 >
 > Holders first.
 >
