@@ -4,6 +4,7 @@ import { createPublicClient, createWalletClient, http, formatUnits, parseAbi, en
 import { privateKeyToAccount } from 'viem/accounts'
 
 export const DEFAULT_RPC = 'https://rpc.mainnet.chain.robinhood.com/'
+const USDG = '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168'
 const MULTICALL3 = '0xcA11bde05977b3631167028862bE2a173976CA11'
 const abi = parseAbi([
   'function planCount() view returns (uint256)',
@@ -113,6 +114,124 @@ export async function runVaultsOnce({ rpc = DEFAULT_RPC, address, key, log = con
   return { count, due: todo.length, sent, skipped }
 }
 
+// ---- Agent without you: one pass over every mandate on the VerdexAgent contract. The contract keeps the limits
+// (budget, per trade, per day, cooldown, floor, expiry); this is the agent's judgement inside them: the rule the
+// owner chose, applied to each stock's move on the day, read from the pools' market data. One trade per mandate
+// per pass at most, always checked against the contract first and simulated before it is sent.
+const agentAbi = parseAbi([
+  'function mandateCount() view returns (uint256)',
+  'function mandates(uint256) view returns (address owner,uint8 rule,uint16 param,uint16 maxSlippageBps,uint32 cooldown,bool paused,bool closed,uint40 expiresAt,uint96 budget,uint96 perTrade,uint96 perDay,uint96 tip,uint40 dayStart,uint96 spentToday,uint96 spent,uint40 lastTrade,uint96 sold,uint32 trades)',
+  'function tokensOf(uint256 id) view returns (address[] tokens,uint24[] fees)',
+  'function check(uint256 id,uint256 i,bool sell,uint256 amountIn) view returns (uint8)',
+  'function quoteSpot(uint256 id,uint256 i,bool sell,uint256 amountIn) view returns (uint256)',
+  'function floorOut(uint256 id,uint256 i,bool sell,uint256 amountIn) view returns (uint256)',
+  'function leftToday(uint256 id) view returns (uint256)',
+  'function execute(uint256 id,uint256 i,bool sell,uint256 amountIn,uint256 minOut) returns (uint256)',
+])
+const FACTORY = '0x1f7d7550B1b028f7571E69A784071F0205FD2EfA'
+const factoryAbi = parseAbi(['function getPool(address,address,uint24) view returns (address)'])
+export const AGENT_RULES = { 0: 'buys the dips', 1: 'buys strength', 2: 'takes profits', 3: 'cuts losses' }
+const CHECK_CODES = { 1: 'closed', 2: 'paused', 3: 'expired', 4: 'no such stock', 5: 'cooling down', 6: 'under a dollar', 7: 'over the per-trade cap', 8: 'over the day cap', 9: 'over the budget' }
+
+// The day's move of each pool, in percent, from the public market data the site also reads. Pools it does not
+// know get no move, so the agent leaves them alone.
+export async function readDayMoves(pools, fetchImpl = fetch) {
+  const out = new Map()
+  const list = [...new Set(pools.map((p) => p.toLowerCase()))]
+  for (let i = 0; i < list.length; i += 30) {
+    const batch = list.slice(i, i + 30)
+    try {
+      const r = await fetchImpl(`https://api.dexscreener.com/latest/dex/pairs/robinhood/${batch.join(',')}`, { headers: { accept: 'application/json' } })
+      if (!r.ok) continue
+      const j = await r.json()
+      for (const pair of j.pairs ?? []) { const h24 = Number(pair.priceChange?.h24); if (pair.pairAddress && isFinite(h24)) out.set(pair.pairAddress.toLowerCase(), h24) }
+    } catch { /* no data for this batch */ }
+  }
+  return out
+}
+
+// What the rule asks for on a stock that moved `movePct` on the day: 'buy', 'sell' or nothing.
+export function agentDecision(rule, paramBps, movePct) {
+  const size = paramBps / 100
+  if (rule === 0) return movePct <= -size ? 'buy' : null
+  if (rule === 1) return movePct >= size ? 'buy' : null
+  if (rule === 2) return movePct >= size ? 'sell' : null
+  if (rule === 3) return movePct <= -size ? 'sell' : null
+  return null
+}
+
+export async function runAgentOnce({ rpc = DEFAULT_RPC, address, key, log = console.log, moves }) {
+  const account = privateKeyToAccount(key)
+  const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
+  const wallet = createWalletClient({ account, chain: chain(rpc), transport: http(rpc) })
+  const c = { address, abi: agentAbi }
+  const count = Number(await pub.readContract({ ...c, functionName: 'mandateCount' }))
+  const out = { count, open: 0, candidates: 0, sent: 0, skipped: 0 }
+  if (!count) return out
+  const ids = Array.from({ length: count }, (_, i) => BigInt(i + 1))
+  const raw = await pub.multicall({ multicallAddress: MULTICALL3, contracts: ids.map((id) => ({ ...c, functionName: 'mandates', args: [id] })) })
+  const now = Math.floor(Date.now() / 1000)
+  const open = []
+  ids.forEach((id, k) => {
+    if (raw[k].status !== 'success') return
+    const m = raw[k].result
+    const [owner, rule, param, , , paused, closed, expiresAt, budget, perTrade, , , , , , , ,] = m
+    if (closed || paused || (Number(expiresAt) !== 0 && now > Number(expiresAt))) return
+    open.push({ id, owner, rule: Number(rule), param: Number(param), budget, perTrade })
+  })
+  out.open = open.length
+  if (!open.length) return out
+  const toks = await pub.multicall({ multicallAddress: MULTICALL3, contracts: open.map((m) => ({ ...c, functionName: 'tokensOf', args: [m.id] })) })
+  open.forEach((m, k) => { const t = toks[k].status === 'success' ? toks[k].result : [[], []]; m.tokens = [...t[0]]; m.fees = [...t[1]] })
+  const legs = open.flatMap((m) => m.tokens.map((token, i) => ({ token, fee: m.fees[i] })))
+  const poolRes = await pub.multicall({ multicallAddress: MULTICALL3, contracts: legs.map((l) => ({ address: FACTORY, abi: factoryAbi, functionName: 'getPool', args: [l.token, USDG, l.fee] })) })
+  const poolOf = new Map()
+  legs.forEach((l, k) => { if (poolRes[k].status === 'success') poolOf.set(`${l.token.toLowerCase()}:${l.fee}`, poolRes[k].result) })
+  const dayMoves = moves ?? (await readDayMoves([...poolOf.values()]))
+  for (const m of open) {
+    let traded = false
+    for (let i = 0; i < m.tokens.length && !traded; i++) {
+      const pool = poolOf.get(`${m.tokens[i].toLowerCase()}:${m.fees[i]}`)
+      const move = pool ? dayMoves.get(pool.toLowerCase()) : undefined
+      if (move === undefined) continue
+      const side = agentDecision(m.rule, m.param, move)
+      if (!side) continue
+      out.candidates++
+      const sell = side === 'sell'
+      try {
+        const left = await pub.readContract({ ...c, functionName: 'leftToday', args: [m.id] })
+        let amount
+        if (!sell) {
+          amount = [m.perTrade, m.budget, left].reduce((a, b) => (a < b ? a : b))
+        } else {
+          const [bal, allowance] = await Promise.all([
+            pub.readContract({ address: m.tokens[i], abi: erc20Abi, functionName: 'balanceOf', args: [m.owner] }),
+            pub.readContract({ address: m.tokens[i], abi: erc20Abi, functionName: 'allowance', args: [m.owner, address] }),
+          ])
+          amount = bal < allowance ? bal : allowance
+          if (amount === 0n) { out.skipped++; log(`mandate ${m.id}: ${AGENT_RULES[m.rule]}, ${m.tokens[i].slice(0, 8)} moved ${move}%: nothing approved to sell`); continue }
+          const value = await pub.readContract({ ...c, functionName: 'quoteSpot', args: [m.id, BigInt(i), true, amount] })
+          const cap = m.perTrade < left ? m.perTrade : left
+          if (value > cap) amount = (amount * cap * 999n) / (value * 1000n)
+        }
+        const code = Number(await pub.readContract({ ...c, functionName: 'check', args: [m.id, BigInt(i), sell, amount] }))
+        if (code !== 0) { out.skipped++; log(`mandate ${m.id}: ${AGENT_RULES[m.rule]}, ${m.tokens[i].slice(0, 8)} moved ${move}%: ${CHECK_CODES[code] ?? code}`); continue }
+        const floor = await pub.readContract({ ...c, functionName: 'floorOut', args: [m.id, BigInt(i), sell, amount] })
+        const sim = await pub.simulateContract({ ...c, functionName: 'execute', args: [m.id, BigInt(i), sell, amount, floor], account })
+        const hash = await wallet.writeContract(sim.request)
+        const r = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
+        log(`mandate ${m.id}: ${r.status} ${hash} ${sell ? 'sold' : 'bought'} ${m.tokens[i].slice(0, 8)} on a ${move}% day, in ${sell ? formatUnits(amount, 18) : formatUnits(amount, 6) + ' USDG'}, out ${sell ? formatUnits(sim.result, 6) + ' USDG' : formatUnits(sim.result, 18)} gas ${r.gasUsed}`)
+        if (r.status === 'success') { out.sent++; traded = true } else out.skipped++
+      } catch (e) {
+        // Balance or allowance short, or the pool moved past the floor: the mandate waits for the next pass.
+        out.skipped++
+        log(`mandate ${m.id}: skipped, ${(e.shortMessage ?? e.message ?? String(e)).split('\n')[0].slice(0, 140)}`)
+      }
+    }
+  }
+  return out
+}
+
 export async function executorBalance({ rpc = DEFAULT_RPC, key }) {
   const account = privateKeyToAccount(key)
   const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc) })
@@ -121,7 +240,6 @@ export async function executorBalance({ rpc = DEFAULT_RPC, key }) {
 
 // ---- refuel: the tips arrive in USDG, the gas is paid in ETH. When the ETH runs low, the executor sells its
 // USDG for ETH through LI.FI on Robinhood Chain, so one small top-up at the start is the only ETH it ever needs.
-const USDG = '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168'
 const LIFI = 'https://li.quest/v1'
 export const REFUEL_BELOW_ETH = 0.00015
 export const REFUEL_MIN_USDG = 1

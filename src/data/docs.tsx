@@ -282,6 +282,21 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'agent-without-you',
+    title: 'Agent without you',
+    blocks: [
+      { kind: 'p', text: `Agent without you is a budget and rules for the agent, kept by a contract on Robinhood Chain (contracts/VerdexAgent.sol) while your wallet is closed. A mandate names the tokenized stocks the agent may trade, the rule it follows, how much USDG it may spend per trade, per day and in all, the least time between two trades on the same stock, a price floor, an expiry and a tip. ${N}'s executor reads each stock's move on the day every ten minutes and applies the rule; when it fires, it calls the contract, which pulls the amount from your allowance, swaps it in the stock's Uniswap v3 pool against USDG, sends the proceeds to you and the tip to the executor. It holds nothing between trades and takes no fee.` },
+      { kind: 'defs', items: [
+        { term: 'The rules', text: 'Four, each with a size: buy the dips (a stock is that far down on the day: buy a trade of it), buy strength (that far up: buy), take profits (that far up: sell a slice of what you hold), cut losses (that far down: sell). The move is the pool’s own 24-hour change, from the market data the site shows. The Agent page can draft a mandate from a sentence; you review it here and sign.' },
+        { term: 'The limits', text: 'Per trade (a buy’s USDG, a sale’s value at spot), per day (buys and sales together, over a rolling day from the mandate’s creation), the budget (USDG for buys, in all; top it up from the card), the cooldown (one trade per stock per cooldown at least), the expiry, and a floor of spot less 1% on every trade, read in the same transaction. The contract checks all of them in `check` and `execute` and refuses the rest. Trades under one USDG are refused too.' },
+        { term: 'Allowances', text: 'A buy mandate approves USDG for exactly its budget plus a tip per trade the budget allows. A sell mandate approves each stock for what you hold. Revoking the allowances ends the mandate for good; closing it does the same from the contract side.' },
+        { term: 'Who runs it', text: 'Allowed executors and the mandate’s owner. The executor list is the only thing the admin can change; no admin can touch a mandate or move anyone’s tokens.' },
+        { term: 'What the contract does not check', text: 'The timing. Whether a stock really moved that much on the day is the executor’s reading of the market data, not proven onchain. The worst a rogue executor could do is trade inside your limits, at spot less your floor, as often as the cooldown and the caps allow. Keep the caps at what you would hand a stranger with those rules.' },
+        { term: 'Risk', text: 'The contract is unaudited. The floors come from the pools’ spot prices, so a pool pushed far from its market price for a moment could fill a trade at that price, bounded by the per-trade cap. The source and compiled bytecode are in the repository, tested on a fork of Robinhood Chain. The Agent page remains available and proposes without ever trading on its own.' },
+      ] },
+    ],
+  },
+  {
     id: 'verdex-index',
     title: 'Verdex Index',
     blocks: [

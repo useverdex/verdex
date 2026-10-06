@@ -8,7 +8,7 @@ import type { ChainX } from '../lib/lifi'
 import { VERDEX_FEE, isHolder } from '../lib/autoInvest'
 import { EXPIRIES } from '../lib/orders'
 import { RULES } from '../lib/vaults'
-import { PROVIDERS, SUGGESTIONS, Session, approve, loadConfig, modelFor, ready, saveConfig, type AgentConfig, type AgentEvent, type Proposal } from '../lib/agent'
+import { PROVIDERS, SUGGESTIONS, Session, approve, loadConfig, mandateUrl, modelFor, ready, saveConfig, type AgentConfig, type AgentEvent, type Proposal } from '../lib/agent'
 import { resolveImg } from '../lib/img'
 import { useWallet, shortAddress } from '../components/wallet/WalletProvider'
 import { AllocBar, AllocLegend } from '../components/alloc'
@@ -47,14 +47,14 @@ function Step({ n, icon, title, text }: { n: number; icon: React.ReactNode; titl
 // A proposal card: what the agent wants to do, complete, with the two buttons that decide it.
 function ProposalCard({ p, connected, onApprove, onDismiss }: { p: Proposal; connected: boolean; onApprove: (p: Proposal) => void; onDismiss: (p: Proposal) => void }) {
   const navigate = useNavigate()
-  const kind = p.kind === 'order' ? 'Order' : p.kind === 'plan' ? 'Auto-Invest plan' : 'Vault'
+  const kind = p.kind === 'order' ? 'Order' : p.kind === 'plan' ? 'Auto-Invest plan' : p.kind === 'mandate' ? 'Mandate, Agent without you' : 'Vault'
   const done = p.status !== 'pending'
-  const where = p.kind === 'order' ? '/orders#orders' : p.kind === 'plan' ? '/auto-invest#plans' : '/vaults#vaults'
-  const whereLabel = p.kind === 'order' ? 'Orders' : p.kind === 'plan' ? 'Auto-Invest' : 'Vaults'
+  const where = p.kind === 'order' ? '/orders#orders' : p.kind === 'plan' ? '/auto-invest#plans' : p.kind === 'mandate' ? mandateUrl(p) : '/vaults#vaults'
+  const whereLabel = p.kind === 'order' ? 'Orders' : p.kind === 'plan' ? 'Auto-Invest' : p.kind === 'mandate' ? 'Agent without you' : 'Vaults'
   return (
     <Box sx={{ mt: 1.5, p: 2.5, borderRadius: t.radius.card, background: t.color.tile, border: `1px solid ${p.status === 'approved' ? 'rgba(194,234,138,.35)' : t.color.border}`, opacity: p.status === 'dismissed' ? 0.55 : 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        {p.kind === 'vault' ? (
+        {p.kind === 'vault' || p.kind === 'mandate' ? (
           <Box sx={{ width: 36, height: 36, borderRadius: '10px', background: z.surface2, display: 'grid', placeItems: 'center', color: t.color.mark }}>
             <SparkIcon size={18} />
           </Box>
@@ -79,6 +79,11 @@ function ProposalCard({ p, connected, onApprove, onDismiss }: { p: Proposal; con
         <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
           <Avatar src={CHAIN_NAME_LOGOS[p.chain]} alt="" sx={{ width: 14, height: 14, background: 'transparent' }} /> {p.target.symbol} on {p.chain} · paid in {p.pay.symbol} · {p.buyNow ? 'first buy right after approval' : `first buy ${fmtDate(p.firstAt)}`}
           {p.current ? ` · now ${fmtUsd(p.current)}, about ${fmtUnits(p.amountUsd / p.current)} ${p.ticker} per buy` : ''}
+        </Typography>
+      )}
+      {p.kind === 'mandate' && (
+        <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
+          <Avatar src={CHAIN_NAME_LOGOS[p.chain]} alt="" sx={{ width: 14, height: 14, background: 'transparent' }} /> {p.chain} · {fmtUsd(p.perTrade)} a trade · {fmtUsd(p.perDay)} a day{p.budget ? ` · ${fmtUsd(p.budget)} in all` : ''} · same stock at most every {p.cooldown === 21_600 ? '6 hours' : p.cooldown === 86_400 ? 'day' : p.cooldown === 259_200 ? '3 days' : 'week'} · {p.expires ? `${Math.round(p.expires / 86_400)} days` : 'until closed'} · floor spot less 1%
         </Typography>
       )}
       {p.kind === 'vault' && (
@@ -107,7 +112,7 @@ function ProposalCard({ p, connected, onApprove, onDismiss }: { p: Proposal; con
             Open {whereLabel} <ArrowRightIcon size={14} />
           </Button>
         ) : null}
-        {!done && <Typography sx={{ fontSize: 12, color: t.color.textLabel }}>{p.kind === 'order' ? 'Approving saves the order; the fill is still confirmed in your wallet.' : p.kind === 'plan' ? 'Approving schedules it; each buy is still confirmed in your wallet.' : 'Approving creates it; funding and every trade are confirmed in your wallet.'}</Typography>}
+        {!done && <Typography sx={{ fontSize: 12, color: t.color.textLabel }}>{p.kind === 'order' ? 'Approving saves the order; the fill is still confirmed in your wallet.' : p.kind === 'plan' ? 'Approving schedules it; each buy is still confirmed in your wallet.' : p.kind === 'mandate' ? 'Approving opens the mandate for your wallet to sign; the contract keeps the limits, the executor trades inside them.' : 'Approving creates it; funding and every trade are confirmed in your wallet.'}</Typography>}
       </Box>
     </Box>
   )
@@ -118,6 +123,7 @@ export default function AgentPage() {
   const { data: chainList } = useChains()
   const chains = chainList as ChainX[] | undefined
   const { account, openWalletMenu } = useWallet()
+  const navigate = useNavigate()
   const [config, setConfig] = useState<AgentConfig>(loadConfig)
   const [draft, setDraft] = useState<AgentConfig>(config)
   const [setupOpen, setSetupOpen] = useState(() => !ready(loadConfig()) || loadConfig().provider === 'demo')
@@ -175,8 +181,9 @@ export default function AgentPage() {
   }
   const onApprove = (p: Proposal) => {
     if (!account) return openWalletMenu()
-    approve(p, account.address)
+    const where = approve(p, account.address)
     setProposals((m) => ({ ...m, [p.id]: { ...p, status: 'approved' } }))
+    if (p.kind === 'mandate') { navigate(where); window.scrollTo({ top: 0 }) }
   }
   const onDismiss = (p: Proposal) => setProposals((m) => ({ ...m, [p.id]: { ...p, status: 'dismissed' } }))
   const save = () => {

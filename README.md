@@ -71,6 +71,13 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   Auto-Invest and Orders) sells the overweight stocks for USDG, takes a ten-cent tip, buys the underweight ones and
   sends everything to the owner, in one transaction with spot-less-1% floors. Allowances are per stock, exactly what
   the owner holds. Deployed from `/deploy/vaults`; the page is `/vaults/without-you`.
+- **Agent without you.** `contracts/VerdexAgent.sol`: a budget and rules for the agent, kept by a contract. A
+  mandate names the stocks, the rule (buy the dips, buy strength, take profits, cut losses) and its size, the USDG
+  per trade, per day and in all, a cooldown per stock, a spot-less-1% floor, an expiry and a tip. The executor (same
+  pass as the others, `runAgentOnce`) reads each stock's move on the day from the pools' market data and trades
+  inside the limits from the owner's allowance; the contract refuses anything outside them (`check` returns the
+  reason). Deployed from `/deploy/agent` or `scripts/deploy-agent.mjs`; the page is `/agent/without-you`, and the
+  Agent page drafts mandates into it.
 - **Verdex on Solana.** `/solana`: the same baskets made of xStocks (Backed's tokenized shares on Solana), bought and sold
   with USDC through Jupiter. No Verdex program: `src/lib/sol/tx.ts` asks Jupiter for each leg's route, composes one v0
   transaction per leg (the 0.25% USDC fee rides on the first one when `VITE_SOLANA_FEE_WALLET` is set), the wallet

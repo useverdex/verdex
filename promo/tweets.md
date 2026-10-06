@@ -859,15 +859,51 @@ Shorter:
 >
 > useverdex.xyz/index?chain=base
 
+## Agent without you (`clip-agentlive.mp4`, 12 s; hype still `photos/hype-agent-without-you.png`)
+
+Box 9 of 11. The limits are the contract's, the rule is the executor's; say both. Unaudited, allowances exact, no fee. No claim that the agent predicts anything: it follows a rule you set, inside caps you set.
+
+### Hype (image, a couple of hours before; render with `promo/teaser.html?bg=agent&tag=Box 9 of 11&line=Agent without you.&sub=17:00 CEST · 15:00 UTC&accent=1`)
+
+> Box 9 of 11.
+>
+> Agent without you. Today at 17:00 CEST, 15:00 UTC. A budget and rules in a contract: how much per trade, per day, in all, in what, with what floor. The agent works inside them while your wallet is closed; the contract refuses the rest.
+>
+> Holders first.
+>
+> useverdex.xyz
+
+### Launch (post with `clip-agentlive.mp4`, then pin it)
+
+> Agent without you is live.
+>
+> Box 9 of 11. Give the agent a mandate on Robinhood Chain: the stocks, the rule (buy the dips, buy strength, take profits, cut losses), the size of the move, $100 a trade, $200 a day, $500 in all, one trade per stock per day, for 30 days. The contract enforces every cap and a floor of spot less 1%, read at trade time; the executor applies the rule to each stock's move on the day, every ten minutes, from your allowance. The stock lands in your wallet.
+>
+> Ask the Agent page for one in a sentence, approve the card, sign. Nothing held between trades. No fee. Unaudited, verified.
+>
+> useverdex.xyz/agent/without-you
+
+Reply:
+
+> What the contract checks and what it does not. It checks the budget, the per-trade and per-day caps, the cooldown, the expiry and the floor, on every trade, and reverts anything outside them. It does not check that the stock really moved 3% today: that is the executor reading the market data. So the worst a rogue executor could do is trade inside your limits at spot less 1%. Set the caps like you would for a stranger with those rules, and revoke to end it.
+
+Shorter:
+
+> Live: Agent without you. Box 9 of 11.
+>
+> A budget and rules, in a contract. The agent trades inside them while you sleep; the contract refuses the rest.
+>
+> useverdex.xyz/agent/without-you
+
 ## Vaults without you (`clip-vaultslive.mp4`, 12 s; hype still `photos/hype-vaults-without-you.png`)
 
 Box 8 of 11. The Auto-Invest pattern applied to rebalancing. Unaudited, allowances exact, no fee; say that weights are read from spot prices.
 
-### Hype (image, a couple of hours before; fill in the time)
+### Hype (image, a couple of hours before; render with `promo/teaser.html?bg=vaults&tag=Box 8 of 11&line=Vaults without you.&sub=17:00 CEST · 15:00 UTC&accent=1`)
 
 > Box 8 of 11.
 >
-> Vaults without you. Today at HH:MM CEST, HH:MM UTC. Set the weights, set the line, close the tab. When a stock drifts past it, a contract sells the overweight and buys the underweight in one transaction, with a floor on every leg.
+> Vaults without you. Today at 17:00 CEST, 15:00 UTC. Set the weights, set the line, close the tab. When a stock drifts past it, a contract sells the overweight and buys the underweight in one transaction, with a floor on every leg.
 >
 > Holders first.
 >

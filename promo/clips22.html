@@ -281,6 +281,12 @@ const CLIPS = {
     [TL('0'), 'An exact allowance', 'the contract can pull what you approved for that order and nothing more', 'exact'],
     [IMG(RH), 'Fills while you sleep', 'the executor checks every order every ten minutes; or fill it yourself', 'live'],
   ], 'Box 7 of 11, live. useverdex.xyz/orders/without-you'),
+  agentlive: (s) => std(s, 9, 'A budget and rules.', 'Agent without you.', [
+    [TL('$'), 'Limits set onchain', 'per trade, per day, in all, a cooldown, a floor, an expiry; the contract enforces them', 'limits'],
+    [TL('AI'), 'The agent works inside them', 'buys the dips, buys strength, takes profits or cuts losses, every ten minutes', 'rules'],
+    [TL('1'), 'Drafted from a sentence', 'ask the Agent page; approve the card; your wallet signs the mandate', 'one card'],
+    [TL('0'), 'Never holds your funds', 'the USDG leaves your wallet at trade time and the stock lands in it', 'no custody'],
+  ], 'Box 9 of 11, live. useverdex.xyz/agent/without-you'),
   vaultslive: (s) => std(s, 8, 'Drift past the line.', 'Vaults without you.', [
     [TL('%'), 'Targets, threshold, cadence', 'the vault you set today, kept by a contract', 'rules'],
     [TL('2'), 'Rebalance in one tx', 'sells the overweight, buys the underweight, each leg with its floor', 'one tx'],

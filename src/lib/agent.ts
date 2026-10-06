@@ -56,11 +56,12 @@ type Base = { id: string; status: 'pending' | 'approved' | 'dismissed'; summary:
 export type OrderProposal = Base & { kind: 'order'; ticker: string; name: string; logo?: string; asset: PlanToken; quote: PlanToken; chain: string; side: Side; trigger: Trigger; price: number; amountUsd?: number; units?: number; expiry: string; current?: number }
 export type PlanProposal = Base & { kind: 'plan'; ticker: string; name: string; logo?: string; target: PlanToken; pay: PlanToken; chain: string; amountUsd: number; cadence: Cadence; buyNow: boolean; firstAt: number; current?: number }
 export type VaultProposal = Base & { kind: 'vault'; name: string; chainId: number; chain: string; quote: PlanToken; assets: VaultAsset[]; rule: Rule; threshold: number; template?: string }
-export type Proposal = OrderProposal | PlanProposal | VaultProposal
+export type MandateProposal = Base & { kind: 'mandate'; rule: 'dip' | 'trend' | 'profit' | 'loss'; ruleName: string; side: 'buy' | 'sell'; paramBps: number; tickers: string[]; perTrade: number; perDay: number; budget: number; cooldown: number; expires: number; chain: string }
+export type Proposal = OrderProposal | PlanProposal | VaultProposal | MandateProposal
 export type AgentEvent = { type: 'text'; text: string } | { type: 'tool'; name: string; label: string } | { type: 'proposal'; proposal: Proposal } | { type: 'error'; message: string }
 export type ToolCtx = { assets: Asset[]; chains: ChainX[] | undefined; account?: { address: Address; chainId: number }; holder: boolean }
 
-export const SUGGESTIONS = ['Buy $250 of NVDA if it drops 5%', 'Every week put $100 into SPY', 'Set a stop-loss on my TSLA at $380', 'Build an AI vault: NVDA 40, AMD 30, TSM 30', 'What do I hold?', "What's gold trading at?"]
+export const SUGGESTIONS = ['Buy $250 of NVDA if it drops 5%', 'Let the agent buy NVDA and AMD dips with $500', 'Every week put $100 into SPY', 'Set a stop-loss on my TSLA at $380', 'Build an AI vault: NVDA 40, AMD 30, TSM 30', 'What do I hold?', "What's gold trading at?"]
 
 // Approve a proposal: the same store the page buttons write to, so the card shows up where it belongs.
 export function approve(p: Proposal, owner: Address): string {
@@ -73,9 +74,15 @@ export function approve(p: Proposal, owner: Address): string {
     addPlan({ owner, ticker: p.ticker, name: p.name, logo: p.logo, target: p.target, pay: p.pay, amountUsd: p.amountUsd, cadence: p.cadence, nextRunAt: firstRunAt(p.buyNow, p.cadence) })
     return '/auto-invest#plans'
   }
+  if (p.kind === 'mandate') return mandateUrl(p)
   addVault({ owner, name: p.name, template: p.template, chainId: p.chainId, quote: p.quote, assets: p.assets, rule: p.rule, threshold: p.threshold, nextRunAt: nextRunAfter(Date.now(), p.rule) })
   return '/vaults#vaults'
 }
+
+// The Agent without you page reads a draft from the query string: the contract is signed there, never from here.
+export const mandateUrl = (p: MandateProposal) => `/agent/without-you?${new URLSearchParams({ rule: p.rule, param: String(p.paramBps), tokens: p.tickers.join(','), perTrade: String(p.perTrade), perDay: String(p.perDay), budget: String(p.budget), cooldown: String(p.cooldown), expires: String(p.expires) })}#agent-composer`
+const MANDATE_RULES = { dip: { name: 'Buy the dips', side: 'buy', dir: 'down' }, trend: { name: 'Buy strength', side: 'buy', dir: 'up' }, profit: { name: 'Take profits', side: 'sell', dir: 'up' }, loss: { name: 'Cut losses', side: 'sell', dir: 'down' } } as const
+export const SUGGESTION_MANDATE = 'Let the agent buy NVDA and AMD dips with $500'
 
 // Asset lookup. Plain words map to the ticker people mean.
 const ALIASES: Record<string, string> = { nvidia: 'NVDA', apple: 'AAPL', microsoft: 'MSFT', google: 'GOOGL', alphabet: 'GOOGL', amazon: 'AMZN', meta: 'META', facebook: 'META', tesla: 'TSLA', gold: 'GLD', silver: 'SLV', bitcoin: 'IBIT', btc: 'IBIT', 'sp500': 'SPY', 's&p': 'SPY', 's&p500': 'SPY', 'the s&p 500': 'SPY', 's&p 500': 'SPY', nasdaq: 'QQQ', 'nasdaq 100': 'QQQ', treasuries: 'SGOV', treasury: 'SGOV', 'treasury bills': 'SGOV', tbills: 'SGOV', 't-bills': 'SGOV', oil: 'USO', spacex: 'SPCX', coinbase: 'COIN', microstrategy: 'MSTR', strategy: 'MSTR', palantir: 'PLTR', broadcom: 'AVGO', tsmc: 'TSM', micron: 'MU', netflix: 'NFLX', costco: 'COST', lilly: 'LLY', 'eli lilly': 'LLY', crowdstrike: 'CRWD', 'rocket lab': 'RKLB', robinhood: 'HOOD', circle: 'CRCL', berkshire: 'BRK.B', jpmorgan: 'JPM', 'jp morgan': 'JPM', intel: 'INTC', qualcomm: 'QCOM', shopify: 'SHOP', alibaba: 'BABA', asml: 'ASML', 'applied materials': 'AMAT' }
@@ -137,6 +144,7 @@ export const TOOLS: { name: string; description: string; schema: Schema; label: 
   { name: 'list_activity', description: "The user's existing Auto-Invest plans, limit and stop orders, and vaults on this device.", schema: obj({}), label: () => 'Reading plans, orders and vaults' },
   { name: 'propose_order', description: 'Queue a limit or stop order for the user to approve. Buy below = limit buy, buy above = stop buy, sell above = limit sell, sell below = stop-loss. Buys need amount_usd, sells need units. Returns the proposal; the user must approve the card before anything is placed.', schema: obj({ ticker: str('Ticker from search_assets'), side: str('buy or sell', ['buy', 'sell']), trigger: str('below or above the price level', ['below', 'above']), price: { type: 'number', description: 'Trigger price in USD' }, amount_usd: numOrNull('For buys: how much to spend, in USD. null for sells'), units: numOrNull('For sells: how many units to sell. null for buys'), expiry: str('How long the order lives', ['gtc', 'day', 'week', 'month']) }), label: (i) => `Drafting ${i.side} order on ${i.ticker}` },
   { name: 'propose_plan', description: 'Queue a recurring Auto-Invest buy for the user to approve: a fixed USD amount of one asset on a cadence, paid in the stablecoin of the asset\'s chain. Returns the proposal; nothing is scheduled until the user approves.', schema: obj({ ticker: str('Ticker from search_assets'), amount_usd: { type: 'number', description: 'USD per buy' }, cadence: str('day, week, two (every two weeks) or month', ['day', 'week', 'two', 'month']), buy_now: { type: 'boolean', description: 'true to make the first buy right after approval, false to wait for the first scheduled date' } }), label: (i) => `Drafting a ${i.cadence === 'two' ? 'two-week' : `${i.cadence}ly`} plan for ${i.ticker}` },
+  { name: 'propose_mandate', description: 'Queue a mandate for Agent without you: a budget and rules in a contract on Robinhood Chain that the Verdex executor works 24/7 without the user. Rules: dip (buy a stock when it is down param% or more on the day), trend (buy when up), profit (sell a slice when up), loss (sell when down). Caps in USD: per_trade, per_day, and for buy rules a total budget. Returns the proposal; the user must approve the card, which opens the mandate for their wallet to sign.', schema: obj({ rule: str('dip, trend, profit or loss', ['dip', 'trend', 'profit', 'loss']), tickers: { type: 'array', items: { type: 'string' }, description: 'Tickers from search_assets, 1 to 12, on Robinhood Chain' }, param_pct: { type: 'number', description: 'Size of the day move that fires the rule: 2, 3, 5 or 10', enum: [2, 3, 5, 10] }, per_trade_usd: { type: 'number', description: 'USD per trade: 25, 50, 100, 250 or 500', enum: [25, 50, 100, 250, 500] }, trades_per_day: { type: 'number', description: 'At most this many trades worth per day: 1, 2, 3 or 5', enum: [1, 2, 3, 5] }, budget_usd: numOrNull('For buy rules: USD in all, 100, 250, 500, 1000 or 2500. null for sell rules'), cooldown: str('Least time between two trades on the same stock', ['6h', 'day', '3d', 'week']), expires: str('How long the mandate lives', ['month', 'quarter', 'never']) }), label: (i) => `Drafting a mandate: ${MANDATE_RULES[(i.rule as keyof typeof MANDATE_RULES) ?? 'dip']?.name ?? i.rule}` },
   { name: 'propose_vault', description: 'Queue a vault for the user to approve: a target allocation across up to 12 listed assets on one chain, kept on target by rebalances the wallet confirms. Give explicit weights, or a template id (mag7, ai, core, balanced, hard, space) with an empty weights list. Returns the proposal; nothing is created until the user approves.', schema: obj({ name: str('Short name for the vault'), template: { type: ['string', 'null'], description: 'Template id or null' }, weights: { type: 'array', description: 'Assets and relative weights; they are normalised to 100', items: obj({ ticker: str('Ticker from search_assets'), weight: { type: 'number', description: 'Relative weight' } }) }, rule: str('When to rebalance: week, month, quarter, or drift (only when off target)', ['week', 'month', 'quarter', 'drift']), threshold: { type: 'number', description: 'Drift threshold in percentage points: 2, 5 or 10', enum: [2, 5, 10] } }), label: (i) => `Drafting vault ${i.name}` },
 ]
 export const toolLabel = (name: string, input: Record<string, unknown>) => TOOLS.find((t) => t.name === name)?.label(input) ?? name
@@ -236,6 +244,25 @@ export async function runTool(name: string, raw: unknown, ctx: ToolCtx, emit: (e
       emit({ type: 'proposal', proposal: p })
       return JSON.stringify({ proposal_id: p.id, summary: p.summary, first_buy: buyNow ? 'right after approval' : new Date(p.firstAt).toISOString(), pays_with: `${pay.symbol} on ${pay.chain}`, current_price_usd: Number(current.toFixed(2)), note: "Queued for the user's approval; nothing is scheduled yet." })
     }
+    case 'propose_mandate': {
+      const ruleKey = (['dip', 'trend', 'profit', 'loss'] as const).find((k) => k === s('rule')) ?? 'dip'
+      const rule = MANDATE_RULES[ruleKey]
+      const given = (Array.isArray(input.tickers) ? (input.tickers as unknown[]).map(String) : []).slice(0, 12)
+      const tickers: string[] = [], dropped: string[] = []
+      for (const tk of given) { const a = findAssets(ctx.assets, tk, 1)[0]; const v = a?.tokens.find((x) => x.chainId === ROBINHOOD); if (a && v && !tickers.includes(a.ticker)) tickers.push(a.ticker); else dropped.push(tk) }
+      if (!tickers.length) return fail(`None of those stocks is on Robinhood Chain${dropped.length ? ` (${dropped.join(', ')})` : ''}. Use search_assets and pick ones issued there.`)
+      const paramPct = [2, 3, 5, 10].includes(n('param_pct') ?? -1) ? n('param_pct')! : 3
+      const perTrade = [25, 50, 100, 250, 500].includes(n('per_trade_usd') ?? -1) ? n('per_trade_usd')! : 100
+      const perDayX = [1, 2, 3, 5].includes(n('trades_per_day') ?? -1) ? n('trades_per_day')! : 2
+      let budget = rule.side === 'buy' ? ([100, 250, 500, 1000, 2500].includes(n('budget_usd') ?? -1) ? n('budget_usd')! : 500) : 0
+      if (rule.side === 'buy' && budget < perTrade) budget = [100, 250, 500, 1000, 2500].find((b) => b >= perTrade) ?? 2500
+      const cooldown = ({ '6h': 21_600, day: 86_400, '3d': 259_200, week: 604_800 } as Record<string, number>)[s('cooldown')] ?? 86_400
+      const expires = ({ month: 30 * 86_400, quarter: 90 * 86_400, never: 0 } as Record<string, number>)[s('expires')] ?? 30 * 86_400
+      const joined = tickers.length <= 1 ? tickers.join('') : `${tickers.slice(0, -1).join(', ')} or ${tickers[tickers.length - 1]}`
+      const p: MandateProposal = { id: pid(), kind: 'mandate', status: 'pending', rule: ruleKey, ruleName: rule.name, side: rule.side, paramBps: paramPct * 100, tickers, perTrade, perDay: perTrade * perDayX, budget, cooldown, expires, chain: chainName(ctx, ROBINHOOD, 'Robinhood Chain'), summary: `${rule.name}: ${rule.side === 'buy' ? usd(perTrade) : `up to ${usd(perTrade)}`} of ${joined} when one is ${paramPct}% ${rule.dir} on the day` }
+      emit({ type: 'proposal', proposal: p })
+      return JSON.stringify({ proposal_id: p.id, summary: p.summary, caps: `${usd(perTrade)} a trade, ${usd(perTrade * perDayX)} a day${budget ? `, ${usd(budget)} in all` : ''}`, cooldown: s('cooldown') || 'day', expires: s('expires') || 'month', dropped: dropped.length ? dropped : undefined, note: "Queued for the user's approval. Approving opens the mandate on the Agent without you page, where their wallet signs it; nothing is on the chain yet." })
+    }
     case 'propose_vault': {
       const tpl = TEMPLATES.find((x) => x.id === s('template'))
       const given = Array.isArray(input.weights) ? (input.weights as { ticker?: unknown; weight?: unknown }[]).map((w) => [String(w?.ticker ?? ''), Number(w?.weight ?? 0)] as [string, number]).filter((w) => w[0]) : []
@@ -269,12 +296,13 @@ function systemPrompt(ctx: ToolCtx) {
   const wallet = ctx.account ? `Connected wallet ${ctx.account.address} on ${chainName(ctx, ctx.account.chainId)}. VERDEX holder: ${ctx.holder ? 'yes, so no Verdex fee' : 'no, so the 0.25% Verdex fee applies on every trade; holding any VERDEX removes it'}.` : 'No wallet connected: the user can still ask and get proposals, but must connect to approve them.'
   return `You are Verdex Agent, the assistant inside Verdex (useverdex.xyz), a non-custodial marketplace for tokenized stocks, ETFs, commodities and treasuries on EVM chains. You help the user act on those markets from their own wallet.
 
-You work only through tools. Read with search_assets, get_price, get_holdings and list_activity. Act with propose_order, propose_plan and propose_vault: each queues a card the user must approve. You never place, schedule, execute or cancel anything yourself, and after approval the wallet still confirms every trade.
+You work only through tools. Read with search_assets, get_price, get_holdings and list_activity. Act with propose_order, propose_plan, propose_vault and propose_mandate: each queues a card the user must approve. A mandate (Agent without you) is the one thing that then works without the user: a budget and rules in a contract on Robinhood Chain, worked by Verdex's executor 24/7 inside caps the contract enforces; propose one when the user wants something done for them while they are away, with limits. You never place, schedule, execute or cancel anything yourself, and after approval the wallet still confirms every trade.
 
 Rules:
 - Call search_assets before proposing anything so the ticker and chain are right, and use the ticker it returns.
 - One clear proposal per request unless the user asks for several. Fill sensible defaults and say what you assumed: limit buys default to $250 and until cancelled; plans default to weekly, paid in the chain's stablecoin; vaults default to Robinhood Chain, monthly, 5% threshold.
 - "If it drops 5%" means a buy below today's price less 5%: read the price first, then propose. A stop-loss is a sell below. Sells need units: read get_holdings when the user does not say how many.
+- Mandates default to buy the dips at 3%, $100 a trade, two trades a day, $500 in all, a day between trades on the same stock, for 30 days. Say that the contract keeps the limits and the executor keeps the rule, and that nothing is signed until they open the page.
 - Keep replies to two or three short sentences in plain words, no headers or bullet lists unless comparing options. Prices in USD.
 - After a proposal, say what it does and that the card needs their approval. Never say something is placed, scheduled or done.
 - Describe assets and order types freely, but do not give personal investment advice or predictions. Never ask for keys, seed phrases or passwords.
@@ -469,6 +497,15 @@ async function demoReply(text: string, ctx: ToolCtx, emit: (e: AgentEvent) => vo
     const r = await call('propose_plan', { ticker: tickers[0], amount_usd: amount, cadence, buy_now: /\b(now|today|right away|immediately|starting now)\b/.test(lower) })
     if (r.error) return `${r.error}`
     return `Drafted: ${r.summary}, paid with ${r.pays_with}, first buy ${r.first_buy === 'right after approval' ? 'right after you approve' : `on ${new Date(r.first_buy as string).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}. ${r.ticker ?? tickers[0]} is at ${usd(r.current_price_usd as number)} now. Review the card and approve it to schedule the plan.`
+  }
+  if (/\b(mandate|agent|without me|while i sleep|24\/7|on its own|automatically|autopilot|the dips|buy dips|dip[s]?\b|take profits?|cut (my )?losses|trailing)\b/.test(lower) && tickers.length) {
+    const ruleKey = /\b(take profits?|profits?)\b/.test(lower) ? 'profit' : /\b(cut|losses?|stop)\b/.test(lower) ? 'loss' : /\b(strength|momentum|breakout|trend|rips?|green)\b/.test(lower) ? 'trend' : 'dip'
+    const pctM = /\b(2|3|5|10)\s?%/.exec(lower)
+    const per = amounts.find((v) => [25, 50, 100, 250, 500].includes(v))
+    const bud = amounts.find((v) => [100, 250, 500, 1000, 2500].includes(v) && v !== per)
+    const r = await call('propose_mandate', { rule: ruleKey, tickers, param_pct: pctM ? Number(pctM[1]) : 3, per_trade_usd: per ?? 100, trades_per_day: 2, budget_usd: bud ?? (per ? Math.max(500, per * 5) : 500), cooldown: /\bweek/.test(lower) ? 'week' : /\b6 ?h|six hours/.test(lower) ? '6h' : 'day', expires: /\b(90|quarter|three months)\b/.test(lower) ? 'quarter' : /\b(never|until i (stop|close))\b/.test(lower) ? 'never' : 'month' })
+    if (r.error) return `${r.error}`
+    return `Drafted a mandate: ${r.summary}; ${r.caps}; the same stock at most once a ${r.cooldown === '6h' ? 'quarter day' : r.cooldown === 'week' ? 'week' : r.cooldown === '3d' ? 'three days' : 'day'}. Approve the card and it opens on the Agent without you page, where your wallet signs it; the contract keeps the limits and the executor keeps the rule.`
   }
   if (/\b(vault|portfolio|allocation|basket|split|rebalanc\w*)\b/.test(lower)) {
     const template = /\bmag(nificent)?\s?7\b/.test(lower) ? 'mag7' : /\b60\s?\/\s?40\b|balanced/.test(lower) ? 'balanced' : /\bhard assets?\b|commodit/.test(lower) ? 'hard' : /\bspace\b|frontier/.test(lower) ? 'space' : /\bcore\b|index/.test(lower) && !tickers.length ? 'core' : /\bai\b/.test(lower) && !tickers.length ? 'ai' : null

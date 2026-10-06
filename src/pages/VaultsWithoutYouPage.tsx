@@ -11,7 +11,7 @@ import { ROBINHOOD, fmtCompact, useAssets, useChains } from '../lib/api'
 import { useClock } from '../lib/holding'
 import { describeError, explorerTx, type ChainX } from '../lib/lifi'
 import { PHASE_LABEL, stockTokens, usePools, type Phase, type Pool, type StockToken } from '../lib/pools'
-import { CONTRACT, DEFAULT_SLIPPAGE_BPS, DEFAULT_TIP, DEPLOYED, INTERVALS, PRESETS, THRESHOLDS, approveHoldings, createVault, deepEnough, explorerAddress, fmtUsdg, fmtWhen, intervalLabel, normalise, poolFor, presetTargets, revokeHoldings, runNow, setPaused, toBps, useOnchainVaults, useVaultTotals, type OnchainVault, type Target } from '../lib/vaultsOnchain'
+import { CONTRACT, DEFAULT_SLIPPAGE_BPS, DEFAULT_TIP, DEPLOYED, INTERVALS, PRESETS, THRESHOLDS, approveHoldings, createVault, deepEnough, explorerAddress, fmtUsdg, fmtWhen, intervalLabel, normalise, poolFor, presetTargets, revokeHoldings, runNow, setPaused, toBps, useOnchainVaults, useVaultTotals, type OnchainLeg, type OnchainVault, type Target } from '../lib/vaultsOnchain'
 import { resolveImg } from '../lib/img'
 import { useWallet } from '../components/wallet/WalletProvider'
 import { CheckIcon, ExternalIcon, LockIcon, PauseIcon, RefreshIcon, ShieldIcon, VaultIcon, WalletIcon } from '../components/icons'
@@ -175,7 +175,11 @@ function VaultCard({ v, wallet, chain, onChanged }: { v: OnchainVault; wallet: C
     setTx({ phase: 'switching' })
     try { await fn(txCtx(wallet, chain, (ph) => setTx((x) => ({ ...x, phase: ph })))); setTx({ phase: 'done' }); onChanged() } catch (e) { setTx({ phase: 'failed', error: describeError(e) }) }
   }
-  const unapproved = v.legs.filter((l) => l.allowance < l.balance)
+  // A leg needs an allowance for what a rebalance would sell of it today: the overweight part. Legs at or under
+  // their target need none until they drift over, so a fresh buy by the vault does not nag for an approval.
+  const sellUnits = (l: OnchainLeg) => { const target = (v.totalUsdg * BigInt(l.targetBps)) / 10_000n; return l.valueUsdg > target && l.valueUsdg > 0n ? (l.balance * (l.valueUsdg - target)) / l.valueUsdg : 0n }
+  const short = (l: OnchainLeg) => l.balance > 0n && l.allowance < sellUnits(l)
+  const unapproved = v.legs.filter(short)
   const dot = v.state === 'paused' ? '#FFE866' : v.due ? '#FFE866' : t.color.mark
   const nextAt = v.lastRun + v.interval
   return (
@@ -204,7 +208,7 @@ function VaultCard({ v, wallet, chain, onChanged }: { v: OnchainVault; wallet: C
                 <Box sx={{ width: `${Math.min(100, l.weightBps / 100)}%`, height: '100%', background: Math.abs(off) >= v.thresholdBps ? '#FFE866' : t.color.mark, borderRadius: 3 }} />
                 <Box sx={{ position: 'absolute', left: `${l.targetBps / 100}%`, top: -2, width: 2, height: 10, background: t.color.text }} />
               </Box>
-              <Typography sx={{ fontSize: 12, color: t.color.textMuted, width: 150, textAlign: 'right' }}>{pct(l.weightBps)} of {pct(l.targetBps, 0)} · {fmtUsdg(l.valueUsdg, 0)}{l.allowance < l.balance ? ' · approve' : ''}</Typography>
+              <Typography sx={{ fontSize: 12, color: t.color.textMuted, width: 150, textAlign: 'right' }}>{pct(l.weightBps)} of {pct(l.targetBps, 0)} · {fmtUsdg(l.valueUsdg, 0)}{short(l) ? ' · approve' : ''}</Typography>
             </Box>
           )
         })}

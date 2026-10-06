@@ -35,6 +35,7 @@ export const EARLY_FEATURES: EarlyFeature[] = [
   { path: '/solana', label: 'Verdex on Solana', opensAt: '2026-10-05T23:00:00Z' },
   { path: '/orders/without-you', label: 'Orders without you', opensAt: '2026-10-06T15:00:00Z' },
   { path: '/vaults/without-you', label: 'Vaults without you', opensAt: '2026-10-07T15:00:00Z' },
+  { path: '/agent/without-you', label: 'Agent without you', opensAt: '2026-10-08T15:00:00Z' },
 ]
 
 const client = () => createPublicClient({ transport: http(RPC, { retryCount: 3, retryDelay: 1200, timeout: 20_000 }) })

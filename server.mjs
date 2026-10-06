@@ -1,16 +1,17 @@
-// Serves the built site and runs the Auto-Invest executor every ten minutes from the same process.
+// Serves the built site and runs the Auto-Invest, Orders, Vaults and Agent executors every ten minutes from the same process.
 // Static files come from dist/ with long cache headers for hashed assets, gzip for text, and the SPA
 // fallback to index.html. The executor only runs when an executor key and a contract address exist.
 import http from 'node:http'
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs'
 import { extname, join, normalize, resolve } from 'node:path'
 import { gzipSync } from 'node:zlib'
-import { runOnce, runOrdersOnce, runVaultsOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
+import { runOnce, runOrdersOnce, runVaultsOnce, runAgentOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
 import { TREASURY_ADDRESS } from './scripts/treasury-address.mjs'
 import { INDEX_ROUTER_ADDRESS } from './scripts/index-addresses.mjs'
 import { AUTOINVEST_ADDRESS as BUILT_IN } from './scripts/autoinvest-address.mjs'
 import { ORDERS_ADDRESS as ORDERS_BUILT_IN } from './scripts/orders-address.mjs'
 import { VAULTS_ADDRESS as VAULTS_BUILT_IN } from './scripts/vaults-address.mjs'
+import { AGENT_ADDRESS as AGENT_BUILT_IN } from './scripts/agent-address.mjs'
 
 const ROOT = resolve('dist')
 const PORT = Number(process.env.PORT ?? 8080)
@@ -53,6 +54,7 @@ const key = process.env.EXECUTOR_KEY ?? (existsSync('executor.key') ? readFileSy
 const address = process.env.AUTOINVEST_ADDRESS || BUILT_IN
 const ordersAddress = process.env.ORDERS_ADDRESS || ORDERS_BUILT_IN
 const vaultsAddress = process.env.VAULTS_ADDRESS || VAULTS_BUILT_IN
+const agentAddress = process.env.AGENT_ADDRESS || AGENT_BUILT_IN
 const EVERY = Number(process.env.EXECUTOR_EVERY_MS ?? 10 * 60 * 1000)
 if (key && address) {
   let running = false
@@ -69,6 +71,10 @@ if (key && address) {
       if (vaultsAddress) {
         const v = await runVaultsOnce({ rpc: process.env.RPC, address: vaultsAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] vaults pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
         if (v?.due) console.log(`[executor] vaults ${v.count} · due ${v.due} · sent ${v.sent} · skipped ${v.skipped}`)
+      }
+      if (agentAddress) {
+        const a = await runAgentOnce({ rpc: process.env.RPC, address: agentAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] agent pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
+        if (a?.candidates) console.log(`[executor] mandates ${a.count} · open ${a.open} · candidates ${a.candidates} · sent ${a.sent} · skipped ${a.skipped}`)
       }
       await refuelIfNeeded({ rpc: process.env.RPC, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => console.log(`[executor] refuel failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`))
     } catch (e) {
