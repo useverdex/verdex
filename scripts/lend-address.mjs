@@ -1,2 +1,2 @@
-// The deployed Verdex Lend contract on Robinhood Chain, or '' before the deployment lands.
-export const LEND_ADDRESS = '0x5B6dd1E7B237288E870FC16A5b20c9F86D7CDD0b'
+// The deployed Verdex Lend contract on Robinhood Chain (v3, deployed 2026-10-08, owner = Verdex dev wallet).
+export const LEND_ADDRESS = '0x509a56618f7c8dcb79fe89dd536b4e33522f4541'

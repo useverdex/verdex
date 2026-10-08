@@ -420,7 +420,7 @@ Phase 3, seven boxes: 1 Copy a wallet (Oct 9, 17:00) · 2 Verdex API (Oct 10, 01
 
 > Box 7 of 7.
 >
-> Agent rules v2. Today at 17:00 CEST, 15:00 UTC. Both ways, hourly moves, weekly budgets: three more ways to use the limits you already set onchain. No new contract, no new allowance.
+> Agent rules v2. Today at 17:00 CEST, 15:00 UTC. Both ways, hourly moves, weekly budgets: three more ways to use the limits you already set onchain. No new contract, the same allowances.
 >
 > Holders first.
 >
@@ -430,7 +430,7 @@ Phase 3, seven boxes: 1 Copy a wallet (Oct 9, 17:00) · 2 Verdex API (Oct 10, 01
 
 > Agent rules v2 are live.
 >
-> Box 7 of 7, and phase 3 is done. Three new rules on the same contract: both ways (buy the dips and take the profits in one mandate), hourly moves (read the last hour instead of the day), and weekly budgets (a cap that resets every seven days, on top of the daily one). The Agent page drafts all of them from a sentence.
+> Box 7 of 7, and phase 3 is done. Three new rules on the same contract: both ways (buy the dips and take the profits in one mandate), hourly moves (read the last hour instead of the day), and weekly budgets (a cap over any seven days, on top of the daily one). The Agent page drafts all of them from a sentence.
 >
 > Same limits, same floor, same no custody. Nothing new to approve.
 >

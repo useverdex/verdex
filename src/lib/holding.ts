@@ -36,6 +36,11 @@ export const EARLY_FEATURES: EarlyFeature[] = [
   { path: '/orders/without-you', label: 'Orders without you', opensAt: '2026-10-06T15:00:00Z' },
   { path: '/vaults/without-you', label: 'Vaults without you', opensAt: '2026-10-06T23:00:00Z' },
   { path: '/agent/without-you', label: 'Agent without you', opensAt: '2026-10-08T15:00:00Z' },
+  { path: '/copy', label: 'Copy a wallet', opensAt: '2026-10-09T15:00:00Z' },
+  { path: '/orders/without-you/base', label: 'Orders without you on Base', opensAt: '2026-10-10T23:00:00Z' },
+  { path: '/auto-invest/without-you/base', label: 'Auto-Invest without you on Base', opensAt: '2026-10-11T15:00:00Z' },
+  { path: '/vaults/without-you/base', label: 'Vaults without you on Base', opensAt: '2026-10-11T23:00:00Z' },
+  { path: '/agent/without-you/rules', label: 'Agent rules v2', opensAt: '2026-10-12T15:00:00Z' },
 ]
 
 const client = () => createPublicClient({ transport: http(RPC, { retryCount: 3, retryDelay: 1200, timeout: 20_000 }) })

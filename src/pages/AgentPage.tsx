@@ -83,7 +83,7 @@ function ProposalCard({ p, connected, onApprove, onDismiss }: { p: Proposal; con
       )}
       {p.kind === 'mandate' && (
         <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
-          <Avatar src={CHAIN_NAME_LOGOS[p.chain]} alt="" sx={{ width: 14, height: 14, background: 'transparent' }} /> {p.chain} · {fmtUsd(p.perTrade)} a trade · {fmtUsd(p.perDay)} a day{p.budget ? ` · ${fmtUsd(p.budget)} in all` : ''} · same stock at most every {p.cooldown === 21_600 ? '6 hours' : p.cooldown === 86_400 ? 'day' : p.cooldown === 259_200 ? '3 days' : 'week'} · {p.expires ? `${Math.round(p.expires / 86_400)} days` : 'until closed'} · floor spot less 1%
+          <Avatar src={CHAIN_NAME_LOGOS[p.chain]} alt="" sx={{ width: 14, height: 14, background: 'transparent' }} /> {p.chain} · {p.hourly ? 'the last hour' : 'the day'} · {fmtUsd(p.perTrade)} a trade · {fmtUsd(p.perDay)} a day{p.weekX ? ` · ${fmtUsd(p.perDay * p.weekX)} a week` : ''}{p.budget ? ` · ${fmtUsd(p.budget)} in all` : ''} · same stock at most every {p.cooldown === 21_600 ? '6 hours' : p.cooldown === 86_400 ? 'day' : p.cooldown === 259_200 ? '3 days' : 'week'} · {p.expires ? `${Math.round(p.expires / 86_400)} days` : 'until closed'} · floor spot less 1%
         </Typography>
       )}
       {p.kind === 'vault' && (

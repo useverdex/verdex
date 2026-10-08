@@ -75,11 +75,14 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   the owner holds. Deployed from `/deploy/vaults`; the page is `/vaults/without-you`. On Base the same contract over
   Slipstream pools (`contracts/VerdexVaultsCL.sol`, `scripts/deploy-vaults-base.mjs`, `?chain=base`, USDC).
 - **Agent without you.** `contracts/VerdexAgent.sol`: a budget and rules for the agent, kept by a contract. A
-  mandate names the stocks, the rule (buy the dips, buy strength, take profits, cut losses) and its size, the USDG
-  per trade, per day and in all, a cooldown per stock, a spot-less-1% floor, an expiry and a tip. The executor (same
-  pass as the others, `runAgentOnce`) reads each stock's move on the day from the pools' market data and trades
+  mandate names the stocks, the rule (buy the dips, buy strength, take profits, cut losses, both ways) and its size,
+  the USDG per trade, per day and in all, a cooldown per stock, a spot-less-1% floor, an expiry and a tip. The executor
+  (same pass as the others, `runAgentOnce`) reads each stock's move on the day, or in the last hour, from the pools'
+  market data and trades
   inside the limits from the owner's allowance; the contract refuses anything outside them (`check` returns the
-  reason). Deployed from `/deploy/agent` or `scripts/deploy-agent.mjs`; the page is `/agent/without-you`, and the
+  reason). Rules v2 (both ways, the hourly window, weekly caps as a multiple of the day cap) are encoded in the rule
+  byte the contract stores and never reads; the weekly cap is kept by the executor from the Traded events of the last
+  seven days. Deployed from `/deploy/agent` or `scripts/deploy-agent.mjs`; the page is `/agent/without-you`, and the
   Agent page drafts mandates into it.
 - **Verdex in numbers.** `/numbers`: Index TVL from the index contracts valued at the pools, volume from the
   aggregator's record of swaps and bridges made through Verdex plus the Index routers' events, fees from the

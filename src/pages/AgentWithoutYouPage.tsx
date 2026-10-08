@@ -9,10 +9,10 @@ import { formatUnits, parseUnits } from 'viem'
 import { BRAND, t, z } from '../theme/tokens'
 import { Bt, Lt, Vg } from '../theme/styles'
 import { ROBINHOOD, fmtCompact, useAssets, useChains } from '../lib/api'
-import { useClock } from '../lib/holding'
+import { earlyFeature, useClock, useHolding } from '../lib/holding'
 import { describeError, explorerTx, type ChainX } from '../lib/lifi'
 import { PHASE_LABEL, USDG, stockTokens, usePools, type Phase, type Pool, type StockToken } from '../lib/pools'
-import { BUDGETS, CONTRACT, COOLDOWNS, DEFAULT_SLIPPAGE_BPS, DEFAULT_TIP, DEPLOYED, EXPIRIES, PARAMS, PER_TRADES, RULES, approveHoldings, approveUsdg, budgetAllowance, closeMandate, cooldownPhrase, createMandate, deepEnough, explorerAddress, fmtUsdg, fmtWhen, pct, poolFor, revokeAll, ruleFor, setPaused, topUp, useAgentTotals, useOnchainMandates, useTrades, type OnchainMandate, type Pick, type Rule } from '../lib/agentOnchain'
+import { BUDGETS, CONTRACT, COOLDOWNS, DEFAULT_SLIPPAGE_BPS, DEFAULT_TIP, DEPLOYED, EXPIRIES, PARAMS, PER_TRADES, RULES, WEEK_X, decodeRule, windowPhrase, approveHoldings, approveUsdg, budgetAllowance, closeMandate, cooldownPhrase, createMandate, deepEnough, explorerAddress, fmtUsdg, fmtWhen, pct, poolFor, revokeAll, ruleFor, setPaused, topUp, useAgentTotals, useOnchainMandates, useTrades, type OnchainMandate, type Pick, type Rule } from '../lib/agentOnchain'
 import { resolveImg } from '../lib/img'
 import { useWallet } from '../components/wallet/WalletProvider'
 import { CheckIcon, ExternalIcon, LockIcon, PauseIcon, RefreshIcon, ShieldIcon, SparkIcon, WalletIcon } from '../components/icons'
@@ -58,9 +58,19 @@ const list = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1
 const units = (v: bigint, d = 18) => { const n = Number(formatUnits(v, d)); return n >= 100 ? n.toFixed(0) : n >= 1 ? n.toFixed(2) : n.toFixed(4) }
 // What a mandate does, in one sentence, for the summary row and the card.
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1)
-function describeMandate(rule: Rule, paramBps: number, tickers: string[], perTrade: number) {
-  const move = `${pct(paramBps)} or more ${rule.id === 0 || rule.id === 3 ? 'down' : 'up'} on the day`
+function describeMandate(rule: Rule, paramBps: number, tickers: string[], perTrade: number, hourly = false) {
+  const w = windowPhrase(hourly)
+  if (rule.side === 'both') return `Buys ${usd(perTrade)} of ${list(tickers)} whenever one is ${pct(paramBps)} or more down ${w}, sells up to ${usd(perTrade)} of it whenever one is ${pct(paramBps)} or more up ${w}`
+  const move = `${pct(paramBps)} or more ${rule.id === 0 || rule.id === 3 ? 'down' : 'up'} ${w}`
   return rule.side === 'buy' ? `${cap(rule.verb)} ${usd(perTrade)} of ${list(tickers)} whenever one is ${move}` : `${cap(rule.verb)} up to ${usd(perTrade)} of ${list(tickers)} whenever one is ${move}`
+}
+
+// Rules v2 (both ways, the hourly window, weekly caps) open on their date; holders at the threshold have them now.
+function useRulesV2(owner: `0x${string}` | undefined) {
+  const f = earlyFeature('/agent/without-you/rules')
+  const now = useClock(!!f)
+  const holding = useHolding(f ? owner : undefined)
+  return !f || now + 30_000 > f.opensAtMs || !!holding.data?.early
 }
 
 // The composer. A proposal from the Agent page arrives in the query string and fills it in.
@@ -69,6 +79,9 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
   const q = (k: string) => params.get(k) ?? ''
   const [rule, setRule] = useState<Rule>(() => RULES.find((r) => r.key === q('rule')) ?? RULES[0])
   const [param, setParam] = useState(() => (PARAMS.includes(Number(q('param'))) ? Number(q('param')) : 300))
+  const [hourly, setHourly] = useState(() => q('window') === 'hour')
+  const [weekX, setWeekX] = useState(() => { const n = Number(q('perWeek')) / (Number(q('perDay')) || 1); return n > 0 && WEEK_X.includes(n) ? n : 0 })
+  const v2 = useRulesV2(wallet.account?.address)
   const [wanted] = useState(() => q('tokens').split(',').map((x) => x.trim().toUpperCase()).filter(Boolean))
   const [custom, setCustom] = useState<Pick[] | null>(null)
   const [perTrade, setPerTrade] = useState(() => (PER_TRADES.includes(Number(q('perTrade'))) ? Number(q('perTrade')) : 100))
@@ -91,19 +104,19 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
   }
   const perDay = perTrade * perDayX
   const busy = tx.phase !== 'idle' && tx.phase !== 'done' && tx.phase !== 'failed'
-  const ok = picks.length >= 1 && picks.length <= 12 && perTrade > 0 && (rule.side === 'sell' || budget >= perTrade)
+  const ok = picks.length >= 1 && picks.length <= 12 && perTrade > 0 && (rule.side === 'sell' || budget >= perTrade) && (v2 || (rule.id < 4 && !hourly && !weekX))
   const ready = !!wallet.account && ok && !busy
   const tickers = picks.map((p) => p.stock.ticker)
-  const budgetRaw = rule.side === 'buy' ? parseUnits(String(budget), USDG.decimals) : 0n
+  const budgetRaw = rule.side !== 'sell' ? parseUnits(String(budget), USDG.decimals) : 0n
   const allowance = budgetAllowance({ budget: budgetRaw, perTrade: parseUnits(String(perTrade), USDG.decimals), tip: DEFAULT_TIP })
   const go = async () => {
     if (!wallet.walletClient || !wallet.account) return
     setTx({ phase: 'switching' })
     try {
       const ctx = txCtx(wallet, chain, (p) => setTx((x) => ({ ...x, phase: p })))
-      const hash = await createMandate(ctx, { picks, rule, paramBps: param, budget: budgetRaw, perTrade: parseUnits(String(perTrade), USDG.decimals), perDay: parseUnits(String(perDay), USDG.decimals), slippageBps: DEFAULT_SLIPPAGE_BPS, cooldown: cooldown.seconds, expiresIn: expiry.seconds, tip: DEFAULT_TIP })
-      if (rule.side === 'buy') await approveUsdg(ctx, allowance)
-      else await approveHoldings(ctx, picks.map((p) => p.stock.address))
+      const hash = await createMandate(ctx, { picks, rule, hourly: v2 && hourly, weekX: v2 ? weekX : 0, paramBps: param, budget: budgetRaw, perTrade: parseUnits(String(perTrade), USDG.decimals), perDay: parseUnits(String(perDay), USDG.decimals), slippageBps: DEFAULT_SLIPPAGE_BPS, cooldown: cooldown.seconds, expiresIn: expiry.seconds, tip: DEFAULT_TIP })
+      if (rule.side !== 'sell') await approveUsdg(ctx, allowance)
+      if (rule.side !== 'buy') await approveHoldings(ctx, picks.map((p) => p.stock.address))
       setTx({ phase: 'done', hash })
       onDone()
     } catch (e) {
@@ -114,11 +127,18 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
   return (
     <Panel sx={{ p: { xs: 2.5, md: 3 } }}>
       <Label>The rule</Label>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>{RULES.map((r) => <Choice key={r.id} on={r.id === rule.id} onClick={() => setRule(r)}>{r.name}</Choice>)}</Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>{(v2 ? RULES : RULES.filter((r) => r.id < 4)).map((r) => <Choice key={r.id} on={r.id === rule.id} onClick={() => setRule(r)}>{r.name}</Choice>)}</Box>
       <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>{rule.blurb}</Typography>
       <Box sx={{ mt: 2.5 }}>
-        <Label>When a stock is {rule.id === 0 || rule.id === 3 ? 'down' : 'up'} on the day by</Label>
+        <Label>When a stock is {rule.side === 'both' ? 'down or up' : rule.id === 0 || rule.id === 3 ? 'down' : 'up'} {windowPhrase(hourly)} by</Label>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>{PARAMS.map((b) => <Choice key={b} on={param === b} onClick={() => setParam(b)}>{pct(b)} or more</Choice>)}</Box>
+        {v2 && (
+          <Box sx={{ mt: 2.5 }}>
+            <Label>The move, measured</Label>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}><Choice on={!hourly} onClick={() => setHourly(false)}>On the day</Choice><Choice on={hourly} onClick={() => setHourly(true)}>In the last hour</Choice></Box>
+            <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>{hourly ? 'The executor reads each stock\'s move over the last hour, every ten minutes. Faster to fire; mind the cooldown.' : 'The executor reads each stock\'s move on the day, every ten minutes.'}</Typography>
+          </Box>
+        )}
       </Box>
       <Box sx={{ mt: 2.5 }}>
         <Label>In</Label>
@@ -143,7 +163,13 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
           <Label>Per day, at most</Label>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>{[1, 2, 3, 5].map((n) => <Choice key={n} on={perDayX === n} onClick={() => setPerDayX(n)}>{usd(perTrade * n)}</Choice>)}</Box>
         </Box>
-        {rule.side === 'buy' && (
+        {v2 && (
+          <Box>
+            <Label>Per week, at most</Label>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>{WEEK_X.map((n) => <Choice key={n} on={weekX === n} onClick={() => setWeekX(n)}>{n ? usd(perDay * n) : 'No weekly cap'}</Choice>)}</Box>
+          </Box>
+        )}
+        {rule.side !== 'sell' && (
           <Box>
             <Label>Budget, in all</Label>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>{BUDGETS.map((v) => <Choice key={v} on={budget === v} onClick={() => setBudget(v)} disabled={v < perTrade}>{usd(v)}</Choice>)}</Box>
@@ -159,16 +185,16 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
         </Box>
       </Box>
       <Box sx={{ mt: 3, p: 2, borderRadius: t.radius.panel, background: t.color.raised, display: 'grid', gap: 1 }}>
-        <Row k="The mandate" v={ok ? describeMandate(rule, param, tickers, perTrade) : '…'} strong />
-        <Row k="Caps" v={`${usd(perTrade)} a trade, ${usd(perDay)} a day${rule.side === 'buy' ? `, ${usd(budget)} in all` : ''}, the same stock ${cooldownPhrase(cooldown.seconds)}`} />
+        <Row k="The mandate" v={ok ? describeMandate(rule, param, tickers, perTrade, hourly) : '…'} strong />
+        <Row k="Caps" v={`${usd(perTrade)} a trade, ${usd(perDay)} a day${weekX ? `, ${usd(perDay * weekX)} a week` : ''}${rule.side !== 'sell' ? `, ${usd(budget)} in all` : ''}, the same stock ${cooldownPhrase(cooldown.seconds)}`} />
         <Row k="Price floor" v={`${DEFAULT_SLIPPAGE_BPS / 100}% below spot, read at trade time`} />
-        <Row k="Tip to whoever runs it" v={`${fmtUsdg(DEFAULT_TIP)} per trade${rule.side === 'buy' ? ', pulled with the buy' : ', from the sale proceeds'}`} />
-        <Row k="Allowance" v={rule.side === 'buy' ? `USDG, exactly ${fmtUsdg(allowance)}: the budget plus the tips` : 'each stock, exactly what you hold today'} />
+        <Row k="Tip to whoever runs it" v={`${fmtUsdg(DEFAULT_TIP)} per trade${rule.side === 'buy' ? ', pulled with the buy' : rule.side === 'sell' ? ', from the sale proceeds' : ', pulled with a buy or from a sale'}`} />
+        <Row k="Allowance" v={rule.side === 'buy' ? `USDG, exactly ${fmtUsdg(allowance)}: the budget plus the tips` : rule.side === 'sell' ? 'each stock, exactly what you hold today' : `USDG, exactly ${fmtUsdg(allowance)}, and each stock for what you hold today`} />
         <Row k="Ends" v={expiry.seconds ? `in ${expiry.label}, or when you close it` : 'when you close it'} />
         <Row k={`${BRAND.name} fee`} v="None" />
       </Box>
       <Button onClick={() => (wallet.account ? void go() : wallet.openWalletMenu())} disabled={!!wallet.account && !ready} sx={{ ...Bt, width: '100%', mt: 2.5, height: 44 }}>
-        {!wallet.account ? 'Connect wallet' : busy ? PHASE_LABEL[tx.phase] : rule.side === 'buy' ? 'Create the mandate and approve the USDG' : 'Create the mandate and approve the holdings'}
+        {!wallet.account ? 'Connect wallet' : busy ? PHASE_LABEL[tx.phase] : rule.side === 'buy' ? 'Create the mandate and approve the USDG' : rule.side === 'sell' ? 'Create the mandate and approve the holdings' : 'Create the mandate and approve USDG and the holdings'}
       </Button>
       {tx.phase === 'failed' && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1.5 }}>{tx.error}</Typography>}
       {tx.phase === 'done' && tx.hash && chain && (
@@ -187,6 +213,7 @@ function MandateCard({ m, wallet, chain, onChanged }: { m: OnchainMandate; walle
   const [extra, setExtra] = useState('100')
   const now = useClock(m.state === 'active')
   const rule = ruleFor(m.rule) ?? RULES[0]
+  const { hourly, weekX } = decodeRule(m.rule)
   const busy = tx.phase !== 'idle' && tx.phase !== 'done' && tx.phase !== 'failed'
   const act = async (fn: (ctx: ReturnType<typeof txCtx>) => Promise<unknown>) => {
     if (!wallet.walletClient || !wallet.account) return
@@ -194,9 +221,9 @@ function MandateCard({ m, wallet, chain, onChanged }: { m: OnchainMandate; walle
     try { await fn(txCtx(wallet, chain, (ph) => setTx((x) => ({ ...x, phase: ph })))); setTx({ phase: 'done' }); onChanged() } catch (e) { setTx({ phase: 'failed', error: describeError(e) }) }
   }
   const tickers = m.legs.map((l) => l.stock?.ticker ?? l.token.slice(0, 6))
-  const needUsdg = rule.side === 'buy' ? budgetAllowance(m) : 0n
-  const usdgShort = m.state === 'active' && rule.side === 'buy' && m.usdgAllowance < (needUsdg < m.perTrade + m.tip ? needUsdg : m.perTrade + m.tip)
-  const stocksShort = m.state === 'active' && rule.side === 'sell' ? m.legs.filter((l) => l.balance > 0n && l.allowance === 0n) : []
+  const needUsdg = rule.side !== 'sell' ? budgetAllowance(m) : 0n
+  const usdgShort = m.state === 'active' && rule.side !== 'sell' && m.usdgAllowance < (needUsdg < m.perTrade + m.tip ? needUsdg : m.perTrade + m.tip)
+  const stocksShort = m.state === 'active' && rule.side !== 'buy' ? m.legs.filter((l) => l.balance > 0n && l.allowance === 0n) : []
   const dot = m.state === 'active' ? t.color.mark : m.state === 'paused' ? '#FFE866' : t.color.textFaint
   const label = m.state === 'active' ? 'Watching, checks every ten minutes' : m.state === 'paused' ? 'Paused' : m.state === 'closed' ? 'Closed' : m.state === 'expired' ? 'Expired' : 'Budget spent'
   const open = m.state === 'active' || m.state === 'paused' || m.state === 'spent'
@@ -212,7 +239,7 @@ function MandateCard({ m, wallet, chain, onChanged }: { m: OnchainMandate; walle
             <Box component="span" sx={{ fontSize: 12, color: t.color.textMuted, fontWeight: 400 }}>{label}</Box>
           </Typography>
           <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>
-            {describeMandate(rule, m.param, tickers, Number(formatUnits(m.perTrade, USDG.decimals)))} · {fmtUsdg(m.perDay, 0)} a day{rule.side === 'buy' ? ` · ${fmtUsdg(m.budget)} left to spend` : ''} · same stock {cooldownPhrase(m.cooldown)}{m.expiresAt ? ` · until ${fmtWhen(m.expiresAt)}` : ''} · mandate #{String(m.id)}
+            {describeMandate(rule, m.param, tickers, Number(formatUnits(m.perTrade, USDG.decimals)), hourly)} · {fmtUsdg(m.perDay, 0)} a day{weekX ? ` · ${fmtUsdg(m.perDay * BigInt(weekX), 0)} a week` : ''}{rule.side !== 'sell' ? ` · ${fmtUsdg(m.budget)} left to spend` : ''} · same stock {cooldownPhrase(m.cooldown)}{m.expiresAt ? ` · until ${fmtWhen(m.expiresAt)}` : ''} · mandate #{String(m.id)}
           </Typography>
         </Box>
       </Box>
@@ -229,7 +256,7 @@ function MandateCard({ m, wallet, chain, onChanged }: { m: OnchainMandate; walle
         })}
       </Box>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 1, mt: 2 }}>
-        {[['Today', `${fmtUsdg(m.perDay - m.leftToday, 0)} of ${fmtUsdg(m.perDay, 0)}`], ['Trades', String(m.trades)], rule.side === 'buy' ? ['Spent in all', fmtUsdg(m.spent)] : ['Sold in all', fmtUsdg(m.sold)], ['Last trade', m.lastTrade ? fmtWhen(m.lastTrade) : 'none yet']].map(([k, v]) => (
+        {[['Today', `${fmtUsdg(m.perDay - m.leftToday, 0)} of ${fmtUsdg(m.perDay, 0)}`], ['Trades', String(m.trades)], rule.side === 'sell' ? ['Sold in all', fmtUsdg(m.sold)] : ['Spent in all', fmtUsdg(m.spent)], ['Last trade', m.lastTrade ? fmtWhen(m.lastTrade) : 'none yet']].map(([k, v]) => (
           <Box key={k} sx={{ p: 1.25, borderRadius: t.radius.input, background: t.color.raised }}>
             <Typography sx={{ fontSize: 11, color: t.color.textLabel }}>{k}</Typography>
             <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{v}</Typography>
@@ -240,7 +267,7 @@ function MandateCard({ m, wallet, chain, onChanged }: { m: OnchainMandate; walle
         {usdgShort && <Button disabled={busy} onClick={() => void act((c) => approveUsdg(c, needUsdg))} sx={{ ...Bt, height: 34, px: 1.75 }}>Approve {fmtUsdg(needUsdg)} USDG</Button>}
         {stocksShort.length > 0 && <Button disabled={busy} onClick={() => void act((c) => approveHoldings(c, stocksShort.map((l) => l.token)))} sx={{ ...Bt, height: 34, px: 1.75 }}>Approve {stocksShort.map((l) => l.stock?.ticker ?? '?').join(', ')}</Button>}
         {open && <Button disabled={busy} onClick={() => void act((c) => setPaused(c, m.id, m.state !== 'paused'))} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75, gap: 0.75 }}>{m.state !== 'paused' ? <><PauseIcon size={13} /> Pause</> : <><RefreshIcon size={13} /> Resume</>}</Button>}
-        {open && rule.side === 'buy' && (
+        {open && rule.side !== 'sell' && (
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
             <InputBase value={extra} onChange={(e) => setExtra(e.target.value)} inputProps={{ 'aria-label': 'Top-up amount', inputMode: 'decimal' }} startAdornment={<span style={{ fontSize: 13, color: t.color.textMuted, marginRight: 4 }}>$</span>} sx={{ width: 90, height: 34, px: 1, borderRadius: t.radius.input, background: t.color.hover, fontSize: 13 }} />
             <Button disabled={busy || extraRaw === 0n} onClick={() => void act(async (c) => { await topUp(c, m.id, extraRaw); await approveUsdg(c, budgetAllowance({ budget: m.budget + extraRaw, perTrade: m.perTrade, tip: m.tip })) })} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75 }}>Top up</Button>
@@ -352,7 +379,7 @@ export default function AgentWithoutYouPage() {
         <Typography component="h2" sx={{ ...t.type.h3, color: t.color.text }}>How it works</Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0,1fr))' }, gap: 2.5, mt: 4 }}>
           <Step n={1} icon={<LockIcon size={20} />} title="You set the limits" text="The stocks, the rule and its size, the USDG per trade, per day and in all, the least time between two trades on the same stock, the floor and the expiry go into the contract. You approve USDG for the budget plus the tips, or each stock for what you hold. Revoke and the mandate stops, whatever anyone does." />
-          <Step n={2} icon={<SparkIcon size={20} />} title="The agent works inside them" text={`${BRAND.name}'s executor reads each stock's move on the day every ten minutes and applies your rule. When it fires, the agent calls the contract: the USDG leaves your wallet, the stock lands in it, the executor takes a ten-cent tip. One trade per stock per cooldown, never more than the caps.`} />
+          <Step n={2} icon={<SparkIcon size={20} />} title="The agent works inside them" text={`${BRAND.name}'s executor reads each stock's move on the day, or in the last hour, every ten minutes and applies your rule. When it fires, the agent calls the contract: the USDG leaves your wallet, the stock lands in it, the executor takes a ten-cent tip. One trade per stock per cooldown, never more than the caps.`} />
           <Step n={3} icon={<ShieldIcon size={20} />} title="The contract refuses the rest" text="Every trade must fit the budget, the per-trade and per-day caps, the cooldown and the expiry, and return at least the pool's spot less 1%, read in the same transaction. A trade outside the limits reverts. The contract holds nothing between trades and no admin can touch a mandate." />
         </Box>
       </Box>

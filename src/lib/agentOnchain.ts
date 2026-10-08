@@ -43,14 +43,21 @@ export const EXPLORER = 'https://robin.etherscan.io'
 export const DEFAULT_TIP = parseUnits('0.10', 6)
 export const DEFAULT_SLIPPAGE_BPS = 100
 
-export type Rule = { id: number; key: 'dip' | 'trend' | 'profit' | 'loss'; name: string; side: 'buy' | 'sell'; verb: string; when: (pct: string) => string; blurb: string }
+export type Rule = { id: number; key: 'dip' | 'trend' | 'profit' | 'loss' | 'both'; name: string; side: 'buy' | 'sell' | 'both'; verb: string; when: (pct: string) => string; blurb: string }
 export const RULES: Rule[] = [
   { id: 0, key: 'dip', name: 'Buy the dips', side: 'buy', verb: 'buys', when: (p) => `a stock is ${p} or more down on the day`, blurb: 'A red day is a buy: when one of the stocks is down by the size you set, the agent buys it with USDG.' },
   { id: 1, key: 'trend', name: 'Buy strength', side: 'buy', verb: 'buys', when: (p) => `a stock is ${p} or more up on the day`, blurb: 'A green day is a buy: when one of the stocks is up by the size you set, the agent buys it with USDG.' },
   { id: 2, key: 'profit', name: 'Take profits', side: 'sell', verb: 'sells', when: (p) => `a stock is ${p} or more up on the day`, blurb: 'A green day is a sale: when one of the stocks you hold is up by the size you set, the agent sells a slice of it for USDG.' },
   { id: 3, key: 'loss', name: 'Cut losses', side: 'sell', verb: 'sells', when: (p) => `a stock is ${p} or more down on the day`, blurb: 'A red day is a sale: when one of the stocks you hold is down by the size you set, the agent sells a slice of it for USDG.' },
+  { id: 4, key: 'both', name: 'Both ways', side: 'both', verb: 'buys and sells', when: (p) => `a stock is ${p} or more down (buy) or up (sell)`, blurb: 'Buy the dips and take the profits in one mandate: down by the size you set, the agent buys with USDG; up by it, the agent sells a slice for USDG.' },
 ]
-export const ruleFor = (id: number) => RULES.find((r) => r.id === id)
+// Rules v2 live in the same byte the contract stores and never reads: bits 0-2 the rule, bit 3 the window (the last
+// hour instead of the day), bits 4-5 a weekly cap as a multiple of the day cap (none, 2x, 3x, 5x), kept by the executor.
+export const WEEK_X = [0, 2, 3, 5]
+export const decodeRule = (code: number) => ({ base: code & 7, hourly: (code & 8) !== 0, weekX: WEEK_X[(code >> 4) & 3] })
+export const encodeRule = (base: number, hourly: boolean, weekX: number) => (base & 7) | (hourly ? 8 : 0) | (Math.max(0, WEEK_X.indexOf(weekX)) << 4)
+export const windowPhrase = (hourly: boolean) => (hourly ? 'in the last hour' : 'on the day')
+export const ruleFor = (code: number) => RULES.find((r) => r.id === (code & 7))
 export const PARAMS = [200, 300, 500, 1000] // bps of a day's move
 export const COOLDOWNS: { key: string; label: string; seconds: number }[] = [{ key: '6h', label: '6 hours', seconds: 21_600 }, { key: 'day', label: 'a day', seconds: 86_400 }, { key: '3d', label: '3 days', seconds: 259_200 }, { key: 'week', label: 'a week', seconds: 604_800 }]
 export const cooldownLabel = (s: number) => COOLDOWNS.find((x) => x.seconds === s)?.label ?? `${Math.round(s / 3600)} hours`
@@ -157,7 +164,7 @@ export function useTrades(ids: bigint[] | undefined) {
   return useQuery({ queryKey: ['agent-onchain-trades', key], queryFn: () => readTrades(ids!), enabled: DEPLOYED && !!ids && ids.length > 0, staleTime: 30_000, refetchInterval: 60_000, retry: 1 })
 }
 
-export type NewMandate = { picks: Pick[]; rule: Rule; paramBps: number; budget: bigint; perTrade: bigint; perDay: bigint; slippageBps: number; cooldown: number; expiresIn: number; tip: bigint }
+export type NewMandate = { picks: Pick[]; rule: Rule; hourly: boolean; weekX: number; paramBps: number; budget: bigint; perTrade: bigint; perDay: bigint; slippageBps: number; cooldown: number; expiresIn: number; tip: bigint }
 // The USDG a buy mandate needs approved: the budget plus a tip for every trade the budget allows.
 export function budgetAllowance(m: { budget: bigint; perTrade: bigint; tip: bigint }) {
   const trades = m.perTrade > 0n ? (m.budget + m.perTrade - 1n) / m.perTrade : 0n
@@ -166,7 +173,7 @@ export function budgetAllowance(m: { budget: bigint; perTrade: bigint; tip: bigi
 export async function createMandate(ctx: TxCtx, m: NewMandate) {
   await ensureChain(ctx)
   const expiresAt = m.expiresIn ? Math.floor(Date.now() / 1000) + m.expiresIn : 0
-  const data = encodeFunctionData({ abi, functionName: 'create', args: [m.picks.map((p) => p.stock.address), m.picks.map((p) => p.pool.fee), m.rule.id, m.paramBps, m.budget, m.perTrade, m.perDay, m.slippageBps, m.cooldown, expiresAt, m.tip] })
+  const data = encodeFunctionData({ abi, functionName: 'create', args: [m.picks.map((p) => p.stock.address), m.picks.map((p) => p.pool.fee), encodeRule(m.rule.id, m.hourly, m.weekX), m.paramBps, m.budget, m.perTrade, m.perDay, m.slippageBps, m.cooldown, expiresAt, m.tip] })
   return sendTx(ctx, CONTRACT, data)
 }
 // Approve USDG for exactly what the mandate may spend, on top of what other mandates already have.

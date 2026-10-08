@@ -24,17 +24,24 @@ const nonce = await pub.getTransactionCount({ address: account.address })
 console.log('deployer', account.address, 'ETH', formatEther(await pub.getBalance({ address: account.address })), 'nonce', nonce, 'lend at', getContractAddress({ from: account.address, nonce: BigInt(nonce) }), dry ? '(dry run)' : '')
 console.log('markets to recreate', MARKETS.length, '· treasury', TREASURY_ADDRESS, '· fee', FEE_BPS, 'bps')
 if (dry) process.exit(0)
-const h = await wal.deployContract({ abi: LEND.abi, bytecode: LEND.bytecode, args: [TREASURY_ADDRESS] })
-const r = await wait(h); console.log('lend v3', r.status, r.contractAddress, 'gas', r.gasUsed); if (r.status !== 'success') process.exit(1)
-const lend = r.contractAddress
-for (const m of MARKETS) {
+// Resume a run that stopped half way: LEND=0x… skips the Lend deploy, FROM_MARKET=n skips the markets before n, LEV=0x… skips Leverage.
+let lend = process.env.LEND
+if (!lend) {
+  const h = await wal.deployContract({ abi: LEND.abi, bytecode: LEND.bytecode, args: [TREASURY_ADDRESS] })
+  const r = await wait(h); console.log('lend v3', r.status, r.contractAddress, 'gas', r.gasUsed); if (r.status !== 'success') process.exit(1)
+  lend = r.contractAddress
+}
+for (const m of MARKETS.slice(Number(process.env.FROM_MARKET ?? 0))) {
   const hm = await wal.writeContract({ address: lend, abi: lendAbi, functionName: 'createMarket', args: [m.collateral, m.loan, m.pool, m.ltvBps, m.liqThresholdBps, m.liqBonusBps, m.twapWindow, BigInt(m.rateBaseBps), BigInt(m.rateSlopeBps), BigInt(m.supplyCap), BigInt(m.borrowCap), BigInt(m.collateralCap)] })
   const rm = await wait(hm); console.log(`market ${m.id}`, rm.status, 'gas', rm.gasUsed); if (rm.status !== 'success') process.exit(1)
 }
 console.log('marketCount', await pub.readContract({ address: lend, abi: lendAbi, functionName: 'marketCount' }))
-const h2 = await wal.deployContract({ abi: LEV.abi, bytecode: LEV.bytecode, args: [lend, USDG, VERDEX, TREASURY_ADDRESS, FEE_BPS] })
-const r2 = await wait(h2); console.log('leverage v2', r2.status, r2.contractAddress, 'gas', r2.gasUsed); if (r2.status !== 'success') process.exit(1)
-const lev = r2.contractAddress
+let lev = process.env.LEV
+if (!lev) {
+  const h2 = await wal.deployContract({ abi: LEV.abi, bytecode: LEV.bytecode, args: [lend, USDG, VERDEX, TREASURY_ADDRESS, FEE_BPS] })
+  const r2 = await wait(h2); console.log('leverage v2', r2.status, r2.contractAddress, 'gas', r2.gasUsed); if (r2.status !== 'success') process.exit(1)
+  lev = r2.contractAddress
+}
 const hc = await wal.writeContract({ address: lev, abi: levAbi, functionName: 'setCaps', args: [MARKETS.map((m) => BigInt(m.id)), MARKETS.map((m) => BigInt(m.levCap))] })
 console.log('caps', (await wait(hc)).status)
 const ho = await wal.writeContract({ address: lend, abi: lendAbi, functionName: 'transferOwnership', args: [OWNER] }); console.log('lend owner -> OWNER', (await wait(ho)).status)

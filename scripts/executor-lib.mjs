@@ -130,15 +130,25 @@ const agentAbi = parseAbi([
   'function floorOut(uint256 id,uint256 i,bool sell,uint256 amountIn) view returns (uint256)',
   'function leftToday(uint256 id) view returns (uint256)',
   'function execute(uint256 id,uint256 i,bool sell,uint256 amountIn,uint256 minOut) returns (uint256)',
+  'event Traded(uint256 indexed id,address indexed executor,address indexed token,bool sell,uint256 amountIn,uint256 amountOut,uint256 tip)',
 ])
 const FACTORY = '0x1f7d7550B1b028f7571E69A784071F0205FD2EfA'
 const factoryAbi = parseAbi(['function getPool(address,address,uint24) view returns (address)'])
-export const AGENT_RULES = { 0: 'buys the dips', 1: 'buys strength', 2: 'takes profits', 3: 'cuts losses' }
+export const AGENT_RULES = { 0: 'buys the dips', 1: 'buys strength', 2: 'takes profits', 3: 'cuts losses', 4: 'trades both ways' }
+// Rules v2 live in the same uint8 the contract stores and never reads: bits 0-2 the base rule (0 dips, 1 strength,
+// 2 profits, 3 losses, 4 both ways: buy the dips and take the profits), bit 3 the window (set: the last hour instead
+// of the day), bits 4-5 a weekly cap as a multiple of the day cap (0 none, then 2x, 3x, 5x), kept by the executor
+// from the contract's own Traded events of the last seven days.
+export const WEEK_X = [0, 2, 3, 5]
+export const decodeRule = (code) => ({ base: code & 7, hourly: (code & 8) !== 0, weekX: WEEK_X[(code >> 4) & 3] })
+export const encodeRule = (base, hourly, weekX) => (base & 7) | (hourly ? 8 : 0) | (Math.max(0, WEEK_X.indexOf(weekX)) << 4)
+const WEEK_BLOCKS = 6_100_000n // seven days of Robinhood Chain blocks, with a margin
 const CHECK_CODES = { 1: 'closed', 2: 'paused', 3: 'expired', 4: 'no such stock', 5: 'cooling down', 6: 'under a dollar', 7: 'over the per-trade cap', 8: 'over the day cap', 9: 'over the budget' }
 
 // The day's move of each pool, in percent, from the public market data the site also reads. Pools it does not
 // know get no move, so the agent leaves them alone.
-export async function readDayMoves(pools, fetchImpl = fetch) {
+// Each pool's move on the day and in the last hour, in percent, from the pools' market data.
+export async function readMoves(pools, fetchImpl = fetch) {
   const out = new Map()
   const list = [...new Set(pools.map((p) => p.toLowerCase()))]
   for (let i = 0; i < list.length; i += 30) {
@@ -147,20 +157,33 @@ export async function readDayMoves(pools, fetchImpl = fetch) {
       const r = await fetchImpl(`https://api.dexscreener.com/latest/dex/pairs/robinhood/${batch.join(',')}`, { headers: { accept: 'application/json' } })
       if (!r.ok) continue
       const j = await r.json()
-      for (const pair of j.pairs ?? []) { const h24 = Number(pair.priceChange?.h24); if (pair.pairAddress && isFinite(h24)) out.set(pair.pairAddress.toLowerCase(), h24) }
+      for (const pair of j.pairs ?? []) { const h24 = Number(pair.priceChange?.h24), h1 = Number(pair.priceChange?.h1); if (pair.pairAddress && isFinite(h24)) out.set(pair.pairAddress.toLowerCase(), { h24, h1: isFinite(h1) ? h1 : undefined }) }
     } catch { /* no data for this batch */ }
   }
   return out
 }
+export async function readDayMoves(pools, fetchImpl = fetch) { return new Map([...(await readMoves(pools, fetchImpl))].map(([k, v]) => [k, v.h24])) }
 
 // What the rule asks for on a stock that moved `movePct` on the day: 'buy', 'sell' or nothing.
 export function agentDecision(rule, paramBps, movePct) {
   const size = paramBps / 100
-  if (rule === 0) return movePct <= -size ? 'buy' : null
-  if (rule === 1) return movePct >= size ? 'buy' : null
-  if (rule === 2) return movePct >= size ? 'sell' : null
-  if (rule === 3) return movePct <= -size ? 'sell' : null
+  const { base } = decodeRule(rule)
+  if (base === 0) return movePct <= -size ? 'buy' : null
+  if (base === 1) return movePct >= size ? 'buy' : null
+  if (base === 2) return movePct >= size ? 'sell' : null
+  if (base === 3) return movePct <= -size ? 'sell' : null
+  if (base === 4) return movePct <= -size ? 'buy' : movePct >= size ? 'sell' : null
   return null
+}
+/** USDG traded by a mandate in the last seven days, from its Traded events: a buy's amount in, a sale's amount out. */
+export async function readWeekSpent(pub, address, id) {
+  const head = await pub.getBlockNumber()
+  const event = agentAbi.find((x) => x.type === 'event' && x.name === 'Traded')
+  const from = head > WEEK_BLOCKS ? head - WEEK_BLOCKS : 0n
+  let logs
+  try { logs = await pub.getLogs({ address, event, args: { id }, fromBlock: from, toBlock: head }) }
+  catch { const mid = from + (head - from) / 2n; logs = [...(await pub.getLogs({ address, event, args: { id }, fromBlock: from, toBlock: mid })), ...(await pub.getLogs({ address, event, args: { id }, fromBlock: mid + 1n, toBlock: head }))] }
+  return logs.reduce((acc, l) => acc + (l.args.sell ? l.args.amountOut : l.args.amountIn), 0n)
 }
 
 export async function runAgentOnce({ rpc = DEFAULT_RPC, address, key, log = console.log, moves }) {
@@ -178,9 +201,9 @@ export async function runAgentOnce({ rpc = DEFAULT_RPC, address, key, log = cons
   ids.forEach((id, k) => {
     if (raw[k].status !== 'success') return
     const m = raw[k].result
-    const [owner, rule, param, , , paused, closed, expiresAt, budget, perTrade, , , , , , , ,] = m
+    const [owner, rule, param, , , paused, closed, expiresAt, budget, perTrade, perDay, , , , , , ,] = m
     if (closed || paused || (Number(expiresAt) !== 0 && now > Number(expiresAt))) return
-    open.push({ id, owner, rule: Number(rule), param: Number(param), budget, perTrade })
+    open.push({ id, owner, rule: Number(rule), param: Number(param), budget, perTrade, perDay, ...decodeRule(Number(rule)) })
   })
   out.open = open.length
   if (!open.length) return out
@@ -190,19 +213,27 @@ export async function runAgentOnce({ rpc = DEFAULT_RPC, address, key, log = cons
   const poolRes = await pub.multicall({ multicallAddress: MULTICALL3, contracts: legs.map((l) => ({ address: FACTORY, abi: factoryAbi, functionName: 'getPool', args: [l.token, USDG, l.fee] })) })
   const poolOf = new Map()
   legs.forEach((l, k) => { if (poolRes[k].status === 'success') poolOf.set(`${l.token.toLowerCase()}:${l.fee}`, poolRes[k].result) })
-  const dayMoves = moves ?? (await readDayMoves([...poolOf.values()]))
+  const allMoves = moves ?? (await readMoves([...poolOf.values()]))
   for (const m of open) {
     let traded = false
     for (let i = 0; i < m.tokens.length && !traded; i++) {
       const pool = poolOf.get(`${m.tokens[i].toLowerCase()}:${m.fees[i]}`)
-      const move = pool ? dayMoves.get(pool.toLowerCase()) : undefined
+      const mv = pool ? allMoves.get(pool.toLowerCase()) : undefined
+      const move = mv === undefined ? undefined : typeof mv === 'number' ? mv : m.hourly ? mv.h1 : mv.h24
       if (move === undefined) continue
       const side = agentDecision(m.rule, m.param, move)
       if (!side) continue
       out.candidates++
       const sell = side === 'sell'
       try {
-        const left = await pub.readContract({ ...c, functionName: 'leftToday', args: [m.id] })
+        let left = await pub.readContract({ ...c, functionName: 'leftToday', args: [m.id] })
+        if (m.weekX) {
+          const weekCap = m.perDay * BigInt(m.weekX)
+          const weekSpent = await readWeekSpent(pub, address, m.id)
+          const leftWeek = weekSpent >= weekCap ? 0n : weekCap - weekSpent
+          if (leftWeek < left) left = leftWeek
+          if (left < 1_000_000n) { out.skipped++; log(`mandate ${m.id}: ${AGENT_RULES[m.base]}, ${m.tokens[i].slice(0, 8)} moved ${move}%: over the week cap`); continue }
+        }
         let amount
         if (!sell) {
           amount = [m.perTrade, m.budget, left].reduce((a, b) => (a < b ? a : b))
@@ -212,18 +243,18 @@ export async function runAgentOnce({ rpc = DEFAULT_RPC, address, key, log = cons
             pub.readContract({ address: m.tokens[i], abi: erc20Abi, functionName: 'allowance', args: [m.owner, address] }),
           ])
           amount = bal < allowance ? bal : allowance
-          if (amount === 0n) { out.skipped++; log(`mandate ${m.id}: ${AGENT_RULES[m.rule]}, ${m.tokens[i].slice(0, 8)} moved ${move}%: nothing approved to sell`); continue }
+          if (amount === 0n) { out.skipped++; log(`mandate ${m.id}: ${AGENT_RULES[m.base]}, ${m.tokens[i].slice(0, 8)} moved ${move}%: nothing approved to sell`); continue }
           const value = await pub.readContract({ ...c, functionName: 'quoteSpot', args: [m.id, BigInt(i), true, amount] })
           const cap = m.perTrade < left ? m.perTrade : left
           if (value > cap) amount = (amount * cap * 999n) / (value * 1000n)
         }
         const code = Number(await pub.readContract({ ...c, functionName: 'check', args: [m.id, BigInt(i), sell, amount] }))
-        if (code !== 0) { out.skipped++; log(`mandate ${m.id}: ${AGENT_RULES[m.rule]}, ${m.tokens[i].slice(0, 8)} moved ${move}%: ${CHECK_CODES[code] ?? code}`); continue }
+        if (code !== 0) { out.skipped++; log(`mandate ${m.id}: ${AGENT_RULES[m.base]}, ${m.tokens[i].slice(0, 8)} moved ${move}%: ${CHECK_CODES[code] ?? code}`); continue }
         const floor = await pub.readContract({ ...c, functionName: 'floorOut', args: [m.id, BigInt(i), sell, amount] })
         const sim = await pub.simulateContract({ ...c, functionName: 'execute', args: [m.id, BigInt(i), sell, amount, floor], account })
         const hash = await wallet.writeContract(sim.request)
         const r = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
-        log(`mandate ${m.id}: ${r.status} ${hash} ${sell ? 'sold' : 'bought'} ${m.tokens[i].slice(0, 8)} on a ${move}% day, in ${sell ? formatUnits(amount, 18) : formatUnits(amount, 6) + ' USDG'}, out ${sell ? formatUnits(sim.result, 6) + ' USDG' : formatUnits(sim.result, 18)} gas ${r.gasUsed}`)
+        log(`mandate ${m.id}: ${r.status} ${hash} ${sell ? 'sold' : 'bought'} ${m.tokens[i].slice(0, 8)} ${m.hourly ? 'in a' : 'on a'} ${move}% ${m.hourly ? 'hour' : 'day'}, in ${sell ? formatUnits(amount, 18) : formatUnits(amount, 6) + ' USDG'}, out ${sell ? formatUnits(sim.result, 6) + ' USDG' : formatUnits(sim.result, 18)} gas ${r.gasUsed}`)
         if (r.status === 'success') { out.sent++; traded = true } else out.skipped++
       } catch (e) {
         // Balance or allowance short, or the pool moved past the floor: the mandate waits for the next pass.
