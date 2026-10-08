@@ -50,7 +50,8 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   It holds nothing between buys; the admin only keeps the executor list. The executor
   (`scripts/executor-lib.mjs`) runs every ten minutes inside `server.mjs`, the Node process that
   serves the built site on Railway, from a gas-only wallet whose key is read from the `EXECUTOR_KEY`
-  environment variable (or `executor.key`, which never leaves the private repository); `scripts/autoinvest-executor.mjs` runs one pass from a shell or a cron.
+  environment variable (or `executor.key`, which never leaves the private repository); `scripts/autoinvest-executor.mjs` runs one pass from a shell or a cron. On Base the same contract over Slipstream pools
+  (`contracts/VerdexAutoInvestCL.sol`, `scripts/deploy-autoinvest-base.mjs`, `?chain=base`, USDC).
 - **Verdex Index.** Baskets of tokenized stocks as one ERC-20 each: `contracts/VerdexIndex.sol` (the index and its
   factory) and `contracts/VerdexIndexRouter.sol` (USDG in, shares out, in one transaction through the stocks' Uniswap
   v3 pools, with a per-leg price floor and a fee waived for VERDEX holders). Fixed units per share, redeem in kind
@@ -65,12 +66,14 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   Auto-Invest pattern applied to orders. An order keeps its level as the pool's own sqrtPriceX96; the executor (the
   same pass as Auto-Invest, in `scripts/executor-lib.mjs`) fills triggered orders from the owner's exact allowance
   with a spot-less-1% floor read at fill time, the tip in USDG. Four kinds: buy below, stop sell, sell above, buy
-  above; optional expiry. Deployed from `/deploy/orders`; the page is `/orders/without-you`.
+  above; optional expiry. Deployed from `/deploy/orders`; the page is `/orders/without-you`. On Base the same contract
+  over Slipstream pools (`contracts/VerdexOrdersCL.sol`, `scripts/deploy-orders-base.mjs`, `?chain=base`, USDC).
 - **Vaults without you.** `contracts/VerdexVaults.sol`: target weights kept by a contract. Holdings are valued at the
   pools' spot prices; when a weight drifts past the threshold and the interval has passed, the executor (same pass as
   Auto-Invest and Orders) sells the overweight stocks for USDG, takes a ten-cent tip, buys the underweight ones and
   sends everything to the owner, in one transaction with spot-less-1% floors. Allowances are per stock, exactly what
-  the owner holds. Deployed from `/deploy/vaults`; the page is `/vaults/without-you`.
+  the owner holds. Deployed from `/deploy/vaults`; the page is `/vaults/without-you`. On Base the same contract over
+  Slipstream pools (`contracts/VerdexVaultsCL.sol`, `scripts/deploy-vaults-base.mjs`, `?chain=base`, USDC).
 - **Agent without you.** `contracts/VerdexAgent.sol`: a budget and rules for the agent, kept by a contract. A
   mandate names the stocks, the rule (buy the dips, buy strength, take profits, cut losses) and its size, the USDG
   per trade, per day and in all, a cooldown per stock, a spot-less-1% floor, an expiry and a tip. The executor (same

@@ -7,11 +7,12 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { BRAND, t, z } from '../theme/tokens'
 import { Bt, Lt, Vg } from '../theme/styles'
-import { ROBINHOOD, fmtCompact, useAssets, useChains } from '../lib/api'
+import { fmtCompact, useAssets, useChains } from '../lib/api'
 import { useClock } from '../lib/holding'
-import { describeError, explorerTx, type ChainX } from '../lib/lifi'
-import { PHASE_LABEL, stockTokens, usePools, type Phase, type Pool, type StockToken } from '../lib/pools'
-import { CONTRACT, DEFAULT_SLIPPAGE_BPS, DEFAULT_TIP, DEPLOYED, INTERVALS, PRESETS, THRESHOLDS, approveHoldings, createVault, deepEnough, explorerAddress, fmtUsdg, fmtWhen, intervalLabel, normalise, poolFor, presetTargets, revokeHoldings, runNow, setPaused, toBps, useOnchainVaults, useVaultTotals, type OnchainLeg, type OnchainVault, type Target } from '../lib/vaultsOnchain'
+import { describeError, type ChainX } from '../lib/lifi'
+import { PHASE_LABEL, stockTokensOn, usePoolsOn, type Phase, type Pool, type StockToken } from '../lib/pools'
+import { DEFAULT_SLIPPAGE_BPS, DEFAULT_TIP, INTERVALS, PRESETS, THRESHOLDS, VAULT_CHAINS, approveHoldings, createVault, deepEnough, fmtUsdg, fmtWhen, intervalLabel, normalise, poolFor, presetTargets, revokeHoldings, runNow, setPaused, toBps, useOnchainVaults, useVaultTotals, vaultChain, type OnchainLeg, type OnchainVault, type Target, type VaultChain } from '../lib/vaultsOnchain'
+import { EarlyGate } from '../components/EarlyGate'
 import { resolveImg } from '../lib/img'
 import { useWallet } from '../components/wallet/WalletProvider'
 import { CheckIcon, ExternalIcon, LockIcon, PauseIcon, RefreshIcon, ShieldIcon, VaultIcon, WalletIcon } from '../components/icons'
@@ -54,7 +55,7 @@ function Row({ k, v, strong }: { k: string; v: React.ReactNode; strong?: boolean
 }
 const pct = (bps: number, d = 1) => `${(bps / 100).toFixed(d)}%`
 
-function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: StockToken[]; pools: Pool[]; loading: boolean; wallet: Ctx; chain: ChainX | undefined; onDone: () => void }) {
+function Composer({ vc, stocks, pools, loading, wallet, chain, onDone }: { vc: VaultChain; stocks: StockToken[]; pools: Pool[]; loading: boolean; wallet: Ctx; chain: ChainX | undefined; onDone: () => void }) {
   // A draft can arrive in the query string (from Copy a wallet): TICKER:WEIGHT pairs become the custom targets.
   const [params] = useSearchParams()
   const [wanted] = useState(() => (params.get('tokens') ?? '').split(',').map((x) => { const [tk, w] = x.split(':'); return { ticker: tk.trim().toUpperCase(), weight: Number(w) } }).filter((x) => x.ticker && isFinite(x.weight) && x.weight > 0))
@@ -83,8 +84,8 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
     setTx({ phase: 'switching' })
     try {
       const ctx = txCtx(wallet, chain, (p) => setTx((x) => ({ ...x, phase: p })))
-      const hash = await createVault(ctx, { targets: normalise(targets), thresholdBps: threshold, interval: interval.seconds, slippageBps: DEFAULT_SLIPPAGE_BPS, tip: DEFAULT_TIP })
-      await approveHoldings(ctx, targets.map((x) => x.stock.address))
+      const hash = await createVault(ctx, vc, { targets: normalise(targets), thresholdBps: threshold, interval: interval.seconds, slippageBps: DEFAULT_SLIPPAGE_BPS, tip: DEFAULT_TIP })
+      await approveHoldings(ctx, vc, targets.map((x) => x.stock.address))
       setTx({ phase: 'done', hash })
       onDone()
     } catch (e) {
@@ -99,7 +100,7 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
         {PRESETS.map((p) => <Choice key={p.id} on={p.id === presetId} onClick={() => setPresetId(p.id)}>{p.name}</Choice>)}
         <Choice on={presetId === 'custom' || presetId === 'query'} onClick={() => edit(targets)}>Custom</Choice>
       </Box>
-      {presetId !== 'custom' && presetId !== 'query' && <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>{PRESETS.find((p) => p.id === presetId)?.blurb} Stocks without a deep USDG pool today are left out.</Typography>}
+      {presetId !== 'custom' && presetId !== 'query' && <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>{PRESETS.find((p) => p.id === presetId)?.blurb} Stocks without a deep {vc.quote.symbol} pool today are left out.</Typography>}
       <Box sx={{ mt: 2.5 }}>
         <Label>Stocks</Label>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -114,7 +115,7 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
           })}
           {stocks.length > 0 && <Choice on={false} onClick={() => setMore((m) => !m)}>{more ? 'Fewer' : `All ${stocks.length}`}</Choice>}
         </Box>
-        {loading && stocks.length === 0 && <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>Reading the stock pools on Robinhood Chain…</Typography>}
+        {loading && stocks.length === 0 && <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>Reading the stock pools on {vc.ic.name}…</Typography>}
       </Box>
       {targets.length > 0 && (
         <Box sx={{ mt: 2.5, display: 'grid', gap: 0.75 }}>
@@ -148,7 +149,7 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
       <Box sx={{ mt: 3, p: 2, borderRadius: t.radius.panel, background: t.color.raised, display: 'grid', gap: 1 }}>
         <Row k="The vault" v={ok ? `${targets.length} stocks, ${bps.map((b, i) => `${targets[i].stock.ticker} ${pct(b, 0)}`).join(', ')}` : '…'} strong />
         <Row k="Runs when" v={`any weight is ${pct(threshold, 0)} off, ${interval.label.toLowerCase()}`} />
-        <Row k="Each run" v="sells the overweight to USDG, buys the underweight with it, sends it all to you" />
+        <Row k="Each run" v={`sells the overweight to ${vc.quote.symbol}, buys the underweight with it, sends it all to you`} />
         <Row k="Price floor" v={`${DEFAULT_SLIPPAGE_BPS / 100}% below spot on every leg, read at run time`} />
         <Row k="Tip to whoever runs it" v={`${fmtUsdg(DEFAULT_TIP)} per run, from the sale proceeds`} />
         <Row k="Allowances" v="each stock, exactly what you hold today" />
@@ -162,14 +163,14 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
         <Box sx={{ mt: 2, p: 2, borderRadius: t.radius.panel, background: 'rgba(194,234,138,.10)', border: '1px solid rgba(194,234,138,.3)' }}>
           <Typography sx={{ fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}><CheckIcon size={16} /> The vault is on the chain.</Typography>
           <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.5 }}>It rebalances from the allowances you approved whenever the weights drift past your line. Buy more of a stock later and approve it again from the vault card. Close the tab; it does not need you.</Typography>
-          <Box component="a" href={explorerTx(chain, ROBINHOOD, tx.hash)} target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Transaction <ExternalIcon size={12} /></Box>
+          <Box component="a" href={`${vc.ic.explorer}/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Transaction <ExternalIcon size={12} /></Box>
         </Box>
       )}
     </Panel>
   )
 }
 
-function VaultCard({ v, wallet, chain, onChanged }: { v: OnchainVault; wallet: Ctx; chain: ChainX | undefined; onChanged: () => void }) {
+function VaultCard({ vc, v, wallet, chain, onChanged }: { vc: VaultChain; v: OnchainVault; wallet: Ctx; chain: ChainX | undefined; onChanged: () => void }) {
   const [tx, setTx] = useState<Tx>({ phase: 'idle' })
   const now = useClock(v.state === 'active')
   const busy = tx.phase !== 'idle' && tx.phase !== 'done' && tx.phase !== 'failed'
@@ -217,10 +218,10 @@ function VaultCard({ v, wallet, chain, onChanged }: { v: OnchainVault; wallet: C
         })}
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
-        {v.due && v.state === 'active' && <Button disabled={busy} onClick={() => void act((c) => runNow(c, v.id))} sx={{ ...Bt, height: 34, px: 1.75, gap: 0.75 }}><RefreshIcon size={13} /> Rebalance now</Button>}
-        {unapproved.length > 0 && <Button disabled={busy} onClick={() => void act((c) => approveHoldings(c, unapproved.map((l) => l.token)))} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75 }}>Approve {unapproved.map((l) => l.stock?.ticker ?? '?').join(', ')}</Button>}
-        <Button disabled={busy} onClick={() => void act((c) => setPaused(c, v.id, v.state === 'active'))} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75, gap: 0.75 }}>{v.state === 'active' ? <><PauseIcon size={13} /> Pause</> : <><RefreshIcon size={13} /> Resume</>}</Button>
-        <Button disabled={busy} onClick={() => void act((c) => revokeHoldings(c, v.legs.map((l) => l.token)))} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75, color: t.color.red }}>Revoke allowances</Button>
+        {v.due && v.state === 'active' && <Button disabled={busy} onClick={() => void act((c) => runNow(c, vc, v.id))} sx={{ ...Bt, height: 34, px: 1.75, gap: 0.75 }}><RefreshIcon size={13} /> Rebalance now</Button>}
+        {unapproved.length > 0 && <Button disabled={busy} onClick={() => void act((c) => approveHoldings(c, vc, unapproved.map((l) => l.token)))} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75 }}>Approve {unapproved.map((l) => l.stock?.ticker ?? '?').join(', ')}</Button>}
+        <Button disabled={busy} onClick={() => void act((c) => setPaused(c, vc, v.id, v.state === 'active'))} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75, gap: 0.75 }}>{v.state === 'active' ? <><PauseIcon size={13} /> Pause</> : <><RefreshIcon size={13} /> Resume</>}</Button>
+        <Button disabled={busy} onClick={() => void act((c) => revokeHoldings(c, vc, v.legs.map((l) => l.token)))} sx={{ ...Lt, backdropFilter: 'none', height: 34, px: 1.75, color: t.color.red }}>Revoke allowances</Button>
         {busy && <Typography sx={{ fontSize: 12, color: t.color.textMuted, alignSelf: 'center' }}>{PHASE_LABEL[tx.phase]}</Typography>}
       </Box>
       {tx.phase === 'failed' && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1 }}>{tx.error}</Typography>}
@@ -232,23 +233,26 @@ export default function VaultsWithoutYouPage() {
   const wallet = useWallet()
   const { account, openWalletMenu } = wallet
   const { data: chains } = useChains()
-  const chain = chains?.find((c) => c.id === ROBINHOOD) as ChainX | undefined
+  const [params, setParams] = useSearchParams()
+  const vc = vaultChain(params.get('chain'))
+  const DEPLOYED = vc.deployed
+  const chain = chains?.find((c) => c.id === vc.ic.id) as ChainX | undefined
   const assets = useAssets()
-  const pools = usePools(assets.data?.assets)
-  const stocks = useMemo(() => (assets.data ? stockTokens(assets.data.assets).filter((s) => deepEnough(poolFor(s, pools.data ?? []))) : []), [assets.data, pools.data])
-  const vaults = useOnchainVaults(account?.address, assets.data?.assets)
-  const totals = useVaultTotals()
+  const pools = usePoolsOn(vc.ic, assets.data?.assets)
+  const stocks = useMemo(() => (assets.data ? stockTokensOn(assets.data.assets, vc.ic.id).filter((s) => deepEnough(poolFor(s, pools.data ?? []))) : []), [assets.data, pools.data, vc.ic.id])
+  const vaults = useOnchainVaults(vc, account?.address, assets.data?.assets)
+  const totals = useVaultTotals(vc)
   const qc = useQueryClient()
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['vaults-onchain'] }); void qc.invalidateQueries({ queryKey: ['vaults-onchain-totals'] }) }
   const list = vaults.data ?? []
 
-  return (
+  const page = (
     <Page>
       <PageHero
         label="Vaults without you"
-        badges={<Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>{DEPLOYED ? 'Live' : 'Contract not deployed'}</Box>}
+        badges={<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>{VAULT_CHAINS.map((c) => <Box key={c.key} component="button" type="button" onClick={() => setParams((prev) => { const n = new URLSearchParams(prev); if (c.key === 'robinhood') n.delete('chain'); else n.set('chain', c.key); return n })} aria-pressed={c.key === vc.key} sx={{ all: 'unset', cursor: 'pointer', ...Vg, ml: 0, ...(c.key === vc.key && { background: t.color.text, color: t.color.page }) }}>{c.ic.name}</Box>)}<Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>{DEPLOYED ? 'Live' : 'Contract not deployed'}</Box></Box>}
         title={<>Drift past the line.<br />It rebalances.</>}
-        lead="Target weights over tokenized stocks on Robinhood Chain, kept by a contract while your wallet is closed. You name the stocks, the weights, a drift threshold and how often it may run; you approve each stock for what you hold. When a weight drifts past the line, the contract sells the overweight stocks for USDG, buys the underweight ones with the proceeds and sends everything back to you, inside one transaction with a floor on every leg. Nothing held between runs. No fee."
+        lead={`Target weights over tokenized stocks on ${vc.ic.name}, kept by a contract while your wallet is closed. You name the stocks, the weights, a drift threshold and how often it may run; you approve each stock for what you hold. When a weight drifts past the line, the contract sells the overweight stocks for ${vc.quote.symbol}, buys the underweight ones with the proceeds and sends everything back to you, inside one transaction with a floor on every leg. Nothing held between runs. No fee.`}
         action={
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <Button onClick={() => (account ? document.getElementById('vaults-composer')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) : openWalletMenu())} sx={{ ...Bt, gap: 1 }}>
@@ -263,13 +267,13 @@ export default function VaultsWithoutYouPage() {
 
       <Stats items={[{ label: 'Vaults', value: totals.data ? totals.data.vaults : DEPLOYED ? '…' : '0' }, { label: 'Active', value: totals.data ? totals.data.active : DEPLOYED ? '…' : '0' }, { label: 'Rebalances', value: totals.data ? totals.data.runs : DEPLOYED ? '…' : '0' }, { label: `${BRAND.name} fee`, value: '0%' }]} />
       <Typography sx={{ fontSize: 13, color: t.color.textLabel, mt: 1.5 }}>
-        Read from the {BRAND.name} Vaults contract on Robinhood Chain{DEPLOYED ? <>, <Box component="a" href={explorerAddress(CONTRACT)} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>{CONTRACT.slice(0, 6)}…{CONTRACT.slice(-4)}</Box></> : ''}. Weights are valued at the stocks' pool prices; the executor checks every vault every ten minutes.
+        Read from the {BRAND.name} Vaults contract on {vc.ic.name}{DEPLOYED ? <>, <Box component="a" href={`${vc.ic.explorer}/address/${vc.contract}`} target="_blank" rel="noopener noreferrer" sx={{ color: t.color.text }}>{vc.contract.slice(0, 6)}…{vc.contract.slice(-4)}</Box></> : ''}. Weights are valued at the stocks' pool prices; the executor checks every vault every ten minutes.
       </Typography>
 
       {!DEPLOYED && (
         <Panel sx={{ mt: 5, p: { xs: 3, md: 4 } }}>
           <Typography sx={{ fontSize: 16, fontWeight: 500 }}>The contract is not on the chain yet.</Typography>
-          <Typography sx={{ fontSize: 14, color: t.color.textMuted, mt: 0.75 }}>The code is in the repository and tested on a fork of Robinhood Chain. Vaults open here the moment it is deployed.</Typography>
+          <Typography sx={{ fontSize: 14, color: t.color.textMuted, mt: 0.75 }}>The code is in the repository. Vaults open here on {vc.ic.name} the moment it is deployed.</Typography>
         </Panel>
       )}
 
@@ -286,13 +290,13 @@ export default function VaultsWithoutYouPage() {
             </Panel>
           ) : (
             <Box sx={{ display: 'grid', gap: 1.5 }}>
-              {list.map((v) => <VaultCard key={String(v.id)} v={v} wallet={wallet} chain={chain} onChanged={refresh} />)}
+              {list.map((v) => <VaultCard key={String(v.id)} vc={vc} v={v} wallet={wallet} chain={chain} onChanged={refresh} />)}
               {vaults.data && list.length === 0 && <Panel sx={{ p: 3 }}><Typography sx={{ fontSize: 14, color: t.color.textMuted }}>{DEPLOYED ? 'No vault yet. Create one on the right.' : 'Vaults open once the contract is deployed.'}</Typography></Panel>}
             </Box>
           )}
         </Box>
         <Box id="vaults-composer" sx={{ minWidth: 0, scrollMarginTop: 96 }}>
-          {DEPLOYED ? <Composer stocks={stocks} pools={pools.data ?? []} loading={pools.isLoading || assets.isLoading} wallet={wallet} chain={chain} onDone={refresh} /> : null}
+          {DEPLOYED ? <Composer vc={vc} stocks={stocks} pools={pools.data ?? []} loading={pools.isLoading || assets.isLoading} wallet={wallet} chain={chain} onDone={refresh} /> : null}
         </Box>
       </Box>
 
@@ -300,7 +304,7 @@ export default function VaultsWithoutYouPage() {
         <Typography component="h2" sx={{ ...t.type.h3, color: t.color.text }}>How it works</Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0,1fr))' }, gap: 2.5, mt: 4 }}>
           <Step n={1} icon={<LockIcon size={20} />} title="Approve what you hold" text="For each stock in the vault you approve the contract for exactly your balance: the most a rebalance can ever sell of it. Buy more later and approve again from the card. Revoke and the vault stops, whatever anyone does." />
-          <Step n={2} icon={<RefreshIcon size={20} />} title="Drift past the line" text={`${BRAND.name}'s executor values your holdings at the pools' spot prices every ten minutes. When any weight is further from its target than your threshold, and the interval has passed, it runs the vault: sells the overweight stocks to USDG, takes a ten-cent tip, buys the underweight ones, sends it all to you. One transaction.`} />
+          <Step n={2} icon={<RefreshIcon size={20} />} title="Drift past the line" text={`${BRAND.name}'s executor values your holdings at the pools' spot prices every ten minutes. When any weight is further from its target than your threshold, and the interval has passed, it runs the vault: sells the overweight stocks to ${vc.quote.symbol}, takes a ten-cent tip, buys the underweight ones, sends it all to you. One transaction.`} />
           <Step n={3} icon={<ShieldIcon size={20} />} title="A floor on every leg" text="Each sale and each buy must return at least the pool's spot less 1%, read in the same transaction. A pool that moved makes the run wait, not fill badly. The contract holds nothing between runs and no admin can touch a vault." />
         </Box>
       </Box>
@@ -316,7 +320,7 @@ export default function VaultsWithoutYouPage() {
             Vaults on this device needed your tab open and your tap on every trade. These do not: the weights, the threshold and the cadence live in the contract, the executor that already runs Auto-Invest and Orders checks them, and a rebalance is one transaction with a floor on every leg. The contract holds no balance, takes no fee, and its admin can only keep the executor list. Unaudited; read it before you trust it with more than you would lose.
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
-            {DEPLOYED && <Box component="a" href={explorerAddress(CONTRACT)} target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Contract on the explorer <ExternalIcon size={12} /></Box>}
+            {DEPLOYED && <Box component="a" href={`${vc.ic.explorer}/address/${vc.contract}`} target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Contract on the explorer <ExternalIcon size={12} /></Box>}
             <Box component="a" href="https://github.com/useverdex/verdex/blob/main/contracts/VerdexVaults.sol" target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Source <ExternalIcon size={12} /></Box>
             <Box component={Link} to="/docs#vaults-without-you" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, color: t.color.text, textDecoration: 'none' }}>Docs</Box>
           </Box>
@@ -339,4 +343,5 @@ export default function VaultsWithoutYouPage() {
       </Panel>
     </Page>
   )
+  return vc.key === 'base' ? <EarlyGate path="/vaults/without-you/base">{page}</EarlyGate> : page
 }

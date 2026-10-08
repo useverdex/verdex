@@ -6,14 +6,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { encodeFunctionData, erc20Abi, formatUnits, isAddress, parseAbi, parseUnits, type Address } from 'viem'
 import artifact from '../../contracts/VerdexOrders.json'
-import { ORDERS_ADDRESS as BUILT_IN } from '../../scripts/orders-address.mjs'
+import { ORDERS_ADDRESS as BUILT_IN, BASE_ORDERS_ADDRESS as BASE_BUILT_IN } from '../../scripts/orders-address.mjs'
 import type { Asset } from './api'
-import { ROBINHOOD } from './api'
 import { waitForTx } from './lifi'
 import { deepEnough, poolFor } from './autopilot'
-import { MULTICALL3, USDG, client, ensureChain, sendTx, stockPriceToRaw, stockTokens, type Pool, type StockToken, type TxCtx } from './pools'
+import { BASE_INDEX, ROBINHOOD_INDEX, type IndexChain } from './indexChains'
+import { MULTICALL3, USDG, clientFor, ensureChainOn, sendTx, stockPriceToRaw, stockTokensOn, type Pool, type StockToken, type TxCtx } from './pools'
 
 export const ORDERS_ADDRESS = (String(import.meta.env.VITE_ORDERS_ADDRESS ?? '').trim() || BUILT_IN).trim()
+export const BASE_ORDERS_ADDRESS = (String(import.meta.env.VITE_BASE_ORDERS_ADDRESS ?? '').trim() || BASE_BUILT_IN).trim()
 export const DEPLOYED = isAddress(ORDERS_ADDRESS)
 export const CONTRACT = (DEPLOYED ? ORDERS_ADDRESS : '0x0000000000000000000000000000000000000000') as Address
 export const abi = parseAbi([
@@ -37,6 +38,30 @@ export const abi = parseAbi([
 ])
 export const BYTECODE = artifact.bytecode as `0x${string}`
 export const EXPLORER = 'https://robin.etherscan.io'
+// The Base contract (contracts/VerdexOrdersCL.sol) is the same with Slipstream's tick spacing in place of the fee tier.
+export const abiCL = parseAbi([
+  'constructor(address factory_, address usdg_, address executor_)',
+  'function place(address tokenIn,address tokenOut,int24 tickSpacing,uint96 amountIn,uint96 tip,uint160 trigger,bool whenAtOrBelow,uint16 maxSlippageBps,uint40 expiresAt) returns (uint256)',
+  'function cancel(uint256 id)',
+  'function ordersOf(address owner) view returns (uint256[])',
+  'function orders(uint256) view returns (address owner,address tokenIn,address tokenOut,int24 tickSpacing,uint160 trigger,bool whenAtOrBelow,uint16 maxSlippageBps,uint40 expiresAt,uint8 status,uint96 amountIn,uint96 tip,uint128 received,uint40 filledAt)',
+  'function orderCount() view returns (uint256)',
+  'function isTriggered(uint256 id) view returns (bool)',
+  'function isDue(uint256 id) view returns (bool)',
+  'function floorOut(uint256 id) view returns (uint256)',
+  'function execute(uint256 id,uint256 minOut) returns (uint256)',
+  'function admin() view returns (address)',
+  'function isExecutor(address) view returns (bool)',
+])
+// Where orders can live: the chain, its contract, the stablecoin they pay with and the pool interface.
+export type OrdersChain = { key: 'robinhood' | 'base'; ic: IndexChain; contract: Address; deployed: boolean; isCL: boolean; quote: { address: Address; symbol: string; decimals: number }; source: string }
+export const ORDERS_CHAINS: OrdersChain[] = [
+  { key: 'robinhood', ic: ROBINHOOD_INDEX, contract: CONTRACT, deployed: DEPLOYED, isCL: false, quote: USDG, source: 'VerdexOrders.sol' },
+  { key: 'base', ic: BASE_INDEX, contract: (isAddress(BASE_ORDERS_ADDRESS) ? BASE_ORDERS_ADDRESS : '0x0000000000000000000000000000000000000000') as Address, deployed: isAddress(BASE_ORDERS_ADDRESS), isCL: true, quote: BASE_INDEX.quote as { address: Address; symbol: string; decimals: number }, source: 'VerdexOrdersCL.sol' },
+]
+export const ordersChain = (key: string | null | undefined) => ORDERS_CHAINS.find((c) => c.key === key) ?? ORDERS_CHAINS[0]
+const abiOf = (oc: OrdersChain) => (oc.isCL ? abiCL : abi)
+const tierOf = (oc: OrdersChain, pool: Pool) => (oc.isCL ? pool.spacing : pool.fee)
 export const DEFAULT_TIP = parseUnits('0.05', 6)
 export const DEFAULT_SLIPPAGE_BPS = 100
 export const Q96 = 2n ** 96n
@@ -99,21 +124,22 @@ export const STATUS_LABEL: Record<OnchainOrder['status'], string> = { open: 'Ope
 type Raw = readonly [Address, Address, Address, number, bigint, boolean, number, number, number, bigint, bigint, bigint, number]
 const lc = (a: string) => a.toLowerCase()
 
-export async function readOrders(owner: Address, assets: Asset[], pools: Pool[]): Promise<OnchainOrder[]> {
-  if (!DEPLOYED) return []
-  const c = client()
-  const ids = [...(await c.readContract({ address: CONTRACT, abi, functionName: 'ordersOf', args: [owner] }))]
+export async function readOrders(oc: OrdersChain, owner: Address, assets: Asset[], pools: Pool[]): Promise<OnchainOrder[]> {
+  if (!oc.deployed) return []
+  const c = clientFor(oc.ic)
+  const A = abiOf(oc) as typeof abi
+  const ids = [...(await c.readContract({ address: oc.contract, abi: A, functionName: 'ordersOf', args: [owner] }))]
   if (!ids.length) return []
-  const raw = await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: ids.flatMap((id) => [{ address: CONTRACT, abi, functionName: 'orders', args: [id] } as const, { address: CONTRACT, abi, functionName: 'isTriggered', args: [id] } as const]) })
-  const stocks = stockTokens(assets)
+  const raw = await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: ids.flatMap((id) => [{ address: oc.contract, abi: A, functionName: 'orders', args: [id] } as const, { address: oc.contract, abi: A, functionName: 'isTriggered', args: [id] } as const]) })
+  const stocks = stockTokensOn(assets, oc.ic.id)
   const now = Math.floor(Date.now() / 1000)
   return ids.map((id, i) => {
     const r = raw[i * 2].result as Raw
     const [owner_, tokenIn, tokenOut, fee, trigger, whenAtOrBelow, maxSlippageBps, expiresAt, st, amountIn, tip, received, filledAt] = r
-    const side: 'buy' | 'sell' = lc(tokenIn) === lc(USDG.address) ? 'buy' : 'sell'
+    const side: 'buy' | 'sell' = lc(tokenIn) === lc(oc.quote.address) ? 'buy' : 'sell'
     const stockAddr = side === 'buy' ? tokenOut : tokenIn
     const stock = stocks.find((s) => lc(s.address) === lc(stockAddr))
-    const pool = pools.find((p) => p.fee === fee && lc(p.quote.address) === lc(USDG.address) && (lc(p.token0.address) === lc(stockAddr) || lc(p.token1.address) === lc(stockAddr)))
+    const pool = pools.find((p) => (oc.isCL ? p.spacing === fee : p.fee === fee) && lc(p.quote.address) === lc(oc.quote.address) && (lc(p.token0.address) === lc(stockAddr) || lc(p.token1.address) === lc(stockAddr)))
     const levelUsd = pool ? priceFromSqrt(pool, trigger) : 0
     const belowPrice = pool ? (pool.stockIsToken0 ? whenAtOrBelow : !whenAtOrBelow) : whenAtOrBelow
     const kind: Kind = side === 'buy' ? (belowPrice ? 'limit-buy' : 'breakout-buy') : belowPrice ? 'stop-sell' : 'take-profit'
@@ -121,71 +147,74 @@ export async function readOrders(owner: Address, assets: Asset[], pools: Pool[])
     return { id, owner: owner_, tokenIn, tokenOut, fee, trigger, whenAtOrBelow, maxSlippageBps, expiresAt, status, amountIn, tip, received, filledAt, triggered: raw[i * 2 + 1].status === 'success' && (raw[i * 2 + 1].result as boolean), side, stock, pool, levelUsd, kind }
   }).reverse()
 }
-export function useOrders(owner: Address | undefined, assets: Asset[] | undefined, pools: Pool[] | undefined) {
-  return useQuery({ queryKey: ['orders-onchain', owner?.toLowerCase(), pools?.length ?? 0], queryFn: () => readOrders(owner!, assets!, pools!), enabled: DEPLOYED && !!owner && !!assets && !!pools, staleTime: 15_000, refetchInterval: 30_000, retry: 1 })
+export function useOrders(oc: OrdersChain, owner: Address | undefined, assets: Asset[] | undefined, pools: Pool[] | undefined) {
+  return useQuery({ queryKey: ['orders-onchain', oc.key, owner?.toLowerCase(), pools?.length ?? 0], queryFn: () => readOrders(oc, owner!, assets!, pools!), enabled: oc.deployed && !!owner && !!assets && !!pools, staleTime: 15_000, refetchInterval: 30_000, retry: 1 })
 }
 
 export type Totals = { orders: number; open: number; filled: number }
-export async function readTotals(): Promise<Totals> {
-  if (!DEPLOYED) return { orders: 0, open: 0, filled: 0 }
-  const c = client()
-  const n = Number(await c.readContract({ address: CONTRACT, abi, functionName: 'orderCount' }))
+export async function readTotals(oc: OrdersChain): Promise<Totals> {
+  if (!oc.deployed) return { orders: 0, open: 0, filled: 0 }
+  const c = clientFor(oc.ic)
+  const A = abiOf(oc) as typeof abi
+  const n = Number(await c.readContract({ address: oc.contract, abi: A, functionName: 'orderCount' }))
   const ids = Array.from({ length: Math.min(n, 400) }, (_, i) => BigInt(n - i))
-  const raw = ids.length ? await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: ids.map((id) => ({ address: CONTRACT, abi, functionName: 'orders', args: [id] } as const)) }) : []
+  const raw = ids.length ? await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: ids.map((id) => ({ address: oc.contract, abi: A, functionName: 'orders', args: [id] } as const)) }) : []
   let open = 0, filled = 0
   for (const r of raw) { if (r.status !== 'success') continue; const st = (r.result as Raw)[8]; if (st === 0) open++; if (st === 1) filled++ }
   return { orders: n, open, filled }
 }
-export function useTotals() {
-  return useQuery({ queryKey: ['orders-onchain-totals'], queryFn: readTotals, enabled: DEPLOYED, staleTime: 60_000, refetchInterval: 120_000, retry: 1 })
+export function useTotals(oc: OrdersChain) {
+  return useQuery({ queryKey: ['orders-onchain-totals', oc.key], queryFn: () => readTotals(oc), enabled: oc.deployed, staleTime: 60_000, refetchInterval: 120_000, retry: 1 })
 }
 
 // Balances and allowances of what open orders need: USDG for buys, each stock for sells.
 export type Wallet = { usdg: bigint; usdgAllowance: bigint; tokens: Record<string, { balance: bigint; allowance: bigint }> }
-export async function readWallet(owner: Address, stocks: StockToken[]): Promise<Wallet> {
-  const c = client()
-  const list = [USDG.address, ...stocks.map((s) => s.address)]
-  const res = await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: list.flatMap((a) => [{ address: a, abi: erc20Abi, functionName: 'balanceOf', args: [owner] } as const, { address: a, abi: erc20Abi, functionName: 'allowance', args: [owner, CONTRACT] } as const]) })
+export async function readWallet(oc: OrdersChain, owner: Address, stocks: StockToken[]): Promise<Wallet> {
+  const c = clientFor(oc.ic)
+  const list = [oc.quote.address, ...stocks.map((s) => s.address)]
+  const res = await c.multicall({ multicallAddress: MULTICALL3, batchSize: 4096, contracts: list.flatMap((a) => [{ address: a, abi: erc20Abi, functionName: 'balanceOf', args: [owner] } as const, { address: a, abi: erc20Abi, functionName: 'allowance', args: [owner, oc.contract] } as const]) })
   const v = (k: number) => (res[k].status === 'success' ? (res[k].result as bigint) : 0n)
   const tokens: Wallet['tokens'] = {}
   list.forEach((a, i) => (tokens[lc(a)] = { balance: v(i * 2), allowance: v(i * 2 + 1) }))
   return { usdg: v(0), usdgAllowance: v(1), tokens }
 }
-export function useOrdersWallet(owner: Address | undefined, stocks: StockToken[]) {
-  return useQuery({ queryKey: ['orders-onchain-wallet', owner?.toLowerCase(), stocks.length], queryFn: () => readWallet(owner!, stocks), enabled: DEPLOYED && !!owner, staleTime: 10_000, retry: 1 })
+export function useOrdersWallet(oc: OrdersChain, owner: Address | undefined, stocks: StockToken[]) {
+  return useQuery({ queryKey: ['orders-onchain-wallet', oc.key, owner?.toLowerCase(), stocks.map((s) => s.address).join(',')], queryFn: () => readWallet(oc, owner!, stocks), enabled: oc.deployed && !!owner, staleTime: 10_000, retry: 1 })
 }
 
 export { deepEnough, poolFor }
 export type NewOrder = { stock: StockToken; pool: Pool; kind: Kind; levelUsd: number; amountIn: bigint; tip: bigint; slippageBps: number; expiresAt: number }
 
-async function approveExact(ctx: TxCtx, token: Address, amount: bigint) {
+async function approveExact(ctx: TxCtx, oc: OrdersChain, token: Address, amount: bigint) {
   ctx.onPhase('approving')
-  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: token, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [CONTRACT, amount] }) })
-  await waitForTx(ctx.chain ?? ({ id: ROBINHOOD } as never), hash)
+  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: token, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [oc.contract, amount] }) })
+  await waitForTx(ctx.chain ?? ({ id: oc.ic.id } as never), hash)
 }
 // Place: an exact allowance for what the fill may pull (amount plus tip on a buy, the stock amount on a sell), then the order.
-export async function placeOrder(ctx: TxCtx, o: NewOrder) {
-  await ensureChain(ctx)
+export async function placeOrder(ctx: TxCtx, oc: OrdersChain, o: NewOrder) {
+  await ensureChainOn(ctx, oc.ic)
   const k = KINDS.find((x) => x.key === o.kind)!
-  const tokenIn = k.side === 'buy' ? USDG.address : o.stock.address
-  const tokenOut = k.side === 'buy' ? o.stock.address : USDG.address
+  const tokenIn = k.side === 'buy' ? oc.quote.address : o.stock.address
+  const tokenOut = k.side === 'buy' ? o.stock.address : oc.quote.address
   const need = k.side === 'buy' ? o.amountIn + o.tip : o.amountIn
-  const c = client()
-  const allowance = await c.readContract({ address: tokenIn, abi: erc20Abi, functionName: 'allowance', args: [ctx.account.address, CONTRACT] })
-  if (allowance < need) await approveExact(ctx, tokenIn, need)
+  const c = clientFor(oc.ic)
+  const allowance = await c.readContract({ address: tokenIn, abi: erc20Abi, functionName: 'allowance', args: [ctx.account.address, oc.contract] })
+  if (allowance < need) await approveExact(ctx, oc, tokenIn, need)
   const { trigger, whenAtOrBelow } = triggerFor(o.pool, o.levelUsd, k.below)
-  const data = encodeFunctionData({ abi, functionName: 'place', args: [tokenIn, tokenOut, o.pool.fee, o.amountIn, o.tip, trigger, whenAtOrBelow, o.slippageBps, o.expiresAt] })
-  return sendTx(ctx, CONTRACT, data)
+  const data = oc.isCL
+    ? encodeFunctionData({ abi: abiCL, functionName: 'place', args: [tokenIn, tokenOut, tierOf(oc, o.pool), o.amountIn, o.tip, trigger, whenAtOrBelow, o.slippageBps, o.expiresAt] })
+    : encodeFunctionData({ abi, functionName: 'place', args: [tokenIn, tokenOut, tierOf(oc, o.pool), o.amountIn, o.tip, trigger, whenAtOrBelow, o.slippageBps, o.expiresAt] })
+  return sendTx(ctx, oc.contract, data)
 }
-export async function cancelOrder(ctx: TxCtx, id: bigint) {
-  await ensureChain(ctx)
-  return sendTx(ctx, CONTRACT, encodeFunctionData({ abi, functionName: 'cancel', args: [id] }))
+export async function cancelOrder(ctx: TxCtx, oc: OrdersChain, id: bigint) {
+  await ensureChainOn(ctx, oc.ic)
+  return sendTx(ctx, oc.contract, encodeFunctionData({ abi, functionName: 'cancel', args: [id] }))
 }
 // The owner may fill a triggered order themselves, with the same floor the executor gets.
-export async function fillNow(ctx: TxCtx, id: bigint) {
-  await ensureChain(ctx)
-  const floor = await client().readContract({ address: CONTRACT, abi, functionName: 'floorOut', args: [id] })
-  return sendTx(ctx, CONTRACT, encodeFunctionData({ abi, functionName: 'execute', args: [id, floor] }))
+export async function fillNow(ctx: TxCtx, oc: OrdersChain, id: bigint) {
+  await ensureChainOn(ctx, oc.ic)
+  const floor = await clientFor(oc.ic).readContract({ address: oc.contract, abi, functionName: 'floorOut', args: [id] })
+  return sendTx(ctx, oc.contract, encodeFunctionData({ abi, functionName: 'execute', args: [id, floor] }))
 }
 export const fmtUsdg = (v: bigint, d = 2) => `$${Number(formatUnits(v, USDG.decimals)).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })}`
 export const fmtStock = (v: bigint, decimals = 18) => { const n = Number(formatUnits(v, decimals)); return n >= 100 ? n.toFixed(2) : n >= 1 ? n.toFixed(4) : n.toFixed(6) }

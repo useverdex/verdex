@@ -12,13 +12,14 @@ const abi = parseAbi([
   'function floorOut(uint256 id) view returns (uint256)',
   'function execute(uint256 id,uint256 minOut) returns (uint256)',
 ])
-const chain = (rpc) => ({ id: 4663, name: 'Robinhood Chain', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: { default: { http: [rpc] } } })
+const chain = (rpc, id = 4663) => ({ id, name: id === 8453 ? 'Base' : 'Robinhood Chain', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: { default: { http: [rpc] } } })
 
 /** Runs every due plan once. Returns { count, due, sent, skipped }. Never throws for a single plan's failure. */
-export async function runOnce({ rpc = DEFAULT_RPC, address, key, log = console.log }) {
+// chainId 8453 runs the Base contract (VerdexAutoInvestCL, the same functions) over a Base RPC.
+export async function runOnce({ rpc = DEFAULT_RPC, address, key, log = console.log, chainId = 4663 }) {
   const account = privateKeyToAccount(key)
-  const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
-  const wallet = createWalletClient({ account, chain: chain(rpc), transport: http(rpc) })
+  const pub = createPublicClient({ chain: chain(rpc, chainId), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
+  const wallet = createWalletClient({ account, chain: chain(rpc, chainId), transport: http(rpc) })
   const c = { address, abi }
   const count = Number(await pub.readContract({ ...c, functionName: 'planCount' }))
   if (!count) return { count, due: 0, sent: 0, skipped: 0 }
@@ -32,7 +33,7 @@ export async function runOnce({ rpc = DEFAULT_RPC, address, key, log = console.l
       const sim = await pub.simulateContract({ ...c, functionName: 'execute', args: [id, floor], account })
       const hash = await wallet.writeContract(sim.request)
       const r = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
-      log(`plan ${id}: ${r.status} ${hash} out ${formatUnits(sim.result, 18)} gas ${r.gasUsed}`)
+      log(`plan ${id}${chainId === 8453 ? ' (Base)' : ''}: ${r.status} ${hash} out ${formatUnits(sim.result, 18)} gas ${r.gasUsed}`)
       if (r.status === 'success') sent++
       else skipped++
     } catch (e) {
@@ -51,10 +52,11 @@ const ordersAbi = parseAbi([
   'function floorOut(uint256 id) view returns (uint256)',
   'function execute(uint256 id,uint256 minOut) returns (uint256)',
 ])
-export async function runOrdersOnce({ rpc = DEFAULT_RPC, address, key, log = console.log }) {
+// chainId 8453 runs the Base contract (VerdexOrdersCL, the same functions) over a Base RPC.
+export async function runOrdersOnce({ rpc = DEFAULT_RPC, address, key, log = console.log, chainId = 4663 }) {
   const account = privateKeyToAccount(key)
-  const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
-  const wallet = createWalletClient({ account, chain: chain(rpc), transport: http(rpc) })
+  const pub = createPublicClient({ chain: chain(rpc, chainId), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
+  const wallet = createWalletClient({ account, chain: chain(rpc, chainId), transport: http(rpc) })
   const c = { address, abi: ordersAbi }
   const count = Number(await pub.readContract({ ...c, functionName: 'orderCount' }))
   if (!count) return { count, due: 0, sent: 0, skipped: 0 }
@@ -68,7 +70,7 @@ export async function runOrdersOnce({ rpc = DEFAULT_RPC, address, key, log = con
       const sim = await pub.simulateContract({ ...c, functionName: 'execute', args: [id, floor], account })
       const hash = await wallet.writeContract(sim.request)
       const r = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
-      log(`order ${id}: ${r.status} ${hash} out ${sim.result} gas ${r.gasUsed}`)
+      log(`order ${id}${chainId === 8453 ? ' (Base)' : ''}: ${r.status} ${hash} out ${sim.result} gas ${r.gasUsed}`)
       if (r.status === 'success') sent++
       else skipped++
     } catch (e) {
@@ -86,10 +88,11 @@ const vaultsAbi = parseAbi([
   'function isDue(uint256 id) view returns (bool)',
   'function execute(uint256 id) returns (uint256 soldUsdg,uint256 boughtUsdg)',
 ])
-export async function runVaultsOnce({ rpc = DEFAULT_RPC, address, key, log = console.log }) {
+// chainId 8453 runs the Base contract (VerdexVaultsCL, the same functions, USDC amounts) over a Base RPC.
+export async function runVaultsOnce({ rpc = DEFAULT_RPC, address, key, log = console.log, chainId = 4663 }) {
   const account = privateKeyToAccount(key)
-  const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
-  const wallet = createWalletClient({ account, chain: chain(rpc), transport: http(rpc) })
+  const pub = createPublicClient({ chain: chain(rpc, chainId), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
+  const wallet = createWalletClient({ account, chain: chain(rpc, chainId), transport: http(rpc) })
   const c = { address, abi: vaultsAbi }
   const count = Number(await pub.readContract({ ...c, functionName: 'vaultCount' }))
   if (!count) return { count, due: 0, sent: 0, skipped: 0 }
@@ -102,7 +105,7 @@ export async function runVaultsOnce({ rpc = DEFAULT_RPC, address, key, log = con
       const sim = await pub.simulateContract({ ...c, functionName: 'execute', args: [id], account })
       const hash = await wallet.writeContract(sim.request)
       const r = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
-      log(`vault ${id}: ${r.status} ${hash} sold ${formatUnits(sim.result[0], 6)} bought ${formatUnits(sim.result[1], 6)} USDG gas ${r.gasUsed}`)
+      log(`vault ${id}${chainId === 8453 ? ' (Base)' : ''}: ${r.status} ${hash} sold ${formatUnits(sim.result[0], 6)} bought ${formatUnits(sim.result[1], 6)} ${chainId === 8453 ? 'USDC' : 'USDG'} gas ${r.gasUsed}`)
       if (r.status === 'success') sent++
       else skipped++
     } catch (e) {

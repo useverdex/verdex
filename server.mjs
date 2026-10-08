@@ -8,9 +8,9 @@ import { gzipSync } from 'node:zlib'
 import { runOnce, runOrdersOnce, runVaultsOnce, runAgentOnce, executorBalance, refuelIfNeeded, treasurySweep, treasuryDistribute } from './scripts/executor-lib.mjs'
 import { TREASURY_ADDRESS } from './scripts/treasury-address.mjs'
 import { INDEX_ROUTER_ADDRESS } from './scripts/index-addresses.mjs'
-import { AUTOINVEST_ADDRESS as BUILT_IN } from './scripts/autoinvest-address.mjs'
-import { ORDERS_ADDRESS as ORDERS_BUILT_IN } from './scripts/orders-address.mjs'
-import { VAULTS_ADDRESS as VAULTS_BUILT_IN } from './scripts/vaults-address.mjs'
+import { AUTOINVEST_ADDRESS as BUILT_IN, BASE_AUTOINVEST_ADDRESS as BASE_AUTOINVEST_BUILT_IN } from './scripts/autoinvest-address.mjs'
+import { ORDERS_ADDRESS as ORDERS_BUILT_IN, BASE_ORDERS_ADDRESS as BASE_ORDERS_BUILT_IN } from './scripts/orders-address.mjs'
+import { VAULTS_ADDRESS as VAULTS_BUILT_IN, BASE_VAULTS_ADDRESS as BASE_VAULTS_BUILT_IN } from './scripts/vaults-address.mjs'
 import { AGENT_ADDRESS as AGENT_BUILT_IN } from './scripts/agent-address.mjs'
 import { apiRead, isApiPath } from './scripts/api-lib.mjs'
 
@@ -63,6 +63,10 @@ const address = process.env.AUTOINVEST_ADDRESS || BUILT_IN
 const ordersAddress = process.env.ORDERS_ADDRESS || ORDERS_BUILT_IN
 const vaultsAddress = process.env.VAULTS_ADDRESS || VAULTS_BUILT_IN
 const agentAddress = process.env.AGENT_ADDRESS || AGENT_BUILT_IN
+const baseOrdersAddress = process.env.BASE_ORDERS_ADDRESS || BASE_ORDERS_BUILT_IN
+const baseAutoInvestAddress = process.env.BASE_AUTOINVEST_ADDRESS || BASE_AUTOINVEST_BUILT_IN
+const baseVaultsAddress = process.env.BASE_VAULTS_ADDRESS || BASE_VAULTS_BUILT_IN
+const BASE_RPC = process.env.BASE_RPC || 'https://mainnet.base.org'
 const EVERY = Number(process.env.EXECUTOR_EVERY_MS ?? 10 * 60 * 1000)
 if (key && address) {
   let running = false
@@ -79,6 +83,18 @@ if (key && address) {
       if (vaultsAddress) {
         const v = await runVaultsOnce({ rpc: process.env.RPC, address: vaultsAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] vaults pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
         if (v?.due) console.log(`[executor] vaults ${v.count} · due ${v.due} · sent ${v.sent} · skipped ${v.skipped}`)
+      }
+      if (baseOrdersAddress) {
+        const ob = await runOrdersOnce({ rpc: BASE_RPC, chainId: 8453, address: baseOrdersAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] base orders pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
+        if (ob?.due) console.log(`[executor] base orders ${ob.count} · due ${ob.due} · sent ${ob.sent} · skipped ${ob.skipped}`)
+      }
+      if (baseAutoInvestAddress) {
+        const ab = await runOnce({ rpc: BASE_RPC, chainId: 8453, address: baseAutoInvestAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] base plans pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
+        if (ab?.due) console.log(`[executor] base plans ${ab.count} · due ${ab.due} · sent ${ab.sent} · skipped ${ab.skipped}`)
+      }
+      if (baseVaultsAddress) {
+        const vb = await runVaultsOnce({ rpc: BASE_RPC, chainId: 8453, address: baseVaultsAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] base vaults pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
+        if (vb?.due) console.log(`[executor] base vaults ${vb.count} · due ${vb.due} · sent ${vb.sent} · skipped ${vb.skipped}`)
       }
       if (agentAddress) {
         const a = await runAgentOnce({ rpc: process.env.RPC, address: agentAddress, key, log: (m) => console.log(`[executor] ${m}`) }).catch((e) => { console.log(`[executor] agent pass failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`); return null })
