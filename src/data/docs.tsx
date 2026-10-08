@@ -325,6 +325,37 @@ export const DOC_SECTIONS: DocSection[] = [
     ],
   },
   {
+    id: 'copy-a-wallet',
+    title: 'Copy a wallet',
+    blocks: [
+      { kind: 'p', text: `Copy a wallet (/copy) reads the tokenized stocks any address holds on Robinhood Chain, values them at their USDG pools’ spot prices and turns them into weights, all from the chain when you paste the address. Copy it saves a vault on this device at those weights, which you fund with USDG on the Vaults page: each stock is bought from its pool by a swap your wallet confirms, with a floor. Keep it opens Vaults without you with the weights filled in, so the contract keeps you at them.` },
+      { kind: 'defs', items: [
+        { term: 'What is copied', text: 'An allocation at today’s prices: the weights, not the entry prices, the timing or anything the address does next. Stocks without a deep USDG pool are shown and left out of the weights, since they could not be bought well.' },
+        { term: 'What is not', text: `${N} does not know who an address is, keeps no list of addresses, stores nothing you paste and ranks no wallets. Every balance on the chain is public; the page only reads them.` },
+        { term: 'Custody and fees', text: 'None. Your USDG buys your stocks into your wallet through the same pools and floors as everything else on the site. There is no contract for copying and no fee.' },
+        { term: 'Risk', text: 'You are buying what someone else holds, at the pools’ current prices, with the pools’ current depth. A thin pool fills badly up to the floor; a copied wallet can sell a minute later and you will not see it here.' },
+      ] },
+    ],
+  },
+  {
+    id: 'api',
+    title: 'Verdex API',
+    blocks: [
+      { kind: 'p', text: `The API is the same reads the site makes, made by the server and served as JSON, open to anyone, no key, no sign-up, cached sixty seconds. Nothing is stored: when the cache expires the next call reads the chain (and the aggregator’s public record) again. Every response is {"ok": true, "readAt": "…", "data": …}; errors are {"ok": false, "error": "…"} with a 502. CORS is open, so a browser page can call it directly.` },
+      { kind: 'defs', items: [
+        { term: 'GET /api', text: 'Lists the endpoints.' },
+        { term: 'GET /api/numbers', text: 'The numbers page in one object: Index TVL and the list of indexes, volume through the aggregator by chain, Index buys and sells, the treasury totals, and the counts of plans, orders, vaults, mandates and executions.' },
+        { term: 'GET /api/indexes, /api/indexes/base', text: 'Every index on both chains (or on Base only): address, symbol, name, supply, NAV and TVL at the pools, and each component’s units per share, price, weight and pool.' },
+        { term: 'GET /api/without-you', text: 'The four contracts that work without you: their addresses, how many plans, orders, vaults and mandates exist, and every buy, fill, rebalance and trade of the last four weeks with its transaction.' },
+        { term: 'GET /api/treasury', text: 'VERDEX bought, burned, paid back and waiting, and every sweep and payout with its transaction.' },
+        { term: 'GET /api/volume', text: 'Swaps and bridges made through Verdex in the last 89 days, from the aggregator’s public record: totals by chain and each transfer with its explorer link.' },
+        { term: 'GET /api/pools, /api/pools/base', text: 'Every tokenized-stock pool against the chain’s stablecoin: price, liquidity, day volume and the day’s move, with the pool and token addresses.' },
+        { term: 'GET /api/assets', text: 'The stock list the site uses, with each asset’s tokens per chain.' },
+        { term: 'Limits', text: 'Sixty-second cache per endpoint; one read in flight per endpoint, so a burst of calls shares one read. Be kind: it runs on the same small server as the executor. Fields may be added; existing ones will not change meaning without a note in the changelog.' },
+      ] },
+    ],
+  },
+  {
     id: 'verdex-index',
     title: 'Verdex Index',
     blocks: [

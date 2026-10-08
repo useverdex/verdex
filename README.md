@@ -86,6 +86,12 @@ Live at [useverdex.xyz](https://useverdex.xyz). Token: VERDEX on Robinhood Chain
   is their weight, read from the token when the page tallies (Borda count), never stored or snapshotted. The admin
   only opens rounds. Deployed with round 1 from `scripts/deploy-vote.mjs` (candidates in `scripts/vote-round-1.json`)
   or from `/deploy/vote`; the page is `/vote`.
+- **Copy a wallet.** `/copy` (`src/lib/copy.ts`): reads the tokenized stocks any address holds on Robinhood Chain,
+  values them at the pools and turns them into weights; Copy saves a vault on this device at those weights (funded
+  on the Vaults page, leg by leg with floors), Keep opens Vaults without you with the weights filled in. No contract.
+- **Verdex API.** `scripts/api-lib.mjs`, served by `server.mjs` at `/api/*`: numbers, indexes (both chains), the
+  without-you contracts and their executions, the treasury, the aggregator volume, the pools and the asset list, as
+  JSON with a sixty-second cache and open CORS. The same reads the site makes, made by the server. `GET /api` lists them.
 - **Verdex on Solana.** `/solana`: the same baskets made of xStocks (Backed's tokenized shares on Solana), bought and sold
   with USDC through Jupiter. No Verdex program: `src/lib/sol/tx.ts` asks Jupiter for each leg's route, composes one v0
   transaction per leg (the 0.25% USDC fee rides on the first one when `VITE_SOLANA_FEE_WALLET` is set), the wallet

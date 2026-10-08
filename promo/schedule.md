@@ -1,6 +1,6 @@
 # Tweet schedule: Oct 7 to Oct 9, 2026 (CEST, UTC in brackets)
 
-Every tweet has a video. Intervals 1h45 to 2h30, anchors fixed: Vaults 01:00, Agent 17:00, Numbers 01:00, Vote 17:00, the undervalued note after it, Telegram 01:00. All copy in English; no partnership claims; "unaudited" where a contract is involved; "undervalued" is an opinion, no price target.
+Every tweet has a video. Intervals 1h45 to 2h30 with odd minutes so nothing looks scheduled; anchors fixed: Vaults 01:00, Agent 17:00, Numbers 01:00, Vote 17:00, the undervalued note after it, Telegram 01:00. All copy in English; no partnership claims; "unaudited" where a contract is involved; "undervalued" is an opinion, no price target.
 
 ## Tuesday Oct 7
 
@@ -18,7 +18,7 @@ Reply, right after:
 
 > How it differs from the Vaults you already had: those ran in your browser and needed your tap on every trade. These live in the contract: weights, threshold and cadence; the executor that already runs Auto-Invest and Orders checks them every ten minutes. Buy more of a stock, approve it again from the card, and it is part of the vault.
 
-### 03:10 (01:10 UTC) · `clip-onerun.mp4`
+### 03:07 (01:07 UTC) · `clip-onerun.mp4`
 
 > What a rebalance looks like, onchain.
 >
@@ -26,7 +26,7 @@ Reply, right after:
 >
 > useverdex.xyz/vaults/without-you
 
-### 05:00 (03:00 UTC) · `clip-opensource2.mp4`
+### 04:58 (02:58 UTC) · `clip-opensource2.mp4`
 
 > Nine contracts. All in the repo, all verified.
 >
@@ -36,7 +36,7 @@ Reply, right after:
 >
 > github.com/useverdex/verdex
 
-### 07:20 (05:20 UTC) · `clip-audit2.mp4`
+### 07:23 (05:23 UTC) · `clip-audit2.mp4`
 
 > Audited by us. Not yet by a third party.
 >
@@ -46,7 +46,7 @@ Reply, right after:
 >
 > useverdex.xyz/docs
 
-### 09:15 (07:15 UTC) · `clip-eightofeleven.mp4`
+### 09:14 (07:14 UTC) · `clip-eightofeleven.mp4`
 
 > Eight of eleven. Checked.
 >
@@ -56,7 +56,7 @@ Reply, right after:
 >
 > useverdex.xyz
 
-### 11:30 (09:30 UTC) · `clip-executor.mp4`
+### 11:36 (09:36 UTC) · `clip-executor.mp4`
 
 > One wallet runs it all. Every ten minutes.
 >
@@ -66,7 +66,7 @@ Reply, right after:
 >
 > useverdex.xyz/docs
 
-### 13:20 (11:20 UTC) · `clip-holdersfirst.mp4`
+### 13:22 (11:22 UTC) · `clip-holdersfirst.mp4`
 
 > Holders first. Every box, hours early.
 >
@@ -76,7 +76,7 @@ Reply, right after:
 >
 > useverdex.xyz/verdex
 
-### 15:10 (13:10 UTC) · `clip-agentsoon.mp4`
+### 15:13 (13:13 UTC) · `clip-agentsoon.mp4`
 
 > Box 9 of 11.
 >
@@ -96,7 +96,7 @@ Reply, right after:
 >
 > useverdex.xyz/agent/without-you
 
-### 19:05 (17:05 UTC) · `clip-limits.mp4`
+### 19:08 (17:08 UTC) · `clip-limits.mp4`
 
 > What the contract checks, and what it does not.
 >
@@ -106,7 +106,7 @@ Reply, right after:
 >
 > useverdex.xyz/agent/without-you
 
-### 21:20 (19:20 UTC) · `clip-draft.mp4`
+### 21:21 (19:21 UTC) · `clip-draft.mp4`
 
 > One sentence. One mandate.
 >
@@ -116,7 +116,7 @@ Reply, right after:
 >
 > useverdex.xyz/agent
 
-### 23:15 (21:15 UTC) · `clip-numberssoon.mp4`
+### 23:13 (21:13 UTC) · `clip-numberssoon.mp4`
 
 > Box 10 of 11.
 >
@@ -138,7 +138,7 @@ Reply, right after:
 >
 > useverdex.xyz/numbers
 
-### 03:10 (01:10 UTC) · `clip-feesbuy.mp4`
+### 03:09 (01:09 UTC) · `clip-feesbuy.mp4`
 
 > Every fee buys VERDEX. Half burned, half paid back.
 >
@@ -148,7 +148,7 @@ Reply, right after:
 >
 > useverdex.xyz/treasury
 
-### 05:20 (03:20 UTC) · `clip-floors.mp4`
+### 05:22 (03:22 UTC) · `clip-floors.mp4`
 
 > Spot, less 1%. Read in the same transaction.
 >
@@ -158,7 +158,7 @@ Reply, right after:
 >
 > useverdex.xyz/docs
 
-### 07:30 (05:30 UTC) · `clip-chains.mp4`
+### 07:34 (05:34 UTC) · `clip-chains.mp4`
 
 > Three chains, one token.
 >
@@ -166,7 +166,7 @@ Reply, right after:
 >
 > useverdex.xyz/index?chain=base
 
-### 09:45 (07:45 UTC) · `clip-passthrough.mp4`
+### 09:47 (07:47 UTC) · `clip-passthrough.mp4`
 
 > Holds nothing. Between runs, between trades.
 >
@@ -176,7 +176,7 @@ Reply, right after:
 >
 > useverdex.xyz/docs
 
-### 11:35 (09:35 UTC) · `clip-tenofeleven.mp4`
+### 11:38 (09:38 UTC) · `clip-tenofeleven.mp4`
 
 > Ten of eleven. Checked.
 >
@@ -186,7 +186,7 @@ Reply, right after:
 >
 > useverdex.xyz
 
-### 13:30 (11:30 UTC) · `clip-readit.mp4`
+### 13:26 (11:26 UTC) · `clip-readit.mp4`
 
 > Read it before you trust it.
 >
@@ -196,7 +196,7 @@ Reply, right after:
 >
 > useverdex.xyz/docs
 
-### 15:15 (13:15 UTC) · `clip-votesoon.mp4`
+### 15:13 (13:13 UTC) · `clip-votesoon.mp4`
 
 > Box 11 of 11.
 >
@@ -214,17 +214,19 @@ Reply, right after:
 >
 > useverdex.xyz/vote
 
-### 19:10 (17:10 UTC) · `clip-undervalued.mp4`
+### 19:12 (17:12 UTC) · `clip-undervalued.mp4`
 
-> Eleven of eleven. Phase 2 is done, and we're not leaving.
+> Honest take from the dev, now that phase 2 is closed.
 >
-> Nine days, nine contracts, three chains, every page live. We truly believe this project is deeply undervalued, and we're going to keep bringing bigger updates and more work until the price can't ignore the value.
+> In nine days we put nine contracts on three chains, all verified, all open source, none holding your funds. The site reads every number from the chain. And the market cap is still what it was before any of it existed.
 >
-> Thank you for the support. News at 01:00 CEST: something for holders, and a say in where this goes next.
+> I think that gap is wrong. Not because of what I promise, because of what is already on the explorer. We are going to keep closing it with work, not with words.
+>
+> 01:00 CEST: a place for holders, and your say on what comes next.
 >
 > useverdex.xyz
 
-### 21:05 (19:05 UTC) · `clip-elevenofeleven.mp4`
+### 21:03 (19:03 UTC) · `clip-elevenofeleven.mp4`
 
 > Eleven of eleven. Checked.
 >
@@ -234,7 +236,7 @@ Reply, right after:
 >
 > useverdex.xyz
 
-### 23:00 (21:00 UTC) · `clip-placeofourown.mp4`
+### 22:58 (20:58 UTC) · `clip-placeofourown.mp4`
 
 > Somewhere to talk. In two hours.
 >

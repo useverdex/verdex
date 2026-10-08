@@ -12,6 +12,7 @@ import { AUTOINVEST_ADDRESS as BUILT_IN } from './scripts/autoinvest-address.mjs
 import { ORDERS_ADDRESS as ORDERS_BUILT_IN } from './scripts/orders-address.mjs'
 import { VAULTS_ADDRESS as VAULTS_BUILT_IN } from './scripts/vaults-address.mjs'
 import { AGENT_ADDRESS as AGENT_BUILT_IN } from './scripts/agent-address.mjs'
+import { apiRead, isApiPath } from './scripts/api-lib.mjs'
 
 const ROOT = resolve('dist')
 const PORT = Number(process.env.PORT ?? 8080)
@@ -35,9 +36,16 @@ function send(req, res, file, status = 200) {
 }
 
 const server = http.createServer((req, res) => {
+  if (req.method === 'OPTIONS') { res.writeHead(204, { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET, OPTIONS', 'access-control-max-age': '86400' }); return res.end() }
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); return res.end() }
   let path
   try { path = decodeURIComponent(new URL(req.url, 'http://x').pathname) } catch { res.writeHead(400); return res.end() }
+  // The API: the same reads the site makes, as JSON, cached sixty seconds, open to anyone.
+  if (path === '/api' || path.startsWith('/api/')) {
+    const key = path.replace(/\/+$/, '') || '/api'
+    if (!isApiPath(key)) { res.writeHead(404, { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*' }); return res.end('{"ok":false,"error":"no such endpoint; GET /api lists them"}') }
+    return apiRead(key).then((r) => { res.writeHead(r.status, { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'cache-control': 'public, max-age=60', age: String(r.age) }); req.method === 'HEAD' ? res.end() : res.end(r.body) }).catch(() => { res.writeHead(500); res.end() })
+  }
   const file = normalize(join(ROOT, path))
   if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end() }
   if (existsSync(file) && statSync(file).isFile()) return send(req, res, file)

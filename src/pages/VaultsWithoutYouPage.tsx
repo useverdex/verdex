@@ -3,7 +3,7 @@
 // their live drift, and pauses, resumes or runs them.
 import { useMemo, useState } from 'react'
 import { Avatar, Box, Button, InputBase, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { BRAND, t, z } from '../theme/tokens'
 import { Bt, Lt, Vg } from '../theme/styles'
@@ -55,14 +55,17 @@ function Row({ k, v, strong }: { k: string; v: React.ReactNode; strong?: boolean
 const pct = (bps: number, d = 1) => `${(bps / 100).toFixed(d)}%`
 
 function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: StockToken[]; pools: Pool[]; loading: boolean; wallet: Ctx; chain: ChainX | undefined; onDone: () => void }) {
-  const [presetId, setPresetId] = useState('mag7')
+  // A draft can arrive in the query string (from Copy a wallet): TICKER:WEIGHT pairs become the custom targets.
+  const [params] = useSearchParams()
+  const [wanted] = useState(() => (params.get('tokens') ?? '').split(',').map((x) => { const [tk, w] = x.split(':'); return { ticker: tk.trim().toUpperCase(), weight: Number(w) } }).filter((x) => x.ticker && isFinite(x.weight) && x.weight > 0))
+  const [presetId, setPresetId] = useState(wanted.length ? 'query' : 'mag7')
   const [custom, setCustom] = useState<Target[]>([])
   const [threshold, setThreshold] = useState(500)
   const [interval, setInterval_] = useState(INTERVALS[1])
   const [tx, setTx] = useState<Tx>({ phase: 'idle' })
   const [more, setMore] = useState(false)
   // The targets are derived: a preset over today's deep pools, or the custom list once the user touches it.
-  const targets = useMemo(() => { const p = PRESETS.find((x) => x.id === presetId); return p ? presetTargets(p, stocks, pools) : custom }, [presetId, custom, stocks, pools])
+  const targets = useMemo(() => { if (presetId === 'query') return normalise(wanted.map((w) => { const stock = stocks.find((s) => s.ticker === w.ticker); const pool = stock ? poolFor(stock, pools) : undefined; return stock && pool && deepEnough(pool) ? { stock, pool, weight: w.weight } : undefined }).filter((x): x is Target => !!x)); const p = PRESETS.find((x) => x.id === presetId); return p ? presetTargets(p, stocks, pools) : custom }, [presetId, custom, stocks, pools, wanted])
   const edit = (next: Target[]) => { setCustom(next); setPresetId('custom') }
   const bps = toBps(targets)
   const toggle = (s: StockToken) => {
@@ -94,9 +97,9 @@ function Composer({ stocks, pools, loading, wallet, chain, onDone }: { stocks: S
       <Label>Start from</Label>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
         {PRESETS.map((p) => <Choice key={p.id} on={p.id === presetId} onClick={() => setPresetId(p.id)}>{p.name}</Choice>)}
-        <Choice on={presetId === 'custom'} onClick={() => edit(targets)}>Custom</Choice>
+        <Choice on={presetId === 'custom' || presetId === 'query'} onClick={() => edit(targets)}>Custom</Choice>
       </Box>
-      {presetId !== 'custom' && <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>{PRESETS.find((p) => p.id === presetId)?.blurb} Stocks without a deep USDG pool today are left out.</Typography>}
+      {presetId !== 'custom' && presetId !== 'query' && <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 1.25 }}>{PRESETS.find((p) => p.id === presetId)?.blurb} Stocks without a deep USDG pool today are left out.</Typography>}
       <Box sx={{ mt: 2.5 }}>
         <Label>Stocks</Label>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
