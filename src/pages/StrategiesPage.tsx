@@ -173,9 +173,9 @@ export default function StrategiesPage() {
         <Panel sx={{ p: { xs: 2.5, md: 3 }, mb: 2.5, borderColor: 'rgba(194,234,138,.35)' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
             <Box sx={{ ...Vg, ml: 0, background: 'rgba(194,234,138,.16)', color: t.color.mark }}>Shared strategy</Box>
-            {shared.m && <Typography sx={{ fontSize: 13, color: t.color.textMuted }}>by {shared.m}</Typography>}
+            {shared.m && <Typography title={`by ${shared.m}`} sx={{ fontSize: 13, color: t.color.textMuted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>by {shared.m}</Typography>}
           </Box>
-          <Typography sx={{ ...t.type.h4, color: t.color.text, mt: 1.5 }}>{shared.n}</Typography>
+          <Typography title={shared.n} sx={{ ...t.type.h4, color: t.color.text, mt: 1.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{shared.n}</Typography>
           <Typography sx={{ fontSize: 13, color: t.color.textMuted, mt: 0.5 }}>
             {sharedAssets.length} assets on {chains?.find((c) => c.id === shared.c)?.name ?? shared.c} · {ruleLabel({ rule: shared.r, threshold: shared.t })}
           </Typography>

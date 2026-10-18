@@ -36,7 +36,8 @@ export async function fetchQuote(p: { fromChain: number; toChain: number; fromTo
     order: 'RECOMMENDED',
   })
   if (p.toAddress) q.set('toAddress', p.toAddress)
-  if (p.fee) q.set('fee', String(p.fee))
+  const sendFee = !!(p.fee && p.fee > 0 && Date.now() >= feeOffUntil)
+  if (sendFee) q.set('fee', String(p.fee))
   const r = await fetch(`${LIFI}/quote?${q}`, { ...lifiInit(), signal: p.signal })
   if (!r.ok) {
     let msg = `Quote failed (${r.status})`
@@ -46,36 +47,45 @@ export async function fetchQuote(p: { fromChain: number; toChain: number; fromTo
     } catch {
       /* ignore */
     }
+    if (sendFee && !p.signal?.aborted) {
+      if (/not configured for collecting fees|integrator.*fee/i.test(msg)) feeOffUntil = Date.now() + FEE_COOLDOWN_MS
+      return fetchQuote({ ...p, fee: undefined })
+    }
     throw new Error(msg)
   }
-  return (await r.json()) as Quote
+  const quote = (await r.json()) as Quote
+  return sendFee && !hasZeroIntegratorSplit(quote) ? { ...quote, verdexFee: p.fee } : quote
+}
+
+type FeeCostWithSplit = { name: string; amountUSD: string; feeSplit?: { lifiFee?: string; integratorFee?: string } }
+
+function hasZeroIntegratorSplit(q: Quote) {
+  const splits = (q.estimate.feeCosts as FeeCostWithSplit[] | undefined)?.filter((f) => f.feeSplit !== undefined)
+  return !!(splits?.length && splits.every((f) => !(Number(f.feeSplit?.integratorFee ?? 0) > 0)))
 }
 
 // A quote that carries the Verdex fee for wallets that owe it. When LI.FI rejects the fee parameter
 // (the integrator has no fee wallet configured yet) the same quote is fetched without it, so a fee
 // problem never blocks a trade, and the parameter is left off for a while to avoid paying two
-// requests per quote.
+// requests per quote across Swap, Auto-Invest, Orders and Vaults.
+const FEE_COOLDOWN_MS = 10 * 60_000
 let feeOffUntil = 0
-export async function fetchQuoteWithFee(p: Parameters<typeof fetchQuote>[0], fee?: number): Promise<Quote> {
-  if (!fee || Date.now() < feeOffUntil) return fetchQuote(p)
-  try {
-    const q = await fetchQuote({ ...p, fee })
-    return { ...q, verdexFee: fee }
-  } catch (e) {
-    if (p.signal?.aborted) throw e
-    if (/not configured for collecting fees/i.test((e as Error).message)) feeOffUntil = Date.now() + 10 * 60_000
-    return fetchQuote(p)
-  }
+export const feeCooldownUntil = () => feeOffUntil
+export function resetFeeCooldown() {
+  feeOffUntil = 0
+}
+export async function fetchQuoteWithFee(p: Parameters<typeof fetchQuote>[0], fee = p.fee): Promise<Quote> {
+  return fetchQuote({ ...p, fee: fee && fee > 0 ? fee : undefined })
 }
 
 // True when LI.FI accepted the Verdex fee on this quote. LI.FI adds its own fixed fee step to quotes
 // as well, so the step list cannot tell the two apart; the flag set at fetch time can.
-export const quoteHasFee = (q: Quote) => !!q.verdexFee
+export const quoteHasFee = (q: Quote) => !!(q.verdexFee && q.verdexFee > 0 && !hasZeroIntegratorSplit(q))
 
 // Fees the route itself charges, in USD, from the quote's own fee list, without the Verdex fee.
 export function routeFeesUsd(q: Quote) {
   const all = q.estimate.feeCosts?.reduce((s, f) => s + Number(f.amountUSD || 0), 0) ?? 0
-  const verdex = q.verdexFee && q.estimate.fromAmountUSD ? Number(q.estimate.fromAmountUSD) * q.verdexFee : 0
+  const verdex = quoteHasFee(q) && q.estimate.fromAmountUSD ? Number(q.estimate.fromAmountUSD) * q.verdexFee! : 0
   return Math.max(0, all - verdex)
 }
 

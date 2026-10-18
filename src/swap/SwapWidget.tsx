@@ -280,7 +280,7 @@ export function SwapWidget() {
             <Typography sx={{ fontSize: 12, color: t.color.textLabel, lineHeight: 1.4 }}>Funds are routed through partner liquidity and settle at the receiving address. Allow 15–45 minutes for cross-chain routes.</Typography>
           </Box>
         )}
-        {q && <RouteSummary q={q} holder={holder} known={!!account && !!holding.data} onBuyVerdex={buyVerdex} />}
+        {q && <RouteSummary q={q} holder={holder} known={!!account && !!holding.data} holderResolved={!account || !!holding.data} onBuyVerdex={buyVerdex} />}
         {quote.error && Number(amount) > 0 && <Typography sx={{ fontSize: 12, color: t.color.red, lineHeight: 1.4 }}>{(quote.error as Error).message}</Typography>}
         {quote.error && buyBasket && to.token?.address === buyBasket.address && (
           <Box sx={{ ...card, gap: 1 }}>
@@ -311,7 +311,7 @@ export function SwapWidget() {
   )
 }
 
-function RouteSummary({ q, holder, known, onBuyVerdex }: { q: Quote; holder: boolean; known: boolean; onBuyVerdex: () => void }) {
+function RouteSummary({ q, holder, known, holderResolved, onBuyVerdex }: { q: Quote; holder: boolean; known: boolean; holderResolved: boolean; onBuyVerdex: () => void }) {
   const gas = q.estimate.gasCosts?.reduce((s, g) => s + Number(g.amountUSD || 0), 0) ?? 0
   const feePct = `${(VERDEX_FEE * 100).toFixed(2)}%`
   const charged = quoteHasFee(q)
@@ -343,7 +343,7 @@ function RouteSummary({ q, holder, known, onBuyVerdex }: { q: Quote; holder: boo
           </Typography>
         </Box>
       )}
-      {VERDEX_FEE > 0 && !holder && charged && <Row label={`${BRAND.name} fee`} value={feeUsd ? `${feePct} · $${feeUsd.toFixed(2)}` : feePct} />}
+      {VERDEX_FEE > 0 && !holder && (charged || holderResolved) && <Row label={`${BRAND.name} fee`} value={charged ? (feeUsd ? `${feePct} · $${feeUsd.toFixed(2)}` : feePct) : '0 · not charged on this route'} />}
       {routeFees >= 0.005 && <Row label="Route fees" value={`$${routeFees.toFixed(2)}`} />}
       <Row label="Network fee" value={gas ? `$${gas.toFixed(2)}` : '-'} />
       <Row label="Estimated time" value={fmtDuration(q.estimate.executionDuration)} />
@@ -360,8 +360,8 @@ function RouteSummary({ q, holder, known, onBuyVerdex }: { q: Quote; holder: boo
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-      <Typography sx={{ fontSize: 12, color: t.color.textMuted }}>{label}</Typography>
-      <Typography sx={{ fontSize: 12, fontWeight: 500 }}>{value}</Typography>
+      <Typography sx={{ fontSize: 12, color: t.color.textMuted, whiteSpace: 'nowrap' }}>{label}</Typography>
+      <Typography sx={{ fontSize: 12, fontWeight: 500, textAlign: 'right' }}>{value}</Typography>
     </Box>
   )
 }
