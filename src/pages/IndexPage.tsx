@@ -130,8 +130,10 @@ function Composer({ indexes, index, side, setIndex, setSide, wallet, chain, feeB
   const quote = useQuote(index, shares, side)
   const fee = holder ? 0 : feeBps
   const busy = tx.phase !== 'idle' && tx.phase !== 'done' && tx.phase !== 'failed'
-  const maxIn = quote.data ? (quote.data.total * BigInt(10_000 + DEFAULT_SLIPPAGE_BPS + fee)) / 10_000n + 1n : 0n
-  const minOut = quote.data ? (quote.data.total * BigInt(10_000 - DEFAULT_SLIPPAGE_BPS - fee)) / 10_000n : 0n
+  const maxSpent = quote.data ? quote.data.perLeg.reduce((s, v) => s + (v * BigInt(10_000 + DEFAULT_SLIPPAGE_BPS)) / 10_000n, 0n) : 0n
+  const minReceived = quote.data ? quote.data.perLeg.reduce((s, v) => s + (v * BigInt(10_000 - DEFAULT_SLIPPAGE_BPS)) / 10_000n, 0n) : 0n
+  const maxIn = quote.data ? maxSpent + (maxSpent * BigInt(fee)) / 10_000n + 1n : 0n
+  const minOut = quote.data ? minReceived - (minReceived * BigInt(fee)) / 10_000n : 0n
   const short = !!wallet.account && side === 'buy' && !!quote.data && usdg < maxIn
   const ready = !!wallet.account && !!index && index.tradable && shares > 0n && !!quote.data && !busy && !short
   const go = async () => {

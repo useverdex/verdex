@@ -157,7 +157,8 @@ contract VerdexLend {
     /// Current borrow APR in bps and supply APR in bps (after the reserve share).
     function rates(uint256 id) external view returns (uint256 borrowAprBps, uint256 supplyAprBps, uint256 utilisationBps) {
         Market storage m = _markets[id];
-        utilisationBps = m.totalSupplyAssets == 0 ? 0 : m.totalBorrowAssets * BPS / m.totalSupplyAssets;
+        (uint256 borrowAssets, uint256 supplyAssets,) = _accruedView(m);
+        utilisationBps = supplyAssets == 0 ? 0 : borrowAssets * BPS / supplyAssets;
         if (utilisationBps > BPS) utilisationBps = BPS;
         borrowAprBps = uint256(m.rateBaseBps) + uint256(m.rateSlopeBps) * utilisationBps / BPS;
         supplyAprBps = borrowAprBps * utilisationBps / BPS * (BPS - reserveBps) / BPS;
@@ -166,13 +167,14 @@ contract VerdexLend {
     /// Max loan asset `who` could still borrow in market `id` at the borrow price.
     function borrowable(uint256 id, address who) external view returns (uint256) {
         Market storage m = _markets[id];
+        (uint256 borrowAssets, uint256 supplyAssets,) = _accruedView(m);
         uint256 limit = collateralValue(id, collateralOf[id][who], true) * m.ltvBps / BPS;
         uint256 debt = debtOf(id, who);
         if (debt >= limit) return 0;
         uint256 room = limit - debt;
-        uint256 liquidity = m.totalSupplyAssets > m.totalBorrowAssets ? m.totalSupplyAssets - m.totalBorrowAssets : 0;
+        uint256 liquidity = supplyAssets > borrowAssets ? supplyAssets - borrowAssets : 0;
         if (room > liquidity) room = liquidity;
-        uint256 capRoom = m.borrowCap > m.totalBorrowAssets ? m.borrowCap - m.totalBorrowAssets : 0;
+        uint256 capRoom = m.borrowCap > borrowAssets ? m.borrowCap - borrowAssets : 0;
         return room > capRoom ? capRoom : room;
     }
 
@@ -363,6 +365,11 @@ contract VerdexLend {
         _checkParams(ltvBps, liqThresholdBps, liqBonusBps);
         Market storage m = _markets[id];
         _accrue(id, m);
+        if (m.totalBorrowShares > 0 && liqThresholdBps < m.liqThresholdBps) revert BadArgs();
+        if (twapWindow != 0) {
+            (,,, uint16 cardinality,,,) = IUniswapV3Pool(m.pool).slot0();
+            if (cardinality < MIN_CARDINALITY) revert BadMarket();
+        }
         m.ltvBps = ltvBps; m.liqThresholdBps = liqThresholdBps; m.liqBonusBps = liqBonusBps; m.twapWindow = twapWindow;
         m.rateBaseBps = rateBaseBps; m.rateSlopeBps = rateSlopeBps;
         emit ParamsSet(id, ltvBps, liqThresholdBps, liqBonusBps, twapWindow, rateBaseBps, rateSlopeBps);

@@ -97,6 +97,7 @@ contract VerdexIndexRouterCL {
         for (uint256 i = 0; i < tokens.length; i++) {
             IUniswapV3Pool pool = _pool(tokens[i], fees[i]);
             (uint160 sqrtP,,,,,) = pool.slot0();
+            if (sqrtP == 0) revert NoPool();
             bool usdgIsToken0 = pool.token0() == usdg;
             // price of token1 in token0 is sqrtP^2 / 2^192; done in two steps so nothing overflows
             uint256 v;
@@ -115,6 +116,7 @@ contract VerdexIndexRouterCL {
         for (uint256 i = 0; i < tokens.length; i++) {
             IUniswapV3Pool pool = _pool(tokens[i], fees[i]);
             (uint160 sqrtP,,,,,) = pool.slot0();
+            if (sqrtP == 0) revert NoPool();
             bool tokenIsToken0 = pool.token0() == tokens[i];
             uint256 v;
             if (tokenIsToken0) { v = (amounts[i] * sqrtP) >> 96; v = (v * sqrtP) >> 96; }
@@ -166,7 +168,10 @@ contract VerdexIndexRouterCL {
         require(IVerdexIndex(index).transferFrom(msg.sender, address(this), shares), "pull");
         IVerdexIndex(index).redeem(shares, address(this));
         for (uint256 i = 0; i < n; i++) {
-            if (amounts[i] == 0) continue;
+            if (amounts[i] == 0) {
+                if (minOutPerLeg[i] > 0) revert Slippage();
+                continue;
+            }
             IUniswapV3Pool pool = _pool(tokens[i], fees[i]);
             bool zeroForOne = pool.token0() == tokens[i];
             _activePool = address(pool);

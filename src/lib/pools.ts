@@ -3,7 +3,7 @@
 // site knows, market figures come from DexScreener, the price and tick from the pool itself, and
 // positions from the position manager. Every transaction is built here and signed in the wallet.
 import { useQuery } from '@tanstack/react-query'
-import { encodeFunctionData, erc20Abi, formatUnits, maxUint256, parseAbi, type Address, type WalletClient } from 'viem'
+import { encodeFunctionData, erc20Abi, formatUnits, parseAbi, type Address, type WalletClient } from 'viem'
 import { ROBINHOOD, type Asset } from './api'
 import { chainMeta, publicClientFor, waitForTx, type ChainX } from './lifi'
 import { readEthUsd } from './token'
@@ -263,7 +263,7 @@ export async function approveIfNeeded(ctx: TxCtx, token: Address, amount: bigint
   const allowance = await c.readContract({ address: token, abi: erc20Abi, functionName: 'allowance', args: [ctx.account.address, spender] })
   if (allowance >= amount) return
   ctx.onPhase('approving')
-  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: token, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [spender, maxUint256] }) })
+  const hash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: token, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [spender, amount] }) })
   await waitForTx(chainX(ctx), hash)
 }
 export async function sendTx(ctx: TxCtx, to: Address, data: `0x${string}`, value?: bigint) {

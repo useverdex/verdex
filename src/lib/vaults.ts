@@ -5,7 +5,7 @@
 // trades (sell overweight, buy underweight), prices each through LI.FI, and asks the wallet to confirm
 // them one by one. Nothing is custodial: tokens sit in the wallet the whole time.
 import { useSyncExternalStore } from 'react'
-import { encodeFunctionData, erc20Abi, formatUnits, maxUint256, parseUnits, type Address, type WalletClient } from 'viem'
+import { encodeFunctionData, erc20Abi, formatUnits, parseUnits, type Address, type WalletClient } from 'viem'
 import { ROBINHOOD, type Asset, type Chain } from './api'
 import { chainMeta, fetchQuote, isNative, readAllowance, readBalance, waitForTx, type ChainX } from './lifi'
 import { PAY_TOKENS, VERDEX_FEE, tokenPrice, type PlanToken } from './autoInvest'
@@ -241,7 +241,7 @@ export async function executeRebalance(v: Vault, trades: PlannedTrade[], ctx: { 
         const allowance = await readAllowance(ctx.chain, from.address as Address, ctx.account.address, quote.estimate.approvalAddress as Address)
         if (allowance < fromAmount) {
           ctx.onProgress({ phase: 'approving', step, steps, trade: tr })
-          const approveHash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: from.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [quote.estimate.approvalAddress as Address, maxUint256] }) })
+          const approveHash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: from.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [quote.estimate.approvalAddress as Address, fromAmount] }) })
           await waitForTx(ctx.chain, approveHash)
         }
       }

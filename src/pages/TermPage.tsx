@@ -71,7 +71,9 @@ export default function TermPage() {
   const go = async () => {
     if (!wallet.walletClient || !me || !coll || raw === 0n) return
     setTx({ phase: 'switching' })
-    try { await post(ctx((p) => setTx({ phase: p })), { isRequest: isReq, collateral: coll.address, amount: raw, collPerLoan: per, minLoan: 0n, interestBps: bps, termDays: days, openDays: 14 }); setTx({ phase: 'done' }); refresh() } catch (e) { setTx({ phase: 'failed', error: describeError(e) }) }
+    const maxLoan = isReq ? backs : raw
+    const minLoan = maxLoan < 10_000_000n ? maxLoan : 10_000_000n
+    try { await post(ctx((p) => setTx({ phase: p })), { isRequest: isReq, collateral: coll.address, amount: raw, collPerLoan: per, minLoan, interestBps: bps, termDays: days, openDays: 14 }); setTx({ phase: 'done' }); refresh() } catch (e) { setTx({ phase: 'failed', error: describeError(e) }) }
   }
 
   // ---- take
@@ -82,7 +84,9 @@ export default function TermPage() {
   const capOf = (o: Offer) => (o.isRequest ? maxPrincipal(o.left, o.collPerLoan) : o.left)
   const doTake = async (o: Offer) => {
     const k = o.id.toString()
-    const p = parseUnits(Number(takeAmt[k] || formatUnits(capOf(o), 6)).toFixed(6), 6)
+    const rawNum = Number(takeAmt[k] || formatUnits(capOf(o), 6))
+    const p = rawNum > 0 ? parseUnits(rawNum.toFixed(6), 6) : 0n
+    if (p === 0n) return
     const set = (ph: Phase, error?: string) => setTakeTx((m) => ({ ...m, [k]: { phase: ph, error } }))
     try { await take(ctx((ph) => set(ph)), o, p > capOf(o) ? capOf(o) : p); set('done'); refresh() } catch (e) { set('failed', describeError(e)) }
   }
@@ -136,7 +140,7 @@ export default function TermPage() {
               <Typography sx={{ fontSize: 16, fontWeight: 500 }}>Open offers and requests</Typography>
               <Box sx={{ display: 'grid', gap: 0.75, mt: 2 }}>
                 {open.map((o) => { const c = collOf(o.collateral)!; const k = o.id.toString(); const cap = capOf(o); const ttx = takeTx[k]; const tb = ttx && ttx.phase !== 'done' && ttx.phase !== 'failed'
-                  const p = Number(takeAmt[k] || formatUnits(cap, 6)); const need = collFor(parseUnits(p.toFixed(6), 6), o.collPerLoan); const own = o.maker.toLowerCase() === me?.toLowerCase()
+                  const p = Number(takeAmt[k] || formatUnits(cap, 6)); const need = collFor(p > 0 ? parseUnits(p.toFixed(6), 6) : 0n, o.collPerLoan); const own = o.maker.toLowerCase() === me?.toLowerCase()
                   return (
                     <Box key={k} sx={{ ...row, alignItems: 'flex-start' }}>
                       <Coin c={c} />

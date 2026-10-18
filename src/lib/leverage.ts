@@ -174,7 +174,9 @@ export async function closeLong(ctx: TxCtx, p: Pair, minOut: bigint) {
 }
 export async function openShort(ctx: TxCtx, p: Pair, plan: Plan, allowance: bigint) {
   if (!p.short) throw new Error('No short market for this stock yet.')
-  await ensureChain(ctx); await approveExact(ctx, plan.margin + plan.fee, allowance)
+  await ensureChain(ctx)
+  const maxFee = plan.fee > 0n ? (plan.fee * BigInt(10_000 + SLIPPAGE_BPS)) / 10_000n + 2n : 0n
+  await approveExact(ctx, plan.margin + maxFee, allowance)
   return send(ctx, 'openShort', [p.short.id, plan.margin, plan.units, plan.minProceeds])
 }
 export async function closeShort(ctx: TxCtx, p: Pair, minOut: bigint) {

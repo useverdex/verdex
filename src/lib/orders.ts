@@ -4,7 +4,7 @@
 // prices the swap through LI.FI and asks the wallet to confirm it. Nothing is custodial and nothing
 // moves before that confirmation.
 import { useSyncExternalStore } from 'react'
-import { encodeFunctionData, erc20Abi, formatUnits, maxUint256, parseUnits, type Address, type WalletClient } from 'viem'
+import { encodeFunctionData, erc20Abi, formatUnits, parseUnits, type Address, type WalletClient } from 'viem'
 import type { Chain } from './api'
 import { chainMeta, fetchQuote, isNative, readAllowance, readBalance, waitForTx, type ChainX, type Quote } from './lifi'
 import { PAY_TOKENS, VERDEX_FEE, tokenPrice, type PlanToken, type Run } from './autoInvest'
@@ -157,7 +157,7 @@ export async function fillOrder(o: Order, ctx: { walletClient: WalletClient; acc
     const allowance = await readAllowance(chain, from.address as Address, ctx.account.address, quote.estimate.approvalAddress as Address)
     if (allowance < fromAmount) {
       ctx.onPhase('approving')
-      const approveHash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: from.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [quote.estimate.approvalAddress as Address, maxUint256] }) })
+      const approveHash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: from.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [quote.estimate.approvalAddress as Address, fromAmount] }) })
       await waitForTx(chain, approveHash)
     }
   }

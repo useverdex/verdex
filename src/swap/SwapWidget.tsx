@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Avatar, Box, Button, InputBase, Typography } from '@mui/material'
-import { erc20Abi, encodeFunctionData, formatUnits, isAddress, maxUint256, parseUnits, type Address } from 'viem'
+import { erc20Abi, encodeFunctionData, formatUnits, isAddress, parseUnits, type Address } from 'viem'
 import { BRAND, fonts, t, z } from '../theme/tokens'
 import { Bt } from '../theme/styles'
 import { ArrowsUpDownIcon, ChevronDownIcon, ExternalIcon, SettingsIcon, WalletIcon } from '../components/icons'
@@ -177,7 +177,7 @@ export function SwapWidget() {
         const allowance = await readAllowance(from.chain, from.token.address as Address, account.address, fresh.estimate.approvalAddress as Address)
         if (allowance < BigInt(fresh.action.fromAmount)) {
           setPhase('approving')
-          const approveHash = await walletClient.sendTransaction({ account: account.address, chain: null, to: from.token.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [fresh.estimate.approvalAddress as Address, maxUint256] }) })
+          const approveHash = await walletClient.sendTransaction({ account: account.address, chain: null, to: from.token.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [fresh.estimate.approvalAddress as Address, BigInt(fresh.action.fromAmount)] }) })
           await waitFor(from.chain, approveHash)
         }
       }

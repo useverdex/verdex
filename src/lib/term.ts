@@ -50,12 +50,13 @@ export function useLoans(who: Address | undefined) {
 
 // Collateral units per 1e18 USDG units, from "collateral worth `ratio` times the loan at `price` USDG per token".
 export function collPerLoan(ratio: number, price: number, collDecimals: number) {
+  if (!(ratio > 0) || !(price > 0)) return 0n
   const perUsdg = parseUnits((ratio / price).toFixed(Math.min(collDecimals, 12)), collDecimals) // per 1 USDG (1e6 units)
   return perUsdg * 10n ** BigInt(18 - USDG.decimals)
 }
 export const collFor = (principal: bigint, perLoan: bigint) => (principal === 0n ? 0n : (principal * perLoan - 1n) / 10n ** 18n + 1n)
 // The most USDG a request's locked collateral can still back.
-export const maxPrincipal = (collLeft: bigint, perLoan: bigint) => (collLeft * 10n ** 18n) / perLoan
+export const maxPrincipal = (collLeft: bigint, perLoan: bigint) => (perLoan === 0n ? 0n : (collLeft * 10n ** 18n) / perLoan)
 
 async function approve(ctx: TxCtx, token: Address, amount: bigint) {
   const c = client()
