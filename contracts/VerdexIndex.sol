@@ -60,6 +60,7 @@ contract VerdexIndex {
     error CapReached();
     error ShortPull();
     error Insufficient();
+    error BadArgs();
 
     modifier nonReentrant() {
         if (_locked) revert Reentrancy();
@@ -110,6 +111,7 @@ contract VerdexIndex {
     /// @notice Pulls the units behind `shares` from the caller and mints the shares to `to`.
     function issue(uint256 shares, address to) external nonReentrant {
         if (shares == 0) revert ZeroShares();
+        if (to == address(0) || to == address(this)) revert BadArgs();
         if (totalSupply + shares > maxSupply) revert CapReached();
         uint256[] memory amounts = amountsIn(shares);
         for (uint256 i = 0; i < amounts.length; i++) {
@@ -126,6 +128,7 @@ contract VerdexIndex {
     /// @notice Burns `shares` from the caller and sends the units behind them to `to`.
     function redeem(uint256 shares, address to) external nonReentrant {
         if (shares == 0) revert ZeroShares();
+        if (to == address(0) || to == address(this)) revert BadArgs();
         _burn(msg.sender, shares);
         uint256[] memory amounts = amountsOut(shares);
         for (uint256 i = 0; i < amounts.length; i++) if (amounts[i] != 0) _tokens[i].safeTransfer(to, amounts[i]);
@@ -137,6 +140,7 @@ contract VerdexIndex {
     /// remaining holders, and the index is never bricked by a single transfer that reverts.
     function redeemForfeiting(uint256 shares, address to, address skipped) external nonReentrant {
         if (shares == 0) revert ZeroShares();
+        if (to == address(0) || to == address(this)) revert BadArgs();
         _burn(msg.sender, shares);
         uint256[] memory amounts = amountsOut(shares);
         bool found;
@@ -156,6 +160,7 @@ contract VerdexIndex {
     }
 
     function transferOwnership(address to) external onlyOwner {
+        if (to == address(0)) revert BadArgs();
         emit OwnershipTransferred(owner, to);
         owner = to;
     }
@@ -184,6 +189,7 @@ contract VerdexIndex {
     }
 
     function _transfer(address from, address to, uint256 value) private {
+        if (to == address(0) || to == address(this)) revert BadArgs();
         uint256 bal = balanceOf[from];
         if (bal < value) revert Insufficient();
         balanceOf[from] = bal - value;
@@ -218,7 +224,7 @@ contract VerdexIndexFactory {
 
     function create(string calldata name, string calldata symbol, address[] calldata tokens, uint256[] calldata units, uint256 maxSupply) external returns (address index) {
         uint256 n = tokens.length;
-        if (n < 2 || n > 20 || units.length != n) revert BadComponents();
+        if (n < 2 || n > 20 || units.length != n || maxSupply == 0) revert BadComponents();
         for (uint256 i = 0; i < n; i++) {
             if (units[i] == 0 || tokens[i].code.length == 0) revert BadComponents();
             for (uint256 j = 0; j < i; j++) if (tokens[j] == tokens[i]) revert BadComponents();

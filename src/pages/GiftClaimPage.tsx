@@ -30,10 +30,12 @@ export default function GiftClaimPage() {
     return s ? { ticker: s.ticker, name: s.name, decimals: s.decimals, logo: s.logo } : { ticker: short(g.token), name: 'Token', decimals: 18, logo: undefined }
   }, [gift.data, assets.data])
   const [state, setState] = useState<{ phase: 'idle' | 'busy' | 'done' | 'failed'; error?: string; relayFailed?: boolean }>({ phase: 'idle' })
+  const [now] = useState(() => Math.floor(Date.now() / 1000))
   const g = gift.data
+  const isExpired = g ? g.expiresAt <= now : false
   const keyMatches = g && link ? g.key !== '0x0000000000000000000000000000000000000000' : false
   const claim = async (own: boolean) => {
-    if (!link || !wallet.account) return
+    if (!link || !wallet.account || isExpired) return
     setState({ phase: 'busy' })
     try {
       if (own) await claimFromWallet({ walletClient: wallet.walletClient!, account: wallet.account, chain, switchChain: wallet.switchChain, onPhase: () => {} }, link.id, link.key)
@@ -52,7 +54,8 @@ export default function GiftClaimPage() {
             <Typography sx={{ fontSize: 14, color: t.color.textMuted, mt: 1 }}>{tok.name} on Robinhood Chain, from {short(g.sender)}</Typography>
             {g.state === 1 && <Typography sx={{ fontSize: 16, mt: 3, color: t.color.mark }}>Claimed by {wallet.account && g.claimedBy.toLowerCase() === wallet.account.address.toLowerCase() ? 'you' : short(g.claimedBy)}. It is in that wallet now.</Typography>}
             {g.state === 2 && <Typography sx={{ fontSize: 16, mt: 3, color: t.color.textMuted }}>The sender took this gift back after it expired.</Typography>}
-            {g.state === 0 && keyMatches && (
+            {g.state === 0 && isExpired && <Typography sx={{ fontSize: 16, mt: 3, color: t.color.textMuted }}>This gift expired on {new Date(g.expiresAt * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} and can no longer be claimed.</Typography>}
+            {g.state === 0 && keyMatches && !isExpired && (
               <Box sx={{ mt: 3.5 }}>
                 {!wallet.account ? <Button onClick={wallet.openWalletMenu} sx={{ ...Bt, height: 50, px: 4 }}>Connect a wallet to claim</Button> : (
                   <Box sx={{ display: 'grid', gap: 1.25, justifyItems: 'center' }}>
@@ -61,7 +64,7 @@ export default function GiftClaimPage() {
                     {state.relayFailed && <Button onClick={() => void claim(true)} sx={{ ...Lt, height: 40, px: 2.5 }}>Claim with my own gas instead</Button>}
                   </Box>
                 )}
-                <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 2 }}>Claimable until the sender takes it back, possible from {new Date(g.expiresAt * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.</Typography>
+                <Typography sx={{ fontSize: 12, color: t.color.textLabel, mt: 2 }}>Claimable until expiry on {new Date(g.expiresAt * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.</Typography>
               </Box>
             )}
             {state.phase === 'failed' && <Typography sx={{ fontSize: 12, color: t.color.red, mt: 1.5 }}>{state.error}</Typography>}
