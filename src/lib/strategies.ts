@@ -68,15 +68,38 @@ export function unfollow(v: Vault) {
 export type Share = { n: string; c: number; w: [string, number][]; r: Rule; t: number; m?: string }
 const b64 = (s: string) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 const unb64 = (s: string) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4))))
+const cleanShareText = (s: string) =>
+  s
+    .replace(/[\p{Cc}\p{Cf}\r\n\u2028\u2029]+/gu, ' ')
+    .replace(/\s*(?:\(\s*verified\s*\)|\[\s*verified\s*\])/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+const cleanShareName = (s: string) =>
+  cleanShareText(
+    s
+      .split(/[\r\n\u0085\u2028\u2029]+/)[0]
+      .replace(/[\p{Cc}\p{Cf}]+/gu, ' ')
+      .replace(/\s+(?:[·|—–-]\s*)?by\s+[^\r\n]+?(?:\(\s*verified\s*\)|\[\s*verified\s*\])\s*$/i, '')
+      .replace(/\s+[·|—–-]\s*by\s+.+$/i, ''),
+  )
+    .slice(0, 40)
+    .trim()
+const cleanShareManager = (s: string) => cleanShareText(s).replace(/^by\s+/i, '').trim().slice(0, 40).trim()
 export function encodeShare(v: Pick<Vault, 'name' | 'chainId' | 'assets' | 'rule' | 'threshold'>, manager?: string) {
-  const share: Share = { n: v.name, c: v.chainId, w: v.assets.map((a) => [a.ticker, Math.round(a.weight * 10) / 10]), r: v.rule, t: v.threshold, ...(manager ? { m: manager } : {}) }
+  const n = cleanShareName(v.name) || 'Shared strategy'
+  const m = manager ? cleanShareManager(manager) || undefined : undefined
+  const share: Share = { n, c: v.chainId, w: v.assets.map((a) => [a.ticker, Math.round(a.weight * 10) / 10]), r: v.rule, t: v.threshold, ...(m ? { m } : {}) }
   return b64(JSON.stringify(share))
 }
 export function decodeShare(code: string): Share | null {
   try {
     const s = JSON.parse(unb64(code)) as Share
-    if (!s || typeof s.n !== 'string' || !Array.isArray(s.w) || !s.w.length || typeof s.c !== 'number') return null
-    return { n: s.n.slice(0, 40), c: s.c, w: s.w.filter((x) => Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'number').slice(0, 12) as [string, number][], r: (['week', 'month', 'quarter', 'drift'] as Rule[]).includes(s.r) ? s.r : 'month', t: [2, 5, 10].includes(s.t) ? s.t : 5, m: typeof s.m === 'string' ? s.m.slice(0, 40) : undefined }
+    if (!s || typeof s.n !== 'string' || !Array.isArray(s.w) || !s.w.length || typeof s.c !== 'number' || !Number.isInteger(s.c) || s.c <= 0) return null
+    const n = cleanShareName(s.n)
+    const m = typeof s.m === 'string' ? cleanShareManager(s.m) || undefined : undefined
+    const w = s.w.filter((x) => Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'number' && Number.isFinite(x[1]) && x[1] > 0).slice(0, 12) as [string, number][]
+    if (!n || !w.length) return null
+    return { n, c: s.c, w, r: (['week', 'month', 'quarter', 'drift'] as Rule[]).includes(s.r) ? s.r : 'month', t: [2, 5, 10].includes(s.t) ? s.t : 5, m }
   } catch {
     return null
   }
