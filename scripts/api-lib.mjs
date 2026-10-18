@@ -209,7 +209,7 @@ const VERDEX = '0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43'
 const VERDEX_MINT_BLOCK = 74_800_000n
 const POOL_MANAGER = '0x8366a39CC670B4001A1121B8F6A443A643e40951'
 const transferEv = parseAbiItem('event Transfer(address indexed from,address indexed to,uint256 value)')
-const scanState = { to: VERDEX_MINT_BLOCK - 1n, firstSeen: new Map(), transfers: [] }
+const scanState = { to: VERDEX_MINT_BLOCK - 1n, firstSeen: new Map(), transfers: [], totalTransfers: 0 }
 async function scanSplit(c, a, b) {
   try { return await c.getLogs({ address: VERDEX, event: transferEv, fromBlock: a, toBlock: b }) }
   catch (e) { if (b - a < 2000n) throw e; const m = (a + b) / 2n; return [...(await scanSplit(c, a, m)), ...(await scanSplit(c, m + 1n, b))] }
@@ -219,15 +219,20 @@ async function scanVerdex(c) {
   if (scanning) return scanning
   scanning = (async () => {
     const head = await c.getBlockNumber()
+    const cutoff = head > 2_000_000n ? head - 2_000_000n : 0n
     for (let a = scanState.to + 1n; a <= head; a += 5_000_000n) {
       const b = a + 4_999_999n > head ? head : a + 4_999_999n
       const got = await scanSplit(c, a, b)
       for (const l of got) {
         const to = l.args.to
         if (to !== '0x0000000000000000000000000000000000000000' && !scanState.firstSeen.has(lc(to))) scanState.firstSeen.set(lc(to), { address: to, block: l.blockNumber })
-        scanState.transfers.push(l.blockNumber)
+        scanState.totalTransfers++
+        if (l.blockNumber >= cutoff) scanState.transfers.push(l.blockNumber)
       }
       scanState.to = b
+    }
+    if (scanState.transfers.length > 0 && scanState.transfers[0] < cutoff) {
+      scanState.transfers = scanState.transfers.filter((b) => b >= cutoff)
     }
     return head
   })().finally(() => { scanning = null })
@@ -257,15 +262,18 @@ export async function holders() {
   const bucket = (lo, hi) => people.filter((r) => share(r.verdex) >= lo && share(r.verdex) < hi).length
   // Holders over time: wallets that hold today, counted from the day they first received VERDEX.
   const days = []
-  const start = Math.min(...people.map((r) => r.since))
-  for (let d = Math.floor(start / 86400) * 86400; d <= now; d += 86400) days.push({ day: d, holders: people.filter((r) => r.since < d + 86400).length })
+  if (people.length > 0) {
+    let start = people[0].since
+    for (let i = 1; i < people.length; i++) if (people[i].since < start) start = people[i].since
+    for (let d = Math.floor(start / 86400) * 86400; d <= now; d += 86400) days.push({ day: d, holders: people.filter((r) => r.since < d + 86400).length })
+  }
   return {
     chain: ch.name, token: VERDEX, supply: SUPPLY, readAt: new Date(now * 1000).toISOString(),
     holders: people.length, contracts: rows.length - people.length,
     inPool: share(rows.find((r) => r.kind === 'pool')?.verdex ?? 0),
     earlyAccessBps: 50, earlyAccess: people.filter((r) => share(r.verdex) >= 0.5).length,
     newHolders: { day: people.filter((r) => r.since >= now - 86400).length, week: people.filter((r) => r.since >= now - 7 * 86400).length },
-    transfers: { day: scanState.transfers.filter((b) => when(b) >= now - 86400).length, total: scanState.transfers.length },
+    transfers: { day: scanState.transfers.filter((b) => when(b) >= now - 86400).length, total: scanState.totalTransfers },
     buckets: [{ label: '1% or more', count: bucket(1, 101) }, { label: '0.5% to 1%', count: bucket(0.5, 1) }, { label: '0.1% to 0.5%', count: bucket(0.1, 0.5) }, { label: '0.01% to 0.1%', count: bucket(0.01, 0.1) }, { label: 'Under 0.01%', count: bucket(0, 0.01) }],
     top10Share: people.slice(0, 10).reduce((s, r) => s + share(r.verdex), 0),
     series: days,

@@ -362,13 +362,24 @@ export async function treasurySweep({ rpc = DEFAULT_RPC, key, treasury, log = co
   return out
 }
 
+async function getLogsSplit(pub, params) {
+  const { fromBlock, toBlock } = params
+  if (fromBlock > toBlock) return []
+  try { return await pub.getLogs(params) }
+  catch (e) {
+    if (toBlock - fromBlock < 2000n) throw e
+    const mid = fromBlock + (toBlock - fromBlock) / 2n
+    return [...(await getLogsSplit(pub, { ...params, fromBlock, toBlock: mid })), ...(await getLogsSplit(pub, { ...params, fromBlock: mid + 1n, toBlock }))]
+  }
+}
+
 // Fee payers of the period: everyone who paid a fee through the Index router since the last payout.
 export async function feePayersSince({ rpc = DEFAULT_RPC, routers = [], fromBlock, toBlock }) {
   const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
   const paid = new Map()
   for (const router of routers) {
     for (const ev of ROUTER_FEE_EVENTS) {
-      const logs = await pub.getLogs({ address: router, event: ev, fromBlock, toBlock })
+      const logs = await getLogsSplit(pub, { address: router, event: ev, fromBlock, toBlock })
       for (const l of logs) { const who = (l.args.buyer ?? l.args.seller).toLowerCase(); const fee = l.args.fee ?? 0n; if (fee > 0n) paid.set(who, (paid.get(who) ?? 0n) + fee) }
     }
   }
@@ -385,7 +396,7 @@ export async function treasuryDistribute({ rpc = DEFAULT_RPC, key, treasury, rou
   if (available === 0n) return { paid: false, reason: 'nothing to pay' }
   const head = await pub.getBlockNumber()
   const since = head - 6_048_000n > 0n ? head - 6_048_000n : 0n // about a week of 0.1 s blocks
-  const last = (await pub.getLogs({ address: treasury, event: TREASURY_ABI.find((x) => x.type === 'event' && x.name === 'Distributed'), fromBlock: since, toBlock: head })).at(-1)
+  const last = (await getLogsSplit(pub, { address: treasury, event: TREASURY_ABI.find((x) => x.type === 'event' && x.name === 'Distributed'), fromBlock: since, toBlock: head })).at(-1)
   const lastBlock = last ? last.blockNumber : (fromBlockDefault ?? since)
   if (!force && last) {
     const at = Number((await pub.getBlock({ blockNumber: last.blockNumber })).timestamp)
@@ -394,7 +405,12 @@ export async function treasuryDistribute({ rpc = DEFAULT_RPC, key, treasury, rou
   const payers = await feePayersSince({ rpc, routers, fromBlock: lastBlock + 1n, toBlock: head })
   const total = [...payers.values()].reduce((s, v) => s + v, 0n)
   if (total === 0n) return { paid: false, reason: 'no fee payers in the period' }
-  const to = [...payers.keys()], amounts = to.map((a) => (available * payers.get(a)) / total)
+  const to = [], amounts = []
+  for (const [a, fee] of payers.entries()) {
+    const amt = (available * fee) / total
+    if (amt > 0n) { to.push(a); amounts.push(amt) }
+  }
+  if (!to.length) return { paid: false, reason: 'nothing to pay after rounding' }
   const hash = await wallet.writeContract({ address: treasury, abi: TREASURY_ABI, functionName: 'distribute', args: [to, amounts] })
   const rc = await pub.waitForTransactionReceipt({ hash, timeout: 120_000 })
   log(`treasury: ${rc.status} ${hash} paid ${formatUnits(amounts.reduce((s, v) => s + v, 0n), 18)} VERDEX to ${to.length} wallets`)

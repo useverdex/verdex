@@ -225,7 +225,7 @@ contract VerdexLeverage {
         out = LeverageAccount(a).sweep(usdg, msg.sender);
         LeverageAccount(a).sweep(m.collateral, msg.sender);
         if (out < minOut) revert Slippage();
-        _finish(id, p);
+        _finish(id, msg.sender, p);
         emit Closed(msg.sender, id, LONG, out);
     }
 
@@ -260,7 +260,7 @@ contract VerdexLeverage {
         out = LeverageAccount(a).sweep(usdg, msg.sender);
         LeverageAccount(a).sweep(m.loan, msg.sender);
         if (out < minOut) revert Slippage();
-        _finish(id, p);
+        _finish(id, msg.sender, p);
         emit Closed(msg.sender, id, SHORT, out);
     }
 
@@ -280,18 +280,27 @@ contract VerdexLeverage {
 
     /// After a Lend liquidation emptied a position, clear it here so the wallet can open again. Anything left in the account comes back.
     function settle(uint256 id) external nonReentrant {
-        address a = accountOf[msg.sender];
-        Position storage p = positions[msg.sender][id];
+        _settle(id, msg.sender);
+    }
+
+    /// Permissionlessly clear a liquidated position whose debt is zero, freeing its openInterest and returning any remaining collateral to `user`.
+    function settleFor(uint256 id, address user) external nonReentrant {
+        _settle(id, user);
+    }
+
+    function _settle(uint256 id, address user) private {
+        address a = accountOf[user];
+        Position storage p = positions[user][id];
         if (a == address(0) || p.side == 0) revert NoPosition();
         if (lend.debtOf(id, a) != 0) revert HasPosition();
         IVerdexLend.Market memory m = lend.market(id);
         uint256 c = lend.collateralOf(id, a);
         if (c > 0) LeverageAccount(a).unlock(address(lend), id, c); // collateral left with no debt: it is yours
         uint8 side = p.side;
-        LeverageAccount(a).sweep(usdg, msg.sender);
-        LeverageAccount(a).sweep(m.loan == usdg ? m.collateral : m.loan, msg.sender);
-        _finish(id, p);
-        emit Closed(msg.sender, id, side, 0);
+        LeverageAccount(a).sweep(usdg, user);
+        LeverageAccount(a).sweep(m.loan == usdg ? m.collateral : m.loan, user);
+        _finish(id, user, p);
+        emit Closed(user, id, side, 0);
     }
 
     // ---- owner ----
@@ -321,9 +330,9 @@ contract VerdexLeverage {
         if (a == address(0) || p.side != side) revert NoPosition();
     }
 
-    function _finish(uint256 id, Position storage p) private {
+    function _finish(uint256 id, address user, Position storage p) private {
         openInterest[id] = openInterest[id] > p.exposure ? openInterest[id] - p.exposure : 0;
-        delete positions[msg.sender][id];
+        delete positions[user][id];
     }
 
     function _fee(uint256 exposure) private returns (uint256 fee) {

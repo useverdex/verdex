@@ -245,7 +245,8 @@ export async function buyIndex(ctx0: TxCtx, index: IndexInfo, shares: bigint, qu
   const ic = index.chain, ctx = onChain(ctx0, ic)
   await ensureChainOn(ctx, ic)
   const maxLeg = quote.perLeg.map((v) => (v * BigInt(10_000 + slippageBps)) / 10_000n)
-  const maxIn = (quote.total * BigInt(10_000 + slippageBps + feeBps)) / 10_000n + 1n
+  const maxSpent = maxLeg.reduce((s, v) => s + v, 0n)
+  const maxIn = maxSpent + (maxSpent * BigInt(feeBps)) / 10_000n + 1n
   const allowance = await clientFor(ic).readContract({ address: ic.quote.address, abi: erc20Abi, functionName: 'allowance', args: [ctx.account.address, ic.router] })
   if (allowance < maxIn) await approveExact(ctx, ic, ic.quote.address, ic.router, maxIn)
   const data = encodeFunctionData({ abi: routerAbi, functionName: 'buy', args: [index.address, shares, maxIn, index.fees, maxLeg, ctx.account.address] })
@@ -256,7 +257,8 @@ export async function sellIndex(ctx0: TxCtx, index: IndexInfo, shares: bigint, q
   const ic = index.chain, ctx = onChain(ctx0, ic)
   await ensureChainOn(ctx, ic)
   const minLeg = quote.perLeg.map((v) => (v * BigInt(10_000 - slippageBps)) / 10_000n)
-  const minOut = (quote.total * BigInt(10_000 - slippageBps - feeBps)) / 10_000n
+  const minReceived = minLeg.reduce((s, v) => s + v, 0n)
+  const minOut = minReceived - (minReceived * BigInt(feeBps)) / 10_000n
   const allowance = await clientFor(ic).readContract({ address: index.address, abi: indexAbi, functionName: 'allowance', args: [ctx.account.address, ic.router] })
   if (allowance < shares) await approveExact(ctx, ic, index.address, ic.router, shares)
   const data = encodeFunctionData({ abi: routerAbi, functionName: 'sell', args: [index.address, shares, minOut, index.fees, minLeg, ctx.account.address] })

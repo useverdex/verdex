@@ -3,7 +3,7 @@
 // the app prices it through LI.FI, approves the pay token once if needed, and asks the wallet to
 // confirm the swap. Nothing is custodial: funds leave the wallet only inside that confirmed swap.
 import { useSyncExternalStore } from 'react'
-import { encodeFunctionData, erc20Abi, maxUint256, parseUnits, type Address, type WalletClient } from 'viem'
+import { encodeFunctionData, erc20Abi, parseUnits, type Address, type WalletClient } from 'viem'
 import { LIFI, ROBINHOOD, lifiInit, type Chain } from './api'
 import { chainMeta, fetchQuote, isNative, readAllowance, waitForTx, type ChainX, type Quote } from './lifi'
 import { VERDEX_TOKEN, readHolding } from './holding'
@@ -171,7 +171,7 @@ export async function executePlan(plan: Plan, ctx: { walletClient: WalletClient;
     const allowance = await readAllowance(chain, plan.pay.address as Address, ctx.account.address, quote.estimate.approvalAddress as Address)
     if (allowance < BigInt(fromAmount)) {
       ctx.onPhase('approving')
-      const approveHash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: plan.pay.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [quote.estimate.approvalAddress as Address, maxUint256] }) })
+      const approveHash = await ctx.walletClient.sendTransaction({ account: ctx.account.address, chain: null, to: plan.pay.address as Address, data: encodeFunctionData({ abi: erc20Abi, functionName: 'approve', args: [quote.estimate.approvalAddress as Address, BigInt(fromAmount)] }) })
       await waitForTx(chain, approveHash)
     }
   }

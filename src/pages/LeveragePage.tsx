@@ -240,7 +240,8 @@ export default function LeveragePage() {
       else if (what === 'settle') await settle(ctx, id)
       else {
         const amount = window.prompt(`USDG to add to the ${s} ${p.stock.ticker} position`, '25')
-        const v = amount ? parseUnits(Number(amount).toFixed(6), 6) : 0n
+        const numAmt = Number(amount)
+        const v = numAmt > 0 ? parseUnits(numAmt.toFixed(6), 6) : 0n
         if (v > 0n) await addMargin(ctx, id, v, w.data?.allowance ?? 0n)
       }
       refresh()
