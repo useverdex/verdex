@@ -20,10 +20,10 @@ export async function relayClaim(key, ip, body) {
   if (now - day.start > 86_400_000) day = { start: now, n: 0 }
   const hits = (byIp.get(ip) ?? []).filter((t) => now - t < 3_600_000)
   if (hits.length >= PER_IP_HOUR || day.n >= PER_DAY) return { status: 429, body: { ok: false, error: 'too many claims, claim from your own wallet instead' } }
-  const account = privateKeyToAccount(key)
-  const pub = createPublicClient({ chain, transport: http(RPC, { retryCount: 2 }) })
-  const wallet = createWalletClient({ account, chain, transport: http(RPC) })
   try {
+    const account = privateKeyToAccount(key)
+    const pub = createPublicClient({ chain, transport: http(RPC, { retryCount: 2 }) })
+    const wallet = createWalletClient({ account, chain, transport: http(RPC) })
     const sim = await pub.simulateContract({ account, address: GIFT_ADDRESS, abi, functionName: 'claim', args: [BigInt(id), to, signature] })
     const hash = await wallet.writeContract(sim.request)
     byIp.set(ip, [...hits, now]); day.n++

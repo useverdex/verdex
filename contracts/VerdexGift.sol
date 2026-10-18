@@ -44,6 +44,7 @@ contract VerdexGift {
     error BadSignature();
     error NotSender();
     error NotExpired();
+    error Expired();
     error TransferFailed();
     error Locked();
 
@@ -77,9 +78,10 @@ contract VerdexGift {
 
     /// @notice Claim gift `id` to `to` with the key's signature. Anyone may submit it; the gift only ever goes to `to`.
     function claim(uint256 id, address to, bytes calldata signature) external nonReentrant {
-        if (id >= _gifts.length || to == address(0)) revert BadGift();
+        if (id >= _gifts.length || to == address(0) || to == address(this)) revert BadGift();
         Gift storage g = _gifts[id];
         if (g.state != 0) revert NotWaiting();
+        if (block.timestamp >= g.expiresAt) revert Expired();
         if (_signer(claimDigest(id, to), signature) != g.key) revert BadSignature();
         g.state = 1;
         g.claimedBy = to;

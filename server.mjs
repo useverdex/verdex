@@ -42,8 +42,24 @@ const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') { res.writeHead(204, { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400' }); return res.end() }
   if (req.method === 'POST' && req.url === '/api/gift/claim') {
     let raw = ''
-    req.on('data', (d) => { raw += d; if (raw.length > 4096) req.destroy() })
-    req.on('end', () => { let body; try { body = JSON.parse(raw) } catch { body = null } const ip = String(req.headers['x-forwarded-for'] ?? req.socket.remoteAddress ?? '').split(',')[0].trim(); relayClaim(key, ip, body).then((r) => { res.writeHead(r.status, { 'content-type': 'application/json', 'access-control-allow-origin': '*' }); res.end(JSON.stringify(r.body)) }) })
+    let destroyed = false
+    req.on('data', (d) => { raw += d; if (raw.length > 4096) { destroyed = true; req.destroy() } })
+    req.on('end', () => {
+      if (destroyed) return
+      let body; try { body = JSON.parse(raw) } catch { body = null }
+      const ip = String(req.headers['x-forwarded-for'] ?? req.socket.remoteAddress ?? '').split(',')[0].trim()
+      relayClaim(key, ip, body)
+        .then((r) => {
+          if (res.writableEnded) return
+          res.writeHead(r.status, { 'content-type': 'application/json', 'access-control-allow-origin': '*' })
+          res.end(JSON.stringify(r.body))
+        })
+        .catch(() => {
+          if (res.writableEnded) return
+          res.writeHead(500, { 'content-type': 'application/json', 'access-control-allow-origin': '*' })
+          res.end(JSON.stringify({ ok: false, error: 'internal error' }))
+        })
+    })
     return
   }
   const PUSH = { '/api/push/subscribe': pushSubscribe, '/api/push/unsubscribe': pushUnsubscribe, '/api/push/test': pushTest }

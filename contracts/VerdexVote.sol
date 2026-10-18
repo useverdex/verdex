@@ -51,7 +51,7 @@ contract VerdexVote {
     /// @notice Opens a round. Two to twelve candidates; it closes at `closesAt`, in the future.
     function openRound(string calldata title, string[] calldata options, uint40 closesAt) external returns (uint256 id) {
         if (msg.sender != admin) revert NotAdmin();
-        if (options.length < 2 || options.length > MAX_OPTIONS || closesAt <= block.timestamp) revert BadRound();
+        if (bytes(title).length == 0 || options.length < 2 || options.length > MAX_OPTIONS || closesAt <= block.timestamp) revert BadRound();
         id = ++roundCount;
         Round storage r = _rounds[id];
         r.title = title;
@@ -63,6 +63,7 @@ contract VerdexVote {
 
     /// @notice Submits or replaces the caller's ranking: candidate indexes, best first, each at most once.
     function vote(uint256 id, uint8[] calldata ranking) external {
+        if (verdex.balanceOf(msg.sender) == 0) revert BadRanking();
         Round storage r = _rounds[id];
         if (r.closesAt == 0) revert BadRound();
         if (block.timestamp > r.closesAt) revert NotOpen();
