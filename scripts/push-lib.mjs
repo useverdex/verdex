@@ -65,10 +65,10 @@ const WATCH = [
   { chain: 'rh', address: AGENT_ADDRESS, events: { [topic('Traded(uint256,address,address,bool,uint256,uint256,uint256)')]: { title: 'Your agent traded', body: 'Your agent just made a trade within its mandate.', url: '/agent/without-you' } }, read: getter('mandates(uint256)'), who: [0] },
   { chain: 'rh', address: INDEX_PLANS_ADDRESS, events: { [topic('Bought(uint256,address,uint256,uint256,uint256,uint40)')]: { title: 'Index buy ran', body: 'Your index Auto-Invest just bought shares.', url: '/index/auto-invest' } }, read: getter('plan(uint256)'), who: [0] },
   { chain: 'rh', address: TERM_ADDRESS, events: {
-    [topic('Started(uint256,uint256,address,address,uint256,uint256,uint256,uint40)')]: { title: 'Term loan started', body: 'A term loan of yours just started.', url: '/lend/term' },
+    [topic('Started(uint256,uint256,address,address,address,uint256,uint256,uint256,uint40)')]: { title: 'Term loan started', body: 'A term loan of yours just started.', url: '/lend/term' },
     [topic('Repaid(uint256,address)')]: { title: 'Loan repaid', body: 'A term loan was repaid and the collateral released.', url: '/lend/term' },
     [topic('Claimed(uint256)')]: { title: 'Collateral claimed', body: 'An unpaid term loan ended and the lender took the collateral.', url: '/lend/term' },
-  }, read: getter('loan(uint256)'), who: [1, 2] },
+  }, read: getter('loan(uint256)'), who: [0, 1] },
   { chain: 'rh', address: OPTIONS_ADDRESS, events: {
     [topic('Bought(uint256,address,uint256)')]: { title: 'Option sold', body: 'Someone bought an option you wrote. The premium is in your wallet.', url: '/options' },
     [topic('Exercised(uint256,address)')]: { title: 'Option exercised', body: 'An option you wrote or hold was just exercised.', url: '/options' },

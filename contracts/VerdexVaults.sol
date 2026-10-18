@@ -187,7 +187,14 @@ contract VerdexVaults {
         Vault storage v = vaults[id];
         if (v.owner == address(0) || v.paused) return false;
         if (block.timestamp < uint256(v.lastRun) + v.interval) return false;
-        return drift(id) >= v.thresholdBps;
+        if (drift(id) < v.thresholdBps) return false;
+        (uint256[] memory balances, uint256[] memory values, uint256 total) = value(id);
+        Leg[] storage L = _legs[id];
+        for (uint256 i = 0; i < L.length; i++) {
+            uint256 target = (total * L[i].targetBps) / BPS;
+            if (values[i] > target + MIN_LEG_USDG && (balances[i] * (values[i] - target)) / values[i] > 0) return true;
+        }
+        return false;
     }
 
     // ---- execution ----
@@ -216,6 +223,7 @@ contract VerdexVaults {
             require(IERC20(L[i].token).transferFrom(v.owner, address(this), units), "pull");
             soldUsdg += _swap(pool, L[i].token, units, address(this), floor_);
         }
+        if (soldUsdg == 0) revert NotDue();
 
         // 2. The tip, out of the proceeds.
         uint256 tip = v.tip;

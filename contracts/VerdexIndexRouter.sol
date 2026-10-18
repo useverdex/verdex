@@ -145,7 +145,7 @@ contract VerdexIndexRouter {
             spent += inAmt;
             _approve(tokens[i], index, amounts[i]);
         }
-        uint256 fee = _fee(spent);
+        uint256 fee = _fee(spent, to);
         if (spent + fee > maxIn) revert Slippage();
         IVerdexIndex(index).issue(shares, to);
         if (fee != 0) _send(usdg, treasury, fee);
@@ -174,7 +174,7 @@ contract VerdexIndexRouter {
             if (outAmt < minOutPerLeg[i]) revert Slippage();
             received += outAmt;
         }
-        uint256 fee = _fee(received);
+        uint256 fee = _fee(received, to);
         if (received - fee < minOut) revert Slippage();
         if (fee != 0) _send(usdg, treasury, fee);
         _send(usdg, to, received - fee);
@@ -215,8 +215,8 @@ contract VerdexIndexRouter {
 
     // ----- Internals -----
 
-    function _fee(uint256 amount) private view returns (uint256) {
-        if (feeBps == 0 || IERC20(verdex).balanceOf(msg.sender) > 0) return 0;
+    function _fee(uint256 amount, address holder) private view returns (uint256) {
+        if (feeBps == 0 || IERC20(verdex).balanceOf(holder) > 0) return 0;
         return (amount * feeBps) / 10_000;
     }
 

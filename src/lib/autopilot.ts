@@ -41,8 +41,23 @@ export const BYTECODE = artifact.bytecode as `0x${string}`
 export const EXPLORER = 'https://robin.etherscan.io'
 // The Base contract (contracts/VerdexAutoInvestCL.sol): Slipstream's tick spacing in place of the fee tier.
 export const abiCL = parseAbi([
+  'constructor(address factory_, address executor_)',
   'function createPlan(address tokenIn,address tokenOut,int24 tickSpacing,uint96 amountIn,uint96 tip,uint32 interval,uint40 firstAt,uint32 buys,uint16 maxSlippageBps) returns (uint256)',
+  'function setPaused(uint256 id,bool paused)',
+  'function cancel(uint256 id)',
+  'function plansOf(address owner) view returns (uint256[])',
+  'function isDue(uint256 id) view returns (bool)',
+  'function quoteSpot(uint256 id) view returns (uint256)',
+  'function floorOut(uint256 id) view returns (uint256)',
+  'function execute(uint256 id,uint256 minOut) returns (uint256)',
+  'function planCount() view returns (uint256)',
   'function plans(uint256) view returns (address owner,address tokenIn,address tokenOut,int24 tickSpacing,uint32 interval,uint40 nextAt,uint32 buysLeft,uint32 buysDone,uint16 maxSlippageBps,bool paused,uint96 amountIn,uint96 tip,uint128 spent,uint128 received)',
+  'function admin() view returns (address)',
+  'function isExecutor(address) view returns (bool)',
+  'function setExecutor(address executor,bool allowed)',
+  'function factory() view returns (address)',
+  'event PlanCreated(uint256 indexed id,address indexed owner,address tokenIn,address tokenOut,int24 tickSpacing,uint96 amountIn,uint32 interval,uint40 firstAt,uint32 buys)',
+  'event Executed(uint256 indexed id,address indexed executor,uint256 amountIn,uint256 amountOut,uint256 tip,uint40 nextAt)',
 ])
 // Where plans can live: the chain, its contract, the stablecoin they pay with and the pool interface.
 export type PlanChain = { key: 'robinhood' | 'base'; ic: IndexChain; contract: Address; deployed: boolean; isCL: boolean; quote: { address: Address; symbol: string; decimals: number }; source: string }
@@ -169,7 +184,7 @@ export async function setAllowance(ctx: TxCtx, pc: PlanChain, amount: bigint) {
 export async function createPlan(ctx: TxCtx, pc: PlanChain, p: NewPlan) {
   await ensureChainOn(ctx, pc.ic)
   const { allowance } = await readAllowance(pc, ctx.account.address)
-  if (allowance < p.budget) await approveExact(ctx, pc, p.budget)
+  if (p.budget > 0n) await approveExact(ctx, pc, allowance + p.budget)
   const data = pc.isCL
     ? encodeFunctionData({ abi: abiCL, functionName: 'createPlan', args: [pc.quote.address, p.stock.address, p.pool.spacing, p.amount, p.tip, p.interval, p.firstAt, p.buys, p.slippageBps] })
     : encodeFunctionData({ abi, functionName: 'createPlan', args: [pc.quote.address, p.stock.address, p.pool.fee, p.amount, p.tip, p.interval, p.firstAt, p.buys, p.slippageBps] })
