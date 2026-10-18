@@ -16,6 +16,7 @@ import { apiRead, isApiPath } from './scripts/api-lib.mjs'
 import { relayClaim } from './scripts/gift-relay.mjs'
 import { pushKey, pushPass, subscribe as pushSubscribe, unsubscribe as pushUnsubscribe, test as pushTest } from './scripts/push-lib.mjs'
 import { INDEX_PLANS_ADDRESS as INDEX_PLANS_BUILT_IN } from './scripts/index-plans-address.mjs'
+import { LEVERAGE_ADDRESS } from './scripts/leverage-address.mjs'
 
 const ROOT = resolve('dist')
 const PORT = Number(process.env.PORT ?? 8080)
@@ -150,6 +151,7 @@ if (key && address) {
 // ---- treasury: sweep fees into VERDEX every six hours, pay the kept half back once a week ----
 const treasury = process.env.TREASURY_ADDRESS || TREASURY_ADDRESS
 const router = process.env.INDEX_ROUTER_ADDRESS || INDEX_ROUTER_ADDRESS
+const leverage = process.env.LEVERAGE_ADDRESS || LEVERAGE_ADDRESS
 if (key && treasury) {
   const tlog = (m) => console.log(`[treasury] ${m}`)
   let busy = false
@@ -161,7 +163,7 @@ if (key && treasury) {
   const payTick = async () => {
     if (busy) return
     busy = true
-    try { const r = await treasuryDistribute({ rpc: process.env.RPC, key, treasury, routers: router ? [router] : [], log: tlog }); if (!r.paid && r.reason) tlog(`payout: ${r.reason}`) } catch (e) { tlog(`payout failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`) } finally { busy = false }
+    try { const r = await treasuryDistribute({ rpc: process.env.RPC, key, treasury, routers: [router, leverage].filter(Boolean), log: tlog }); if (!r.paid && r.reason) tlog(`payout: ${r.reason}`) } catch (e) { tlog(`payout failed: ${(e.shortMessage ?? e.message ?? String(e)).slice(0, 160)}`) } finally { busy = false }
   }
   tlog(`${treasury} · sweep every 6 h · payout weekly`)
   setTimeout(sweepTick, 60_000)

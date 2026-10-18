@@ -115,7 +115,7 @@ contract VerdexIndexPlans {
         if (!isExecutor[msg.sender] && msg.sender != p.owner) revert NotExecutor();
         if (!isDue(id) || shares == 0) revert NotDue();
         (uint256 cap, uint256[] memory perLeg) = capFor(id, shares);
-        if (cap > p.amount) revert TooDear();
+        if (cap > p.amount || cap * 10_100 < uint256(p.amount) * 10_000) revert TooDear();
         uint256 amount = p.amount;
         uint256 tip = msg.sender == p.owner ? 0 : p.tip;
         _pull(p.owner, amount + tip);

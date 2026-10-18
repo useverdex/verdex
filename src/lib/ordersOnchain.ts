@@ -199,7 +199,7 @@ export async function placeOrder(ctx: TxCtx, oc: OrdersChain, o: NewOrder) {
   const need = k.side === 'buy' ? o.amountIn + o.tip : o.amountIn
   const c = clientFor(oc.ic)
   const allowance = await c.readContract({ address: tokenIn, abi: erc20Abi, functionName: 'allowance', args: [ctx.account.address, oc.contract] })
-  if (allowance < need) await approveExact(ctx, oc, tokenIn, need)
+  await approveExact(ctx, oc, tokenIn, allowance + need)
   const { trigger, whenAtOrBelow } = triggerFor(o.pool, o.levelUsd, k.below)
   const data = oc.isCL
     ? encodeFunctionData({ abi: abiCL, functionName: 'place', args: [tokenIn, tokenOut, tierOf(oc, o.pool), o.amountIn, o.tip, trigger, whenAtOrBelow, o.slippageBps, o.expiresAt] })

@@ -320,6 +320,7 @@ const TREASURY_ABI = parseAbi([
 const ROUTER_FEE_EVENTS = parseAbi([
   'event Bought(address indexed index,address indexed buyer,address indexed to,uint256 shares,uint256 usdgIn,uint256 fee)',
   'event Sold(address indexed index,address indexed seller,address indexed to,uint256 shares,uint256 usdgOut,uint256 fee)',
+  'event Opened(address indexed user,uint256 indexed id,uint8 side,uint256 margin,uint256 exposure,uint256 units,uint256 fee)',
 ])
 const VERDEX = '0x96f455a90a80dcf0c2df6703ea4ba3bedf286e43'
 export const SWEEP_MIN_USDG = 5
@@ -362,14 +363,14 @@ export async function treasurySweep({ rpc = DEFAULT_RPC, key, treasury, log = co
   return out
 }
 
-// Fee payers of the period: everyone who paid a fee through the Index router since the last payout.
+// Fee payers of the period: everyone who paid a fee through the Index router or Leverage since the last payout.
 export async function feePayersSince({ rpc = DEFAULT_RPC, routers = [], fromBlock, toBlock }) {
   const pub = createPublicClient({ chain: chain(rpc), transport: http(rpc, { retryCount: 3, retryDelay: 1500, timeout: 30_000 }) })
   const paid = new Map()
   for (const router of routers) {
     for (const ev of ROUTER_FEE_EVENTS) {
       const logs = await pub.getLogs({ address: router, event: ev, fromBlock, toBlock })
-      for (const l of logs) { const who = (l.args.buyer ?? l.args.seller).toLowerCase(); const fee = l.args.fee ?? 0n; if (fee > 0n) paid.set(who, (paid.get(who) ?? 0n) + fee) }
+      for (const l of logs) { const who = (l.args.to ?? l.args.buyer ?? l.args.seller ?? l.args.user).toLowerCase(); const fee = l.args.fee ?? 0n; if (fee > 0n) paid.set(who, (paid.get(who) ?? 0n) + fee) }
     }
   }
   return paid

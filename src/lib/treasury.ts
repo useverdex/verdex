@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { encodeDeployData, erc20Abi, formatEther, formatUnits, isAddress, parseAbi, parseAbiItem, type Address } from 'viem'
 import artifact from '../../contracts/VerdexTreasury.json'
 import { TREASURY_ADDRESS as BUILT_IN } from '../../scripts/treasury-address.mjs'
+import { LEVERAGE_ADDRESS as LEVERAGE_BUILT_IN } from '../../scripts/leverage-address.mjs'
 import { VERDEX_TOKEN } from './holding'
 import { ROUTER as INDEX_ROUTER, DEPLOYED as INDEX_DEPLOYED } from './indexes'
 import { MULTICALL3, USDG, WETH, client, ensureChain, type TxCtx } from './pools'
@@ -39,6 +40,7 @@ const SWEPT = parseAbiItem('event Swept(address indexed executor,address indexed
 const DISTRIBUTED = parseAbiItem('event Distributed(uint256 indexed epoch,uint256 total,uint256 recipients)')
 const BOUGHT = parseAbiItem('event Bought(address indexed index,address indexed buyer,address indexed to,uint256 shares,uint256 usdgIn,uint256 fee)')
 const SOLD = parseAbiItem('event Sold(address indexed index,address indexed seller,address indexed to,uint256 shares,uint256 usdgOut,uint256 fee)')
+const OPENED = parseAbiItem('event Opened(address indexed user,uint256 indexed id,uint8 side,uint256 margin,uint256 exposure,uint256 units,uint256 fee)')
 const WEEK_BLOCKS = 6_048_000n // about a week of 0.1 s blocks
 const LOOKBACK = 4n * WEEK_BLOCKS
 
@@ -112,13 +114,17 @@ export async function readTreasury(): Promise<Treasury> {
   const v = <T,>(k: number, fallback: T): T => (res[k].status === 'success' ? (res[k].result as T) : fallback)
   const sweeps = await withTimes(sweptLogs.map((l) => ({ block: Number(l.blockNumber), tx: l.transactionHash, tokenIn: l.args.tokenIn!, amountIn: l.args.amountIn!, verdexOut: l.args.verdexOut!, burned: l.args.burned!, kept: l.args.kept! })))
   const payouts = await withTimes(paidLogs.map((l) => ({ block: Number(l.blockNumber), tx: l.transactionHash, epoch: l.args.epoch!, total: l.args.total!, recipients: l.args.recipients! })))
-  // Fees paid through the Index router since the last payout: the next payout is split pro rata to these.
+  // Fees paid through the Index router and Leverage since the last payout: the next payout is split pro rata to these.
   const sinceBlock = payouts.length ? BigInt(payouts[payouts.length - 1].block) + 1n : from
   const paid = new Map<string, bigint>()
   if (INDEX_DEPLOYED) {
     const [b, s] = await Promise.all([chunked(sinceBlock, head, (x, y) => c.getLogs({ address: INDEX_ROUTER, event: BOUGHT, fromBlock: x, toBlock: y })), chunked(sinceBlock, head, (x, y) => c.getLogs({ address: INDEX_ROUTER, event: SOLD, fromBlock: x, toBlock: y }))])
-    for (const l of b) if ((l.args.fee ?? 0n) > 0n) paid.set(l.args.buyer!.toLowerCase(), (paid.get(l.args.buyer!.toLowerCase()) ?? 0n) + l.args.fee!)
-    for (const l of s) if ((l.args.fee ?? 0n) > 0n) paid.set(l.args.seller!.toLowerCase(), (paid.get(l.args.seller!.toLowerCase()) ?? 0n) + l.args.fee!)
+    for (const l of b) if ((l.args.fee ?? 0n) > 0n) { const who = (l.args.to ?? l.args.buyer)!.toLowerCase(); paid.set(who, (paid.get(who) ?? 0n) + l.args.fee!) }
+    for (const l of s) if ((l.args.fee ?? 0n) > 0n) { const who = (l.args.to ?? l.args.seller)!.toLowerCase(); paid.set(who, (paid.get(who) ?? 0n) + l.args.fee!) }
+  }
+  if (isAddress(LEVERAGE_BUILT_IN)) {
+    const o = await chunked(sinceBlock, head, (x, y) => c.getLogs({ address: LEVERAGE_BUILT_IN as Address, event: OPENED, fromBlock: x, toBlock: y }))
+    for (const l of o) if ((l.args.fee ?? 0n) > 0n) { const who = l.args.user!.toLowerCase(); paid.set(who, (paid.get(who) ?? 0n) + l.args.fee!) }
   }
   const periodFees = [...paid.entries()].map(([payer, fee]) => ({ payer: payer as Address, fee })).sort((a, b) => (b.fee > a.fee ? 1 : -1))
   return {
